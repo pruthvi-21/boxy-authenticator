@@ -6,9 +6,18 @@
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_color_dark</item>
         <item name="colorAccent">@color/primary_color</item>
+        <item name="colorSecondary">@color/primary_color_dark</item>
         <item name="colorSurface">@color/surface_color</item>
+        <item name="colorSurfaceVariant">@color/surface_color_variant</item>
         <item name="android:colorBackground">?colorSurface</item>
         <item name="android:statusBarColor">?colorSurface</item>
         <item name="android:windowLightStatusBar">?isLightTheme</item>
+
+        <item name="buttonGroupButtonStyle">@style/ButtonGroupButtonStyle</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+    </style>
+
+    <style name="ButtonGroupButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="textAllCaps">false</item>
     </style>
 </resources>

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Tokky</string>
+    <string name="label_algorithm">Algorithm</string>
+    <string name="label_advanced">Advanced</string>
+    <string name="label_counter">Counter</string>
+    <string name="title_enter_account_details">Enter account details</string>
+    <string name="cd_fab_add_new">add</string>
 </resources>
