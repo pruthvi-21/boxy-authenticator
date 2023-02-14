@@ -2,22 +2,29 @@
 
     <style name="BaseTheme" parent="Theme.Tokky" />
 
-    <style name="Theme.Tokky" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primary_color</item>
-        <item name="colorPrimaryDark">@color/primary_color_dark</item>
-        <item name="colorAccent">@color/primary_color</item>
-        <item name="colorSecondary">@color/primary_color_dark</item>
-        <item name="colorSurface">@color/surface_color</item>
-        <item name="colorSurfaceVariant">@color/surface_color_variant</item>
-        <item name="android:colorBackground">?colorSurface</item>
+    <style name="Theme.Tokky" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:statusBarColor">?colorSurface</item>
         <item name="android:windowLightStatusBar">?isLightTheme</item>
 
         <item name="buttonGroupButtonStyle">@style/ButtonGroupButtonStyle</item>
-        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+        <item name="textInputStyle">@style/TextInputLayoutStyle</item>
     </style>
 
-    <style name="ButtonGroupButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="textAllCaps">false</item>
+    <style name="Theme.Tokky.Overlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
+        <item name="colorSurface">@color/surface_color</item>
+        <item name="colorSurfaceVariant">@color/surface_color_variant</item>
+        <item name="android:colorBackground">@color/surface_color</item>
     </style>
+
+    <style name="ButtonGroupButtonStyle" parent="Widget.Material3.Button.TextButton">
+        <item name="textAllCaps">false</item>
+        <item name="backgroundTint">@color/btn_grp_text_btn_bg_selector</item>
+        <item name="android:textColor">@color/btn_grp_text_btn_text_color_selector</item>
+    </style>
+
+    <style name="TextInputLayoutStyle" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="boxBackgroundColor">?colorSurface</item>
+    </style>
+
 </resources>

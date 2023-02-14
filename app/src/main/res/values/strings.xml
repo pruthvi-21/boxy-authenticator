@@ -1,8 +1,19 @@
 <resources>
     <string name="app_name">Tokky</string>
-    <string name="label_algorithm">Algorithm</string>
-    <string name="label_advanced">Advanced</string>
-    <string name="label_counter">Counter</string>
-    <string name="title_enter_account_details">Enter account details</string>
     <string name="cd_fab_add_new">add</string>
+
+    <!-- EnterKeyDetailsActivity -->
+    <string name="title_enter_account_details">Enter account details</string>
+    <string name="label_save_btn">Save</string>
+    <string name="label_issuer">Issuer</string>
+    <string name="label_label">Label</string>
+    <string name="label_secret_key">Secret Key</string>
+    <string name="label_advanced">Advanced</string>
+    <string name="label_digits">Digits</string>
+    <string name="label_period">Period</string>
+    <string name="label_algorithm">Algorithm</string>
+
+    <string name="label_algo_sha1" translatable="false">SHA1</string>
+    <string name="label_algo_sha256" translatable="false">SHA256</string>
+    <string name="label_algo_sha512" translatable="false">SHA512</string>
 </resources>

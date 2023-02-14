@@ -4,4 +4,5 @@
     <dimen name="screen_margin_large">32dp</dimen>
 
     <dimen name="main_fab_margin">20dp</dimen>
+    <dimen name="disabled_alpha">0.38</dimen>
 </resources>

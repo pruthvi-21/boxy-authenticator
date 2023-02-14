@@ -13,19 +13,19 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_marginTop="12dp"
-        android:background="?attr/colorSurface"
+        android:background="?colorSurface"
         app:navigationIcon="@drawable/ic_chevron_left"
         app:title="@string/title_enter_account_details"
         app:titleTextAppearance="@style/TextAppearance.AppCompat.Title">
 
         <Button
             android:id="@+id/details_save_btn"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:padding="0dp"
-            android:text="Save" />
+            android:text="@string/label_save_btn" />
     </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.core.widget.NestedScrollView
@@ -43,62 +43,18 @@
                 android:paddingHorizontal="@dimen/screen_margin_large"
                 android:paddingVertical="@dimen/screen_margin">
 
-                <LinearLayout
-                    android:id="@+id/type_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Type of key" />
-
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/key_type_toggle_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:outlineAmbientShadowColor="#000"
-                        app:checkedButton="@id/key_totp"
-                        app:selectionRequired="true"
-                        app:singleSelection="true">
-
-                        <Button
-                            android:id="@+id/key_totp"
-                            style="?buttonGroupButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Time based" />
-
-                        <Button
-                            android:id="@+id/key_hotp"
-                            style="?buttonGroupButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Counter based" />
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
-
-                </LinearLayout>
-
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/issuer_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="Issuer"
-                    app:layout_constraintTop_toBottomOf="@id/type_layout">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:startIconDrawable="@drawable/ic_issuer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:hint="@string/label_issuer" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -106,8 +62,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="Label"
-                    app:layout_constraintTop_toBottomOf="@id/issuer_input_layout">
+                    android:hint="@string/label_label"
+                    app:layout_constraintTop_toBottomOf="@id/issuer_input_layout"
+                    app:startIconDrawable="@drawable/ic_label">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
@@ -119,27 +76,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="Secret Key"
-                    app:layout_constraintTop_toBottomOf="@id/label_input_layout">
+                    android:hint="@string/label_secret_key"
+                    app:layout_constraintTop_toBottomOf="@id/label_input_layout"
+                    app:startIconDrawable="@drawable/ic_secret_key">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/counter_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/label_counter"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/secret_key_input_layout">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.checkbox.MaterialCheckBox
@@ -148,14 +91,13 @@
                     android:layout_height="wrap_content"
                     android:text="@string/label_advanced"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/counter_input_layout" />
+                    app:layout_constraintTop_toBottomOf="@id/secret_key_input_layout" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/adv_options_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?colorSurfaceVariant"
                 android:orientation="vertical"
                 android:paddingHorizontal="@dimen/screen_margin_large"
                 android:paddingVertical="@dimen/screen_margin">
@@ -166,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="7.5dp"
                     android:layout_weight="1"
-                    android:hint="Digits"
+                    android:hint="@string/label_digits"
                     app:layout_constraintEnd_toStartOf="@id/adv_period_input_layout"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -183,10 +125,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="7.5dp"
                     android:layout_weight="1"
-                    android:hint="Period"
+                    android:hint="@string/label_period"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/adv_digits_input_layout"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:startIconDrawable="@drawable/ic_period">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
@@ -225,7 +168,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="SHA1" />
+                            android:text="@string/label_algo_sha1" />
 
                         <Button
                             android:id="@+id/algo_sha256"
@@ -233,7 +176,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="SHA256" />
+                            android:text="@string/label_algo_sha256" />
 
                         <Button
                             android:id="@+id/algo_sha512"
@@ -241,7 +184,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="SHA512" />
+                            android:text="@string/label_algo_sha512" />
 
                     </com.google.android.material.button.MaterialButtonToggleGroup>
                 </LinearLayout>
