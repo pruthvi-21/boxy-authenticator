@@ -8,10 +8,11 @@
     <string name="label_issuer">Issuer</string>
     <string name="label_label">Label</string>
     <string name="label_secret_key">Secret Key</string>
-    <string name="label_advanced">Advanced</string>
     <string name="label_digits">Digits</string>
     <string name="label_period">Period</string>
     <string name="label_algorithm">Algorithm</string>
+    <string name="label_view_advanced_options"><u>View advanced options</u></string>
+    <string name="label_hide_advanced_options"><u>Hide advanced options</u></string>
 
     <string name="label_algo_sha1" translatable="false">SHA1</string>
     <string name="label_algo_sha256" translatable="false">SHA256</string>

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
     android:orientation="vertical"
     tools:context=".ui.EnterKeyDetailsActivity">
 
@@ -30,165 +29,81 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/screen_margin">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_margin="15dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="?colorSurfaceVariant"
+                app:cardCornerRadius="50dp"
+                app:strokeWidth="0dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@android:drawable/ic_dialog_alert" />
+            </com.google.android.material.card.MaterialCardView>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/screen_margin_large"
                 android:paddingVertical="@dimen/screen_margin">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/issuer_input_layout"
+                <com.ps.tokky.views.EditField
+                    android:id="@+id/issuer_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:startIconDrawable="@drawable/ic_issuer">
+                    app:hint="@string/label_issuer"
+                    app:icon="@drawable/ic_issuer"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="@string/label_issuer" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/label_input_layout"
+                <com.ps.tokky.views.EditField
+                    android:id="@+id/label_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="@string/label_label"
-                    app:layout_constraintTop_toBottomOf="@id/issuer_input_layout"
-                    app:startIconDrawable="@drawable/ic_label">
+                    app:hint="@string/label_label"
+                    app:icon="@drawable/ic_label"
+                    app:layout_constraintTop_toBottomOf="@id/issuer_field" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/secret_key_input_layout"
+                <com.ps.tokky.views.EditField
+                    android:id="@+id/secret_key_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="@string/label_secret_key"
-                    app:layout_constraintTop_toBottomOf="@id/label_input_layout"
-                    app:startIconDrawable="@drawable/ic_secret_key">
+                    app:hint="@string/label_secret_key"
+                    app:icon="@drawable/ic_secret_key"
+                    app:layout_constraintTop_toBottomOf="@id/label_field" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/adv_options_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_advanced"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/secret_key_input_layout" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/adv_options_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingHorizontal="@dimen/screen_margin_large"
-                android:paddingVertical="@dimen/screen_margin">
+            <TextView
+                android:id="@+id/adv_layout_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawableEnd="@drawable/ic_chevron_down"
+                android:drawablePadding="5dp"
+                android:drawableTint="?colorOnSurface"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/label_view_advanced_options"
+                android:textColor="?colorOnSurface"
+                android:textSize="12sp" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/adv_digits_input_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="7.5dp"
-                    android:layout_weight="1"
-                    android:hint="@string/label_digits"
-                    app:layout_constraintEnd_toStartOf="@id/adv_period_input_layout"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="number" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/adv_period_input_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="7.5dp"
-                    android:layout_weight="1"
-                    android:hint="@string/label_period"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/adv_digits_input_layout"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:startIconDrawable="@drawable/ic_period">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="number" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/adv_digits_input_layout">
-
-                    <TextView
-                        style="@style/TextAppearance.AppCompat.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="@string/label_algorithm" />
-
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/algo_toggle_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:checkedButton="@id/algo_sha1"
-                        app:selectionRequired="true"
-                        app:singleSelection="true">
-
-                        <Button
-                            android:id="@+id/algo_sha1"
-                            style="?buttonGroupButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/label_algo_sha1" />
-
-                        <Button
-                            android:id="@+id/algo_sha256"
-                            style="?buttonGroupButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/label_algo_sha256" />
-
-                        <Button
-                            android:id="@+id/algo_sha512"
-                            style="?buttonGroupButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/label_algo_sha512" />
-
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <include
+                android:id="@+id/adv_layout"
+                layout="@layout/content_enter_key_details_adv_layout" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

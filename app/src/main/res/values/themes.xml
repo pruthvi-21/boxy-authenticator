@@ -22,9 +22,12 @@
         <item name="android:textColor">@color/btn_grp_text_btn_text_color_selector</item>
     </style>
 
-    <style name="TextInputLayoutStyle" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
-        <item name="boxBackgroundColor">?colorSurface</item>
+    <style name="TextInputLayoutStyle" parent="Widget.Material3.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxBackgroundColor">?colorSurfaceVariant</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.None</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeColor">@android:color/transparent</item>
+        <item name="hintEnabled">false</item>
     </style>
 
 </resources>

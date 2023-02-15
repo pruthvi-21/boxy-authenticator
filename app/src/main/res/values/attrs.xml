@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="buttonGroupButtonStyle" format="reference" />
+
+    <declare-styleable name="EditField">
+        <attr name="hint" format="string" />
+        <attr name="icon" format="reference" />
+    </declare-styleable>
 </resources>
