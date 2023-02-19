@@ -14,7 +14,5 @@
     <string name="label_view_advanced_options"><u>View advanced options</u></string>
     <string name="label_hide_advanced_options"><u>Hide advanced options</u></string>
 
-    <string name="label_algo_sha1" translatable="false">SHA1</string>
-    <string name="label_algo_sha256" translatable="false">SHA256</string>
-    <string name="label_algo_sha512" translatable="false">SHA512</string>
+    <string name="db_entry_failed">Failed to add</string>
 </resources>

@@ -86,34 +86,7 @@
             android:id="@+id/algo_toggle_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:checkedButton="@id/algo_sha1"
             app:selectionRequired="true"
-            app:singleSelection="true">
-
-            <Button
-                android:id="@+id/algo_sha1"
-                style="?buttonGroupButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/label_algo_sha1" />
-
-            <Button
-                android:id="@+id/algo_sha256"
-                style="?buttonGroupButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/label_algo_sha256" />
-
-            <Button
-                android:id="@+id/algo_sha512"
-                style="?buttonGroupButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/label_algo_sha512" />
-
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+            app:singleSelection="true" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

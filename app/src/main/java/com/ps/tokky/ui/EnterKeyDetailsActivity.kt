@@ -8,10 +8,16 @@ import android.text.InputType
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
+import android.widget.LinearLayout.LayoutParams
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
+import com.ps.tokky.database.DBHelper
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
+import com.ps.tokky.models.AuthEntry
+import com.ps.tokky.models.HashAlgorithm
 
 class EnterKeyDetailsActivity : AppCompatActivity() {
 
@@ -20,6 +26,8 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
     }
 
     private var shortAnimationDuration: Int = 0
+
+    private val dbHelper = DBHelper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +48,43 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         binding.advLayoutSwitch.setOnClickListener {
             showAdvancedOptions(binding.advLayout.advOptionsLayout.visibility == View.GONE)
         }
+
+        binding.advLayout.advDigitsInputLayout.editText.setText("6")
+        binding.advLayout.advPeriodInputLayout.editText.setText("30")
+
+        inflateAlgorithmMethods()
+
+        binding.detailsSaveBtn.setOnClickListener {
+            val issuer = binding.issuerField.value
+            val label = binding.labelField.value
+            val secretKey = binding.secretKeyField.value
+            val digits = binding.advLayout.advDigitsInputLayout.value.toInt()
+            val period = binding.advLayout.advPeriodInputLayout.value.toInt()
+            var checkedAlgo = HashAlgorithm.SHA1
+            for (algo in HashAlgorithm.values()) {
+                if (algo.id == binding.advLayout.algoToggleGroup.checkedButtonId) {
+                    checkedAlgo = algo
+                }
+            }
+
+            val newEntry = AuthEntry(issuer, label, secretKey, digits, period, checkedAlgo)
+            val success = dbHelper.addEntry(newEntry)
+
+            if (success) finish()
+            else Toast.makeText(this, R.string.db_entry_failed, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun inflateAlgorithmMethods() {
+        for (algo in HashAlgorithm.values()) {
+            val button = MaterialButton(this, null, R.attr.buttonGroupButtonStyle)
+            button.id = algo.id
+            button.text = algo.name
+            binding.advLayout.algoToggleGroup.addView(button)
+            (button.layoutParams as LayoutParams).weight = 1f
+        }
+
+        binding.advLayout.algoToggleGroup.check(HashAlgorithm.SHA1.id)
     }
 
     private fun showAdvancedOptions(show: Boolean) {

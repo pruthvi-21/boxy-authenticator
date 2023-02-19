@@ -27,4 +27,9 @@ class EditField(
 
         ta.recycle()
     }
+
+    val value: String
+        get() {
+            return editText.text.toString()
+        }
 }

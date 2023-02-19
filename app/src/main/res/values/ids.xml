@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="sha1" type="id" />
+    <item name="sha256" type="id" />
+    <item name="sha512" type="id" />
+</resources>
