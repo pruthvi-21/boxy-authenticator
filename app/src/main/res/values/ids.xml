@@ -3,4 +3,7 @@
     <item name="sha1" type="id" />
     <item name="sha256" type="id" />
     <item name="sha512" type="id" />
+
+    <item name="len6" type="id" />
+    <item name="len8" type="id" />
 </resources>

@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.InputType
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
@@ -18,8 +19,12 @@ import com.ps.tokky.database.DBHelper
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
 import com.ps.tokky.models.AuthEntry
 import com.ps.tokky.models.HashAlgorithm
+import com.ps.tokky.models.OTPLength
+import com.ps.tokky.utils.Constants
 
 class EnterKeyDetailsActivity : AppCompatActivity() {
+
+    private val TAG = "EnterKeyDetailsActivity"
 
     private val binding: ActivityEnterKeyDetailsBinding by lazy {
         ActivityEnterKeyDetailsBinding.inflate(layoutInflater)
@@ -39,52 +44,70 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         binding.labelField.editText.addTextChangedListener(textWatcher)
         binding.secretKeyField.editText.addTextChangedListener(textWatcher)
         binding.advLayout.advPeriodInputLayout.editText.addTextChangedListener(textWatcher)
-        binding.advLayout.advDigitsInputLayout.editText.addTextChangedListener(textWatcher)
 
         binding.detailsSaveBtn.isEnabled = false
         binding.advLayout.advPeriodInputLayout.editText.inputType = InputType.TYPE_CLASS_NUMBER
-        binding.advLayout.advDigitsInputLayout.editText.inputType = InputType.TYPE_CLASS_NUMBER
 
         binding.advLayoutSwitch.setOnClickListener {
             showAdvancedOptions(binding.advLayout.advOptionsLayout.visibility == View.GONE)
         }
 
-        binding.advLayout.advDigitsInputLayout.editText.setText("6")
         binding.advLayout.advPeriodInputLayout.editText.setText("30")
 
         inflateAlgorithmMethods()
+        inflateOTPLengthToggleLayout()
 
         binding.detailsSaveBtn.setOnClickListener {
             val issuer = binding.issuerField.value
             val label = binding.labelField.value
             val secretKey = binding.secretKeyField.value
-            val digits = binding.advLayout.advDigitsInputLayout.value.toInt()
+            val otpLength = OTPLength
+                .values()
+                .find { it.resId == binding.advLayout.otpLengthToggleGroup.checkedButtonId }
             val period = binding.advLayout.advPeriodInputLayout.value.toInt()
-            var checkedAlgo = HashAlgorithm.SHA1
-            for (algo in HashAlgorithm.values()) {
-                if (algo.id == binding.advLayout.algoToggleGroup.checkedButtonId) {
-                    checkedAlgo = algo
-                }
+            val algo = HashAlgorithm
+                .values()
+                .find { it.resId == binding.advLayout.algoToggleGroup.checkedButtonId }
+
+            otpLength ?: Log.e(TAG, "No value selected for OTP Length")
+            algo ?: Log.e(TAG, "No value selected for Hash Algorithm")
+
+            if (otpLength == null || algo == null) {
+                Toast.makeText(this, R.string.error_saving_details, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            val newEntry = AuthEntry(issuer, label, secretKey, digits, period, checkedAlgo)
+            val newEntry = AuthEntry(issuer, label, secretKey, otpLength, period, algo)
             val success = dbHelper.addEntry(newEntry)
 
             if (success) finish()
-            else Toast.makeText(this, R.string.db_entry_failed, Toast.LENGTH_SHORT).show()
+            else Toast.makeText(this, R.string.error_db_entry_failed, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun inflateAlgorithmMethods() {
         for (algo in HashAlgorithm.values()) {
-            val button = MaterialButton(this, null, R.attr.buttonGroupButtonStyle)
-            button.id = algo.id
-            button.text = algo.name
+            val button = MaterialButton(this, null, R.attr.buttonGroupButtonStyle).apply {
+                id = algo.resId
+                text = algo.name
+            }
             binding.advLayout.algoToggleGroup.addView(button)
             (button.layoutParams as LayoutParams).weight = 1f
         }
 
-        binding.advLayout.algoToggleGroup.check(HashAlgorithm.SHA1.id)
+        binding.advLayout.algoToggleGroup.check(Constants.DEFAULT_HASH_ALGORITHM.resId)
+    }
+
+    private fun inflateOTPLengthToggleLayout() {
+        for (len in OTPLength.values()) {
+            val button = MaterialButton(this, null, R.attr.buttonGroupButtonStyle)
+            button.id = len.resId
+            button.text = len.title
+            binding.advLayout.otpLengthToggleGroup.addView(button)
+            (button.layoutParams as LayoutParams).weight = 1f
+        }
+
+        binding.advLayout.otpLengthToggleGroup.check(Constants.DEFAULT_OTP_LENGTH.resId)
     }
 
     private fun showAdvancedOptions(show: Boolean) {
@@ -121,8 +144,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
             override fun afterTextChanged(editable: Editable) {
                 if (TextUtils.isEmpty(binding.labelField.editText.text) &&
                     TextUtils.isEmpty(binding.issuerField.editText.text) ||
-                    TextUtils.isEmpty(binding.secretKeyField.editText.text) ||
-                    !isNonZeroIntegerInput(binding.advLayout.advDigitsInputLayout.textInputLayout)
+                    TextUtils.isEmpty(binding.secretKeyField.editText.text)
                 ) {
                     binding.detailsSaveBtn.isEnabled = false
                 } else {

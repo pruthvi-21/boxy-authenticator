@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.ps.tokky.models.AuthEntry
 import com.ps.tokky.models.HashAlgorithm
+import com.ps.tokky.models.OTPLength
+import com.ps.tokky.utils.Constants
 
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, DBInfo.VERSION) {
 
@@ -16,7 +18,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
                     "${DBInfo.COL_ISSUER} text, " +
                     "${DBInfo.COL_LABEL} text, " +
                     "${DBInfo.COL_SECRET_KEY} text, " +
-                    "${DBInfo.COL_DIGITS} int, " +
+                    "${DBInfo.COL_OTP_LENGTH} int, " +
                     "${DBInfo.COL_PERIOD} int, " +
                     "${DBInfo.COL_ALGORITHM} int)"
         )
@@ -28,9 +30,9 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
             put(DBInfo.COL_ISSUER, entry.issuer)
             put(DBInfo.COL_LABEL, entry.label)
             put(DBInfo.COL_SECRET_KEY, entry.secretKey)
-            put(DBInfo.COL_DIGITS, entry.digits)
+            put(DBInfo.COL_OTP_LENGTH, entry.otpLength.id)
             put(DBInfo.COL_PERIOD, entry.period)
-            put(DBInfo.COL_ALGORITHM, HashAlgorithm.values().indexOf(entry.algo))
+            put(DBInfo.COL_ALGORITHM, entry.algo.id)
         }
 
         val rowID = db.insert(DBInfo.TABLE_KEYS, null, contentValues)
@@ -46,16 +48,18 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
 
         if (cursor.moveToFirst()) {
             do {
-                list.add(
-                    AuthEntry(
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getInt(4),
-                        cursor.getInt(5),
-                        HashAlgorithm.values()[cursor.getInt(6)]
-                    )
-                )
+                val issuer = cursor.getString(1)
+                val label = cursor.getString(2)
+                val secretKey = cursor.getString(3)
+                val otpLength = OTPLength.values()
+                    .find { it.id == cursor.getInt(4) }
+                    ?: Constants.DEFAULT_OTP_LENGTH
+                val period = cursor.getInt(5)
+                val algo = HashAlgorithm.values()
+                    .find { it.id == cursor.getInt(6) }
+                    ?: Constants.DEFAULT_HASH_ALGORITHM
+
+                list.add(AuthEntry(issuer, label, secretKey, otpLength, period, algo))
             } while (cursor.moveToNext())
         }
 
@@ -79,6 +83,6 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
         const val COL_SECRET_KEY = "secret_key"
         const val COL_ALGORITHM = "algorithm"
         const val COL_PERIOD = "period"
-        const val COL_DIGITS = "digits"
+        const val COL_OTP_LENGTH = "otp_length"
     }
 }

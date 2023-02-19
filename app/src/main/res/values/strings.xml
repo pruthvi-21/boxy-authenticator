@@ -8,11 +8,13 @@
     <string name="label_issuer">Issuer</string>
     <string name="label_label">Label</string>
     <string name="label_secret_key">Secret Key</string>
-    <string name="label_digits">Digits</string>
+    <string name="label_otp_length">OTP Length</string>
     <string name="label_period">Period</string>
+    <string name="hint_period">Period (default - 30)</string>
     <string name="label_algorithm">Algorithm</string>
     <string name="label_view_advanced_options"><u>View advanced options</u></string>
     <string name="label_hide_advanced_options"><u>Hide advanced options</u></string>
 
-    <string name="db_entry_failed">Failed to add</string>
+    <string name="error_db_entry_failed">Failed to add</string>
+    <string name="error_saving_details">Unable to save</string>
 </resources>
