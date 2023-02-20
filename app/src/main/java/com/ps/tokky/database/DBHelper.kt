@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.models.AuthEntry
 import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
@@ -29,10 +30,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
         val contentValues = ContentValues().apply {
             put(DBInfo.COL_ISSUER, entry.issuer)
             put(DBInfo.COL_LABEL, entry.label)
-            put(DBInfo.COL_SECRET_KEY, entry.secretKey)
+            put(DBInfo.COL_SECRET_KEY, entry.secretKeyEncoded)
             put(DBInfo.COL_OTP_LENGTH, entry.otpLength.id)
             put(DBInfo.COL_PERIOD, entry.period)
-            put(DBInfo.COL_ALGORITHM, entry.algo.id)
+            put(DBInfo.COL_ALGORITHM, entry.algorithm.id)
         }
 
         val rowID = db.insert(DBInfo.TABLE_KEYS, null, contentValues)
@@ -59,7 +60,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
                     .find { it.id == cursor.getInt(6) }
                     ?: Constants.DEFAULT_HASH_ALGORITHM
 
-                list.add(AuthEntry(issuer, label, secretKey, otpLength, period, algo))
+                list.add(AuthEntry(issuer, label, Base32().decode(secretKey), otpLength, period, algo))
             } while (cursor.moveToNext())
         }
 
@@ -75,7 +76,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
 
     private object DBInfo {
         const val NAME = "auths"
-        const val VERSION = 6
+        const val VERSION = 11
         const val TABLE_KEYS = "auth_secret_keys"
         const val COL_ID = "id"
         const val COL_ISSUER = "issuer"
