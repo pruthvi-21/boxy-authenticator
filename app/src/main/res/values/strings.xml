@@ -16,6 +16,7 @@
     <string name="label_hide_advanced_options"><u>Hide advanced options</u></string>
 
     <string name="error_db_entry_failed">Failed to add</string>
+    <string name="error_invalid_chars">Invalid characters entered in secret key</string>
     <string name="error_saving_details">Unable to save</string>
     <string name="toast_copied_to_clipboard">Copied to clipboard</string>
     <string name="label_clipboard_content">OTP Token</string>

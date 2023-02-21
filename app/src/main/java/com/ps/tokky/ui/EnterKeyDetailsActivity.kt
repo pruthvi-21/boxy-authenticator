@@ -21,6 +21,8 @@ import com.ps.tokky.models.AuthEntry
 import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
 import com.ps.tokky.utils.Constants
+import com.ps.tokky.utils.formatSecretKey
+import com.ps.tokky.utils.isValidSecretKey
 
 class EnterKeyDetailsActivity : AppCompatActivity() {
 
@@ -60,7 +62,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         binding.detailsSaveBtn.setOnClickListener {
             val issuer = binding.issuerField.value
             val label = binding.labelField.value
-            val secretKey = binding.secretKeyField.value.replace("\\s", "").toUpperCase()
+            val secretKey = binding.secretKeyField.value.formatSecretKey()
             val otpLength = OTPLength
                 .values()
                 .find { it.resId == binding.advLayout.otpLengthToggleGroup.checkedButtonId }
@@ -69,10 +71,14 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                 .values()
                 .find { it.resId == binding.advLayout.algoToggleGroup.checkedButtonId }
 
-            otpLength ?: Log.e(TAG, "No value selected for OTP Length")
-            algo ?: Log.e(TAG, "No value selected for Hash Algorithm")
-
+            if (!secretKey.isValidSecretKey()) {
+                Log.e(TAG, "onSaveDetails: Invalid Secret Key format")
+                Toast.makeText(this, R.string.error_invalid_chars, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             if (otpLength == null || algo == null) {
+                otpLength ?: Log.e(TAG, "onSaveDetails: No value selected for OTP Length")
+                algo ?: Log.e(TAG, "onSaveDetails: No value selected for Hash Algorithm")
                 Toast.makeText(this, R.string.error_saving_details, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -142,10 +148,11 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(editable: Editable) {
-                if (TextUtils.isEmpty(binding.labelField.editText.text) &&
-                    TextUtils.isEmpty(binding.issuerField.editText.text) ||
-                    TextUtils.isEmpty(binding.secretKeyField.editText.text)
-                ) {
+                val issuer = binding.issuerField.editText.text
+                val label = binding.labelField.editText.text
+                val secretKey = binding.secretKeyField.editText.text
+
+                if (TextUtils.isEmpty(label) && TextUtils.isEmpty(issuer) || TextUtils.isEmpty(secretKey)) {
                     binding.detailsSaveBtn.isEnabled = false
                 } else {
                     binding.detailsSaveBtn.isEnabled =

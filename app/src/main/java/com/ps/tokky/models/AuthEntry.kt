@@ -35,6 +35,7 @@ class AuthEntry(
     override fun toString(): String {
         return "Issuer: $issuer\n" +
                 "Label: $label\n" +
+                "SecretKey: $secretKeyEncoded\n" +
                 "OTP: ${getOTP}\n"
     }
 }
