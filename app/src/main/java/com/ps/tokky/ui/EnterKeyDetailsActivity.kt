@@ -60,7 +60,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         binding.detailsSaveBtn.setOnClickListener {
             val issuer = binding.issuerField.value
             val label = binding.labelField.value
-            val secretKey = binding.secretKeyField.value
+            val secretKey = binding.secretKeyField.value.replace("\\s", "").toUpperCase()
             val otpLength = OTPLength
                 .values()
                 .find { it.resId == binding.advLayout.otpLengthToggleGroup.checkedButtonId }
