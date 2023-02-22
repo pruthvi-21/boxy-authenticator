@@ -5,7 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
-import com.ps.tokky.models.AuthEntry
+import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
 import com.ps.tokky.utils.Constants
@@ -25,7 +25,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
         )
     }
 
-    fun addEntry(entry: AuthEntry): Boolean {
+    fun addEntry(entry: TokenEntry): Boolean {
         val db = writableDatabase
         val contentValues = ContentValues().apply {
             put(DBInfo.COL_ISSUER, entry.issuer)
@@ -42,10 +42,10 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
         return rowID != -1L
     }
 
-    fun getAllEntries(): List<AuthEntry> {
+    fun getAllEntries(): List<TokenEntry> {
         val cursor = readableDatabase.rawQuery("select * from ${DBInfo.TABLE_KEYS}", null)
 
-        val list = ArrayList<AuthEntry>()
+        val list = ArrayList<TokenEntry>()
 
         if (cursor.moveToFirst()) {
             do {
@@ -60,7 +60,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
                     .find { it.id == cursor.getInt(6) }
                     ?: Constants.DEFAULT_HASH_ALGORITHM
 
-                list.add(AuthEntry(issuer, label, Base32().decode(secretKey), otpLength, period, algo))
+                list.add(TokenEntry(issuer, label, Base32().decode(secretKey), otpLength, period, algo))
             } while (cursor.moveToNext())
         }
 

@@ -21,18 +21,12 @@ public class TokenCalculator {
         return mac.doFinal(data);
     }
 
-    public static int TOTP_RFC6238(byte[] secret, int period, long time, OTPLength otpLength, HashAlgorithm algorithm, int offset) {
+    public static int TOTP_RFC6238(byte[] secret, int period, OTPLength otpLength, HashAlgorithm algorithm, int offset) {
+        long time = System.currentTimeMillis() / 1000;
         int fullToken = TOTP(secret, period, time, algorithm, offset);
         int div = (int) Math.pow(10, otpLength.getValue());
 
         return fullToken % div;
-    }
-
-    public static String TOTP_RFC6238(byte[] secret, int period, OTPLength otpLength, HashAlgorithm algorithm, int offset) {
-        return Utils.INSTANCE.formatTokenString(
-                TOTP_RFC6238(secret, period, System.currentTimeMillis() / 1000, otpLength, algorithm, offset),
-                otpLength
-        );
     }
 
     private static int TOTP(byte[] key, int period, long time, HashAlgorithm algorithm, int offset) {

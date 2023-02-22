@@ -3,9 +3,12 @@ package com.ps.tokky
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ps.tokky.database.DBHelper
 import com.ps.tokky.databinding.ActivityMainBinding
 import com.ps.tokky.ui.EnterKeyDetailsActivity
+import com.ps.tokky.utils.TokenAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,10 +17,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val helper = DBHelper(this)
+    private val adapter: TokenAdapter by lazy {
+        TokenAdapter(binding.recyclerView)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        val layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = layoutManager
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this, layoutManager.orientation))
 
         binding.fabAddNew.setOnClickListener {
             startActivity(Intent(this, EnterKeyDetailsActivity::class.java))
@@ -31,11 +42,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun refresh() {
         val list = helper.getAllEntries()
-        var data = ""
-        for (item in list) {
-            data += item.toString() + "\n"
-        }
+        adapter.updateEntries(list)
+    }
 
-        binding.data.text = data
+    override fun onResume() {
+        super.onResume()
+        adapter.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adapter.onPause()
     }
 }

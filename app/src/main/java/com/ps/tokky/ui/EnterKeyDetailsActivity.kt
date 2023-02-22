@@ -17,11 +17,11 @@ import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
 import com.ps.tokky.database.DBHelper
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
-import com.ps.tokky.models.AuthEntry
+import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
 import com.ps.tokky.utils.Constants
-import com.ps.tokky.utils.formatSecretKey
+import com.ps.tokky.utils.cleanSecretKey
 import com.ps.tokky.utils.isValidSecretKey
 
 class EnterKeyDetailsActivity : AppCompatActivity() {
@@ -62,7 +62,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         binding.detailsSaveBtn.setOnClickListener {
             val issuer = binding.issuerField.value
             val label = binding.labelField.value
-            val secretKey = binding.secretKeyField.value.formatSecretKey()
+            val secretKey = binding.secretKeyField.value.cleanSecretKey()
             val otpLength = OTPLength
                 .values()
                 .find { it.resId == binding.advLayout.otpLengthToggleGroup.checkedButtonId }
@@ -83,7 +83,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val newEntry = AuthEntry(issuer, label, secretKey, otpLength, period, algo)
+            val newEntry = TokenEntry(issuer, label, secretKey, otpLength, period, algo)
             val success = dbHelper.addEntry(newEntry)
 
             if (success) finish()

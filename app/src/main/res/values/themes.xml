@@ -32,4 +32,11 @@
         <item name="hintEnabled">false</item>
     </style>
 
+    <style name="AuthEntryCardStyle" parent="Widget.Material3.CardView.Filled">
+        <item name="contentPadding">0dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">?colorSurfaceVariant</item>
+        <item name="cardCornerRadius">0dp</item>
+    </style>
+
 </resources>
