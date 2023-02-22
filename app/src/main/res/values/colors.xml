@@ -2,4 +2,15 @@
 <resources>
     <color name="surface_color">#F2F2F2</color>
     <color name="surface_color_variant">#E1E1E1</color>
+
+    <array name="random_tile_colors">
+        <item>#2daa9a</item>
+        <item>#8C84F3</item>
+        <item>#F18072</item>
+        <item>#e4c62e</item>
+        <item>#C075E1</item>
+        <item>#F4838D</item>
+        <item>#D64854</item>
+        <item>#6ebd64</item>
+    </array>
 </resources>

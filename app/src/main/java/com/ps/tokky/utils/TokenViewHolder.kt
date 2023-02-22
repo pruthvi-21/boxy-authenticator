@@ -1,5 +1,6 @@
 package com.ps.tokky.utils
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.view.View
@@ -13,6 +14,7 @@ import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 
 class TokenViewHolder(
+    val context: Context,
     val binding: RvAuthCardBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -34,6 +36,10 @@ class TokenViewHolder(
         updateOTP()
 
         binding.progressBar.setMax(entry.period)
+
+        val drawable = LetterBitmap(context)
+            .getLetterTile(entry.issuer.ifEmpty { entry.label })
+        binding.thumbnailImg.setImageBitmap(drawable)
 
         binding.cardVisibleLayout.setOnClickListener {
             onExpandListener?.onEntryExpand(this, adapterPosition, !isExpanded)

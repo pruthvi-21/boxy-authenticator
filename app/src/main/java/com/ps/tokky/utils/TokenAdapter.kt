@@ -1,6 +1,7 @@
 package com.ps.tokky.utils
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 
 class TokenAdapter(
+    private val context: Context,
     private val recyclerView: RecyclerView
 ) : RecyclerView.Adapter<TokenViewHolder>() {
 
@@ -29,7 +31,7 @@ class TokenAdapter(
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = RvAuthCardBinding.inflate(layoutInflater, parent, false)
 
-        return TokenViewHolder(binding)
+        return TokenViewHolder(context, binding)
     }
 
     override fun getItemCount() = list.size

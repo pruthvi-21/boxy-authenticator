@@ -12,5 +12,6 @@
 
     <dimen name="main_fab_margin">20dp</dimen>
     <dimen name="disabled_alpha">0.38</dimen>
-    <dimen name="card_thumbnail_size">35dp</dimen>
+    <dimen name="card_thumbnail_width">56dp</dimen>
+    <dimen name="card_thumbnail_height">37dp</dimen>
 </resources>
