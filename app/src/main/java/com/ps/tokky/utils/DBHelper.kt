@@ -1,4 +1,4 @@
-package com.ps.tokky.database
+package com.ps.tokky.utils
 
 import android.content.ContentValues
 import android.content.Context
@@ -8,7 +8,6 @@ import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
-import com.ps.tokky.utils.Constants
 
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, DBInfo.VERSION) {
 

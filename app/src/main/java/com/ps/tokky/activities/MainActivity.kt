@@ -1,13 +1,12 @@
-package com.ps.tokky
+package com.ps.tokky.activities
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ps.tokky.database.DBHelper
+import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.databinding.ActivityMainBinding
-import com.ps.tokky.ui.EnterKeyDetailsActivity
 import com.ps.tokky.utils.TokenAdapter
 
 class MainActivity : AppCompatActivity() {

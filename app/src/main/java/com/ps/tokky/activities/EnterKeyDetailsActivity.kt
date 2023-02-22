@@ -1,4 +1,4 @@
-package com.ps.tokky.ui
+package com.ps.tokky.activities
 
 import android.os.Bundle
 import android.os.Handler
@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
-import com.ps.tokky.database.DBHelper
+import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.models.HashAlgorithm
