@@ -1,5 +1,6 @@
 package com.ps.tokky.models
 
+import android.text.Spannable
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.TokenCalculator
 import com.ps.tokky.utils.formatOTP
@@ -43,7 +44,7 @@ class TokenEntry(
         return false
     }
 
-    val otpFormatted: String
+    val otpFormatted: Spannable
         get() = currentOTP.formatOTP(otpLength)
 
     override fun toString(): String {

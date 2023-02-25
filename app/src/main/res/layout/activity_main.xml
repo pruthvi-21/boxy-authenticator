@@ -34,22 +34,12 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.google.android.material.card.MaterialCardView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/screen_margin"
-            app:cardBackgroundColor="?colorSurface"
-            app:cardCornerRadius="@dimen/radius_large"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:clipToPadding="false" />
-        </com.google.android.material.card.MaterialCardView>
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:clipToPadding="false" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_new"

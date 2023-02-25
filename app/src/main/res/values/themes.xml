@@ -5,6 +5,7 @@
     <style name="Theme.Tokky" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:statusBarColor">?colorSurface</item>
         <item name="android:windowLightStatusBar">?isLightTheme</item>
+        <item name="colorControlHighlight">#AB121212</item>
 
         <item name="buttonGroupButtonStyle">@style/ButtonGroupButtonStyle</item>
         <item name="textInputStyle">@style/TextInputLayoutStyle</item>
@@ -30,13 +31,6 @@
         <item name="boxStrokeWidth">0dp</item>
         <item name="boxStrokeColor">@android:color/transparent</item>
         <item name="hintEnabled">false</item>
-    </style>
-
-    <style name="AuthEntryCardStyle" parent="Widget.Material3.CardView.Filled">
-        <item name="contentPadding">0dp</item>
-        <item name="cardElevation">0dp</item>
-        <item name="cardBackgroundColor">?colorSurfaceVariant</item>
-        <item name="cardCornerRadius">0dp</item>
     </style>
 
 </resources>

@@ -1,17 +1,15 @@
 package com.ps.tokky.utils
 
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.RotateAnimation
+import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.AutoTransition
-import androidx.transition.TransitionManager
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
+
 
 class TokenViewHolder(
     val context: Context,
@@ -31,17 +29,21 @@ class TokenViewHolder(
 
     fun bind(entry: TokenEntry) {
         this.entry = entry
-        binding.textViewLabel.text = entry.issuer
-        binding.accountLabel.text = entry.label
+        binding.issuerLabel.text = entry.issuer
+        if (entry.label.isNotEmpty()) {
+            binding.accountLabel.visibility = View.VISIBLE
+            binding.accountLabel.text = entry.label
+        }
+        binding.otpHolder.typeface = Typeface.MONOSPACE
         updateOTP()
 
         binding.progressBar.setMax(entry.period)
 
         val drawable = LetterBitmap(context)
             .getLetterTile(entry.issuer.ifEmpty { entry.label })
-        binding.thumbnailImg.setImageBitmap(drawable)
+        binding.thumbnail.setImageBitmap(drawable)
 
-        binding.cardVisibleLayout.setOnClickListener {
+        binding.cardView.setOnClickListener {
             onExpandListener?.onEntryExpand(this, adapterPosition, !isExpanded)
         }
     }
@@ -57,25 +59,12 @@ class TokenViewHolder(
                 handler.removeCallbacks(handlerTask)
             }
 
-            val transitionSet = AutoTransition()
-            TransitionManager.beginDelayedTransition(binding.cardHiddenLayout, transitionSet)
             binding.cardHiddenLayout.visibility = if (field) View.VISIBLE else View.GONE
 
-            val rotateAnimation = RotateAnimation(
-                if (field) 0f else 180f,
-                if (field) 180f else 0f,
-                Animation.RELATIVE_TO_SELF,
-                0.5f,
-                Animation.RELATIVE_TO_SELF,
-                0.5f
-            ).apply {
-                interpolator = DecelerateInterpolator()
-                repeatCount = 0
-                duration = 200
-                fillAfter = true
-            }
-
-            binding.arrow.startAnimation(rotateAnimation)
+            binding.arrow.animate()
+                .rotationBy(if (value) 180f else -180f)
+                .setDuration(200)
+                .start()
         }
 
     fun setOnExpandListener(listener: EntryExpandListener) {
@@ -84,7 +73,11 @@ class TokenViewHolder(
 
     fun updateOTP() {
         entry ?: return
-        binding.valueText.text = entry!!.otpFormatted
+        binding.otpHolder.text = entry!!.otpFormatted
+    }
+
+    fun setBackground(@DrawableRes res: Int) {
+        binding.cardView.setBackgroundResource(res)
     }
 
     interface EntryExpandListener {

@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.ps.tokky.R
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 
@@ -38,6 +39,13 @@ class TokenAdapter(
 
     override fun onBindViewHolder(holder: TokenViewHolder, position: Int) {
         holder.bind(list[position])
+
+        var res = R.drawable.bg_rounded_middle_ripple
+        if (list.size != 1) {
+            if (position == 0) res = R.drawable.bg_rounded_top_ripple
+            if (position == list.size - 1) res = R.drawable.bg_rounded_bottom_ripple
+        } else res = R.drawable.bg_rounded_ripple
+        holder.setBackground(res)
 
         holder.setOnExpandListener(object : TokenViewHolder.EntryExpandListener {
             override fun onEntryExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean) {

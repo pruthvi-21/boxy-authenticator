@@ -10,5 +10,5 @@ enum class OTPLength(
     val chunkSize: Int
 ) {
     LEN_6(0x0045345, R.id.len6, "6 digits", 6, 3),
-    LEN_8(0x345A342, R.id.len8, "8 digits", 8, 4);
+    LEN_8(0x345A342, R.id.len8, "8 digits", 8, 3);
 }

@@ -3,11 +3,15 @@ package com.ps.tokky.activities
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ps.tokky.utils.DBHelper
+import androidx.recyclerview.widget.SimpleItemAnimator
+import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityMainBinding
+import com.ps.tokky.utils.DBHelper
+import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,7 +31,9 @@ class MainActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
-        binding.recyclerView.addItemDecoration(DividerItemDecoration(this, layoutManager.orientation))
+        val divider = DividerItemDecorator(ResourcesCompat.getDrawable(resources, R.drawable.divider, null))
+        binding.recyclerView.addItemDecoration(divider)
+        (binding.recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
         binding.fabAddNew.setOnClickListener {
             startActivity(Intent(this, EnterKeyDetailsActivity::class.java))

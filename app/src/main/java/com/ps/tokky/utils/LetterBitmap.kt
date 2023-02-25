@@ -13,10 +13,11 @@ class LetterBitmap(context: Context) {
     private val tileColors = context.resources.obtainTypedArray(R.array.random_tile_colors)
 
     private val paint = TextPaint().apply {
-        color = Utils.getThemeColorFromAttr(context, com.google.android.material.R.attr.colorOnPrimaryContainer)
+        color = Utils.getThemeColorFromAttr(context, com.google.android.material.R.attr.titleTextColor)
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
         textSize = tileHeight * FONT_SCALE
+        typeface = Typeface.create("sans-serif-light", Typeface.NORMAL)
     }
 
     private val rect = Rect()
@@ -50,7 +51,7 @@ class LetterBitmap(context: Context) {
     }
 
     companion object {
-        private const val FONT_SCALE = 0.65f
+        private const val FONT_SCALE = 0.55f
 
         private fun startsWithAlphabeticOrDigit(string: String): Boolean {
             return Character.isAlphabetic(string.codePointAt(0)) ||
