@@ -2,6 +2,7 @@ package com.ps.tokky.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +27,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //Block screenshots
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+
         setContentView(binding.root)
 
         val layoutManager = LinearLayoutManager(this)

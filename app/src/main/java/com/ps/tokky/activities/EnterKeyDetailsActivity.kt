@@ -9,18 +9,19 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
-import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
-import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
+import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.Constants
+import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.utils.cleanSecretKey
 import com.ps.tokky.utils.isValidSecretKey
 
@@ -38,6 +39,10 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //Block screenshots
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+
         setContentView(binding.root)
 
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
