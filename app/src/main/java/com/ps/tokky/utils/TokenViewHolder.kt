@@ -62,7 +62,7 @@ class TokenViewHolder(
             binding.cardHiddenLayout.visibility = if (field) View.VISIBLE else View.GONE
 
             binding.arrow.animate()
-                .rotationBy(if (value) 180f else -180f)
+                .rotation(if (value) 180f else 0f)
                 .setDuration(200)
                 .start()
         }
