@@ -46,6 +46,11 @@ class TokenViewHolder(
         binding.cardView.setOnClickListener {
             onExpandListener?.onEntryExpand(this, adapterPosition, !isExpanded)
         }
+
+        binding.otpHolder.setOnLongClickListener {
+            Utils.copyToClipboard(context, entry.otpFormattedString)
+            true
+        }
     }
 
     var isExpanded = false
@@ -73,7 +78,7 @@ class TokenViewHolder(
 
     fun updateOTP() {
         entry ?: return
-        binding.otpHolder.text = entry!!.otpFormatted
+        binding.otpHolder.text = entry!!.otpFormattedSpan
     }
 
     fun setBackground(@DrawableRes res: Int) {

@@ -44,8 +44,11 @@ class TokenEntry(
         return false
     }
 
-    val otpFormatted: Spannable
+    val otpFormattedSpan: Spannable
         get() = currentOTP.formatOTP(otpLength)
+
+    val otpFormattedString: String
+        get() = "$currentOTP".padStart(otpLength.value, '0')
 
     override fun toString(): String {
         return "Issuer: $issuer\n" +

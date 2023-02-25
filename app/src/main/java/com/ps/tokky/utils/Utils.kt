@@ -1,11 +1,15 @@
 package com.ps.tokky.utils
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
+import android.widget.Toast
+import com.ps.tokky.R
 import com.ps.tokky.models.OTPLength
 
 object Utils {
@@ -14,6 +18,14 @@ object Utils {
         val colorValue = arr.getColor(0, -1)
         arr.recycle()
         return colorValue
+    }
+
+    fun copyToClipboard(context: Context, text: String?) {
+        text ?: return
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(context.getString(R.string.label_clipboard_content), text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(context, R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG).show()
     }
 }
 
