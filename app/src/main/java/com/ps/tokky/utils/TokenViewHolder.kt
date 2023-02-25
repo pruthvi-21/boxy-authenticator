@@ -1,6 +1,7 @@
 package com.ps.tokky.utils
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
@@ -9,7 +10,6 @@ import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
-
 
 class TokenViewHolder(
     val context: Context,
@@ -78,6 +78,7 @@ class TokenViewHolder(
 
     fun setBackground(@DrawableRes res: Int) {
         binding.cardView.setBackgroundResource(res)
+        binding.cardView.backgroundTintList = ColorStateList.valueOf(ColorUtils.primaryTintedBackground(context))
     }
 
     interface EntryExpandListener {
