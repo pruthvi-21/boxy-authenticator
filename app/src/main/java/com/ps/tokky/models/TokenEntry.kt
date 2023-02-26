@@ -1,5 +1,7 @@
 package com.ps.tokky.models
 
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Spannable
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.TokenCalculator
@@ -12,7 +14,7 @@ class TokenEntry(
     val otpLength: OTPLength,
     val period: Int,
     val algorithm: HashAlgorithm
-) {
+) : Parcelable {
 
     private var currentOTP: Int = 0
     private var lastUpdatedCounter: Long = 0L
@@ -25,6 +27,16 @@ class TokenEntry(
         period: Int,
         algorithm: HashAlgorithm
     ) : this(issuer, label, Base32().decode(secretKey), otpLength, period, algorithm) {
+    }
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.createByteArray()!!,
+        OTPLength.valueOf(parcel.readString()!!),
+        parcel.readInt(),
+        HashAlgorithm.valueOf(parcel.readString()!!)
+    ) {
     }
 
     val secretKeyEncoded: String
@@ -55,5 +67,28 @@ class TokenEntry(
                 "Label: $label\n" +
                 "SecretKey: $secretKeyEncoded\n" +
                 "OTP: ${currentOTP}\n"
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(issuer)
+        parcel.writeString(label)
+        parcel.writeByteArray(secretKey)
+        parcel.writeString(otpLength.name)
+        parcel.writeInt(period)
+        parcel.writeString(algorithm.name)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<TokenEntry> {
+        override fun createFromParcel(parcel: Parcel): TokenEntry {
+            return TokenEntry(parcel)
+        }
+
+        override fun newArray(size: Int): Array<TokenEntry?> {
+            return arrayOfNulls(size)
+        }
     }
 }

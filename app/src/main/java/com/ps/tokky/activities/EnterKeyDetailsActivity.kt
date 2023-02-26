@@ -1,5 +1,6 @@
 package com.ps.tokky.activities
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -44,6 +45,14 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
 
         setContentView(binding.root)
+
+        val currentObj = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.extras?.getParcelable("obj", TokenEntry::class.java)
+        } else {
+            intent.extras?.getParcelable("obj")
+        }
+        val editMode = currentObj != null
+        Log.d(TAG, "onCreate: In edit mode $editMode")
 
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
