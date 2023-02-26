@@ -32,6 +32,8 @@ class TokenViewHolder(
         if (entry.label.isNotEmpty()) {
             binding.accountLabel.visibility = View.VISIBLE
             binding.accountLabel.text = entry.label
+        } else{
+            binding.accountLabel.visibility = View.GONE
         }
 
         val drawable = LetterBitmap(context)
