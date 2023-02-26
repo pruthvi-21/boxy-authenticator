@@ -8,8 +8,9 @@ import com.ps.tokky.utils.TokenCalculator
 import com.ps.tokky.utils.formatOTP
 
 class TokenEntry(
-    val issuer: String,
-    val label: String,
+    var dbID: Int = -1,
+    var issuer: String,
+    var label: String,
     private val secretKey: ByteArray,
     val otpLength: OTPLength,
     val period: Int,
@@ -26,10 +27,11 @@ class TokenEntry(
         otpLength: OTPLength,
         period: Int,
         algorithm: HashAlgorithm
-    ) : this(issuer, label, Base32().decode(secretKey), otpLength, period, algorithm) {
+    ) : this(-1, issuer, label, Base32().decode(secretKey), otpLength, period, algorithm) {
     }
 
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.createByteArray()!!,
@@ -70,6 +72,7 @@ class TokenEntry(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(dbID)
         parcel.writeString(issuer)
         parcel.writeString(label)
         parcel.writeByteArray(secretKey)

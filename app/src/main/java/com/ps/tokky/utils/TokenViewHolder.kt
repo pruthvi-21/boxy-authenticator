@@ -1,12 +1,10 @@
 package com.ps.tokky.utils
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
@@ -16,7 +14,7 @@ class TokenViewHolder(
     val binding: RvAuthCardBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    private var onExpandListener: EntryExpandListener? = null
+    private var listener: Callback? = null
     private var entry: TokenEntry? = null
 
     private val handler = Handler(Looper.getMainLooper())
@@ -29,22 +27,42 @@ class TokenViewHolder(
 
     fun bind(entry: TokenEntry) {
         this.entry = entry
+        binding.cardView.setCardBackgroundColor(ColorUtils.primaryTintedBackground(context))
         binding.issuerLabel.text = entry.issuer
         if (entry.label.isNotEmpty()) {
             binding.accountLabel.visibility = View.VISIBLE
             binding.accountLabel.text = entry.label
         }
-        binding.otpHolder.typeface = Typeface.MONOSPACE
-        updateOTP()
-
-        binding.progressBar.setMax(entry.period)
 
         val drawable = LetterBitmap(context)
             .getLetterTile(entry.issuer.ifEmpty { entry.label })
         binding.thumbnail.setImageBitmap(drawable)
 
+        if (editModeEnabled) {
+            binding.arrow.visibility = View.GONE
+            binding.cardHiddenLayout.visibility = View.GONE
+            isExpanded = false
+
+            binding.edit.setOnClickListener {
+                listener?.onEdit(entry)
+            }
+
+            binding.delete.setOnClickListener {
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    listener?.onDelete(entry, adapterPosition)
+                }
+            }
+            return
+        }
+
+        binding.arrow.visibility = View.VISIBLE
+        binding.otpHolder.typeface = Typeface.MONOSPACE
+        updateOTP()
+
+        binding.progressBar.setMax(entry.period)
         binding.cardView.setOnClickListener {
-            onExpandListener?.onEntryExpand(this, adapterPosition, !isExpanded)
+            if (editModeEnabled) return@setOnClickListener
+            listener?.onExpand(this, adapterPosition, !isExpanded)
         }
 
         binding.otpHolder.setOnLongClickListener {
@@ -72,8 +90,21 @@ class TokenViewHolder(
                 .start()
         }
 
-    fun setOnExpandListener(listener: EntryExpandListener) {
-        this.onExpandListener = listener
+    var editModeEnabled = false
+        set(value) {
+            field = value
+
+            if (value) {
+                isExpanded = false
+            }
+
+            binding.arrow.visibility = if (value) View.GONE else View.VISIBLE
+            binding.edit.visibility = if (value) View.VISIBLE else View.GONE
+            binding.delete.visibility = binding.edit.visibility
+        }
+
+    fun setCallback(listener: Callback?) {
+        this.listener = listener
     }
 
     fun updateOTP() {
@@ -81,12 +112,9 @@ class TokenViewHolder(
         binding.otpHolder.text = entry!!.otpFormattedSpan
     }
 
-    fun setBackground(@DrawableRes res: Int) {
-        binding.cardView.setBackgroundResource(res)
-        binding.cardView.backgroundTintList = ColorStateList.valueOf(ColorUtils.primaryTintedBackground(context))
-    }
-
-    interface EntryExpandListener {
-        fun onEntryExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean)
+    interface Callback {
+        fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean)
+        fun onEdit(entry: TokenEntry)
+        fun onDelete(entry: TokenEntry, position: Int)
     }
 }

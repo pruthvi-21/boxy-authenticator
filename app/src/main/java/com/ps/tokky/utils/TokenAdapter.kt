@@ -1,22 +1,26 @@
 package com.ps.tokky.utils
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.ps.tokky.R
+import com.ps.tokky.activities.EnterKeyDetailsActivity
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 
 class TokenAdapter(
-    private val context: Context,
-    private val recyclerView: RecyclerView
-) : RecyclerView.Adapter<TokenViewHolder>() {
-
-    private val list = ArrayList<TokenEntry>()
+    private val context: AppCompatActivity,
+    private val list: ArrayList<TokenEntry>,
+    private val recyclerView: RecyclerView,
+) : RecyclerView.Adapter<TokenViewHolder>(), TokenViewHolder.Callback {
 
     private var currentExpanded = -1
 
@@ -28,6 +32,8 @@ class TokenAdapter(
         }
     }
 
+    private val dbHelper = DBHelper(context)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TokenViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = RvAuthCardBinding.inflate(layoutInflater, parent, false)
@@ -38,32 +44,34 @@ class TokenAdapter(
     override fun getItemCount() = list.size
 
     override fun onBindViewHolder(holder: TokenViewHolder, position: Int) {
+        holder.editModeEnabled = editModeEnabled
         holder.bind(list[position])
 
-        var res = R.drawable.bg_rounded_middle_ripple
-        if (list.size != 1) {
-            if (position == 0) res = R.drawable.bg_rounded_top_ripple
-            if (position == list.size - 1) res = R.drawable.bg_rounded_bottom_ripple
-        } else res = R.drawable.bg_rounded_ripple
-        holder.setBackground(res)
+        holder.setCallback(this)
+        setShape(holder.binding.cardView, position)
+        setMargin(holder.binding.cardView)
+    }
 
-        holder.setOnExpandListener(object : TokenViewHolder.EntryExpandListener {
-            override fun onEntryExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean) {
-                when (currentExpanded) {
-                    adapterPosition -> {
-                        holder.isExpanded = false
-                        currentExpanded = -1
-                    }
-                    else -> {
-                        if (currentExpanded != -1)
-                            getViewHolderAt(currentExpanded)?.isExpanded = false
+    private fun setShape(card: MaterialCardView, position: Int) {
+        val shapeBuilder = ShapeAppearanceModel.Builder()
+        val radius = context.resources.getDimension(R.dimen.radius_large)
 
-                        currentExpanded = adapterPosition
-                        holder.isExpanded = true
-                    }
-                }
-            }
-        })
+        if (!editModeEnabled) {
+            if (list.size != 1) {
+                if (position == 0) shapeBuilder.setTopLeftCornerSize(radius).setTopRightCornerSize(radius)
+                if (position == list.size - 1) shapeBuilder.setBottomLeftCornerSize(radius).setBottomRightCornerSize(radius)
+            } else shapeBuilder.setAllCornerSizes(radius)
+        }
+        card.shapeAppearanceModel = shapeBuilder.build()
+    }
+
+    private fun setMargin(card: CardView) {
+        (card.layoutParams as RecyclerView.LayoutParams).apply {
+            val marginVertical =
+                if (editModeEnabled) (context.resources.getDimension(R.dimen.rv_item_margin) / 2).toInt() else 0
+            topMargin = marginVertical
+            bottomMargin = marginVertical
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -74,10 +82,10 @@ class TokenAdapter(
     }
 
     fun checkAndUpdateOTP() {
+        if (editModeEnabled) return
         for (i in list.indices) {
             val item = list[i]
-            if (item.updateOTP())
-                getViewHolderAt(i)?.updateOTP()
+            if (item.updateOTP()) getViewHolderAt(i)?.updateOTP()
         }
     }
 
@@ -86,11 +94,44 @@ class TokenAdapter(
         return recyclerView.findViewHolderForAdapterPosition(pos) as TokenViewHolder?
     }
 
+    var editModeEnabled: Boolean = false
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    override fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean) {
+        when (currentExpanded) {
+            adapterPosition -> {
+                vh.isExpanded = false
+                currentExpanded = -1
+            }
+            else -> {
+                if (currentExpanded != -1) getViewHolderAt(currentExpanded)?.isExpanded = false
+
+                currentExpanded = adapterPosition
+                vh.isExpanded = true
+            }
+        }
+    }
+
+    override fun onEdit(entry: TokenEntry) {
+        context.startActivity(Intent(context, EnterKeyDetailsActivity::class.java).apply {
+            putExtra("obj", entry)
+        })
+    }
+
+    override fun onDelete(entry: TokenEntry, position: Int) {
+        dbHelper.removeEntry(entry)
+        list.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     fun onResume() {
-        handler.post(handlerTask)
+        if (!editModeEnabled) handler.post(handlerTask)
     }
 
     fun onPause() {
-        handler.removeCallbacks(handlerTask)
+        if (!editModeEnabled) handler.removeCallbacks(handlerTask)
     }
 }

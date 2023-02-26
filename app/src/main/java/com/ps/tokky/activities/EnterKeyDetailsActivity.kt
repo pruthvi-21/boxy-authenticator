@@ -46,13 +46,37 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val currentObj = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val currentEntry = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.extras?.getParcelable("obj", TokenEntry::class.java)
         } else {
             intent.extras?.getParcelable("obj")
         }
-        val editMode = currentObj != null
-        Log.d(TAG, "onCreate: In edit mode $editMode")
+        val editMode = currentEntry != null
+        Log.d(TAG, "onCreate: In edit mode: $editMode")
+
+        if (editMode) {
+            binding.issuerField.editText.setText(currentEntry!!.issuer)
+            binding.labelField.editText.setText(currentEntry.label)
+            binding.secretKeyField.visibility = View.GONE
+            binding.advLayoutSwitch.visibility = View.GONE
+            binding.advLayout.advOptionsLayout.visibility = View.GONE
+
+            binding.detailsSaveBtn.visibility = View.VISIBLE
+            binding.issuerField.editText.addTextChangedListener(editModeTextWatcher)
+            binding.labelField.editText.addTextChangedListener(editModeTextWatcher)
+            binding.detailsSaveBtn.setOnClickListener {
+                val issuer = binding.issuerField.editText.text.toString()
+                val label = binding.labelField.editText.text.toString()
+
+                if (issuer == currentEntry.issuer && label == currentEntry.label)
+                else dbHelper.updateEntry(currentEntry.also {
+                    it.issuer = issuer
+                    it.label = label
+                })
+                finish()
+            }
+            return
+        }
 
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
 
@@ -181,6 +205,19 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                 } catch (e: NumberFormatException) {
                     false
                 }
+            }
+        }
+
+    private val editModeTextWatcher: TextWatcher =
+        object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(editable: Editable) {
+                val issuer = binding.issuerField.editText.text
+                val label = binding.labelField.editText.text
+
+                binding.detailsSaveBtn.isEnabled = !TextUtils.isEmpty(issuer)
             }
         }
 }

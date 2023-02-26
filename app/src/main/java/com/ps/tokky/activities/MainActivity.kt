@@ -2,7 +2,10 @@ package com.ps.tokky.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +16,6 @@ import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
 
-
 class MainActivity : AppCompatActivity() {
 
     private val binding: ActivityMainBinding by lazy {
@@ -22,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private val helper = DBHelper(this)
     private val adapter: TokenAdapter by lazy {
-        TokenAdapter(this, binding.recyclerView)
+        TokenAdapter(this, ArrayList(), binding.recyclerView)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +35,8 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
@@ -41,12 +45,9 @@ class MainActivity : AppCompatActivity() {
         (binding.recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
         binding.fabAddNew.setOnClickListener {
-            startActivity(Intent(this, EnterKeyDetailsActivity::class.java))
+            addNewActivityLauncher.launch(Intent(this, EnterKeyDetailsActivity::class.java))
         }
 
-        binding.refresh.setOnClickListener {
-            refresh()
-        }
         refresh()
     }
 
@@ -64,4 +65,43 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         adapter.onPause()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (!adapter.editModeEnabled) menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                adapter.editModeEnabled = false
+                invalidateOptionsMenu()
+                supportActionBar?.setTitle(R.string.app_name)
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                supportActionBar?.setHomeAsUpIndicator(0)
+                binding.fabAddNew.show()
+            }
+            R.id.menu_main_refresh -> {
+                refresh()
+                return true
+            }
+            R.id.menu_main_edit -> {
+                adapter.editModeEnabled = true
+                invalidateOptionsMenu()
+                supportActionBar?.setTitle(R.string.edit)
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+                binding.fabAddNew.hide()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+
+    private val addNewActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            refresh()
+        }
+
 }

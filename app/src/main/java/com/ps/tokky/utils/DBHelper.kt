@@ -5,9 +5,9 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
-import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
+import com.ps.tokky.models.TokenEntry
 
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, DBInfo.VERSION) {
 
@@ -41,13 +41,14 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
         return rowID != -1L
     }
 
-    fun getAllEntries(): List<TokenEntry> {
+    fun getAllEntries(): ArrayList<TokenEntry> {
         val cursor = readableDatabase.rawQuery("select * from ${DBInfo.TABLE_KEYS}", null)
 
         val list = ArrayList<TokenEntry>()
 
         if (cursor.moveToFirst()) {
             do {
+                val id = cursor.getInt(0)
                 val issuer = cursor.getString(1)
                 val label = cursor.getString(2)
                 val secretKey = cursor.getString(3)
@@ -59,7 +60,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
                     .find { it.id == cursor.getInt(6) }
                     ?: Constants.DEFAULT_HASH_ALGORITHM
 
-                list.add(TokenEntry(issuer, label, Base32().decode(secretKey), otpLength, period, algo))
+                list.add(TokenEntry(id, issuer, label, Base32().decode(secretKey), otpLength, period, algo))
             } while (cursor.moveToNext())
         }
 
@@ -71,6 +72,25 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
         //Do the migration work here
         db?.execSQL("DROP TABLE IF EXISTS ${DBInfo.TABLE_KEYS}")
         onCreate(db)
+    }
+
+    fun updateEntry(entry: TokenEntry) {
+        val query = StringBuilder("UPDATE ${DBInfo.TABLE_KEYS} SET ")
+
+        if (entry.issuer.isNotEmpty()) {
+            query.append("${DBInfo.COL_ISSUER}='${entry.issuer}'")
+        }
+        if (entry.label.isNotEmpty()) {
+            query.append(", ${DBInfo.COL_LABEL}='${entry.label}' ")
+        }
+
+        query.append("WHERE ${DBInfo.COL_ID}=${entry.dbID};")
+
+        writableDatabase?.execSQL(query.toString())
+    }
+
+    fun removeEntry(entry: TokenEntry) {
+        writableDatabase?.execSQL("DELETE FROM ${DBInfo.TABLE_KEYS} WHERE ${DBInfo.COL_ID}=${entry.dbID};")
     }
 
     private object DBInfo {

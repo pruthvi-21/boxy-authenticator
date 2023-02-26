@@ -15,4 +15,5 @@
     <dimen name="card_thumbnail_width">55dp</dimen>
     <dimen name="card_thumbnail_height">37.5dp</dimen>
     <dimen name="home_card_corner_radius">@dimen/radius_large</dimen>
+    <dimen name="rv_item_margin">10dp</dimen>
 </resources>
