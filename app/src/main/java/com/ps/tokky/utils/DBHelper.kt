@@ -42,7 +42,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
     }
 
     fun getAllEntries(): ArrayList<TokenEntry> {
-        val cursor = readableDatabase.rawQuery("select * from ${DBInfo.TABLE_KEYS}", null)
+        val cursor = readableDatabase.rawQuery("SELECT * FROM ${DBInfo.TABLE_KEYS} ORDER BY ${DBInfo.COL_ISSUER} ASC", null)
 
         val list = ArrayList<TokenEntry>()
 
