@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -48,6 +49,15 @@ class MainActivity : AppCompatActivity() {
             addNewActivityLauncher.launch(Intent(this, EnterKeyDetailsActivity::class.java))
         }
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (!adapter.editModeEnabled) {
+                    finish()
+                }
+                openEditMode(false)
+            }
+        })
+
         refresh()
     }
 
@@ -74,28 +84,37 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                adapter.editModeEnabled = false
-                invalidateOptionsMenu()
-                supportActionBar?.setTitle(R.string.app_name)
-                supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                supportActionBar?.setHomeAsUpIndicator(0)
-                binding.fabAddNew.show()
+                openEditMode(false)
+                return true
             }
             R.id.menu_main_refresh -> {
                 refresh()
                 return true
             }
             R.id.menu_main_edit -> {
-                adapter.editModeEnabled = true
-                invalidateOptionsMenu()
-                supportActionBar?.setTitle(R.string.edit)
-                supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
-                binding.fabAddNew.hide()
+                openEditMode(true)
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun openEditMode(open: Boolean) {
+        if (open) {
+            adapter.editModeEnabled = true
+            invalidateOptionsMenu()
+            supportActionBar?.setTitle(R.string.edit)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+            binding.fabAddNew.hide()
+        } else {
+            adapter.editModeEnabled = false
+            invalidateOptionsMenu()
+            supportActionBar?.setTitle(R.string.app_name)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            supportActionBar?.setHomeAsUpIndicator(0)
+            binding.fabAddNew.show()
+        }
     }
 
 
