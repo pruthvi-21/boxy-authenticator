@@ -1,5 +1,6 @@
 package com.ps.tokky.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val helper = DBHelper(this)
+    private val helper = DBHelper.getInstance(this)
     private val adapter: TokenAdapter by lazy {
         TokenAdapter(this, ArrayList(), binding.recyclerView, addNewActivityLauncher)
     }
@@ -58,11 +59,11 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        refresh()
+        refresh(true)
     }
 
-    private fun refresh() {
-        val list = helper.getAllEntries()
+    private fun refresh(reload: Boolean) {
+        val list = helper.getAllEntries(reload)
         adapter.updateEntries(list)
     }
 
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             R.id.menu_main_refresh -> {
-                refresh()
+                refresh(true)
                 return true
             }
             R.id.menu_main_edit -> {
@@ -120,7 +121,10 @@ class MainActivity : AppCompatActivity() {
 
     private val addNewActivityLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            refresh()
+            val extras = it.data?.extras
+            if (it.resultCode == Activity.RESULT_OK && extras != null) {
+                refresh(true)
+            }
         }
 
 }

@@ -1,5 +1,7 @@
 package com.ps.tokky.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -36,7 +38,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
     private var shortAnimationDuration: Int = 0
 
-    private val dbHelper = DBHelper(this)
+    private val dbHelper = DBHelper.getInstance(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +75,11 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                     it.issuer = issuer
                     it.label = label
                 })
+                println("YYHHBB: EnterKeyDetails: saving result")
+                setResult(
+                    Activity.RESULT_OK,
+                    Intent().putExtra("obj", currentEntry)
+                )
                 finish()
             }
             return
@@ -124,8 +131,10 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
             val newEntry = TokenEntry(issuer, label, secretKey, otpLength, period, algo)
             val success = dbHelper.addEntry(newEntry)
 
-            if (success) finish()
-            else Toast.makeText(this, R.string.error_db_entry_failed, Toast.LENGTH_SHORT).show()
+            if (success) {
+                setResult(Activity.RESULT_OK, Intent().putExtra("refresh", true))
+                finish()
+            } else Toast.makeText(this, R.string.error_db_entry_failed, Toast.LENGTH_SHORT).show()
         }
     }
 

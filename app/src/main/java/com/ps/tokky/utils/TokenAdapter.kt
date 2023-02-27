@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -34,7 +35,7 @@ class TokenAdapter(
         }
     }
 
-    private val dbHelper = DBHelper(context)
+    private val dbHelper = DBHelper.getInstance(context)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TokenViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -117,9 +118,10 @@ class TokenAdapter(
         }
     }
 
-    override fun onEdit(entry: TokenEntry) {
+    override fun onEdit(entry: TokenEntry, position: Int) {
         editActivityLauncher.launch(Intent(context, EnterKeyDetailsActivity::class.java).apply {
             putExtra("obj", entry)
+            putExtra("idx", position)
         })
     }
 

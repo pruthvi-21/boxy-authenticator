@@ -46,7 +46,7 @@ class TokenViewHolder(
             isExpanded = false
 
             binding.edit.setOnClickListener {
-                listener?.onEdit(entry)
+                listener?.onEdit(entry, adapterPosition)
             }
 
             binding.delete.setOnClickListener {
@@ -116,7 +116,7 @@ class TokenViewHolder(
 
     interface Callback {
         fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean)
-        fun onEdit(entry: TokenEntry)
+        fun onEdit(entry: TokenEntry, position: Int)
         fun onDelete(entry: TokenEntry, position: Int)
     }
 }

@@ -9,12 +9,16 @@ import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
 import com.ps.tokky.models.TokenEntry
 
-class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, DBInfo.VERSION) {
+class DBHelper private constructor(
+    context: Context
+) : SQLiteOpenHelper(context, DBInfo.NAME, null, DBInfo.VERSION) {
+
+    private val allEntries = ArrayList<TokenEntry>()
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
-            "create table ${DBInfo.TABLE_KEYS} (" +
-                    "${DBInfo.COL_ID} integer primary key autoincrement, " +
+            "CREATE TABLE ${DBInfo.TABLE_KEYS} (" +
+                    "${DBInfo.COL_ID} integer PRIMARY KEY AUTOINCREMENT, " +
                     "${DBInfo.COL_ISSUER} text, " +
                     "${DBInfo.COL_LABEL} text, " +
                     "${DBInfo.COL_SECRET_KEY} text, " +
@@ -37,14 +41,16 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
 
         val rowID = db.insert(DBInfo.TABLE_KEYS, null, contentValues)
         db.close()
+        getAllEntries(true)
 
         return rowID != -1L
     }
 
-    fun getAllEntries(): ArrayList<TokenEntry> {
+    fun getAllEntries(refresh: Boolean): ArrayList<TokenEntry> {
+        if (!refresh && allEntries.isNotEmpty()) return allEntries
         val cursor = readableDatabase.rawQuery("SELECT * FROM ${DBInfo.TABLE_KEYS} ORDER BY ${DBInfo.COL_ISSUER} ASC", null)
 
-        val list = ArrayList<TokenEntry>()
+        allEntries.clear()
 
         if (cursor.moveToFirst()) {
             do {
@@ -60,12 +66,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
                     .find { it.id == cursor.getInt(6) }
                     ?: Constants.DEFAULT_HASH_ALGORITHM
 
-                list.add(TokenEntry(id, issuer, label, Base32().decode(secretKey), otpLength, period, algo))
+                allEntries.add(TokenEntry(id, issuer, label, Base32().decode(secretKey), otpLength, period, algo))
             } while (cursor.moveToNext())
         }
 
         cursor.close()
-        return list
+        return allEntries
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -87,10 +93,21 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DBInfo.NAME, null, 
         query.append("WHERE ${DBInfo.COL_ID}=${entry.dbID};")
 
         writableDatabase?.execSQL(query.toString())
+        getAllEntries(true)
     }
 
     fun removeEntry(entry: TokenEntry) {
         writableDatabase?.execSQL("DELETE FROM ${DBInfo.TABLE_KEYS} WHERE ${DBInfo.COL_ID}=${entry.dbID};")
+        allEntries.remove(entry)
+    }
+
+    companion object {
+        private var instance: DBHelper? = null
+        fun getInstance(context: Context): DBHelper {
+            if (instance == null)
+                instance = DBHelper(context)
+            return instance!!
+        }
     }
 
     private object DBInfo {
