@@ -50,6 +50,11 @@ class MainActivity : AppCompatActivity() {
             addNewActivityLauncher.launch(Intent(this, EnterKeyDetailsActivity::class.java))
         }
 
+        binding.fabAddNew.setOnLongClickListener {
+            qrActivityLauncher.launch(Intent(this, CameraScannerActivity::class.java))
+            true
+        }
+
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (!adapter.editModeEnabled) {
@@ -123,6 +128,13 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val extras = it.data?.extras
             if (it.resultCode == Activity.RESULT_OK && extras != null) {
+                refresh(true)
+            }
+        }
+
+    private val qrActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
                 refresh(true)
             }
         }

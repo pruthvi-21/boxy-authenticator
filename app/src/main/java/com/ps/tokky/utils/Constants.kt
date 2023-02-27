@@ -4,6 +4,7 @@ import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
 
 object Constants {
+    const val DEFAULT_OTP_VALIDITY = 30
     val DEFAULT_OTP_LENGTH = OTPLength.LEN_6
     val DEFAULT_HASH_ALGORITHM = HashAlgorithm.SHA1
 

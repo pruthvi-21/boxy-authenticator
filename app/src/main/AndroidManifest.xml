@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:name=".App"
@@ -14,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/BaseTheme"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.CameraScannerActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.EnterKeyDetailsActivity"
             android:exported="false" />
