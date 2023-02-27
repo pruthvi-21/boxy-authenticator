@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ class TokenAdapter(
     private val context: AppCompatActivity,
     private val list: ArrayList<TokenEntry>,
     private val recyclerView: RecyclerView,
+    private val editActivityLauncher: ActivityResultLauncher<Intent>
 ) : RecyclerView.Adapter<TokenViewHolder>(), TokenViewHolder.Callback {
 
     private var currentExpanded = -1
@@ -116,7 +118,7 @@ class TokenAdapter(
     }
 
     override fun onEdit(entry: TokenEntry) {
-        context.startActivity(Intent(context, EnterKeyDetailsActivity::class.java).apply {
+        editActivityLauncher.launch(Intent(context, EnterKeyDetailsActivity::class.java).apply {
             putExtra("obj", entry)
         })
     }

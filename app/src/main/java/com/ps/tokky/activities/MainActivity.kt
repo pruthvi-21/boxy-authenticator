@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     private val helper = DBHelper(this)
     private val adapter: TokenAdapter by lazy {
-        TokenAdapter(this, ArrayList(), binding.recyclerView)
+        TokenAdapter(this, ArrayList(), binding.recyclerView, addNewActivityLauncher)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
