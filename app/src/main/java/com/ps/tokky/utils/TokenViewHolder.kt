@@ -32,12 +32,12 @@ class TokenViewHolder(
         if (entry.label.isNotEmpty()) {
             binding.accountLabel.visibility = View.VISIBLE
             binding.accountLabel.text = entry.label
-        } else{
+        } else {
             binding.accountLabel.visibility = View.GONE
         }
 
         val drawable = LetterBitmap(context)
-            .getLetterTile(entry.issuer.ifEmpty { entry.label })
+            .getLetterTile(entry.issuer + entry.label) //appending label for different color if same issuer name
         binding.thumbnail.setImageBitmap(drawable)
 
         if (editModeEnabled) {
