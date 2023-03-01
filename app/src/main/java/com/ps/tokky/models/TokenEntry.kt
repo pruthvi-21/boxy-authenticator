@@ -1,20 +1,20 @@
 package com.ps.tokky.models
 
+import android.database.Cursor
 import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.Spannable
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.BaseEncoding
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
+import com.ps.tokky.utils.*
 import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_LENGTH
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_VALIDITY
-import com.ps.tokky.utils.TokenCalculator
-import com.ps.tokky.utils.cleanSecretKey
-import com.ps.tokky.utils.formatOTP
 import java.net.URL
 
-class TokenEntry(
-    var dbID: Int = -1,
+class TokenEntry private constructor(
+    var dbID: String,
     var issuer: String,
     var label: String,
     private val secretKey: ByteArray,
@@ -26,18 +26,8 @@ class TokenEntry(
     private var currentOTP: Int = 0
     private var lastUpdatedCounter: Long = 0L
 
-    constructor(
-        issuer: String,
-        label: String,
-        secretKey: String,
-        otpLength: OTPLength,
-        period: Int,
-        algorithm: HashAlgorithm
-    ) : this(-1, issuer, label, Base32().decode(secretKey), otpLength, period, algorithm) {
-    }
-
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
+        parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.createByteArray()!!,
@@ -73,12 +63,11 @@ class TokenEntry(
     override fun toString(): String {
         return "Issuer: $issuer\n" +
                 "Label: $label\n" +
-                "SecretKey: $secretKeyEncoded\n" +
                 "OTP: ${currentOTP}\n"
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(dbID)
+        parcel.writeString(dbID)
         parcel.writeString(issuer)
         parcel.writeString(label)
         parcel.writeByteArray(secretKey)
@@ -101,14 +90,23 @@ class TokenEntry(
         }
     }
 
-    class Builder {
-        private var dbID: Int = -1
+    class Builder() {
+        private lateinit var dbID: String
         private lateinit var issuer: String
         private var label: String = ""
         private lateinit var secretKey: ByteArray
         private var otpLength = DEFAULT_OTP_LENGTH
         private var period = DEFAULT_OTP_VALIDITY
         private var algorithm = DEFAULT_HASH_ALGORITHM
+
+        constructor(token: TokenEntry) : this() {
+            issuer = token.issuer
+            label = token.label
+            secretKey = token.secretKey
+            otpLength = token.otpLength
+            period = token.period
+            algorithm = token.algorithm
+        }
 
         fun setIssuer(issuer: String): Builder {
             this.issuer = issuer
@@ -122,8 +120,11 @@ class TokenEntry(
             return this
         }
 
+        @Throws
         fun setSecretKey(key: String): Builder {
+            if (!key.isValidSecretKey()) throw InvalidSecretKeyException()
             return setSecretKey(Base32().decode(key.cleanSecretKey()))
+
         }
 
         fun setSecretKey(key: ByteArray): Builder {
@@ -186,6 +187,11 @@ class TokenEntry(
         }
 
         fun build(): TokenEntry {
+            dbID = "$issuer:$label".hashWithSHA1()
+            return buildToken()
+        }
+
+        private fun buildToken(): TokenEntry {
             return TokenEntry(
                 dbID = dbID,
                 issuer = issuer,
@@ -203,6 +209,24 @@ class TokenEntry(
             } else {
                 label.substring(issuer.length + 1).trim { it <= ' ' }
             }
+        }
+
+        fun buildFromCursor(cursor: Cursor?): TokenEntry? {
+            cursor ?: return null
+            dbID = cursor.getString(0)
+            setIssuer(cursor.getString(1))
+            setLabel(cursor.getString(2))
+            secretKey = BaseEncoding.base32().decode(cursor.getString(3))
+            val otpLength = OTPLength.values()
+                .find { it.id == cursor.getInt(4) }
+                ?: DEFAULT_OTP_LENGTH
+            setOTPLength(otpLength)
+            setPeriod(cursor.getInt(5))
+            setHashAlgorithm(algorithm = HashAlgorithm.values()
+                .find { it.id == cursor.getInt(6) }
+                ?: DEFAULT_HASH_ALGORITHM)
+
+            return buildToken()
         }
     }
 }

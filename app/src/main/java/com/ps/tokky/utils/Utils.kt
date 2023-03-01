@@ -8,9 +8,13 @@ import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.ps.tokky.R
 import com.ps.tokky.models.OTPLength
+import com.ps.tokky.utils.Constants.hexArray
+import java.security.MessageDigest
 
 object Utils {
     fun getThemeColorFromAttr(context: Context, colorAttr: Int): Int {
@@ -27,6 +31,20 @@ object Utils {
         clipboard.setPrimaryClip(clip)
         Toast.makeText(context, R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG).show()
     }
+
+}
+
+fun View.showKeyboard(context: Context, showForced: Boolean) {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    if (showForced) imm.toggleSoftInput(
+        InputMethodManager.SHOW_FORCED,
+        InputMethodManager.HIDE_IMPLICIT_ONLY
+    ) else imm.showSoftInput(this, 0)
+}
+
+fun View.hideKeyboard(context: Context) {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
 fun Int.formatOTP(length: OTPLength): SpannableStringBuilder {
@@ -50,9 +68,29 @@ fun Int.formatOTP(length: OTPLength): SpannableStringBuilder {
 
 @SuppressLint("DefaultLocale")
 fun String.cleanSecretKey(): String {
-    return this.replace("\\s", "").toUpperCase()
+    return this.replace("\\s", "").uppercase()
 }
 
 fun String.isValidSecretKey(): Boolean {
     return Regex(Constants.BASE32_CHARS).matches(this)
+}
+
+fun String.hashWithSHA1(): String {
+    val bytes = this.toByteArray(Charsets.UTF_8)
+
+    val md = MessageDigest.getInstance("SHA-1")
+    md.update(bytes, 0, bytes.size)
+    val hashBytes = md.digest()
+
+    return hashBytes.toHex()
+}
+
+fun ByteArray.toHex(): String {
+    val hexChars = CharArray(size * 2)
+    for (j in indices) {
+        val v = this[j].toInt() and 0xFF
+        hexChars[j * 2] = hexArray[v ushr 4]
+        hexChars[j * 2 + 1] = hexArray[v and 0x0F]
+    }
+    return String(hexChars)
 }

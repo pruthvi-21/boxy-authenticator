@@ -11,4 +11,6 @@ object Constants {
     const val OTP_GENERATION_REFRESH_INTERVAL = 1000L
 
     const val BASE32_CHARS = "[A-Z2-7 ]+"
+    val hexArray = "0123456789ABCDEF".toCharArray()
+
 }

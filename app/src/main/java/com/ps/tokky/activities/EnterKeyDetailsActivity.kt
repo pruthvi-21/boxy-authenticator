@@ -17,16 +17,14 @@ import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
 import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
 import com.ps.tokky.models.TokenEntry
-import com.ps.tokky.utils.Constants
-import com.ps.tokky.utils.DBHelper
-import com.ps.tokky.utils.cleanSecretKey
-import com.ps.tokky.utils.isValidSecretKey
+import com.ps.tokky.utils.*
 
 class EnterKeyDetailsActivity : AppCompatActivity() {
 
@@ -67,20 +65,20 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
             binding.issuerField.editText.addTextChangedListener(editModeTextWatcher)
             binding.labelField.editText.addTextChangedListener(editModeTextWatcher)
             binding.detailsSaveBtn.setOnClickListener {
+                hideIme()
+
                 val issuer = binding.issuerField.editText.text.toString()
                 val label = binding.labelField.editText.text.toString()
 
                 if (issuer == currentEntry.issuer && label == currentEntry.label)
-                else dbHelper.updateEntry(currentEntry.also {
-                    it.issuer = issuer
-                    it.label = label
-                })
-                println("YYHHBB: EnterKeyDetails: saving result")
-                setResult(
-                    Activity.RESULT_OK,
-                    Intent().putExtra("obj", currentEntry)
-                )
-                finish()
+                else {
+                    val obj = TokenEntry.Builder(currentEntry)
+                        .setIssuer(issuer)
+                        .setLabel(label)
+                        .build()
+                    dbHelper.removeEntry(currentEntry)
+                    addEntryInDB(obj)
+                }
             }
             return
         }
@@ -105,37 +103,79 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         inflateOTPLengthToggleLayout()
 
         binding.detailsSaveBtn.setOnClickListener {
-            val issuer = binding.issuerField.value
-            val label = binding.labelField.value
-            val secretKey = binding.secretKeyField.value.cleanSecretKey()
-            val otpLength = OTPLength
-                .values()
-                .find { it.resId == binding.advLayout.otpLengthToggleGroup.checkedButtonId }
-            val period = binding.advLayout.advPeriodInputLayout.value.toInt()
-            val algo = HashAlgorithm
-                .values()
-                .find { it.resId == binding.advLayout.algoToggleGroup.checkedButtonId }
+            hideIme()
 
-            if (!secretKey.isValidSecretKey()) {
+            val builder = TokenEntry.Builder()
+
+            try {
+                builder
+                    .setIssuer(binding.issuerField.value)
+                    .setLabel(binding.labelField.value)
+                    .setSecretKey(binding.secretKeyField.value.cleanSecretKey())
+                    .setPeriod(binding.advLayout.advPeriodInputLayout.value.toInt())
+
+                val otpLength = OTPLength
+                    .values()
+                    .find { it.resId == binding.advLayout.otpLengthToggleGroup.checkedButtonId }
+
+                val algo = HashAlgorithm
+                    .values()
+                    .find { it.resId == binding.advLayout.algoToggleGroup.checkedButtonId }
+
+                if (otpLength == null || algo == null) {
+                    otpLength ?: Log.e(TAG, "onSaveDetails: No value selected for OTP Length")
+                    algo ?: Log.e(TAG, "onSaveDetails: No value selected for Hash Algorithm")
+                    Toast.makeText(this, R.string.error_saving_details, Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val token = builder
+                    .setOTPLength(otpLength)
+                    .setHashAlgorithm(algo)
+                    .build()
+
+                addEntryInDB(token)
+            } catch (exception: InvalidSecretKeyException) {
                 Log.e(TAG, "onSaveDetails: Invalid Secret Key format")
                 Toast.makeText(this, R.string.error_invalid_chars, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
             }
-            if (otpLength == null || algo == null) {
-                otpLength ?: Log.e(TAG, "onSaveDetails: No value selected for OTP Length")
-                algo ?: Log.e(TAG, "onSaveDetails: No value selected for Hash Algorithm")
-                Toast.makeText(this, R.string.error_saving_details, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+        }
+    }
 
-            val newEntry = TokenEntry(issuer, label, secretKey, otpLength, period, algo)
-            val success = dbHelper.addEntry(newEntry)
+    private fun addEntryInDB(token: TokenEntry) {
+        try {
+            val success = dbHelper.addEntry(token)
 
             if (success) {
                 setResult(Activity.RESULT_OK, Intent().putExtra("refresh", true))
                 finish()
             } else Toast.makeText(this, R.string.error_db_entry_failed, Toast.LENGTH_SHORT).show()
+        } catch (exception: TokenExistsInDBException) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Account already exists")
+                .setMessage("You already have a account from '${token.issuer}'")
+                .setPositiveButton("Replace") { _, _ ->
+                    dbHelper.updateEntry(token)
+
+                    setResult(Activity.RESULT_OK, Intent().putExtra("id", token.dbID))
+                    finish()
+                }
+                .setNegativeButton("Rename") { _, _ ->
+                    binding.detailsSaveBtn.isEnabled = false
+                    binding.issuerField.textInputLayout.editText?.requestFocus()
+                    binding.issuerField.editText.setSelection(token.issuer.length)
+                    binding.issuerField.editText.showKeyboard(this, true)
+                }
+                .create()
+                .show()
         }
+    }
+
+    private fun hideIme() {
+        binding.issuerField.editText.hideKeyboard(this)
+        binding.labelField.editText.hideKeyboard(this)
+        binding.secretKeyField.editText.hideKeyboard(this)
+        binding.advLayout.advPeriodInputLayout.editText.hideKeyboard(this)
     }
 
     private fun inflateAlgorithmMethods() {
