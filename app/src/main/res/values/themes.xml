@@ -2,19 +2,17 @@
 
     <style name="BaseTheme" parent="Theme.Tokky" />
 
-    <style name="Theme.Tokky" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:statusBarColor">?colorSurface</item>
-        <item name="android:windowLightStatusBar">?isLightTheme</item>
-        <item name="colorControlHighlight">#AB121212</item>
-
-        <item name="buttonGroupButtonStyle">@style/ButtonGroupButtonStyle</item>
-        <item name="textInputStyle">@style/TextInputLayoutStyle</item>
-    </style>
-
-    <style name="Theme.Tokky.Overlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
+    <style name="Theme.Tokky" parent="Theme.Material3.DynamicColors.DayNight">
         <item name="colorSurface">@color/surface_color</item>
         <item name="colorSurfaceVariant">@color/surface_color_variant</item>
         <item name="android:colorBackground">@color/surface_color</item>
+        <item name="android:statusBarColor">?colorSurface</item>
+        <item name="android:windowLightStatusBar">?isLightTheme</item>
+        <item name="colorControlHighlight">#AB121212</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="buttonGroupButtonStyle">@style/ButtonGroupButtonStyle</item>
+        <item name="textInputStyle">@style/TextInputLayoutStyle</item>
     </style>
 
     <style name="ButtonGroupButtonStyle" parent="Widget.Material3.Button.TextButton">
