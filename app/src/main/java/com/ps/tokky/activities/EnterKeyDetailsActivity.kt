@@ -38,6 +38,8 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
     private val dbHelper = DBHelper.getInstance(this)
 
+    private val fromQR: Boolean by lazy { intent.extras?.getBoolean("from_qr") ?: false }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,6 +54,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
             intent.extras?.getParcelable("obj")
         }
         val editMode = currentEntry != null
+
         Log.d(TAG, "onCreate: In edit mode: $editMode")
 
         if (editMode) {
@@ -70,15 +73,12 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                 val issuer = binding.issuerField.editText.text.toString()
                 val label = binding.labelField.editText.text.toString()
 
-                if (issuer == currentEntry.issuer && label == currentEntry.label)
-                else {
-                    val obj = TokenEntry.Builder(currentEntry)
-                        .setIssuer(issuer)
-                        .setLabel(label)
-                        .build()
-                    dbHelper.removeEntry(currentEntry)
-                    addEntryInDB(obj)
-                }
+                val obj = TokenEntry.Builder(currentEntry)
+                    .setIssuer(issuer)
+                    .setLabel(label)
+                    .build()
+
+                addEntryInDB(obj, currentEntry.dbID)
             }
             return
         }
@@ -134,7 +134,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                     .setHashAlgorithm(algo)
                     .build()
 
-                addEntryInDB(token)
+                addEntryInDB(token, null)
             } catch (exception: InvalidSecretKeyException) {
                 Log.e(TAG, "onSaveDetails: Invalid Secret Key format")
                 Toast.makeText(this, R.string.error_invalid_chars, Toast.LENGTH_SHORT).show()
@@ -142,8 +142,12 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun addEntryInDB(token: TokenEntry) {
+    private fun addEntryInDB(token: TokenEntry, oldId: String?) {
         try {
+            if (oldId != null) {
+                val isPresent = dbHelper.getAllEntries(false).find { it.dbID == oldId } != null
+                if (isPresent && !fromQR) dbHelper.removeEntryById(oldId)
+            }
             val success = dbHelper.addEntry(token)
 
             if (success) {

@@ -74,14 +74,14 @@ class DBHelper private constructor(
     }
 
     fun updateEntry(entry: TokenEntry) {
-        removeEntry(entry)
+        removeEntryById(entry.dbID)
         addEntry(entry)
         getAllEntries(true)
     }
 
-    fun removeEntry(entry: TokenEntry) {
-        writableDatabase?.execSQL("DELETE FROM ${DBInfo.TABLE_KEYS} WHERE ${DBInfo.COL_ID}='${entry.dbID}';")
-        allEntries.removeIf { entry.dbID == it.dbID }
+    fun removeEntryById(id: String) {
+        writableDatabase?.execSQL("DELETE FROM ${DBInfo.TABLE_KEYS} WHERE ${DBInfo.COL_ID}='$id';")
+        allEntries.removeIf { id == it.dbID }
     }
 
     companion object {

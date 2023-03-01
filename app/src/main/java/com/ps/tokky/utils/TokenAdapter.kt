@@ -126,7 +126,7 @@ class TokenAdapter(
     }
 
     override fun onDelete(entry: TokenEntry, position: Int) {
-        dbHelper.removeEntry(entry)
+        dbHelper.removeEntryById(entry.dbID)
         list.removeAt(position)
         notifyItemRemoved(position)
     }

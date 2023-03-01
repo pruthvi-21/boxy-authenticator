@@ -1,7 +1,6 @@
 package com.ps.tokky.models
 
 import android.database.Cursor
-import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.Spannable
@@ -11,7 +10,7 @@ import com.ps.tokky.utils.*
 import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_LENGTH
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_VALIDITY
-import java.net.URL
+import java.net.URI
 
 class TokenEntry private constructor(
     var dbID: String,
@@ -122,7 +121,7 @@ class TokenEntry private constructor(
 
         @Throws
         fun setSecretKey(key: String): Builder {
-            if (!key.isValidSecretKey()) throw InvalidSecretKeyException()
+            if (!key.cleanSecretKey().isValidSecretKey()) throw InvalidSecretKeyException()
             return setSecretKey(Base32().decode(key.cleanSecretKey()))
 
         }
@@ -150,39 +149,30 @@ class TokenEntry private constructor(
         }
 
         fun createFromQR(path: String): Builder {
-            val urlPath = path.replaceFirst("otpauth".toRegex(), "http")
-            val uri = Uri.parse(urlPath)
-            val url = URL(urlPath)
-            if (url.protocol != "http") {
-                throw Exception("Invalid Protocol")
-            }
+            val uri = URI(path)
+            val queryParams = uri.query.split("&")
+                .map { it.split("=").let { pair -> pair[0] to pair[1] } }
+                .toMap()
 
-            val issuer = uri.getQueryParameter("issuer") ?: throw Exception("Empty issuer name")
+            val issuer = uri.host
+            val label = uri.path.substring(1)
+
+            val secret = queryParams["secret"] ?: throw IllegalArgumentException("Missing secret parameter")
+            val digits = queryParams["digits"]?.toInt() ?: 6
+            val algorithm = queryParams["algorithm"] ?: "SHA1"
+            val period = queryParams["period"]?.toInt() ?: 30
             setIssuer(issuer)
-
-            val secret = uri.getQueryParameter("secret") ?: throw Exception("Empty secret")
-            setSecretKey(secret)
-
-            var label: String? = ""
-            if (uri.path != null) label = getStrippedLabel(issuer, uri.path!!.substring(1))
+            setSecretKey(secret.cleanSecretKey())
             setLabel(label)
 
-            val period = uri.getQueryParameter("period")
-            setPeriod(period?.toInt())
+            setPeriod(period)
+            if (digits == 8)
+                setOTPLength(OTPLength.LEN_8)
+            if (algorithm.equals("sha265", true))
+                setHashAlgorithm(HashAlgorithm.SHA256)
+            if (algorithm.equals("sha512", true))
+                setHashAlgorithm(HashAlgorithm.SHA512)
 
-            val length = uri.getQueryParameter("digits")
-            if (length != null) {
-                if (length == "8")
-                    setOTPLength(OTPLength.LEN_8)
-            }
-
-            val algorithm = uri.getQueryParameter("algorithm")
-            if (algorithm != null) {
-                if (algorithm.equals("sha265", true))
-                    setHashAlgorithm(HashAlgorithm.SHA256)
-                if (algorithm.equals("sha512", true))
-                    setHashAlgorithm(HashAlgorithm.SHA512)
-            }
             return this
         }
 
