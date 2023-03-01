@@ -39,7 +39,7 @@ class TokenEntry private constructor(
 
     val secretKeyEncoded: String
         get() {
-            return String(Base32().encode(secretKey))
+            return BaseEncoding.base32().encode(secretKey)
         }
 
     fun updateOTP(): Boolean {
