@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -71,6 +71,8 @@ class MainActivity : AppCompatActivity() {
     private fun refresh(reload: Boolean) {
         val list = helper.getAllEntries(reload)
         adapter.updateEntries(list)
+        binding.emptyLayout.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+        invalidateOptionsMenu()
     }
 
     override fun onResume() {
@@ -84,7 +86,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (!adapter.editModeEnabled) menuInflater.inflate(R.menu.menu_main, menu)
+        if (!adapter.editModeEnabled)
+            menuInflater.inflate(R.menu.menu_main, menu)
+        menu?.getItem(1)?.isEnabled = helper.getAllEntries(false).isNotEmpty()
         return true
     }
 
@@ -106,7 +110,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun openEditMode(open: Boolean) {
+    fun openEditMode(open: Boolean) {
         if (open) {
             adapter.editModeEnabled = true
             invalidateOptionsMenu()
@@ -121,6 +125,7 @@ class MainActivity : AppCompatActivity() {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
             supportActionBar?.setHomeAsUpIndicator(0)
             binding.fabAddNew.show()
+            refresh(false)
         }
     }
 

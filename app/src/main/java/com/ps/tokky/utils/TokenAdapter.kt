@@ -14,6 +14,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.ps.tokky.R
 import com.ps.tokky.activities.EnterKeyDetailsActivity
+import com.ps.tokky.activities.MainActivity
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 
@@ -127,6 +128,10 @@ class TokenAdapter(
         dbHelper.removeEntry(entry.id)
         list.removeAt(position)
         notifyItemRemoved(position)
+
+        if (list.size == 0 && context is MainActivity) {
+            context.openEditMode(false)
+        }
     }
 
     fun onResume() {
