@@ -20,7 +20,7 @@ class TokenViewHolder(
     private val handler = Handler(Looper.getMainLooper())
     private val handlerTask: Runnable = object : Runnable {
         override fun run() {
-            binding.progressBar.setProgress((System.currentTimeMillis() / 1000 % entry!!.period).toInt())
+            entry?.progressPercent?.toInt()?.let { binding.progressBar.setProgress(it) }
             handler.postDelayed(this, 1000)
         }
     }

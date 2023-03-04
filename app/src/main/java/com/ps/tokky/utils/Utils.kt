@@ -13,7 +13,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.ps.tokky.R
 import com.ps.tokky.models.OTPLength
-import com.ps.tokky.utils.Constants.hexArray
 import java.security.MessageDigest
 
 object Utils {
@@ -30,6 +29,12 @@ object Utils {
         val clip = ClipData.newPlainText(context.getString(R.string.label_clipboard_content), text)
         clipboard.setPrimaryClip(clip)
         Toast.makeText(context, R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG).show()
+    }
+
+    fun isValidTOTPAuthURL(url: String): Boolean {
+        //TODO: need to find the regex
+        val regex = Regex("")
+        return true
     }
 
 }
@@ -75,22 +80,8 @@ fun String.isValidSecretKey(): Boolean {
     return Regex(Constants.BASE32_CHARS).matches(this)
 }
 
-fun String.hashWithSHA1(): String {
-    val bytes = this.toByteArray(Charsets.UTF_8)
-
-    val md = MessageDigest.getInstance("SHA-1")
-    md.update(bytes, 0, bytes.size)
-    val hashBytes = md.digest()
-
-    return hashBytes.toHex()
-}
-
-fun ByteArray.toHex(): String {
-    val hexChars = CharArray(size * 2)
-    for (j in indices) {
-        val v = this[j].toInt() and 0xFF
-        hexChars[j * 2] = hexArray[v ushr 4]
-        hexChars[j * 2 + 1] = hexArray[v and 0x0F]
-    }
-    return String(hexChars)
+fun String.hash(algorithm: String): String {
+    val md = MessageDigest.getInstance(algorithm)
+    val digest = md.digest(toByteArray())
+    return digest.fold("") { str, it -> str + "%02x".format(it) }
 }

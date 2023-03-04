@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -120,13 +119,12 @@ class TokenAdapter(
 
     override fun onEdit(entry: TokenEntry, position: Int) {
         editActivityLauncher.launch(Intent(context, EnterKeyDetailsActivity::class.java).apply {
-            putExtra("obj", entry)
-            putExtra("idx", position)
+            putExtra("id", entry.id)
         })
     }
 
     override fun onDelete(entry: TokenEntry, position: Int) {
-        dbHelper.removeEntryById(entry.dbID)
+        dbHelper.removeEntry(entry.id)
         list.removeAt(position)
         notifyItemRemoved(position)
     }

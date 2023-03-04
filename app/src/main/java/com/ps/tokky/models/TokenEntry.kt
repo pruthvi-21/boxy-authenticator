@@ -1,44 +1,124 @@
 package com.ps.tokky.models
 
-import android.database.Cursor
-import android.os.Parcel
-import android.os.Parcelable
 import android.text.Spannable
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.BaseEncoding
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.*
-import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
-import com.ps.tokky.utils.Constants.DEFAULT_OTP_LENGTH
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_VALIDITY
+import org.json.JSONObject
 import java.net.URI
+import java.util.*
 
-class TokenEntry private constructor(
-    var dbID: String,
-    var issuer: String,
-    var label: String,
-    private val secretKey: ByteArray,
-    val otpLength: OTPLength,
-    val period: Int,
-    val algorithm: HashAlgorithm
-) : Parcelable {
+class TokenEntry {
+
+    val id: String?
+    var issuer: String
+    var label: String
+    private val secretKey: ByteArray
+    private val otpLength: OTPLength
+    val period: Int
+    private val algorithm: HashAlgorithm
+    var hash: String
+
+    constructor(
+        id: String?,
+        issuer: String,
+        label: String,
+        secretKey: String,
+        otpLength: OTPLength = OTPLength.LEN_6,
+        period: Int = DEFAULT_OTP_VALIDITY,
+        algorithm: HashAlgorithm = HashAlgorithm.SHA1,
+        hash: String?
+    ) {
+        this.id = id ?: UUID.randomUUID().toString()
+        this.issuer = issuer
+        this.label = label
+
+        if (secretKey.isValidSecretKey()) {
+            this.secretKey = Base32().decode(secretKey.cleanSecretKey())
+        } else throw InvalidSecretKeyException("Invalid secret key")
+
+        this.otpLength = otpLength
+        this.period = period
+        this.algorithm = algorithm
+        this.hash = hash ?: getHash(this)
+    }
+
+    constructor(id: String, json: JSONObject) {
+        this.id = id
+        this.issuer = json.getString(KEY_ISSUER)
+        this.label = json.getString(KEY_LABEL)
+
+        val secretKey = json.getString(KEY_SECRET_KEY)
+        this.secretKey = Base32().decode(secretKey)
+
+        this.period = if (json.has(KEY_PERIOD)) json.getInt(KEY_PERIOD)
+        else DEFAULT_OTP_VALIDITY
+
+        var length = OTPLength.LEN_6
+        if (json.has(KEY_OTP_LENGTH)) {
+            val digits = json.getInt(KEY_OTP_LENGTH)
+            if (digits == 8) length = OTPLength.LEN_8
+        }
+
+        var algo = HashAlgorithm.SHA1
+        if (json.has(KEY_ALGORITHM)) {
+            val algorithm = json.getString(KEY_ALGORITHM)
+            if (algorithm == "SHA265") algo = HashAlgorithm.SHA256
+            if (algorithm == "SHA512") algo = HashAlgorithm.SHA512
+        }
+
+        this.otpLength = length
+        this.algorithm = algo
+        this.hash = json.getString(KEY_HASH)
+    }
+
+    constructor(uri: URI) {
+        if (!Utils.isValidTOTPAuthURL(uri.toString())) {
+            throw BadlyFormedURLException("Invalid URL format")
+        }
+        this.id = UUID.randomUUID().toString()
+
+        val params = uri.query.split("&")
+            .associate {
+                it.split("=")
+                    .let { pair -> pair[0] to pair[1] }
+            }
+
+        //use uri.host for otp type TOTP or HOTP
+        this.issuer = params["issuer"] ?: ""
+        this.label = uri.path.substring(1)
+
+        val secret = params["secret"] ?: throw IllegalArgumentException("Missing secret parameter")
+        if (secret.isValidSecretKey()) {
+            this.secretKey = Base32().decode(secret.cleanSecretKey())
+        } else throw InvalidSecretKeyException("Invalid secret key")
+
+        this.period = params["period"]?.toInt() ?: 30
+
+        val digits = params["digits"]?.toInt() ?: 6
+
+        this.otpLength = if (digits == 8) OTPLength.LEN_8 else OTPLength.LEN_6
+
+        val algorithm = params["algorithm"] ?: "SHA1"
+        this.algorithm = if (algorithm.equals("SHA256", true)) HashAlgorithm.SHA256
+        else if (algorithm.equals("SHA512", true)) HashAlgorithm.SHA512
+        else HashAlgorithm.SHA1
+
+        this.hash = getHash(this)
+    }
 
     private var currentOTP: Int = 0
     private var lastUpdatedCounter: Long = 0L
 
-    constructor(parcel: Parcel) : this(
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.createByteArray()!!,
-        OTPLength.valueOf(parcel.readString()!!),
-        parcel.readInt(),
-        HashAlgorithm.valueOf(parcel.readString()!!)
-    ) {
-    }
-
     val secretKeyEncoded: String
         get() {
             return BaseEncoding.base32().encode(secretKey)
+        }
+
+    val progressPercent: Long
+        get() {
+            return (System.currentTimeMillis() / 1000 % period)
         }
 
     fun updateOTP(): Boolean {
@@ -59,164 +139,37 @@ class TokenEntry private constructor(
     val otpFormattedString: String
         get() = "$currentOTP".padStart(otpLength.value, '0')
 
-    override fun toString(): String {
-        return "Issuer: $issuer\n" +
-                "Label: $label\n" +
-                "OTP: ${currentOTP}\n"
+    fun updateInfo(issuer: String, label: String) {
+        this.issuer = issuer
+        this.label = label
+        this.hash = getHash(this)
     }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(dbID)
-        parcel.writeString(issuer)
-        parcel.writeString(label)
-        parcel.writeByteArray(secretKey)
-        parcel.writeString(otpLength.name)
-        parcel.writeInt(period)
-        parcel.writeString(algorithm.name)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<TokenEntry> {
-        override fun createFromParcel(parcel: Parcel): TokenEntry {
-            return TokenEntry(parcel)
-        }
-
-        override fun newArray(size: Int): Array<TokenEntry?> {
-            return arrayOfNulls(size)
+    fun toJson(): JSONObject {
+        return JSONObject().apply {
+            put(KEY_ISSUER, issuer) //String
+            put(KEY_LABEL, label) //String
+            put(KEY_SECRET_KEY, secretKeyEncoded) //String
+            put(KEY_PERIOD, period) //Int
+            put(KEY_OTP_LENGTH, otpLength.value) //Int
+            put(KEY_ALGORITHM, algorithm.name) //String
+            put(KEY_HASH, hash)
         }
     }
 
-    class Builder() {
-        private lateinit var dbID: String
-        private lateinit var issuer: String
-        private var label: String = ""
-        private lateinit var secretKey: ByteArray
-        private var otpLength = DEFAULT_OTP_LENGTH
-        private var period = DEFAULT_OTP_VALIDITY
-        private var algorithm = DEFAULT_HASH_ALGORITHM
+    companion object {
+        const val KEY_ISSUER = "issuer"
+        const val KEY_LABEL = "label"
+        const val KEY_SECRET_KEY = "secret_key"
+        const val KEY_ALGORITHM = "algorithm"
+        const val KEY_PERIOD = "period"
+        const val KEY_OTP_LENGTH = "otp_length"
+        const val KEY_HASH = "hash"
 
-        constructor(token: TokenEntry) : this() {
-            issuer = token.issuer
-            label = token.label
-            secretKey = token.secretKey
-            otpLength = token.otpLength
-            period = token.period
-            algorithm = token.algorithm
-        }
-
-        fun setIssuer(issuer: String): Builder {
-            this.issuer = issuer
-            return this
-        }
-
-        fun setLabel(label: String?): Builder {
-            if (label != null) {
-                this.label = label
-            }
-            return this
-        }
-
-        @Throws
-        fun setSecretKey(key: String): Builder {
-            if (!key.cleanSecretKey().isValidSecretKey()) throw InvalidSecretKeyException()
-            return setSecretKey(Base32().decode(key.cleanSecretKey()))
-
-        }
-
-        fun setSecretKey(key: ByteArray): Builder {
-            this.secretKey = key
-            return this
-        }
-
-        fun setOTPLength(otpLength: OTPLength): Builder {
-            this.otpLength = otpLength
-            return this
-        }
-
-        fun setPeriod(period: Int?): Builder {
-            if (period != null) {
-                this.period = period
-            }
-            return this
-        }
-
-        fun setHashAlgorithm(algorithm: HashAlgorithm): Builder {
-            this.algorithm = algorithm
-            return this
-        }
-
-        fun createFromQR(path: String): Builder {
-            val uri = URI(path)
-            val queryParams = uri.query.split("&")
-                .map { it.split("=").let { pair -> pair[0] to pair[1] } }
-                .toMap()
-
-            val issuer = uri.host
-            val label = uri.path.substring(1)
-
-            val secret = queryParams["secret"] ?: throw IllegalArgumentException("Missing secret parameter")
-            val digits = queryParams["digits"]?.toInt() ?: 6
-            val algorithm = queryParams["algorithm"] ?: "SHA1"
-            val period = queryParams["period"]?.toInt() ?: 30
-            setIssuer(issuer)
-            setSecretKey(secret.cleanSecretKey())
-            setLabel(label)
-
-            setPeriod(period)
-            if (digits == 8)
-                setOTPLength(OTPLength.LEN_8)
-            if (algorithm.equals("sha265", true))
-                setHashAlgorithm(HashAlgorithm.SHA256)
-            if (algorithm.equals("sha512", true))
-                setHashAlgorithm(HashAlgorithm.SHA512)
-
-            return this
-        }
-
-        fun build(): TokenEntry {
-            dbID = "$issuer:$label".hashWithSHA1()
-            return buildToken()
-        }
-
-        private fun buildToken(): TokenEntry {
-            return TokenEntry(
-                dbID = dbID,
-                issuer = issuer,
-                label = label,
-                secretKey = secretKey,
-                otpLength = otpLength,
-                period = period,
-                algorithm = algorithm
-            )
-        }
-
-        private fun getStrippedLabel(issuer: String?, label: String): String? {
-            return if (issuer == null || issuer.isEmpty() || !label.startsWith("$issuer:")) {
-                label.trim { it <= ' ' }
-            } else {
-                label.substring(issuer.length + 1).trim { it <= ' ' }
-            }
-        }
-
-        fun buildFromCursor(cursor: Cursor?): TokenEntry? {
-            cursor ?: return null
-            dbID = cursor.getString(0)
-            setIssuer(cursor.getString(1))
-            setLabel(cursor.getString(2))
-            secretKey = BaseEncoding.base32().decode(cursor.getString(3))
-            val otpLength = OTPLength.values()
-                .find { it.id == cursor.getInt(4) }
-                ?: DEFAULT_OTP_LENGTH
-            setOTPLength(otpLength)
-            setPeriod(cursor.getInt(5))
-            setHashAlgorithm(algorithm = HashAlgorithm.values()
-                .find { it.id == cursor.getInt(6) }
-                ?: DEFAULT_HASH_ALGORITHM)
-
-            return buildToken()
+        fun getHash(t: TokenEntry): String {
+            return "${t.issuer}:${t.period}:${t.label}:${t.otpLength.value}:${t.secretKeyEncoded}:${t.algorithm.name}"
+                .hash("SHA512")
+                .hash("SHA1")
         }
     }
 }

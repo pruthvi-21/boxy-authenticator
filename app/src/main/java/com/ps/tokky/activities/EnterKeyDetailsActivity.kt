@@ -2,7 +2,6 @@ package com.ps.tokky.activities
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,10 +24,9 @@ import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.*
+import java.net.URI
 
 class EnterKeyDetailsActivity : AppCompatActivity() {
-
-    private val TAG = "EnterKeyDetailsActivity"
 
     private val binding: ActivityEnterKeyDetailsBinding by lazy {
         ActivityEnterKeyDetailsBinding.inflate(layoutInflater)
@@ -38,7 +36,8 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
     private val dbHelper = DBHelper.getInstance(this)
 
-    private val fromQR: Boolean by lazy { intent.extras?.getBoolean("from_qr") ?: false }
+    private val editId: String? by lazy { intent.extras?.getString("id") }
+    private val otpAuthUrl: String? by lazy { intent.extras?.getString("otpAuth") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,37 +47,37 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val currentEntry = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.extras?.getParcelable("obj", TokenEntry::class.java)
-        } else {
-            intent.extras?.getParcelable("obj")
-        }
-        val editMode = currentEntry != null
+        val editMode = editId != null || otpAuthUrl != null
 
-        Log.d(TAG, "onCreate: In edit mode: $editMode")
+        Log.i(TAG, "onCreate: In edit mode: $editMode")
 
         if (editMode) {
-            binding.issuerField.editText.setText(currentEntry!!.issuer)
-            binding.labelField.editText.setText(currentEntry.label)
-            binding.secretKeyField.visibility = View.GONE
-            binding.advLayoutSwitch.visibility = View.GONE
-            binding.advLayout.advOptionsLayout.visibility = View.GONE
+            try {
+                val currentEntry = if (otpAuthUrl != null) TokenEntry(URI(otpAuthUrl!!))
+                else dbHelper.getAllEntries(false).find { it.id == editId }
 
-            binding.detailsSaveBtn.visibility = View.VISIBLE
-            binding.issuerField.editText.addTextChangedListener(editModeTextWatcher)
-            binding.labelField.editText.addTextChangedListener(editModeTextWatcher)
-            binding.detailsSaveBtn.setOnClickListener {
-                hideIme()
+                binding.issuerField.editText.setText(currentEntry!!.issuer)
+                binding.labelField.editText.setText(currentEntry.label)
+                binding.secretKeyField.visibility = View.GONE
+                binding.advLayoutSwitch.visibility = View.GONE
+                binding.advLayout.advOptionsLayout.visibility = View.GONE
 
-                val issuer = binding.issuerField.editText.text.toString()
-                val label = binding.labelField.editText.text.toString()
+                binding.detailsSaveBtn.visibility = View.VISIBLE
+                binding.issuerField.editText.addTextChangedListener(editModeTextWatcher)
+                binding.labelField.editText.addTextChangedListener(editModeTextWatcher)
+                binding.detailsSaveBtn.setOnClickListener {
+                    hideIme()
 
-                val obj = TokenEntry.Builder(currentEntry)
-                    .setIssuer(issuer)
-                    .setLabel(label)
-                    .build()
+                    currentEntry.updateInfo(
+                        issuer = binding.issuerField.editText.text.toString(),
+                        label = binding.labelField.editText.text.toString()
+                    )
 
-                addEntryInDB(obj, currentEntry.dbID)
+                    updateEntryInDB(currentEntry)
+                }
+            } catch (exception: BadlyFormedURLException) {
+                Log.e(TAG, "onCreate: ", exception)
+                Toast.makeText(this, "URL is badly formed", Toast.LENGTH_SHORT).show()
             }
             return
         }
@@ -97,7 +96,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
             showAdvancedOptions(binding.advLayout.advOptionsLayout.visibility == View.GONE)
         }
 
-        binding.advLayout.advPeriodInputLayout.editText.setText("30")
+        binding.advLayout.advPeriodInputLayout.editText.setText(Constants.DEFAULT_OTP_VALIDITY.toString())
 
         inflateAlgorithmMethods()
         inflateOTPLengthToggleLayout()
@@ -105,14 +104,11 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         binding.detailsSaveBtn.setOnClickListener {
             hideIme()
 
-            val builder = TokenEntry.Builder()
-
             try {
-                builder
-                    .setIssuer(binding.issuerField.value)
-                    .setLabel(binding.labelField.value)
-                    .setSecretKey(binding.secretKeyField.value.cleanSecretKey())
-                    .setPeriod(binding.advLayout.advPeriodInputLayout.value.toInt())
+                val issuer = binding.issuerField.value
+                val label = binding.labelField.value
+                val secretKey = binding.secretKeyField.value.cleanSecretKey()
+                val period = binding.advLayout.advPeriodInputLayout.value.toInt()
 
                 val otpLength = OTPLength
                     .values()
@@ -129,12 +125,18 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                val token = builder
-                    .setOTPLength(otpLength)
-                    .setHashAlgorithm(algo)
-                    .build()
+                val token = TokenEntry(
+                    id = null,
+                    issuer = issuer,
+                    label = label,
+                    secretKey = secretKey,
+                    otpLength = otpLength,
+                    period = period,
+                    algorithm = algo,
+                    hash = null
+                )
 
-                addEntryInDB(token, null)
+                addEntryInDB(token)
             } catch (exception: InvalidSecretKeyException) {
                 Log.e(TAG, "onSaveDetails: Invalid Secret Key format")
                 Toast.makeText(this, R.string.error_invalid_chars, Toast.LENGTH_SHORT).show()
@@ -142,11 +144,15 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun addEntryInDB(token: TokenEntry, oldId: String?) {
+    private fun updateEntryInDB(token: TokenEntry) {
+        addEntryInDB(token, token.id)
+    }
+
+    private fun addEntryInDB(token: TokenEntry, oldId: String? = null) {
         try {
             if (oldId != null) {
-                val isPresent = dbHelper.getAllEntries(false).find { it.dbID == oldId } != null
-                if (isPresent && !fromQR) dbHelper.removeEntryById(oldId)
+                val isPresent = dbHelper.getAllEntries(false).find { it.id == oldId } != null
+                if (isPresent && otpAuthUrl == null) dbHelper.removeEntry(oldId)
             }
             val success = dbHelper.addEntry(token)
 
@@ -161,7 +167,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                 .setPositiveButton("Replace") { _, _ ->
                     dbHelper.updateEntry(token)
 
-                    setResult(Activity.RESULT_OK, Intent().putExtra("id", token.dbID))
+                    setResult(Activity.RESULT_OK, Intent().putExtra("id", token.id))
                     finish()
                 }
                 .setNegativeButton("Rename") { _, _ ->
@@ -268,9 +274,11 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
             override fun afterTextChanged(editable: Editable) {
                 val issuer = binding.issuerField.editText.text
-                val label = binding.labelField.editText.text
-
                 binding.detailsSaveBtn.isEnabled = !TextUtils.isEmpty(issuer)
             }
         }
+
+    companion object {
+        private const val TAG = "EnterKeyDetailsActivity"
+    }
 }

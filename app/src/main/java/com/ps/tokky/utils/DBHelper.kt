@@ -5,43 +5,32 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.ps.tokky.models.TokenEntry
+import org.json.JSONObject
 
 class DBHelper private constructor(
     context: Context
-) : SQLiteOpenHelper(context, DBInfo.NAME, null, DBInfo.VERSION) {
+) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     private val allEntries = ArrayList<TokenEntry>()
 
     override fun onCreate(db: SQLiteDatabase?) {
-        db?.execSQL(
-            "CREATE TABLE ${DBInfo.TABLE_KEYS} (" +
-                    "${DBInfo.COL_ID} text PRIMARY KEY, " +
-                    "${DBInfo.COL_ISSUER} text, " +
-                    "${DBInfo.COL_LABEL} text, " +
-                    "${DBInfo.COL_SECRET_KEY} text, " +
-                    "${DBInfo.COL_OTP_LENGTH} int, " +
-                    "${DBInfo.COL_PERIOD} int, " +
-                    "${DBInfo.COL_ALGORITHM} int)"
-        )
+        db?.execSQL("CREATE TABLE $TABLE_KEYS ($COL_ID text PRIMARY KEY, $COL_DATA text)")
     }
 
     fun addEntry(entry: TokenEntry): Boolean {
-        val te: TokenEntry? = allEntries.find { it.dbID == entry.dbID }
+        val te: TokenEntry? = allEntries.find { (it.issuer + it.label) == (entry.issuer + entry.label) }
         if (te != null) {
             throw TokenExistsInDBException()
         }
         val db = writableDatabase
+        val data = entry.toJson().toString()
+
         val contentValues = ContentValues().apply {
-            put(DBInfo.COL_ID, entry.dbID)
-            put(DBInfo.COL_ISSUER, entry.issuer)
-            put(DBInfo.COL_LABEL, entry.label)
-            put(DBInfo.COL_SECRET_KEY, entry.secretKeyEncoded)
-            put(DBInfo.COL_OTP_LENGTH, entry.otpLength.id)
-            put(DBInfo.COL_PERIOD, entry.period)
-            put(DBInfo.COL_ALGORITHM, entry.algorithm.id)
+            put(COL_ID, entry.id)
+            put(COL_DATA, data)
         }
 
-        val rowID = db.insert(DBInfo.TABLE_KEYS, null, contentValues)
+        val rowID = db.insert(TABLE_KEYS, null, contentValues)
         db.close()
         getAllEntries(true)
 
@@ -50,16 +39,17 @@ class DBHelper private constructor(
 
     fun getAllEntries(refresh: Boolean): ArrayList<TokenEntry> {
         if (!refresh && allEntries.isNotEmpty()) return allEntries
-        val cursor = readableDatabase.rawQuery("SELECT * FROM ${DBInfo.TABLE_KEYS} ORDER BY ${DBInfo.COL_ISSUER} ASC", null)
+        val cursor = readableDatabase.rawQuery("SELECT * FROM $TABLE_KEYS", null)
 
         allEntries.clear()
 
         if (cursor.moveToFirst()) {
             do {
-                val obj = TokenEntry.Builder()
-                    .buildFromCursor(cursor)
-                if (obj != null)
-                    allEntries.add(obj)
+                val obj = TokenEntry(
+                    cursor.getString(0)!!,
+                    JSONObject(cursor.getString(1)!!)
+                )
+                allEntries.add(obj)
             } while (cursor.moveToNext())
         }
 
@@ -69,22 +59,31 @@ class DBHelper private constructor(
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         //Do the migration work here
-        db?.execSQL("DROP TABLE IF EXISTS ${DBInfo.TABLE_KEYS}")
+        db?.execSQL("DROP TABLE IF EXISTS $TABLE_KEYS")
         onCreate(db)
     }
 
     fun updateEntry(entry: TokenEntry) {
-        removeEntryById(entry.dbID)
-        addEntry(entry)
-        getAllEntries(true)
+        val te: TokenEntry? = allEntries.find { it.id == entry.id }
+        if (te != null) {
+            throw TokenExistsInDBException()
+        }
+        writableDatabase?.execSQL("UPDATE $TABLE_KEYS SET $COL_DATA = '${entry.toJson()}' WHERE $COL_ID = '${entry.id}'")
     }
 
-    fun removeEntryById(id: String) {
-        writableDatabase?.execSQL("DELETE FROM ${DBInfo.TABLE_KEYS} WHERE ${DBInfo.COL_ID}='$id';")
-        allEntries.removeIf { id == it.dbID }
+    fun removeEntry(id: String?) {
+        id ?: return
+        writableDatabase?.execSQL("DELETE FROM $TABLE_KEYS WHERE $COL_ID = '$id';")
+        allEntries.removeIf { id == it.id }
     }
 
     companion object {
+        const val DB_NAME = "auths"
+        const val DB_VERSION = 14
+        const val TABLE_KEYS = "auth_secret_keys"
+        const val COL_ID = "id"
+        const val COL_DATA = "data"
+
         private var instance: DBHelper? = null
         fun getInstance(context: Context): DBHelper {
             if (instance == null)
@@ -93,16 +92,4 @@ class DBHelper private constructor(
         }
     }
 
-    private object DBInfo {
-        const val NAME = "auths"
-        const val VERSION = 13
-        const val TABLE_KEYS = "auth_secret_keys"
-        const val COL_ID = "id"
-        const val COL_ISSUER = "issuer"
-        const val COL_LABEL = "label"
-        const val COL_SECRET_KEY = "secret_key"
-        const val COL_ALGORITHM = "algorithm"
-        const val COL_PERIOD = "period"
-        const val COL_OTP_LENGTH = "otp_length"
-    }
 }
