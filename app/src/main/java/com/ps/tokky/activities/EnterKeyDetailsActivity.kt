@@ -68,7 +68,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                 binding.issuerField.editText.addTextChangedListener(editModeTextWatcher)
                 binding.labelField.editText.addTextChangedListener(editModeTextWatcher)
                 binding.detailsSaveBtn.setOnClickListener {
-                    hideIme()
+                    hideKeyboard()
 
                     currentEntry.updateInfo(
                         issuer = binding.issuerField.editText.text.toString(),
@@ -95,6 +95,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         binding.advLayout.advPeriodInputLayout.editText.inputType = InputType.TYPE_CLASS_NUMBER
 
         binding.advLayoutSwitch.setOnClickListener {
+            hideKeyboard()
             showAdvancedOptions(binding.advLayout.advOptionsLayout.visibility == View.GONE)
         }
 
@@ -104,7 +105,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         inflateOTPLengthToggleLayout()
 
         binding.detailsSaveBtn.setOnClickListener {
-            hideIme()
+            hideKeyboard()
 
             try {
                 val issuer = binding.issuerField.value
@@ -183,7 +184,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun hideIme() {
+    private fun hideKeyboard() {
         binding.issuerField.editText.hideKeyboard(this)
         binding.labelField.editText.hideKeyboard(this)
         binding.secretKeyField.editText.hideKeyboard(this)
@@ -247,6 +248,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                 if (binding.secretKeyField.editText.text.isEmpty()) {
                     onBackPressed()
                 } else {
+                    hideKeyboard()
                     MaterialAlertDialogBuilder(this)
                         .setTitle(R.string.enter_details_activity_dialog_back_title)
                         .setMessage(R.string.enter_details_activity_dialog_back_message)
