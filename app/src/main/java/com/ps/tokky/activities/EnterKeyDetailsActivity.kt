@@ -10,6 +10,7 @@ import android.text.InputType
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout.LayoutParams
@@ -46,6 +47,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
 
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         val editMode = editId != null || otpAuthUrl != null
 
@@ -237,6 +239,25 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                 binding.advLayout.advOptionsLayout.visibility = View.GONE
             }, shortAnimationDuration.toLong())
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                if (binding.secretKeyField.editText.text.isEmpty()) {
+                    onBackPressed()
+                } else {
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.enter_details_activity_dialog_back_title)
+                        .setMessage(R.string.enter_details_activity_dialog_back_message)
+                        .setPositiveButton(R.string.dialog_go_back) { _, _ -> onBackPressed() }
+                        .setNegativeButton(R.string.dialog_cancel, null)
+                        .create()
+                        .show()
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private val textWatcher: TextWatcher =

@@ -15,6 +15,10 @@
     <string name="label_algorithm">Algorithm</string>
     <string name="label_view_advanced_options"><u>View advanced options</u></string>
     <string name="label_hide_advanced_options"><u>Hide advanced options</u></string>
+    <string name="enter_details_activity_dialog_back_title">Warning</string>
+    <string name="enter_details_activity_dialog_back_message">Going back will clear all the fields. Are you sure to go back?</string>
+    <string name="dialog_go_back">Go back</string>
+    <string name="dialog_cancel">Cancel</string>
 
     <string name="error_db_entry_failed">Failed to add, please try after sometime</string>
     <string name="error_db_delete_failed">Failed to remove</string>
