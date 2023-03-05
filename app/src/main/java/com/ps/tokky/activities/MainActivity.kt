@@ -86,9 +86,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (!adapter.editModeEnabled)
+        if (!adapter.editModeEnabled) {
             menuInflater.inflate(R.menu.menu_main, menu)
-        menu?.getItem(1)?.isEnabled = helper.getAllEntries(false).isNotEmpty()
+            menu?.getItem(1)?.isEnabled = helper.getAllEntries(false).isNotEmpty()
+        }
         return true
     }
 
