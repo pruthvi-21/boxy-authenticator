@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.ps.tokky.models.TokenEntry
 import org.json.JSONObject
+import javax.crypto.SecretKey
 
 class DBHelper private constructor(
     context: Context
@@ -24,10 +25,11 @@ class DBHelper private constructor(
         }
         val db = writableDatabase
         val data = entry.toJson().toString()
+        val cipher = CryptoUtils.encryptData(data, secretKey)
 
         val contentValues = ContentValues().apply {
             put(COL_ID, entry.id)
-            put(COL_DATA, data)
+            put(COL_DATA, cipher)
         }
 
         val rowID = db.insert(TABLE_KEYS, null, contentValues)
@@ -45,11 +47,12 @@ class DBHelper private constructor(
 
         if (cursor.moveToFirst()) {
             do {
-                val obj = TokenEntry(
-                    cursor.getString(0)!!,
-                    JSONObject(cursor.getString(1)!!)
-                )
-                allEntries.add(obj)
+                val id = cursor.getString(0)
+                val cipher = cursor.getString(1)
+                val data = CryptoUtils.decryptData(cipher, secretKey)
+                val jsonObj = JSONObject(data)
+
+                allEntries.add(TokenEntry(id, jsonObj))
             } while (cursor.moveToNext())
         }
 
@@ -78,6 +81,8 @@ class DBHelper private constructor(
     }
 
     companion object {
+        private const val TAG = "DBHelper"
+
         const val DB_NAME = "auths"
         const val DB_VERSION = 14
         const val TABLE_KEYS = "auth_secret_keys"
@@ -85,9 +90,12 @@ class DBHelper private constructor(
         const val COL_DATA = "data"
 
         private var instance: DBHelper? = null
+        private var secretKey: SecretKey? = null
         fun getInstance(context: Context): DBHelper {
-            if (instance == null)
+            if (instance == null) {
                 instance = DBHelper(context)
+                secretKey = CryptoUtils.getSecretKey()
+            }
             return instance!!
         }
     }
