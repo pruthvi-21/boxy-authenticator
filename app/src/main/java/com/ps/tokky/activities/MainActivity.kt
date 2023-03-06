@@ -1,12 +1,16 @@
 package com.ps.tokky.activities
 
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +22,7 @@ import com.ps.tokky.databinding.ActivityMainBinding
 import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
+import kotlin.math.roundToLong
 
 class MainActivity : AppCompatActivity() {
 
@@ -112,22 +117,48 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openEditMode(open: Boolean) {
-        if (open) {
-            adapter.editModeEnabled = true
-            invalidateOptionsMenu()
-            supportActionBar?.setTitle(R.string.edit)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
-            binding.fabAddNew.hide()
-        } else {
-            adapter.editModeEnabled = false
-            invalidateOptionsMenu()
-            supportActionBar?.setTitle(R.string.app_name)
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            supportActionBar?.setHomeAsUpIndicator(0)
-            binding.fabAddNew.show()
-            refresh(false)
+
+        val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                duration = (duration * ValueAnimator.getDurationScale()).roundToLong()
+            }
         }
+        val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                duration = (duration * ValueAnimator.getDurationScale()).roundToLong()
+            }
+        }
+
+        fadeOut.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                if (open) {
+                    adapter.editModeEnabled = true
+                    invalidateOptionsMenu()
+                    supportActionBar?.setTitle(R.string.edit)
+                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+                    binding.fabAddNew.visibility = View.GONE
+                } else {
+                    adapter.editModeEnabled = false
+                    invalidateOptionsMenu()
+                    supportActionBar?.setTitle(R.string.app_name)
+                    supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                    supportActionBar?.setHomeAsUpIndicator(0)
+                    binding.fabAddNew.visibility = View.VISIBLE
+//                  refresh(false)
+                }
+                binding.root.startAnimation(fadeIn)
+            }
+
+            override fun onAnimationRepeat(animation: Animation?) {
+            }
+
+        })
+        binding.root.startAnimation(fadeOut)
     }
 
 
