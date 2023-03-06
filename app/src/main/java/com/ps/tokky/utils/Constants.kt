@@ -10,4 +10,6 @@ object Constants {
     const val OTP_GENERATION_REFRESH_INTERVAL = 1000L
 
     const val BASE32_CHARS = "[A-Z2-7 ]+"
+
+    const val KEY_LIST_ORDER = "list_order"
 }

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
@@ -18,6 +19,7 @@ import com.ps.tokky.activities.EnterKeyDetailsActivity
 import com.ps.tokky.activities.MainActivity
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
+import com.ps.tokky.utils.Constants.KEY_LIST_ORDER
 import java.util.*
 
 class TokenAdapter(
@@ -31,6 +33,7 @@ class TokenAdapter(
 
     private val handler = Handler(Looper.getMainLooper())
     private val dbHelper = DBHelper.getInstance(context)
+    private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     private val handlerTask = object : Runnable {
         override fun run() {
@@ -60,6 +63,8 @@ class TokenAdapter(
 
                 Collections.swap(list, fromPosition, toPosition)
                 notifyItemMoved(fromPosition, toPosition)
+                saveListOrder()
+
                 return true
             }
 
@@ -114,6 +119,9 @@ class TokenAdapter(
     fun updateEntries(list: List<TokenEntry>) {
         this.list.clear()
         this.list.addAll(list)
+
+        setListOrder()
+
         notifyDataSetChanged()
     }
 
@@ -162,11 +170,34 @@ class TokenAdapter(
     override fun onDelete(entry: TokenEntry, position: Int) {
         dbHelper.removeEntry(entry.id)
         list.removeAt(position)
+
+        saveListOrder()
+
         notifyItemRemoved(position)
 
         if (list.size == 0 && context is MainActivity) {
             context.openEditMode(false)
         }
+    }
+
+    private fun setListOrder() {
+        val listOrderStr = sharedPreferences.getString(KEY_LIST_ORDER, "")
+        val listOrder = listOrderStr?.split(",")?.toList()
+
+        if (listOrder?.isNotEmpty() == true) {
+            val sortedThings = list.sortedWith { a, b ->
+                listOrder.indexOf(a.id).compareTo(listOrder.indexOf(b.id))
+            }
+
+            this.list.clear()
+            this.list.addAll(sortedThings)
+        }
+    }
+
+    private fun saveListOrder() {
+        val ids = ArrayList<String>()
+        list.forEach { ids.add(it.id!!) }
+        sharedPreferences.edit().putString(KEY_LIST_ORDER, ids.joinToString(",")).apply()
     }
 
     fun onResume() {
