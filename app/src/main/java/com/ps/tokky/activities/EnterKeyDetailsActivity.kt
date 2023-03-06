@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +22,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
-import com.ps.tokky.models.HashAlgorithm
 import com.ps.tokky.models.OTPLength
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.*
@@ -101,7 +101,6 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
         binding.advLayout.advPeriodInputLayout.editText.setText(Constants.DEFAULT_OTP_VALIDITY.toString())
 
-        inflateAlgorithmMethods()
         inflateOTPLengthToggleLayout()
 
         binding.detailsSaveBtn.setOnClickListener {
@@ -117,13 +116,10 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                     .values()
                     .find { it.resId == binding.advLayout.otpLengthToggleGroup.checkedButtonId }
 
-                val algo = HashAlgorithm
-                    .values()
-                    .find { it.resId == binding.advLayout.algoToggleGroup.checkedButtonId }
+                val algo = findViewById<Button>(binding.advLayout.algoToggleGroup.checkedButtonId).text.toString()
 
-                if (otpLength == null || algo == null) {
-                    otpLength ?: Log.e(TAG, "onSaveDetails: No value selected for OTP Length")
-                    algo ?: Log.e(TAG, "onSaveDetails: No value selected for Hash Algorithm")
+                if (otpLength == null) {
+                    Log.e(TAG, "onSaveDetails: No value selected for OTP Length")
                     Toast.makeText(this, R.string.error_saving_details, Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
@@ -189,19 +185,6 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         binding.labelField.editText.hideKeyboard(this)
         binding.secretKeyField.editText.hideKeyboard(this)
         binding.advLayout.advPeriodInputLayout.editText.hideKeyboard(this)
-    }
-
-    private fun inflateAlgorithmMethods() {
-        for (algo in HashAlgorithm.values()) {
-            val button = MaterialButton(this, null, R.attr.buttonGroupButtonStyle).apply {
-                id = algo.resId
-                text = algo.name
-            }
-            binding.advLayout.algoToggleGroup.addView(button)
-            (button.layoutParams as LayoutParams).weight = 1f
-        }
-
-        binding.advLayout.algoToggleGroup.check(Constants.DEFAULT_HASH_ALGORITHM.resId)
     }
 
     private fun inflateOTPLengthToggleLayout() {

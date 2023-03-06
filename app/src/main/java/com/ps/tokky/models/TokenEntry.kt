@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.BaseEncoding
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.*
+import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_VALIDITY
 import org.json.JSONObject
 import java.net.URI
@@ -18,7 +19,7 @@ class TokenEntry {
     private val secretKey: ByteArray
     private val otpLength: OTPLength
     val period: Int
-    private val algorithm: HashAlgorithm
+    private val algorithm: String
     var hash: String
 
     constructor(
@@ -28,7 +29,7 @@ class TokenEntry {
         secretKey: String,
         otpLength: OTPLength = OTPLength.LEN_6,
         period: Int = DEFAULT_OTP_VALIDITY,
-        algorithm: HashAlgorithm = HashAlgorithm.SHA1,
+        algorithm: String = DEFAULT_HASH_ALGORITHM,
         hash: String?
     ) {
         this.id = id ?: UUID.randomUUID().toString()
@@ -62,15 +63,11 @@ class TokenEntry {
             if (digits == 8) length = OTPLength.LEN_8
         }
 
-        var algo = HashAlgorithm.SHA1
-        if (json.has(KEY_ALGORITHM)) {
-            val algorithm = json.getString(KEY_ALGORITHM)
-            if (algorithm == "SHA265") algo = HashAlgorithm.SHA256
-            if (algorithm == "SHA512") algo = HashAlgorithm.SHA512
-        }
+        this.algorithm = if (json.has(KEY_ALGORITHM)) {
+            json.getString(KEY_ALGORITHM)
+        } else DEFAULT_HASH_ALGORITHM
 
         this.otpLength = length
-        this.algorithm = algo
         this.hash = json.getString(KEY_HASH)
     }
 
@@ -101,11 +98,7 @@ class TokenEntry {
 
         this.otpLength = if (digits == 8) OTPLength.LEN_8 else OTPLength.LEN_6
 
-        val algorithm = params["algorithm"] ?: "SHA1"
-        this.algorithm = if (algorithm.equals("SHA256", true)) HashAlgorithm.SHA256
-        else if (algorithm.equals("SHA512", true)) HashAlgorithm.SHA512
-        else HashAlgorithm.SHA1
-
+        this.algorithm = params["algorithm"] ?: "SHA1"
         this.hash = getHash(this)
     }
 
@@ -153,7 +146,7 @@ class TokenEntry {
             put(KEY_SECRET_KEY, secretKeyEncoded) //String
             put(KEY_PERIOD, period) //Int
             put(KEY_OTP_LENGTH, otpLength.value) //Int
-            put(KEY_ALGORITHM, algorithm.name) //String
+            put(KEY_ALGORITHM, algorithm) //String
             put(KEY_HASH, hash)
         }
     }
@@ -170,7 +163,7 @@ class TokenEntry {
         const val KEY_HASH = "hash"
 
         fun getHash(t: TokenEntry): String {
-            return "${t.issuer}:${t.period}:${t.label}:${t.otpLength.value}:${t.secretKeyEncoded}:${t.algorithm.name}"
+            return "${t.issuer}:${t.period}:${t.label}:${t.otpLength.value}:${t.secretKeyEncoded}:${t.algorithm}"
                 .hash("SHA512")
                 .hash("SHA1")
         }

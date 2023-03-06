@@ -76,7 +76,33 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="7"
+            app:checkedButton="@id/btn_sha1"
             app:selectionRequired="true"
-            app:singleSelection="true" />
+            app:singleSelection="true">
+
+            <Button
+                android:id="@+id/btn_sha1"
+                style="?buttonGroupButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SHA1" />
+
+            <Button
+                android:id="@+id/btn_sha256"
+                style="?buttonGroupButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SHA256" />
+
+            <Button
+                android:id="@+id/btn_sha512"
+                style="?buttonGroupButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SHA512" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
     </LinearLayout>
 </LinearLayout>

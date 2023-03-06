@@ -1,6 +1,5 @@
 package com.ps.tokky.utils;
 
-import com.ps.tokky.models.HashAlgorithm;
 import com.ps.tokky.models.OTPLength;
 
 import java.nio.ByteBuffer;
@@ -11,9 +10,9 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class TokenCalculator {
-    private static byte[] generateHash(HashAlgorithm algorithm, byte[] key, byte[] data)
+    private static byte[] generateHash(String algorithm, byte[] key, byte[] data)
             throws NoSuchAlgorithmException, InvalidKeyException {
-        String algo = "Hmac" + algorithm.name();
+        String algo = "Hmac" + algorithm;
 
         Mac mac = Mac.getInstance(algo);
         mac.init(new SecretKeySpec(key, algo));
@@ -21,7 +20,7 @@ public class TokenCalculator {
         return mac.doFinal(data);
     }
 
-    public static int TOTP_RFC6238(byte[] secret, int period, OTPLength otpLength, HashAlgorithm algorithm, int offset) {
+    public static int TOTP_RFC6238(byte[] secret, int period, OTPLength otpLength, String algorithm, int offset) {
         long time = System.currentTimeMillis() / 1000;
         int fullToken = TOTP(secret, period, time, algorithm, offset);
         int div = (int) Math.pow(10, otpLength.getValue());
@@ -29,11 +28,11 @@ public class TokenCalculator {
         return fullToken % div;
     }
 
-    private static int TOTP(byte[] key, int period, long time, HashAlgorithm algorithm, int offset) {
+    private static int TOTP(byte[] key, int period, long time, String algorithm, int offset) {
         return HOTP(key, (time / period) + offset, algorithm);
     }
 
-    private static int HOTP(byte[] key, long counter, HashAlgorithm algorithm) {
+    private static int HOTP(byte[] key, long counter, String algorithm) {
         int r = 0;
 
         try {
