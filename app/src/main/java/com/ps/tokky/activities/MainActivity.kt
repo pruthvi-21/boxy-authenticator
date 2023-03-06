@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fabAddNew.setOnLongClickListener {
-            qrActivityLauncher.launch(Intent(this, CameraScannerActivity::class.java))
+            addNewActivityLauncher.launch(Intent(this, CameraScannerActivity::class.java))
             true
         }
 
@@ -167,13 +167,6 @@ class MainActivity : AppCompatActivity() {
             val extras = it.data?.extras
             if (it.resultCode == Activity.RESULT_OK && extras != null) {
                 adapter.addToken(helper.getAllEntries(false).find { it1 -> it1.id == extras.getString("id") })
-            }
-        }
-
-    private val qrActivityLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                refresh(true)
             }
         }
 

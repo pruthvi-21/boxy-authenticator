@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.budiyev.android.codescanner.*
 import com.google.zxing.BarcodeFormat
@@ -33,11 +34,10 @@ class CameraScannerActivity : AppCompatActivity() {
             runOnUiThread {
                 try {
                     setResult(Activity.RESULT_OK)
-                    startActivity(
+                    addNewActivityLauncher.launch(
                         Intent(this, EnterKeyDetailsActivity::class.java)
                             .putExtra("otpAuth", it.text)
                     )
-                    finish()
                 } catch (exception: Exception) {
                     exception.printStackTrace()
                     Toast.makeText(this, "Exception: ${exception.message}", Toast.LENGTH_SHORT).show()
@@ -67,4 +67,13 @@ class CameraScannerActivity : AppCompatActivity() {
         codeScanner.releaseResources()
         super.onPause()
     }
+
+    private val addNewActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val extras = it.data?.extras
+            if (it.resultCode == Activity.RESULT_OK && extras != null) {
+                setResult(Activity.RESULT_OK, Intent().putExtra("id", extras.getString("id")))
+            }
+            finish()
+        }
 }
