@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_refresh"
         android:iconTint="?colorControlNormal"
         android:title="@string/refresh"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_main_edit"
