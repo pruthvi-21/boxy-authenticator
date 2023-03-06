@@ -1,32 +1,42 @@
 package com.ps.tokky.activities
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.budiyev.android.codescanner.*
 import com.google.zxing.BarcodeFormat
-import com.ps.tokky.R
+import com.ps.tokky.databinding.ActivityCameraScannerBinding
 
 class CameraScannerActivity : AppCompatActivity() {
-    private lateinit var codeScanner: CodeScanner
+
+    private val binding by lazy { ActivityCameraScannerBinding.inflate(layoutInflater) }
+
+    private val codeScanner by lazy { CodeScanner(this, binding.scannerView) }
+
+    private var cameraPermissionGranted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_camera_scanner)
-        val scannerView = findViewById<CodeScannerView>(R.id.scanner_view)
+        setContentView(binding.root)
 
-        codeScanner = CodeScanner(this, scannerView)
+        requestCameraPermission()
 
         // Parameters (default values)
-        codeScanner.camera = CodeScanner.CAMERA_BACK
-        codeScanner.formats = listOf(BarcodeFormat.QR_CODE)
-        codeScanner.autoFocusMode = AutoFocusMode.SAFE
-        codeScanner.scanMode = ScanMode.SINGLE
-        codeScanner.isAutoFocusEnabled = true
-        codeScanner.isFlashEnabled = false
+        codeScanner.apply {
+            camera = CodeScanner.CAMERA_BACK
+            formats = listOf(BarcodeFormat.QR_CODE)
+            autoFocusMode = AutoFocusMode.SAFE
+            scanMode = ScanMode.SINGLE
+            isAutoFocusEnabled = true
+            isFlashEnabled = false
+        }
 
 
         // Callbacks
@@ -53,14 +63,35 @@ class CameraScannerActivity : AppCompatActivity() {
             }
         }
 
-        scannerView.setOnClickListener {
+        binding.scannerView.setOnClickListener {
             codeScanner.startPreview()
+        }
+    }
+
+    private fun requestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_CODE
+            )
+        } else {
+            cameraPermissionGranted = true
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            cameraPermissionGranted =
+                grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
     }
 
     override fun onResume() {
         super.onResume()
-        codeScanner.startPreview()
+        if (cameraPermissionGranted)
+            codeScanner.startPreview()
     }
 
     override fun onPause() {
@@ -76,4 +107,8 @@ class CameraScannerActivity : AppCompatActivity() {
             }
             finish()
         }
+
+    companion object {
+        private const val CAMERA_PERMISSION_CODE = 9890
+    }
 }
