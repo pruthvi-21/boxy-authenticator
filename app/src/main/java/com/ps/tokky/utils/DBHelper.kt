@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.ps.tokky.models.TokenEntry
 import org.json.JSONObject
 import javax.crypto.SecretKey
@@ -55,6 +56,9 @@ class DBHelper private constructor(
                 allEntries.add(TokenEntry(id, jsonObj))
             } while (cursor.moveToNext())
         }
+
+        val valid = TokenEntry.validateHash(allEntries)
+        Log.i(TAG, "getAllEntries: validated tokens hash: $valid")
 
         cursor.close()
         return allEntries

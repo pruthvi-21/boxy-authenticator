@@ -1,6 +1,7 @@
 package com.ps.tokky.models
 
 import android.text.Spannable
+import android.util.Log
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.BaseEncoding
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.*
@@ -158,6 +159,8 @@ class TokenEntry {
     }
 
     companion object {
+        const val TAG = "TokenEntry"
+
         const val KEY_ISSUER = "issuer"
         const val KEY_LABEL = "label"
         const val KEY_SECRET_KEY = "secret_key"
@@ -170,6 +173,17 @@ class TokenEntry {
             return "${t.issuer}:${t.period}:${t.label}:${t.otpLength.value}:${t.secretKeyEncoded}:${t.algorithm.name}"
                 .hash("SHA512")
                 .hash("SHA1")
+        }
+
+        fun validateHash(tokens: List<TokenEntry>): Boolean {
+            var valid = true
+            for (token in tokens) {
+                if (token.hash != getHash(token)) {
+                    Log.e(TAG, "validateHash: hash mismatched for token issued by ${token.issuer}")
+                    valid = false
+                }
+            }
+            return valid
         }
     }
 }
