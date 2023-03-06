@@ -207,4 +207,11 @@ class TokenAdapter(
     fun onPause() {
         if (!editModeEnabled) handler.removeCallbacks(handlerTask)
     }
+
+    fun addToken(token: TokenEntry?) {
+        token ?: return
+        list.add(token)
+        notifyItemInserted(list.indexOf(token))
+        saveListOrder()
+    }
 }

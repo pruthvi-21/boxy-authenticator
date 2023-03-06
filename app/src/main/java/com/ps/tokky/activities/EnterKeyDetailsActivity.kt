@@ -156,7 +156,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
             val success = dbHelper.addEntry(token)
 
             if (success) {
-                setResult(Activity.RESULT_OK, Intent().putExtra("refresh", true))
+                setResult(Activity.RESULT_OK, Intent().putExtra("id", token.id))
                 finish()
             } else Toast.makeText(this, R.string.error_db_entry_failed, Toast.LENGTH_SHORT).show()
         } catch (exception: TokenExistsInDBException) {
