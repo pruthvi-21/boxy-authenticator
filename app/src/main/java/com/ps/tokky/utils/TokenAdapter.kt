@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -17,6 +18,7 @@ import com.ps.tokky.activities.EnterKeyDetailsActivity
 import com.ps.tokky.activities.MainActivity
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
+import java.util.*
 
 class TokenAdapter(
     private val context: AppCompatActivity,
@@ -28,14 +30,45 @@ class TokenAdapter(
     private var currentExpanded = -1
 
     private val handler = Handler(Looper.getMainLooper())
+    private val dbHelper = DBHelper.getInstance(context)
+
     private val handlerTask = object : Runnable {
         override fun run() {
             checkAndUpdateOTP()
             handler.postDelayed(this, Constants.OTP_GENERATION_REFRESH_INTERVAL)
         }
     }
+    private val itemTouchHelper by lazy {
+        val callback = object : ItemTouchHelper.Callback() {
+            override fun getMovementFlags(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                return makeMovementFlags(
+                    ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                    0
+                )
+            }
 
-    private val dbHelper = DBHelper.getInstance(context)
+            override fun onMove(
+                recyclerView: RecyclerView,
+                source: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val fromPosition = source.adapterPosition
+                val toPosition = target.adapterPosition
+
+                Collections.swap(list, fromPosition, toPosition)
+                notifyItemMoved(fromPosition, toPosition)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            }
+
+        }
+        ItemTouchHelper(callback)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TokenViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -98,9 +131,11 @@ class TokenAdapter(
     }
 
     var editModeEnabled: Boolean = false
+        @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
             notifyDataSetChanged()
+            itemTouchHelper.attachToRecyclerView(if (value) this.recyclerView else null)
         }
 
     override fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean) {
