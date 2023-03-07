@@ -28,4 +28,5 @@
     <string name="label_clipboard_content">OTP Token</string>
     <string name="refresh">Refresh</string>
     <string name="edit">Edit</string>
+    <string name="unlock_prompt_title">Unlock to use Tokky</string>
 </resources>
