@@ -23,6 +23,13 @@ object Utils {
         return colorValue
     }
 
+    fun getDimenFromAttr(context: Context, dimenAttr: Int): Int {
+        val arr = context.theme.obtainStyledAttributes(intArrayOf(dimenAttr))
+        val dimen = arr.getDimensionPixelSize(0, -1)
+        arr.recycle()
+        return dimen
+    }
+
     fun copyToClipboard(context: Context, text: String?) {
         text ?: return
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

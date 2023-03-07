@@ -47,7 +47,12 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
 
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.collapsingToolbar.toolbar)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_chevron_left)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = " "
+
+        binding.collapsingToolbar.setTitle(R.string.title_enter_account_details)
 
         val editMode = editId != null || otpAuthUrl != null
 

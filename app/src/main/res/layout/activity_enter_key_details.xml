@@ -1,41 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".activities.EnterKeyDetailsActivity">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="12dp"
-        android:background="?colorSurface"
-        app:navigationIcon="@drawable/ic_chevron_left"
-        app:title="@string/title_enter_account_details"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat.Title">
+    <com.ps.tokky.views.AppBarX
+        android:id="@+id/app_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/surface_color"
+        app:elevation="0dp">
 
-        <Button
-            android:id="@+id/details_save_btn"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:padding="0dp"
-            android:text="@string/label_save_btn" />
-    </com.google.android.material.appbar.MaterialToolbar>
+        <com.ps.tokky.views.CollapsingToolbarX
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap" />
+
+    </com.ps.tokky.views.AppBarX>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/screen_margin">
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/screen_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <Button
+                android:id="@+id/details_save_btn"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:padding="0dp"
+                android:text="@string/label_save_btn" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="100dp"
@@ -107,8 +109,4 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.collapsingToolbar.toolbar)
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity() {
                 if (open) {
                     adapter.editModeEnabled = true
                     invalidateOptionsMenu()
-                    supportActionBar?.setTitle(R.string.edit)
+                    binding.collapsingToolbar.toolbar.setTitle(R.string.edit)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
                     binding.fabAddNew.visibility = View.GONE
@@ -148,6 +148,7 @@ class MainActivity : AppCompatActivity() {
                     supportActionBar?.setTitle(R.string.app_name)
                     supportActionBar?.setDisplayHomeAsUpEnabled(false)
                     supportActionBar?.setHomeAsUpIndicator(0)
+                    binding.collapsingToolbar.toolbar.navigationIcon = null
                     binding.fabAddNew.visibility = View.VISIBLE
 //                  refresh(false)
                 }

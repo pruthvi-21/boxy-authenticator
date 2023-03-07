@@ -16,4 +16,6 @@
     <dimen name="card_thumbnail_height">37.5dp</dimen>
     <dimen name="home_card_corner_radius">@dimen/radius_large</dimen>
     <dimen name="rv_item_margin">10dp</dimen>
+    <dimen name="collapsing_toolbar_expanded_frame_margin_bottom">20dp</dimen>
+    <dimen name="toolbar_margin_top">12dp</dimen>
 </resources>
