@@ -84,7 +84,7 @@ class TokenEntry {
         this.issuer = params["issuer"] ?: ""
         this.label = uri.path.substring(1)
 
-        val secret = params["secret"] ?: throw IllegalArgumentException("Missing secret parameter")
+        val secret = params["secret"]?.cleanSecretKey() ?: throw IllegalArgumentException("Missing secret parameter")
         if (secret.isValidSecretKey()) {
             this.secretKey = Base32().decode(secret.cleanSecretKey())
         } else throw InvalidSecretKeyException("Invalid secret key")
