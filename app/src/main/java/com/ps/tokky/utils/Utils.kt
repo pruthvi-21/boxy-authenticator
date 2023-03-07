@@ -12,7 +12,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.ps.tokky.R
-import com.ps.tokky.models.OTPLength
 import java.security.MessageDigest
 
 object Utils {
@@ -59,11 +58,11 @@ fun View.hideKeyboard(context: Context) {
     imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
-fun Int.formatOTP(length: OTPLength): SpannableStringBuilder {
+fun Int.formatOTP(length: Int): SpannableStringBuilder {
     val res = "$this"
-        .padStart(length.value, '0')
+        .padStart(length, '0')
         .reversed()
-        .replace(".".repeat(length.chunkSize).toRegex(), "$0 ")
+        .replace(".".repeat(3).toRegex(), "$0 ")
         .trim()
         .reversed()
 

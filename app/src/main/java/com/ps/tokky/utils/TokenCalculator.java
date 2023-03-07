@@ -1,7 +1,5 @@
 package com.ps.tokky.utils;
 
-import com.ps.tokky.models.OTPLength;
-
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -20,10 +18,10 @@ public class TokenCalculator {
         return mac.doFinal(data);
     }
 
-    public static int TOTP_RFC6238(byte[] secret, int period, OTPLength otpLength, String algorithm, int offset) {
+    public static int TOTP_RFC6238(byte[] secret, int period, int otpLength, String algorithm, int offset) {
         long time = System.currentTimeMillis() / 1000;
         int fullToken = TOTP(secret, period, time, algorithm, offset);
-        int div = (int) Math.pow(10, otpLength.getValue());
+        int div = (int) Math.pow(10, otpLength);
 
         return fullToken % div;
     }

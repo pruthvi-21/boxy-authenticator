@@ -53,8 +53,34 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="7"
+            app:checkedButton="@id/btn_6digits"
             app:selectionRequired="true"
-            app:singleSelection="true" />
+            app:singleSelection="true">
+
+            <Button
+                android:id="@+id/btn_4digits"
+                style="?buttonGroupButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="4" />
+
+            <Button
+                android:id="@+id/btn_6digits"
+                style="?buttonGroupButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="6" />
+
+            <Button
+                android:id="@+id/btn_8digits"
+                style="?buttonGroupButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="8" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
     </LinearLayout>
 
     <LinearLayout

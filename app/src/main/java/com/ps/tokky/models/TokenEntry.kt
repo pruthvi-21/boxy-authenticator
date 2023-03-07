@@ -6,6 +6,7 @@ import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.Bas
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.*
 import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
+import com.ps.tokky.utils.Constants.DEFAULT_OTP_LENGTH
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_VALIDITY
 import org.json.JSONObject
 import java.net.URI
@@ -17,7 +18,7 @@ class TokenEntry {
     var issuer: String
     var label: String
     private val secretKey: ByteArray
-    private val otpLength: OTPLength
+    private val otpLength: Int
     val period: Int
     private val algorithm: String
     var hash: String
@@ -27,7 +28,7 @@ class TokenEntry {
         issuer: String,
         label: String,
         secretKey: String,
-        otpLength: OTPLength = OTPLength.LEN_6,
+        otpLength: Int = DEFAULT_OTP_LENGTH,
         period: Int = DEFAULT_OTP_VALIDITY,
         algorithm: String = DEFAULT_HASH_ALGORITHM,
         hash: String?
@@ -57,17 +58,13 @@ class TokenEntry {
         this.period = if (json.has(KEY_PERIOD)) json.getInt(KEY_PERIOD)
         else DEFAULT_OTP_VALIDITY
 
-        var length = OTPLength.LEN_6
-        if (json.has(KEY_OTP_LENGTH)) {
-            val digits = json.getInt(KEY_OTP_LENGTH)
-            if (digits == 8) length = OTPLength.LEN_8
-        }
+        this.otpLength = if (json.has(KEY_OTP_LENGTH)) json.getInt(KEY_OTP_LENGTH)
+        else DEFAULT_OTP_LENGTH
 
         this.algorithm = if (json.has(KEY_ALGORITHM)) {
             json.getString(KEY_ALGORITHM)
         } else DEFAULT_HASH_ALGORITHM
 
-        this.otpLength = length
         this.hash = json.getString(KEY_HASH)
     }
 
@@ -93,10 +90,7 @@ class TokenEntry {
         } else throw InvalidSecretKeyException("Invalid secret key")
 
         this.period = params["period"]?.toInt() ?: 30
-
-        val digits = params["digits"]?.toInt() ?: 6
-
-        this.otpLength = if (digits == 8) OTPLength.LEN_8 else OTPLength.LEN_6
+        this.otpLength = params["digits"]?.toInt() ?: DEFAULT_OTP_LENGTH
 
         this.algorithm = params["algorithm"] ?: "SHA1"
         this.hash = getHash(this)
@@ -131,7 +125,7 @@ class TokenEntry {
         get() = currentOTP.formatOTP(otpLength)
 
     val otpFormattedString: String
-        get() = "$currentOTP".padStart(otpLength.value, '0')
+        get() = "$currentOTP".padStart(otpLength, '0')
 
     fun updateInfo(issuer: String, label: String) {
         this.issuer = issuer
@@ -145,7 +139,7 @@ class TokenEntry {
             put(KEY_LABEL, label) //String
             put(KEY_SECRET_KEY, secretKeyEncoded) //String
             put(KEY_PERIOD, period) //Int
-            put(KEY_OTP_LENGTH, otpLength.value) //Int
+            put(KEY_OTP_LENGTH, otpLength) //Int
             put(KEY_ALGORITHM, algorithm) //String
             put(KEY_HASH, hash)
         }
@@ -163,7 +157,7 @@ class TokenEntry {
         const val KEY_HASH = "hash"
 
         fun getHash(t: TokenEntry): String {
-            return "${t.issuer}:${t.period}:${t.label}:${t.otpLength.value}:${t.secretKeyEncoded}:${t.algorithm}"
+            return "${t.issuer}:${t.period}:${t.label}:${t.otpLength}:${t.secretKeyEncoded}:${t.algorithm}"
                 .hash("SHA512")
                 .hash("SHA1")
         }

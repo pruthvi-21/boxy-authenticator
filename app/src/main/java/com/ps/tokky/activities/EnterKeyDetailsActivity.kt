@@ -15,15 +15,12 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
-import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
-import com.ps.tokky.models.OTPLength
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.*
 import java.net.URI
@@ -110,8 +107,6 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
         binding.advLayout.advPeriodInputLayout.editText.setText(Constants.DEFAULT_OTP_VALIDITY.toString())
 
-        inflateOTPLengthToggleLayout()
-
         binding.detailsSaveBtn.setOnClickListener {
             hideKeyboard()
 
@@ -121,17 +116,13 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
                 val secretKey = binding.secretKeyField.value.cleanSecretKey()
                 val period = binding.advLayout.advPeriodInputLayout.value.toInt()
 
-                val otpLength = OTPLength
-                    .values()
-                    .find { it.resId == binding.advLayout.otpLengthToggleGroup.checkedButtonId }
+                val otpLength = when (binding.advLayout.otpLengthToggleGroup.checkedButtonId) {
+                    binding.advLayout.btn4digits.id -> 4
+                    binding.advLayout.btn8digits.id -> 8
+                    else -> 6
+                }
 
                 val algo = findViewById<Button>(binding.advLayout.algoToggleGroup.checkedButtonId).text.toString()
-
-                if (otpLength == null) {
-                    Log.e(TAG, "onSaveDetails: No value selected for OTP Length")
-                    Toast.makeText(this, R.string.error_saving_details, Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
 
                 val token = TokenEntry(
                     id = null,
@@ -194,18 +185,6 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         binding.labelField.editText.hideKeyboard(this)
         binding.secretKeyField.editText.hideKeyboard(this)
         binding.advLayout.advPeriodInputLayout.editText.hideKeyboard(this)
-    }
-
-    private fun inflateOTPLengthToggleLayout() {
-        for (len in OTPLength.values()) {
-            val button = MaterialButton(this, null, R.attr.buttonGroupButtonStyle)
-            button.id = len.resId
-            button.text = len.title
-            binding.advLayout.otpLengthToggleGroup.addView(button)
-            (button.layoutParams as LayoutParams).weight = 1f
-        }
-
-        binding.advLayout.otpLengthToggleGroup.check(Constants.DEFAULT_OTP_LENGTH.resId)
     }
 
     private fun showAdvancedOptions(show: Boolean) {
