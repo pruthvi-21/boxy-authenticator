@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.LinearLayout.LayoutParams
 import android.widget.Toast
@@ -65,6 +66,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
                 binding.issuerField.editText.setText(currentEntry!!.issuer)
                 binding.labelField.editText.setText(currentEntry.label)
+                binding.labelField.editText.imeOptions = EditorInfo.IME_ACTION_DONE
                 binding.secretKeyField.visibility = View.GONE
                 binding.advLayoutSwitch.visibility = View.GONE
                 binding.advLayout.advOptionsLayout.visibility = View.GONE
@@ -98,6 +100,8 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
 
         binding.detailsSaveBtn.isEnabled = false
         binding.advLayout.advPeriodInputLayout.editText.inputType = InputType.TYPE_CLASS_NUMBER
+        binding.advLayout.advPeriodInputLayout.editText.imeOptions = EditorInfo.IME_ACTION_DONE
+        binding.secretKeyField.editText.imeOptions = EditorInfo.IME_ACTION_DONE
 
         binding.advLayoutSwitch.setOnClickListener {
             hideKeyboard()
