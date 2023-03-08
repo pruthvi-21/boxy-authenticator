@@ -16,7 +16,6 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
@@ -25,7 +24,7 @@ import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.*
 import java.net.URI
 
-class EnterKeyDetailsActivity : AppCompatActivity() {
+class EnterKeyDetailsActivity : BaseActivity() {
 
     private val binding: ActivityEnterKeyDetailsBinding by lazy {
         ActivityEnterKeyDetailsBinding.inflate(layoutInflater)
@@ -34,7 +33,6 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
     private var shortAnimationDuration: Int = 0
 
     private val dbHelper = DBHelper.getInstance(this)
-    private val preferences by lazy { AppPreferences.getInstance(this) }
 
     private val editId: String? by lazy { intent.extras?.getString("id") }
     private val otpAuthUrl: String? by lazy { intent.extras?.getString("otpAuth") }

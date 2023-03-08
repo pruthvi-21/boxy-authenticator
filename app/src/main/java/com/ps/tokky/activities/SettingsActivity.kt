@@ -9,10 +9,9 @@ import com.ps.tokky.databinding.ActivitySettingsBinding
 import com.ps.tokky.fragments.PreferenceFragment
 import com.ps.tokky.utils.AppPreferences
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : BaseActivity() {
 
     private val binding by lazy { ActivitySettingsBinding.inflate(layoutInflater) }
-    private val preferences by lazy { AppPreferences.getInstance(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

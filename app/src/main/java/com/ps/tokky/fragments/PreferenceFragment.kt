@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceFragmentCompat
 import com.ps.tokky.R
 import com.ps.tokky.preferences.AppLockPreference
+import com.ps.tokky.utils.AppPreferences.Companion.KEY_APP_LOCK
 
 class PreferenceFragment : PreferenceFragmentCompat() {
 
@@ -53,6 +54,5 @@ class PreferenceFragment : PreferenceFragmentCompat() {
 
     companion object {
         private const val TAG = "PreferenceFragment"
-        private const val KEY_APP_LOCK = "key_app_lock"
     }
 }

@@ -5,7 +5,7 @@ import androidx.preference.PreferenceManager
 
 class AppPreferences private constructor(context: Context) {
 
-    private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     var appLockEnabled: Boolean = false
         get() {
@@ -28,8 +28,8 @@ class AppPreferences private constructor(context: Context) {
     companion object {
         private var instance: AppPreferences? = null
 
-        private const val KEY_APP_LOCK = "key_app_lock"
-        private const val KEY_ALLOW_SCREENSHOTS = "key_allow_screenshots"
+        const val KEY_APP_LOCK = "key_app_lock"
+        const val KEY_ALLOW_SCREENSHOTS = "key_allow_screenshots"
 
         fun getInstance(context: Context): AppPreferences {
             if (instance == null) {

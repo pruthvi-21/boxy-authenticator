@@ -30,7 +30,7 @@ import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
 import kotlin.math.roundToLong
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private var userAuthenticated = false
         set(value) {
@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
     private val adapter: TokenAdapter by lazy {
         TokenAdapter(this, ArrayList(), binding.recyclerView, addNewActivityLauncher)
     }
-    private val preferences by lazy { AppPreferences.getInstance(this) }
 
     //For biometric authentication
     private val executor by lazy { ContextCompat.getMainExecutor(this) }
