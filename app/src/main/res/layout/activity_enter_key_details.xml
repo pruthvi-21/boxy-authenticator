@@ -30,15 +30,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/details_save_btn"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:padding="0dp"
-                android:text="@string/label_save_btn" />
-
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
@@ -106,6 +97,19 @@
             <include
                 android:id="@+id/adv_layout"
                 layout="@layout/content_enter_key_details_adv_layout" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/details_save_btn"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginVertical="10dp"
+                android:padding="13dp"
+                android:text="@string/label_btn_add_account"
+                android:textColor="@color/btn_grp_text_btn_text_color_selector"
+                android:textStyle="bold"
+                app:backgroundTint="@color/btn_add_account_bg_selector"
+                app:cornerRadius="@dimen/radius_large" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

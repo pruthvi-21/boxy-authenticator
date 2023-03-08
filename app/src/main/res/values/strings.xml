@@ -5,7 +5,7 @@
 
     <!-- EnterKeyDetailsActivity -->
     <string name="title_enter_account_details">Enter account details</string>
-    <string name="label_save_btn">Save</string>
+    <string name="label_btn_add_account">Add account</string>
     <string name="label_issuer">Issuer</string>
     <string name="label_label">Label</string>
     <string name="label_secret_key">Secret Key</string>
