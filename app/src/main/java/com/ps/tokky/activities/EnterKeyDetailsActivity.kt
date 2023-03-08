@@ -34,6 +34,7 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
     private var shortAnimationDuration: Int = 0
 
     private val dbHelper = DBHelper.getInstance(this)
+    private val preferences by lazy { AppPreferences.getInstance(this) }
 
     private val editId: String? by lazy { intent.extras?.getString("id") }
     private val otpAuthUrl: String? by lazy { intent.extras?.getString("otpAuth") }
@@ -42,7 +43,9 @@ class EnterKeyDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //Block screenshots
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        if (!preferences.allowScreenshots) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        }
 
         setContentView(binding.root)
         setSupportActionBar(binding.collapsingToolbar.toolbar)

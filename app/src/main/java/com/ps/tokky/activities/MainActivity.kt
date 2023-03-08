@@ -62,7 +62,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //Block screenshots
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        if (!preferences.allowScreenshots) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        }
 
         setContentView(binding.root)
         setSupportActionBar(binding.collapsingToolbar.toolbar)
