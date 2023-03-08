@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="key_app_lock">key_app_lock</string>
+
+    <string name="title_app_lock">Enable app lock</string>
+
+    <string name="summary_app_lock">Lock this app with screen lock</string>
+</resources>

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen>
-
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.ps.tokky.preferences.AppLockPreference
+        app:defaultValue="false"
+        app:key="@string/key_app_lock"
+        app:layout="@layout/preference_layout_single"
+        app:summary="@string/summary_app_lock"
+        app:title="@string/title_app_lock" />
 </PreferenceScreen>

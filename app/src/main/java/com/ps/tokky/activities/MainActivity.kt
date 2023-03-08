@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityMainBinding
+import com.ps.tokky.utils.AppPreferences
 import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
@@ -32,6 +33,10 @@ import kotlin.math.roundToLong
 class MainActivity : AppCompatActivity() {
 
     private var userAuthenticated = false
+        set(value) {
+            field = value
+            if (field) refresh(true)
+        }
 
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -41,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private val adapter: TokenAdapter by lazy {
         TokenAdapter(this, ArrayList(), binding.recyclerView, addNewActivityLauncher)
     }
+    private val preferences by lazy { AppPreferences.getInstance(this) }
 
     //For biometric authentication
     private val executor by lazy { ContextCompat.getMainExecutor(this) }
@@ -64,7 +70,6 @@ class MainActivity : AppCompatActivity() {
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 userAuthenticated = true
-                refresh(true)
             }
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -113,6 +118,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         adapter.onResume()
+
+        if (!preferences.appLockEnabled) userAuthenticated = true
 
         if (!userAuthenticated) {
             biometricPrompt?.authenticate(promptInfo)
