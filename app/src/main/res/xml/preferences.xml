@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.ps.tokky.preferences.AppLockPreference
-        app:defaultValue="false"
-        app:key="@string/key_app_lock"
-        app:layout="@layout/preference_layout_top"
-        app:summary="@string/summary_app_lock"
-        app:title="@string/title_app_lock" />
+    <com.ps.tokky.preferences.MaterialPreferenceCategory>
+        <com.ps.tokky.preferences.AppLockPreference
+            app:defaultValue="false"
+            app:key="@string/key_app_lock"
+            app:summary="@string/summary_app_lock"
+            app:title="@string/title_app_lock" />
 
-    <com.ps.tokky.preferences.MaterialSwitchPreference
-        app:defaultValue="false"
-        app:key="@string/key_screenshots"
-        app:layout="@layout/preference_layout_bottom"
-        app:summary="@string/summary_screenshots"
-        app:title="@string/title_screenshots" />
+        <com.ps.tokky.preferences.MaterialSwitchPreference
+            app:defaultValue="false"
+            app:key="@string/key_screenshots"
+            app:summary="@string/summary_screenshots"
+            app:title="@string/title_screenshots" />
+    </com.ps.tokky.preferences.MaterialPreferenceCategory>
 </PreferenceScreen>
