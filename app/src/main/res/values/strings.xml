@@ -29,4 +29,5 @@
     <string name="refresh">Refresh</string>
     <string name="edit">Edit</string>
     <string name="unlock_prompt_title">Unlock to use Tokky</string>
+    <string name="title_settings">Settings</string>
 </resources>

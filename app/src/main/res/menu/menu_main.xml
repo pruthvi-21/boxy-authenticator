@@ -14,4 +14,9 @@
         android:iconTint="?colorControlNormal"
         android:title="@string/edit"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_main_settings"
+        android:title="@string/title_settings"
+        app:showAsAction="never" />
 </menu>

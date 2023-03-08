@@ -146,6 +146,9 @@ class MainActivity : AppCompatActivity() {
                 openEditMode(true)
                 return true
             }
+            R.id.menu_main_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+            }
         }
         return super.onOptionsItemSelected(item)
     }
