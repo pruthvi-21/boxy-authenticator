@@ -32,4 +32,8 @@
     <string name="title_settings">Settings</string>
     <string name="disable_app_lock_prompt">Disable app lock</string>
 
+    <string name="dialog_title_delete_token">Remove</string>
+    <string name="dialog_message_delete_token">Before removing please ensure that you turn off 2FA for this account.\n\nAlso, please ensure that you have alternative mechanism for generating codes.</string>
+    <string name="dialog_remove">Remove account</string>
+
 </resources>

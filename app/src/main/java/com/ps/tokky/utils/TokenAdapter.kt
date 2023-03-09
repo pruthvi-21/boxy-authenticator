@@ -2,8 +2,12 @@ package com.ps.tokky.utils
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
@@ -13,10 +17,12 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.ps.tokky.R
 import com.ps.tokky.activities.EnterKeyDetailsActivity
 import com.ps.tokky.activities.MainActivity
+import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.Constants.KEY_LIST_ORDER
@@ -168,16 +174,34 @@ class TokenAdapter(
     }
 
     override fun onDelete(entry: TokenEntry, position: Int) {
-        dbHelper.removeEntry(entry.id)
-        list.removeAt(position)
+        val titleViewBinding = DialogTitleDeleteWarningBinding.inflate(LayoutInflater.from(context))
 
-        saveListOrder()
+        val ssb = SpannableStringBuilder(entry.issuer)
+        ssb.setSpan(StyleSpan(Typeface.BOLD), 0, entry.issuer.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-        notifyItemRemoved(position)
+        titleViewBinding.title.text = SpannableStringBuilder(context.getString(R.string.dialog_title_delete_token))
+            .append(" ")
+            .append(ssb)
+            .append("?")
 
-        if (list.size == 0 && context is MainActivity) {
-            context.openEditMode(false, updateUI = true)
-        }
+        MaterialAlertDialogBuilder(context)
+            .setCustomTitle(titleViewBinding.root)
+            .setMessage(R.string.dialog_message_delete_token)
+            .setPositiveButton(R.string.dialog_remove) { _, _ ->
+                dbHelper.removeEntry(entry.id)
+                list.removeAt(position)
+
+                saveListOrder()
+
+                notifyItemRemoved(position)
+
+                if (list.size == 0 && context is MainActivity) {
+                    context.openEditMode(false, updateUI = true)
+                }
+            }
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .create()
+            .show()
     }
 
     private fun setListOrder() {

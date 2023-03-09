@@ -2,4 +2,5 @@
 <resources>
     <color name="surface_color">#000000</color>
     <color name="surface_color_variant">#212121</color>
+    <color name="color_warning">#e9d502</color>
 </resources>
