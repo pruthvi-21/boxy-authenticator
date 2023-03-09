@@ -15,7 +15,6 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
@@ -24,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityMainBinding
-import com.ps.tokky.utils.AppPreferences
 import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
@@ -161,7 +159,7 @@ class MainActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun openEditMode(open: Boolean) {
+    fun openEditMode(open: Boolean, updateUI: Boolean = false) {
 
         val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -195,6 +193,7 @@ class MainActivity : BaseActivity() {
                     supportActionBar?.setHomeAsUpIndicator(0)
                     binding.collapsingToolbar.toolbar.navigationIcon = null
                     binding.fabAddNew.visibility = View.VISIBLE
+                    binding.emptyLayout.visibility = if (updateUI) View.VISIBLE else View.GONE
 //                  refresh(false)
                 }
                 binding.root.startAnimation(fadeIn)

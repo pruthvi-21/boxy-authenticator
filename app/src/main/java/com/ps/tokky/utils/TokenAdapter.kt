@@ -176,7 +176,7 @@ class TokenAdapter(
         notifyItemRemoved(position)
 
         if (list.size == 0 && context is MainActivity) {
-            context.openEditMode(false)
+            context.openEditMode(false, updateUI = true)
         }
     }
 
