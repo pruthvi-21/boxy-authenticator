@@ -46,7 +46,6 @@ class CollapsingToolbarX @JvmOverloads constructor(
                 ).apply {
                     gravity = Gravity.CENTER
                 }
-                setText(R.string.app_name)
                 gravity = Gravity.CENTER
                 setTextAppearance(com.google.android.material.R.style.TextAppearance_Design_CollapsingToolbar_Expanded)
             }
@@ -76,7 +75,6 @@ class CollapsingToolbarX @JvmOverloads constructor(
                 ).apply {
                     setPadding(0, 0, 0, 3)
                 }
-                setText(R.string.app_name)
                 gravity = Gravity.CENTER
                 setTextAppearance(com.google.android.material.R.style.TextAppearance_AppCompat_Widget_ActionBar_Title)
                 maxLines = 1
@@ -103,6 +101,14 @@ class CollapsingToolbarX @JvmOverloads constructor(
 
     fun setTitle(title: String) {
         collapsedTitleView.text = title
+        expandedTitleView.text = title
+    }
+
+    fun setCollapsedTitle(title: String) {
+        collapsedTitleView.text = title
+    }
+
+    fun setExpandedTitle(title: String) {
         expandedTitleView.text = title
     }
 
