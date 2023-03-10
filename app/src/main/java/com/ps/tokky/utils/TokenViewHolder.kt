@@ -7,11 +7,11 @@ import android.os.Looper
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.ps.tokky.databinding.RvAuthCardBinding
+import com.ps.tokky.models.Thumbnails
 import com.ps.tokky.models.TokenEntry
 
 class TokenViewHolder(
-    val context: Context,
-    val binding: RvAuthCardBinding
+    val context: Context, val binding: RvAuthCardBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private var listener: Callback? = null
@@ -36,9 +36,7 @@ class TokenViewHolder(
             binding.accountLabel.visibility = View.GONE
         }
 
-        val drawable = LetterBitmap(context)
-            .getLetterTile(entry.issuer + entry.label) //appending label for different color if same issuer name
-        binding.thumbnail.setImageBitmap(drawable)
+        generateIcon()
 
         if (editModeEnabled) {
             binding.arrow.visibility = View.GONE
@@ -73,6 +71,20 @@ class TokenViewHolder(
         }
     }
 
+    private fun generateIcon() {
+        if (entry == null) return
+
+        val thumb = Thumbnails.values().find { it.name.lowercase() == entry!!.issuer.replace(" ", "").lowercase() }
+        if (thumb != null) {
+            binding.thumbnail.setImageResource(thumb.icon)
+            return
+        }
+
+        val drawable =
+            LetterBitmap(context).getLetterTile(entry?.issuer + entry?.label) //appending label for different color if same issuer name
+        binding.thumbnail.setImageBitmap(drawable)
+    }
+
     var isExpanded = false
         set(value) {
             field = value
@@ -86,10 +98,7 @@ class TokenViewHolder(
 
             binding.cardHiddenLayout.visibility = if (field) View.VISIBLE else View.GONE
 
-            binding.arrow.animate()
-                .rotation(if (value) 180f else 0f)
-                .setDuration(200)
-                .start()
+            binding.arrow.animate().rotation(if (value) 180f else 0f).setDuration(200).start()
         }
 
     var editModeEnabled = false
