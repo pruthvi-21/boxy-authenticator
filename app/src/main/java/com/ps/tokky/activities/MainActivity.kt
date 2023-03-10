@@ -65,6 +65,7 @@ class MainActivity : BaseActivity() {
 
         setContentView(binding.root)
         setSupportActionBar(binding.collapsingToolbar.toolbar)
+        binding.collapsingToolbar.setTitle(R.string.app_name)
 
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
