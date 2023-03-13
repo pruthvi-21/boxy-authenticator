@@ -27,7 +27,6 @@ class TokenViewHolder(
 
     fun bind(entry: TokenEntry) {
         this.entry = entry
-        binding.cardView.setCardBackgroundColor(ColorUtils.primaryTintedBackground(context))
         binding.issuerLabel.text = entry.issuer
         if (entry.label.isNotEmpty()) {
             binding.accountLabel.visibility = View.VISIBLE

@@ -6,9 +6,9 @@ import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import androidx.preference.PreferenceFragmentCompat
+import com.libx.ui.preference.PreferenceFragmentCompat
 import com.ps.tokky.R
-import com.ps.tokky.preferences.AppLockPreference
+import com.ps.tokky.preference.AppLockPreference
 import com.ps.tokky.utils.AppPreferences.Companion.KEY_APP_LOCK
 
 class PreferenceFragment : PreferenceFragmentCompat() {

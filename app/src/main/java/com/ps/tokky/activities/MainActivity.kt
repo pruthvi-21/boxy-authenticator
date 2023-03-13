@@ -64,8 +64,7 @@ class MainActivity : BaseActivity() {
         }
 
         setContentView(binding.root)
-        setSupportActionBar(binding.collapsingToolbar.toolbar)
-        binding.collapsingToolbar.setTitle(R.string.app_name)
+        setSupportActionBar(binding.toolbarLayout.toolbar)
 
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
@@ -182,7 +181,7 @@ class MainActivity : BaseActivity() {
                 if (open) {
                     adapter.editModeEnabled = true
                     invalidateOptionsMenu()
-                    binding.collapsingToolbar.toolbar.setTitle(R.string.edit)
+                    binding.toolbarLayout.toolbar.setTitle(R.string.edit)
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                     supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
                     binding.fabAddNew.visibility = View.GONE
@@ -192,7 +191,7 @@ class MainActivity : BaseActivity() {
                     supportActionBar?.setTitle(R.string.app_name)
                     supportActionBar?.setDisplayHomeAsUpEnabled(false)
                     supportActionBar?.setHomeAsUpIndicator(0)
-                    binding.collapsingToolbar.toolbar.navigationIcon = null
+                    binding.toolbarLayout.toolbar.navigationIcon = null
                     binding.fabAddNew.visibility = View.VISIBLE
                     binding.emptyLayout.visibility = if (updateUI) View.VISIBLE else View.GONE
 //                  refresh(false)
@@ -206,7 +205,6 @@ class MainActivity : BaseActivity() {
         })
         binding.root.startAnimation(fadeOut)
     }
-
 
     private val addNewActivityLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

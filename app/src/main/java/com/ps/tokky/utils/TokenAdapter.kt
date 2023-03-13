@@ -101,7 +101,7 @@ class TokenAdapter(
 
     private fun setShape(card: MaterialCardView, position: Int) {
         val shapeBuilder = ShapeAppearanceModel.Builder()
-        val radius = context.resources.getDimension(R.dimen.radius_large)
+        val radius = context.resources.getDimension(R.dimen.item_radius)
 
         if (!editModeEnabled) {
             if (list.size != 1) {

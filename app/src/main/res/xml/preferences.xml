@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.ps.tokky.preferences.MaterialPreferenceCategory>
-        <com.ps.tokky.preferences.AppLockPreference
+<com.libx.ui.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.libx.ui.preference.PreferenceCategory>
+        <com.ps.tokky.preference.AppLockPreference
             app:defaultValue="false"
             app:key="@string/key_app_lock"
             app:summary="@string/summary_app_lock"
             app:title="@string/title_app_lock" />
 
-        <com.ps.tokky.preferences.MaterialSwitchPreference
+        <com.libx.ui.preference.SwitchPreference
             app:defaultValue="false"
             app:key="@string/key_screenshots"
             app:summary="@string/summary_screenshots"
             app:title="@string/title_screenshots" />
-    </com.ps.tokky.preferences.MaterialPreferenceCategory>
-</PreferenceScreen>
+    </com.libx.ui.preference.PreferenceCategory>
+</com.libx.ui.preference.PreferenceScreen>

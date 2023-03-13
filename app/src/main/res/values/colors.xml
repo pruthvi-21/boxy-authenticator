@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="surface_color">#F2F2F2</color>
-    <color name="surface_color_variant">#E1E1E1</color>
+    <color name="surface_color_variant">@color/tinted_primary</color>
     <color name="item_bg">@color/tinted_primary</color>
     <color name="color_warning">#bea802</color>
 

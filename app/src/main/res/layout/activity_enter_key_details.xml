@@ -1,34 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.libx.ui.views.ToolbarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.ps.tokky.views.AppBarX
-        android:id="@+id/app_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/surface_color"
-        app:elevation="0dp">
-
-        <com.ps.tokky.views.CollapsingToolbarX
-            android:id="@+id/collapsing_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap" />
-
-    </com.ps.tokky.views.AppBarX>
+    android:id="@+id/toolbar_layout"
+    android:layout_height="match_parent"
+    app:navigationIcon="@drawable/ic_samsung_arrow_left"
+    app:title="@string/title_enter_account_details">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingHorizontal="@dimen/screen_margin"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/screen_margin">
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="100dp"
@@ -46,39 +33,56 @@
                     android:src="@android:drawable/ic_dialog_alert" />
             </com.google.android.material.card.MaterialCardView>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp"
                 android:paddingVertical="@dimen/screen_margin">
 
-                <com.ps.tokky.views.EditField
-                    android:id="@+id/issuer_field"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_issuer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    app:hint="@string/label_issuer"
-                    app:icon="@drawable/ic_issuer"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:hint="@string/label_issuer"
+                    app:startIconDrawable="@drawable/ic_issuer">
 
-                <com.ps.tokky.views.EditField
-                    android:id="@+id/label_field"
+                    <com.google.android.material.textfield.TextInputEditText
+                        style="?textInputEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    app:hint="@string/label_label"
-                    app:icon="@drawable/ic_label"
-                    app:layout_constraintTop_toBottomOf="@id/issuer_field" />
+                    android:hint="@string/label_label"
+                    app:startIconDrawable="@drawable/ic_label">
 
-                <com.ps.tokky.views.EditField
-                    android:id="@+id/secret_key_field"
+                    <com.google.android.material.textfield.TextInputEditText
+                        style="?textInputEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_secret_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    app:hint="@string/label_secret_key"
-                    app:icon="@drawable/ic_secret_key"
-                    app:layout_constraintTop_toBottomOf="@id/label_field" />
+                    android:hint="@string/label_secret_key"
+                    app:startIconDrawable="@drawable/ic_secret_key">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        style="?textInputEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/adv_layout_switch"
@@ -112,5 +116,4 @@
                 app:cornerRadius="@dimen/radius_large" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</com.libx.ui.views.ToolbarLayout>

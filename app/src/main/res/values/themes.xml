@@ -1,18 +1,9 @@
 <resources>
 
-    <style name="BaseTheme" parent="Theme.Tokky" />
-
-    <style name="Theme.Tokky" parent="Theme.Material3.DynamicColors.DayNight">
-        <item name="colorSurface">@color/surface_color</item>
-        <item name="colorSurfaceVariant">@color/surface_color_variant</item>
-        <item name="android:colorBackground">@color/surface_color</item>
-        <item name="android:statusBarColor">?colorSurface</item>
-        <item name="android:windowLightStatusBar">?isLightTheme</item>
-        <item name="colorControlHighlight">#AB121212</item>
-        <item name="windowNoTitle">true</item>
-
+    <style name="Theme.Tokky" parent="LibXBaseTheme">
         <item name="buttonGroupButtonStyle">@style/ButtonGroupButtonStyle</item>
         <item name="textInputStyle">@style/TextInputLayoutStyle</item>
+        <item name="textInputEditTextStyle">@style/TextInputEditTextStyle</item>
     </style>
 
     <style name="ButtonGroupButtonStyle" parent="Widget.Material3.Button.TextButton">
@@ -23,12 +14,18 @@
         <item name="textAllCaps">false</item>
     </style>
 
-    <style name="TextInputLayoutStyle" parent="Widget.Material3.TextInputLayout.OutlinedBox.Dense">
+    <style name="TextInputLayoutStyle" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">?colorSurfaceVariant</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.None</item>
-        <item name="boxStrokeWidth">0dp</item>
-        <item name="boxStrokeColor">@android:color/transparent</item>
-        <item name="hintEnabled">false</item>
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="startIconTint">@color/text_input_layout_icon_tint</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Medium</item>
+    </style>
+
+    <style name="TextInputEditTextStyle" parent="ThemeOverlay.Material3.TextInputEditText">
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingStart">52.5dp</item>
     </style>
 
 </resources>

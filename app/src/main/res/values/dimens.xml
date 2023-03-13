@@ -3,20 +3,12 @@
     <dimen name="screen_margin">16dp</dimen>
     <dimen name="screen_margin_large">32dp</dimen>
 
-    <dimen name="radius_tiny">8dp</dimen>
-    <dimen name="radius_small">12dp</dimen>
-    <dimen name="radius_medium">16dp</dimen>
-    <dimen name="radius_large">24dp</dimen>
-    <dimen name="radius_xlarge">28dp</dimen>
-    <dimen name="radius_xxlarge">33dp</dimen>
-
     <dimen name="main_fab_margin">20dp</dimen>
     <dimen name="disabled_alpha">0.38</dimen>
     <dimen name="card_thumbnail_width">55dp</dimen>
     <dimen name="card_thumbnail_height">37.5dp</dimen>
-    <dimen name="home_card_corner_radius">@dimen/radius_large</dimen>
     <dimen name="rv_item_margin">10dp</dimen>
     <dimen name="collapsing_toolbar_expanded_frame_margin_bottom">20dp</dimen>
     <dimen name="toolbar_margin_top">12dp</dimen>
-    <dimen name="item_radius">@dimen/radius_xxlarge</dimen>
+    <dimen name="item_radius">@dimen/radius_xxl</dimen>
 </resources>

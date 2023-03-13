@@ -1,12 +1,13 @@
-package com.ps.tokky.preferences
+package com.ps.tokky.preference
 
 import android.content.Context
 import android.util.AttributeSet
+import com.libx.ui.preference.SwitchPreference
 
 class AppLockPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-) : MaterialSwitchPreference(context, attrs) {
+) : SwitchPreference(context, attrs) {
 
     override fun onClick() {}
 

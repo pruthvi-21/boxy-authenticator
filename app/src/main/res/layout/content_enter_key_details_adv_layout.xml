@@ -25,13 +25,20 @@
             android:layout_weight="3"
             android:text="@string/label_period" />
 
-        <com.ps.tokky.views.EditField
-            android:id="@+id/adv_period_input_layout"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_period"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="7"
-            app:hint="@string/hint_period"
-            app:icon="@drawable/ic_period" />
+            android:hint="@string/hint_period"
+            app:startIconDrawable="@drawable/ic_period">
+
+            <com.google.android.material.textfield.TextInputEditText
+                style="?textInputEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <LinearLayout
