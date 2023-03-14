@@ -13,4 +13,11 @@
             app:summary="@string/summary_screenshots"
             app:title="@string/title_screenshots" />
     </com.libx.ui.preference.PreferenceCategory>
+
+    <com.libx.ui.preference.PreferenceCategory app:title="@string/pref_cat_title_ui">
+        <com.libx.ui.preference.SwitchPreference
+            app:defaultValue="true"
+            app:key="@string/pref_key_show_thumbnail"
+            app:title="@string/pref_title_thumbnail" />
+    </com.libx.ui.preference.PreferenceCategory>
 </com.libx.ui.preference.PreferenceScreen>

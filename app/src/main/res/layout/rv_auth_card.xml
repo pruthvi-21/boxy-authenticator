@@ -30,6 +30,7 @@
                 android:id="@+id/thumbnail_frame"
                 android:layout_width="@dimen/card_thumbnail_width"
                 android:layout_height="@dimen/card_thumbnail_height"
+                android:layout_marginEnd="4dp"
                 app:cardCornerRadius="@dimen/radius_tiny"
                 app:cardElevation="0dp">
 
@@ -45,7 +46,7 @@
             <LinearLayout
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
+                android:layout_marginHorizontal="12dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 

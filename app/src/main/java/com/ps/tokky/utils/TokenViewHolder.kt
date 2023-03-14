@@ -14,6 +14,8 @@ class TokenViewHolder(
     val binding: RvAuthCardBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
+    private val preferences = AppPreferences.getInstance(context)
+
     private var listener: Callback? = null
     private var entry: TokenEntry? = null
 
@@ -35,9 +37,13 @@ class TokenViewHolder(
             binding.accountLabel.visibility = View.GONE
         }
 
-        val drawable = LetterBitmap(context)
-            .getLetterTile(entry.issuer + entry.label) //appending label for different color if same issuer name
-        binding.thumbnail.setImageBitmap(drawable)
+        val showIcon = preferences.displayIcon
+        binding.thumbnailFrame.visibility = if (showIcon) View.VISIBLE else View.GONE
+        if (showIcon) {
+            val drawable = LetterBitmap(context)
+                .getLetterTile(entry.issuer + entry.label) //appending label for different color if same issuer name
+            binding.thumbnail.setImageBitmap(drawable)
+        }
 
         if (editModeEnabled) {
             binding.arrow.visibility = View.GONE
