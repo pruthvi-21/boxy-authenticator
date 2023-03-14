@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.res.AssetManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -43,6 +46,17 @@ object Utils {
         return true
     }
 
+    fun getThumbnailFromAssets(assetManager: AssetManager, fileName: String): Bitmap? {
+        return try {
+            val inputStream = assetManager.open(fileName)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream.close()
+
+            bitmap
+        } catch (exception: Exception) {
+            null
+        }
+    }
 }
 
 fun View.showKeyboard(context: Context, showForced: Boolean) {

@@ -37,13 +37,7 @@ class TokenViewHolder(
             binding.accountLabel.visibility = View.GONE
         }
 
-        val showIcon = preferences.displayIcon
-        binding.thumbnailFrame.visibility = if (showIcon) View.VISIBLE else View.GONE
-        if (showIcon) {
-            val drawable = LetterBitmap(context)
-                .getLetterTile(entry.issuer + entry.label) //appending label for different color if same issuer name
-            binding.thumbnail.setImageBitmap(drawable)
-        }
+        setThumbnail(entry.issuer, entry.label)
 
         if (editModeEnabled) {
             binding.arrow.visibility = View.GONE
@@ -75,6 +69,18 @@ class TokenViewHolder(
         binding.otpHolder.setOnLongClickListener {
             Utils.copyToClipboard(context, entry.otpFormattedString)
             true
+        }
+    }
+
+    private fun setThumbnail(issuer: String, label: String) {
+        if (preferences.displayIcon) {
+            binding.thumbnailFrame.visibility = View.VISIBLE
+            val fileName = "logo_${issuer.lowercase().replace(" ", "_")}.png"
+            val logoBitmap = Utils.getThumbnailFromAssets(context.assets, fileName) ?: LetterBitmap(context)
+                .getLetterTile("$issuer$label") //appending label for different color if same issuer name
+            binding.thumbnail.setImageBitmap(logoBitmap)
+        } else {
+            binding.thumbnailFrame.visibility = View.GONE
         }
     }
 
