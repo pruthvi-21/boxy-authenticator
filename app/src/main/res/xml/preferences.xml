@@ -7,6 +7,13 @@
             app:summary="@string/summary_app_lock"
             app:title="@string/title_app_lock" />
 
+        <com.ps.tokky.preference.BiometricUnlockPreference
+            app:defaultValue="false"
+            app:dependency="@string/key_app_lock"
+            app:key="@string/key_biometric_unlock"
+            app:summary="@string/pref_summary_biometrics"
+            app:title="@string/pref_title_biometrics" />
+
         <com.libx.ui.preference.SwitchPreference
             app:defaultValue="false"
             app:key="@string/key_screenshots"

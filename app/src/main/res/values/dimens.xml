@@ -12,7 +12,7 @@
     <dimen name="toolbar_margin_top">12dp</dimen>
     <dimen name="item_radius">@dimen/radius_xxl</dimen>
 
-    <dimen name="lockscreen_pin_dot_radius">10dp</dimen>
+    <dimen name="lockscreen_pin_dot_radius">8dp</dimen>
     <dimen name="lockscreen_pin_dot_gap">15dp</dimen>
     <dimen name="keypad_button_stroke">0.25dp</dimen>
 </resources>

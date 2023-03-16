@@ -16,6 +16,16 @@ class AppPreferences private constructor(context: Context) {
         set(value) {
             field = value
             sharedPreferences.edit().putBoolean(KEY_APP_LOCK, value).apply()
+            if (!value) sharedPreferences.edit().remove(KEY_PASSCODE_HASH).apply()
+        }
+
+    var biometricUnlockEnabled: Boolean = false
+        get() {
+            return sharedPreferences.getBoolean(KEY_BIOMETRIC_UNLOCK, false)
+        }
+        set(value) {
+            field = value
+            sharedPreferences.edit().putBoolean(KEY_BIOMETRIC_UNLOCK, value).apply()
         }
 
     var allowScreenshots: Boolean = false
@@ -36,7 +46,7 @@ class AppPreferences private constructor(context: Context) {
             sharedPreferences.edit().putBoolean(KEY_SHOW_THUMBNAILS, value).apply()
         }
 
-    fun isBiometricEnabled(): Boolean {
+    fun isBiometricAvailable(): Boolean {
         return (biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS)
     }
 
@@ -45,12 +55,18 @@ class AppPreferences private constructor(context: Context) {
         return storedPasscodeHash == passcodeHash
     }
 
+    fun setPIN(passcode: String) {
+        sharedPreferences.edit().putString(KEY_PASSCODE_HASH, passcode).apply()
+    }
+
     companion object {
         private var instance: AppPreferences? = null
 
         const val KEY_PASSCODE_HASH = "key_passcode_hash"
 
         const val KEY_APP_LOCK = "key_app_lock"
+        const val KEY_BIOMETRIC_UNLOCK = "key_biometric_unlock"
+
         const val KEY_ALLOW_SCREENSHOTS = "key_allow_screenshots"
 
         const val KEY_SHOW_THUMBNAILS = "key_show_thumbnail"

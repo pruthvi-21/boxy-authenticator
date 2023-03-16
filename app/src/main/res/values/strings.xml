@@ -31,7 +31,9 @@
     <string name="auth_activity_biometric_unlock_prompt_title">Unlock to use Tokky</string>
     <string name="auth_activity_biometric_unlock_prompt_negative_text">Use PIN</string>
     <string name="title_settings">Settings</string>
-    <string name="disable_app_lock_prompt">Disable app lock</string>
+    <string name="enable_app_lock_prompt">Enable biometric unlock</string>
+    <string name="disable_app_lock_prompt">Disable biometric unlock</string>
+    <string name="app_lock_prompt_negative_text">Cancel</string>
 
     <string name="dialog_title_delete_token">Remove</string>
     <string name="dialog_message_delete_token">Before removing please ensure that you turn off 2FA for this account.\n\nAlso, please ensure that you have alternative mechanism for generating codes.</string>
@@ -41,4 +43,10 @@
     <string name="auth_activity_unlock_with_biometrics">Unlock with biometrics</string>
     <string name="auth_activity_title">Enter your PIN</string>
     <string name="auth_activity_subtitle">Access your account with your 4-digit PIN</string>
+
+    <!-- Settings Activity -->
+    <string name="settings_setup_pin_bottom_sheet_title">Create a new PIN</string>
+    <string name="settings_setup_reenter_pin_bottom_sheet_title">Reenter your PIN</string>
+    <string name="settings_disable_pin_bottom_sheet_title">Enter your PIN to disable app lock</string>
+    <string name="settings_app_lock_incorrect_pin">Incorrect PIN</string>
 </resources>

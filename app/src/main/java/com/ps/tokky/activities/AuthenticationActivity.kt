@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -12,8 +11,10 @@ import androidx.core.content.ContextCompat
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityAuthenticationBinding
 import com.ps.tokky.utils.CryptoUtils
+import com.ps.tokky.views.KeypadLayout
+import kotlinx.coroutines.*
 
-class AuthenticationActivity : BaseActivity(), View.OnClickListener {
+class AuthenticationActivity : BaseActivity(), KeypadLayout.OnKeypadKeyClickListener {
 
     private val binding by lazy { ActivityAuthenticationBinding.inflate(layoutInflater) }
 
@@ -33,6 +34,8 @@ class AuthenticationActivity : BaseActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        if (!preferences.appLockEnabled) loginSuccess()
+
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 loginSuccess()
@@ -47,28 +50,17 @@ class AuthenticationActivity : BaseActivity(), View.OnClickListener {
             }
         })
 
-        val keypadButtons = arrayOf(
-            binding.keypad.button1, binding.keypad.button2, binding.keypad.button3,
-            binding.keypad.button4, binding.keypad.button5, binding.keypad.button6,
-            binding.keypad.button7, binding.keypad.button8, binding.keypad.button9,
-            binding.keypad.button0
-        )
-
-        for (btn in keypadButtons) {
-            btn.addOnClickListener(this)
-        }
-
-        binding.keypad.buttonBackspace.addOnClickListener(this)
-
         binding.btnBiometrics.setOnClickListener {
             biometricPrompt?.authenticate(promptInfo)
         }
+
+        binding.keypad.keypadKeyClickListener = this
     }
 
     override fun onResume() {
         super.onResume()
 
-        if (preferences.isBiometricEnabled()) {
+        if (preferences.isBiometricAvailable() && preferences.biometricUnlockEnabled) {
             biometricPrompt?.authenticate(promptInfo)
             binding.btnBiometrics.visibility = View.VISIBLE
         } else {
@@ -76,30 +68,40 @@ class AuthenticationActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
+    override fun onDigitClick(digit: String) {
+        if (passcode.size >= 4) return
+        passcode.add(digit)
+        updateUI()
+        if (passcode.size == 4)
+            CoroutineScope(Dispatchers.Default).launch {
+                delay(300)
+                verifyPIN()
+            }
+    }
+
+    override fun onBackspaceClick() {
+        if (passcode.size <= 0) return
+        passcode.removeAt(passcode.size - 1)
+        updateUI()
+    }
+
     private fun loginSuccess() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
-    override fun onClick(v: View?) {
-        if (v?.id == binding.keypad.buttonBackspace.id) {
-            if (passcode.size <= 0) return
-            passcode.removeAt(passcode.size - 1)
-        } else {
-            if (passcode.size >= 4 || v == null || v !is TextView?) return
-
-            passcode.add(v.text.toString())
-        }
-        verifyPIN()
-        updateUI()
-    }
-
-    private fun verifyPIN() {
+    private suspend fun verifyPIN() {
         if (passcode.size < 4) return
 
         val status = preferences.verifyPIN(CryptoUtils.hashPasscode(passcode.joinToString(separator = "")))
-        if (!status) Toast.makeText(this, "Incorrect attempt", Toast.LENGTH_SHORT).show()
-        else loginSuccess()
+        if (!status) {
+            passcode.clear()
+            updateUI()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@AuthenticationActivity, R.string.settings_app_lock_incorrect_pin, Toast.LENGTH_SHORT)
+                    .show()
+            }
+        } else loginSuccess()
     }
 
     private fun updateUI() {
