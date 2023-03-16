@@ -1,11 +1,13 @@
 package com.ps.tokky.utils
 
 import android.content.Context
+import android.hardware.biometrics.BiometricManager
 import androidx.preference.PreferenceManager
 
 class AppPreferences private constructor(context: Context) {
 
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val biometricManager = context.getSystemService(BiometricManager::class.java)
 
     var appLockEnabled: Boolean = false
         get() {
@@ -34,8 +36,19 @@ class AppPreferences private constructor(context: Context) {
             sharedPreferences.edit().putBoolean(KEY_SHOW_THUMBNAILS, value).apply()
         }
 
+    fun isBiometricEnabled(): Boolean {
+        return (biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS)
+    }
+
+    fun verifyPIN(passcodeHash: String): Boolean {
+        val storedPasscodeHash = sharedPreferences.getString(KEY_PASSCODE_HASH, null)
+        return storedPasscodeHash == passcodeHash
+    }
+
     companion object {
         private var instance: AppPreferences? = null
+
+        const val KEY_PASSCODE_HASH = "key_passcode_hash"
 
         const val KEY_APP_LOCK = "key_app_lock"
         const val KEY_ALLOW_SCREENSHOTS = "key_allow_screenshots"

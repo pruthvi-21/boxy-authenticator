@@ -5,19 +5,14 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricPrompt
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -30,12 +25,6 @@ import kotlin.math.roundToLong
 
 class MainActivity : BaseActivity() {
 
-    private var userAuthenticated = false
-        set(value) {
-            field = value
-            if (field) refresh(true)
-        }
-
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -43,16 +32,6 @@ class MainActivity : BaseActivity() {
     private val helper = DBHelper.getInstance(this)
     private val adapter: TokenAdapter by lazy {
         TokenAdapter(this, ArrayList(), binding.recyclerView, addNewActivityLauncher)
-    }
-
-    //For biometric authentication
-    private val executor by lazy { ContextCompat.getMainExecutor(this) }
-    private var biometricPrompt: BiometricPrompt? = null
-    private val promptInfo by lazy {
-        BiometricPrompt.PromptInfo.Builder()
-            .setTitle(getString(R.string.unlock_prompt_title))
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
-            .build()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,21 +44,6 @@ class MainActivity : BaseActivity() {
 
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarLayout.toolbar)
-
-        biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                userAuthenticated = true
-            }
-
-            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                Toast.makeText(this@MainActivity, "Unable to verify user identity", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-
-            override fun onAuthenticationFailed() {
-                Log.w(TAG, "onAuthenticationFailed: Incorrect attempt")
-            }
-        })
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
@@ -105,6 +69,7 @@ class MainActivity : BaseActivity() {
                 openEditMode(false)
             }
         })
+        refresh(true)
     }
 
     private fun refresh(reload: Boolean) {
@@ -117,12 +82,6 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         adapter.onResume()
-
-        if (!preferences.appLockEnabled) userAuthenticated = true
-
-        if (!userAuthenticated) {
-            biometricPrompt?.authenticate(promptInfo)
-        }
     }
 
     override fun onPause() {

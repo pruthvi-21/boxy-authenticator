@@ -62,4 +62,8 @@ object CryptoUtils {
         val plaintext = cipher.doFinal(ciphertext)
         return String(plaintext, Charsets.UTF_8)
     }
+
+    fun hashPasscode(passcode: String): String {
+        return passcode.hash("SHA256").hash("SHA1")
+    }
 }

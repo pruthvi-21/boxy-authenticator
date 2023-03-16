@@ -4,6 +4,19 @@
         <item name="buttonGroupButtonStyle">@style/ButtonGroupButtonStyle</item>
         <item name="textInputStyle">@style/TextInputLayoutStyle</item>
         <item name="textInputEditTextStyle">@style/TextInputEditTextStyle</item>
+        <item name="keypadButtonStyle">@style/KeypadButtonStyle</item>
+    </style>
+
+    <style name="KeypadButtonStyle">
+        <item name="android:background">@drawable/bg_keypad_button</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:gravity">center</item>
+        <item name="android:hapticFeedbackEnabled">true</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:paddingVertical">15dp</item>
     </style>
 
     <style name="ButtonGroupButtonStyle" parent="Widget.Material3.Button.TextButton">
