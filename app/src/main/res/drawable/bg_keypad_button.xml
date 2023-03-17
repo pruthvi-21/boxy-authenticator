@@ -6,7 +6,7 @@
             <solid android:color="?colorSurfaceVariant" />
             <stroke
                 android:width="@dimen/keypad_button_stroke"
-                android:color="?colorOutline" />
+                android:color="?colorSurface" />
         </shape>
     </item>
 </ripple>
