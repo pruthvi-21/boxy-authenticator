@@ -72,7 +72,7 @@ class MainActivity : BaseActivity() {
         refresh(true)
     }
 
-    private fun refresh(reload: Boolean) {
+    fun refresh(reload: Boolean) {
         val list = helper.getAllEntries(reload)
         adapter.updateEntries(list)
         binding.emptyLayout.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE

@@ -19,8 +19,9 @@ open class BaseActivity : AppCompatActivity(), SharedPreferences.OnSharedPrefere
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == AppPreferences.KEY_ALLOW_SCREENSHOTS) {
-            recreate()
+        when (key) {
+            AppPreferences.KEY_ALLOW_SCREENSHOTS -> recreate()
+            AppPreferences.KEY_SHOW_THUMBNAILS -> if (this is MainActivity) this.refresh(false)
         }
     }
 }
