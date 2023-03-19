@@ -13,8 +13,7 @@
     <string name="label_period">Period</string>
     <string name="hint_period">Period (default - 30)</string>
     <string name="label_algorithm">Algorithm</string>
-    <string name="label_view_advanced_options"><u>View advanced options</u></string>
-    <string name="label_hide_advanced_options"><u>Hide advanced options</u></string>
+    <string name="label_advanced_options">Advanced options</string>
     <string name="enter_details_activity_dialog_back_title">Warning</string>
     <string name="enter_details_activity_dialog_back_message">Going back will clear all the fields. Are you sure to go back?</string>
     <string name="dialog_go_back">Go back</string>

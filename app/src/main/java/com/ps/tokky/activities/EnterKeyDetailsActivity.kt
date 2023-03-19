@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
-import android.text.InputType
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
@@ -61,7 +60,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
                 binding.tilLabel.editText?.setText(currentEntry!!.label)
                 binding.tilLabel.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
                 binding.tilSecretKey.visibility = View.GONE
-                binding.advLayoutSwitch.visibility = View.GONE
+                binding.advOptionsSwitch.visibility = View.GONE
                 binding.advLayout.advOptionsLayout.visibility = View.GONE
 
                 binding.detailsSaveBtn.visibility = View.VISIBLE
@@ -95,12 +94,11 @@ class EnterKeyDetailsActivity : BaseActivity() {
         binding.advLayout.tilPeriod.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
         binding.tilSecretKey.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
 
-        binding.advLayoutSwitch.setOnClickListener {
+        binding.advOptionsSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             hideKeyboard()
-            showAdvancedOptions(binding.advLayout.advOptionsLayout.visibility == View.GONE)
+            showAdvancedOptions(isChecked)
         }
-
-        binding.advLayout.tilPeriod.editText!!.setText(Constants.DEFAULT_OTP_VALIDITY.toString())
+        resetAdvanceFields()
 
         binding.detailsSaveBtn.setOnClickListener {
             hideKeyboard()
@@ -183,11 +181,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
     }
 
     private fun showAdvancedOptions(show: Boolean) {
-        val upArrow = R.drawable.ic_chevron_up
-        val downArrow = R.drawable.ic_chevron_down
         if (show) {
-            binding.advLayoutSwitch.setCompoundDrawablesWithIntrinsicBounds(0, 0, upArrow, 0)
-            binding.advLayoutSwitch.setText(R.string.label_hide_advanced_options)
             binding.advLayout.advOptionsLayout.apply {
                 alpha = 0f
                 visibility = View.VISIBLE
@@ -196,16 +190,21 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     .alpha(1f)
             }
         } else {
-            binding.advLayoutSwitch.setCompoundDrawablesWithIntrinsicBounds(0, 0, downArrow, 0)
-            binding.advLayoutSwitch.setText(R.string.label_view_advanced_options)
             binding.advLayout.advOptionsLayout.animate()
                 .setDuration(shortAnimationDuration.toLong())
                 .alpha(0f)
 
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.advLayout.advOptionsLayout.visibility = View.GONE
+                resetAdvanceFields()
             }, shortAnimationDuration.toLong())
         }
+    }
+
+    private fun resetAdvanceFields() {
+        binding.advLayout.tilPeriod.editText?.setText(Constants.DEFAULT_OTP_VALIDITY.toString())
+        binding.advLayout.otpLengthToggleGroup.check(binding.advLayout.btn6digits.id)
+        binding.advLayout.algoToggleGroup.check(binding.advLayout.btnSha1.id)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
