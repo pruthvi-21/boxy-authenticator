@@ -10,7 +10,6 @@
         android:id="@+id/toolbar_layout"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        app:subtitle="Sample subtitle"
         app:title="@string/app_name"
         tools:context=".activities.MainActivity">
 
