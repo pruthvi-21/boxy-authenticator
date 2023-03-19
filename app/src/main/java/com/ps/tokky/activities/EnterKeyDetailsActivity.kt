@@ -234,10 +234,9 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
             override fun afterTextChanged(editable: Editable) {
                 val issuer = binding.tilIssuer.editText!!.text
-                val label = binding.tilLabel.editText!!.text
                 val secretKey = binding.tilSecretKey.editText!!.text
 
-                if (TextUtils.isEmpty(label) && TextUtils.isEmpty(issuer) || TextUtils.isEmpty(secretKey)) {
+                if (TextUtils.isEmpty(issuer) || TextUtils.isEmpty(secretKey)) {
                     binding.detailsSaveBtn.isEnabled = false
                 } else {
                     binding.detailsSaveBtn.isEnabled =
