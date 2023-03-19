@@ -150,6 +150,7 @@ class TokenAdapter(
             field = value
             notifyDataSetChanged()
             itemTouchHelper.attachToRecyclerView(if (value) this.recyclerView else null)
+            currentExpanded = -1
         }
 
     override fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean) {
