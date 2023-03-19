@@ -196,7 +196,7 @@ class TokenAdapter(
                 notifyItemRemoved(position)
 
                 if (list.size == 0 && context is MainActivity) {
-                    context.openEditMode(false, updateUI = true)
+                    context.openEditMode(false)
                 }
             }
             .setNegativeButton(R.string.dialog_cancel, null)

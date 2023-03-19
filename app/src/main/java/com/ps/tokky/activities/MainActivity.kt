@@ -92,7 +92,7 @@ class MainActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (!adapter.editModeEnabled) {
             menuInflater.inflate(R.menu.menu_main, menu)
-            menu?.getItem(1)?.isEnabled = helper.getAllEntries(false).isNotEmpty()
+            menu?.findItem(R.id.menu_main_edit)?.isEnabled = helper.getAllEntries(false).isNotEmpty()
         }
         return true
     }
@@ -108,7 +108,7 @@ class MainActivity : BaseActivity() {
                 return true
             }
             R.id.menu_main_edit -> {
-                openEditMode(true)
+                openEditMode(!adapter.editModeEnabled)
                 return true
             }
             R.id.menu_main_settings -> {
@@ -118,31 +118,28 @@ class MainActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun openEditMode(open: Boolean, updateUI: Boolean = false) {
+    fun openEditMode(open: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             withContext(Dispatchers.Main) {
-                binding.toolbarLayout.startAnimation(fadeOutAnimation)
+                binding.recyclerView.startAnimation(fadeOutAnimation)
             }
-            delay(200)
+            delay(100)
             withContext(Dispatchers.Main) {
+                invalidateOptionsMenu()
                 if (open) {
-                    invalidateOptionsMenu()
-                    binding.toolbarLayout.toolbar.setTitle(R.string.edit)
-                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                    supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
+                    binding.toolbarLayout.title = getString(R.string.edit_mode_title)
+                    binding.toolbarLayout.navigationIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_close, theme)
                     adapter.editModeEnabled = true
                     binding.fabAddNew.hide()
                 } else {
-                    invalidateOptionsMenu()
-                    supportActionBar?.setTitle(R.string.app_name)
-                    supportActionBar?.setDisplayHomeAsUpEnabled(false)
-                    supportActionBar?.setHomeAsUpIndicator(0)
-                    binding.toolbarLayout.toolbar.navigationIcon = null
+                    binding.toolbarLayout.title = getString(R.string.app_name)
+                    binding.toolbarLayout.navigationIcon = null
                     adapter.editModeEnabled = false
-                    binding.emptyLayout.visibility = if (updateUI) View.VISIBLE else View.GONE
                     binding.fabAddNew.show()
+
+                    binding.emptyLayout.visibility = if (helper.getAllEntries(false).isEmpty()) View.VISIBLE else View.GONE
                 }
-                binding.toolbarLayout.startAnimation(fadeInAnimation)
+                binding.recyclerView.startAnimation(fadeInAnimation)
             }
         }
     }

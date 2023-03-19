@@ -26,7 +26,8 @@
     <string name="toast_copied_to_clipboard">Copied to clipboard</string>
     <string name="label_clipboard_content">OTP Token</string>
     <string name="refresh">Refresh</string>
-    <string name="edit">Edit</string>
+    <string name="menu_edit">Edit</string>
+    <string name="edit_mode_title">Edit tokens</string>
     <string name="auth_activity_biometric_unlock_prompt_title">Unlock to use Tokky</string>
     <string name="auth_activity_biometric_unlock_prompt_negative_text">Use PIN</string>
     <string name="title_settings">Settings</string>
