@@ -10,6 +10,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityAuthenticationBinding
+import com.ps.tokky.utils.AppPreferences.Companion.KEY_PASSCODE_HASH
 import com.ps.tokky.utils.CryptoUtils
 import com.ps.tokky.views.KeypadLayout
 import kotlinx.coroutines.*
@@ -34,7 +35,12 @@ class AuthenticationActivity : BaseActivity(), KeypadLayout.OnKeypadKeyClickList
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        if (!preferences.appLockEnabled) loginSuccess()
+        if (!preferences.appLockEnabled ||
+            preferences.sharedPreferences.getString(KEY_PASSCODE_HASH, null) == null
+        ) {
+            preferences.appLockEnabled = false
+            loginSuccess()
+        }
 
         biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
