@@ -13,8 +13,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ps.tokky.R
+import com.ps.tokky.activities.transfer.ImportActivity
+import com.ps.tokky.activities.transfer.export.ExportActivity
 import com.ps.tokky.databinding.ActivityMainBinding
+import com.ps.tokky.databinding.BottomSheetTransferAccountsBinding
 import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
@@ -110,6 +114,23 @@ class MainActivity : BaseActivity() {
             R.id.menu_main_edit -> {
                 openEditMode(!adapter.editModeEnabled)
                 return true
+            }
+            R.id.menu_main_transfer_accounts -> {
+                val dialogBinding = BottomSheetTransferAccountsBinding.inflate(layoutInflater)
+                val dialog = BottomSheetDialog(this)
+                dialog.setContentView(dialogBinding.root)
+
+                dialogBinding.btnExportAccounts.setOnClickListener {
+                    dialog.dismiss()
+                    startActivity(Intent(this@MainActivity, ExportActivity::class.java))
+                }
+
+                dialogBinding.btnImportAccounts.setOnClickListener {
+                    dialog.dismiss()
+                    startActivity(Intent(this@MainActivity, ImportActivity::class.java))
+                }
+
+                dialog.show()
             }
             R.id.menu_main_settings -> {
                 startActivity(Intent(this, SettingsActivity::class.java))

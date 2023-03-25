@@ -1,5 +1,8 @@
 package com.ps.tokky.utils
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 object Constants {
     const val DEFAULT_OTP_VALIDITY = 30
     const val DEFAULT_OTP_LENGTH = 6
@@ -10,4 +13,16 @@ object Constants {
     const val BASE32_CHARS = "[A-Z2-7 ]+"
 
     const val KEY_LIST_ORDER = "list_order"
+
+    private const val EXPORT_FILE_NAME_PREFIX = "tokky_accounts_"
+
+    val EXPORT_FILE_NAME: String
+        get() {
+            val currentDateTime = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+            val formatted = currentDateTime.format(formatter)
+            return EXPORT_FILE_NAME_PREFIX + formatted
+        }
+
+    const val MIME_TYPE = "application/json"
 }

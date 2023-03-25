@@ -16,6 +16,11 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_main_transfer_accounts"
+        android:title="@string/title_transfer_accounts"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_main_settings"
         android:title="@string/title_settings"
         app:showAsAction="never" />

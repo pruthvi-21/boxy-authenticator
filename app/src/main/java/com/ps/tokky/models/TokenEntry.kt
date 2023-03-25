@@ -145,6 +145,19 @@ class TokenEntry {
         }
     }
 
+    fun toQRData(): String {
+        JSONObject().apply {
+            put(KEY_ISSUER, issuer) //String
+            put(KEY_LABEL, label) //String
+            put(KEY_SECRET_KEY, secretKeyEncoded) //String
+            put(KEY_PERIOD, period) //Int
+            put(KEY_OTP_LENGTH, otpLength) //Int
+            put(KEY_ALGORITHM, algorithm) //String
+            put(KEY_HASH, hash)
+        }
+        return "$issuer"
+    }
+
     companion object {
         const val TAG = "TokenEntry"
 

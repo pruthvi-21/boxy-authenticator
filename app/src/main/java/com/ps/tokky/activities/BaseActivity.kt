@@ -4,9 +4,11 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ps.tokky.utils.AppPreferences
+import com.ps.tokky.utils.DBHelper
 
 open class BaseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     protected val preferences by lazy { AppPreferences.getInstance(this) }
+    protected val dbHelper by lazy { DBHelper.getInstance(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
