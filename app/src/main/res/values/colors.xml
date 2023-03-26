@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="launcher_foreground_color">#689F38</color>
-    <color name="launcher_background_color">#252525</color>
+    <color name="launcher_background_color">#689F38</color>
 
     <color name="surface_color">#F2F2F2</color>
     <color name="surface_color_variant">@color/tinted_primary</color>

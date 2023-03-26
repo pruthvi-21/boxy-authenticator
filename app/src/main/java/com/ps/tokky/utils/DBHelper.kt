@@ -84,10 +84,6 @@ class DBHelper private constructor(
         allEntries.removeIf { id == it.id }
     }
 
-    fun getEntriesWithIDs(list: List<String?>): List<TokenEntry?> {
-        return list.map { allEntries.find { it1 -> it == it1.id } }
-    }
-
     companion object {
         private const val TAG = "DBHelper"
 

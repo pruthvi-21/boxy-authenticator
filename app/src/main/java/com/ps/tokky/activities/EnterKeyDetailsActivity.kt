@@ -31,6 +31,8 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
     private var shortAnimationDuration: Int = 0
 
+    private val dbHelper = DBHelper.getInstance(this)
+
     private val editId: String? by lazy { intent.extras?.getString("id") }
     private val otpAuthUrl: String? by lazy { intent.extras?.getString("otpAuth") }
 
