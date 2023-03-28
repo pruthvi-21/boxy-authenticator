@@ -21,7 +21,6 @@ import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.*
-import java.net.URI
 
 class EnterKeyDetailsActivity : BaseActivity() {
 
@@ -53,7 +52,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
         if (editMode) {
             try {
-                val currentEntry = if (otpAuthUrl != null) TokenEntry(URI(otpAuthUrl!!))
+                val currentEntry = if (otpAuthUrl != null) TokenEntry(otpAuthUrl)
                 else dbHelper.getAllEntries(false).find { it.id == editId }
 
                 binding.tilIssuer.editText?.setText(currentEntry!!.issuer)
@@ -76,6 +75,9 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
                     updateEntryInDB(currentEntry)
                 }
+            } catch (exception: EmptyURLContentException) {
+                Log.e(TAG, "onCreate: ", exception)
+                Toast.makeText(this, "Empty URL", Toast.LENGTH_SHORT).show()
             } catch (exception: BadlyFormedURLException) {
                 Log.e(TAG, "onCreate: ", exception)
                 Toast.makeText(this, "URL is badly formed", Toast.LENGTH_SHORT).show()
