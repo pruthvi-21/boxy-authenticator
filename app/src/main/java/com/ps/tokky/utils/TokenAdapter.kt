@@ -9,6 +9,8 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
@@ -74,9 +76,11 @@ class TokenAdapter(
                 return true
             }
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            }
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
 
+            override fun isLongPressDragEnabled(): Boolean {
+                return false
+            }
         }
         ItemTouchHelper(callback)
     }
@@ -85,14 +89,21 @@ class TokenAdapter(
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = RvAuthCardBinding.inflate(layoutInflater, parent, false)
 
-        return TokenViewHolder(context, binding)
+        return TokenViewHolder(context, binding).apply {
+            touchListener = View.OnTouchListener { v, event ->
+                v.performClick()
+                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(this)
+                }
+                true
+            }
+        }
     }
 
     override fun getItemCount() = list.size
 
     override fun onBindViewHolder(holder: TokenViewHolder, position: Int) {
-        holder.editModeEnabled = editModeEnabled
-        holder.bind(list[position])
+        holder.bind(list[position], editModeEnabled)
 
         holder.setCallback(this)
         setShape(holder.binding.cardView, position)
