@@ -30,8 +30,6 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
     private var shortAnimationDuration: Int = 0
 
-    private val dbHelper = DBHelper.getInstance(this)
-
     private val editId: String? by lazy { intent.extras?.getString("id") }
     private val otpAuthUrl: String? by lazy { intent.extras?.getString("otpAuth") }
 
@@ -53,7 +51,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
         if (editMode) {
             try {
                 val currentEntry = if (otpAuthUrl != null) TokenEntry(otpAuthUrl)
-                else dbHelper.getAllEntries(false).find { it.id == editId }
+                else db.getAll(false).find { it.id == editId }
 
                 binding.tilIssuer.editText?.setText(currentEntry!!.issuer)
                 binding.tilLabel.editText?.setText(currentEntry!!.label)
@@ -145,10 +143,10 @@ class EnterKeyDetailsActivity : BaseActivity() {
     private fun addEntryInDB(token: TokenEntry, oldId: String? = null) {
         try {
             if (oldId != null) {
-                val isPresent = dbHelper.getAllEntries(false).find { it.id == oldId } != null
-                if (isPresent && otpAuthUrl == null) dbHelper.removeEntry(oldId)
+                val isPresent = db.getAll(false).find { it.id == oldId } != null
+                if (isPresent && otpAuthUrl == null) db.remove(oldId)
             }
-            val success = dbHelper.addEntry(token)
+            val success = db.add(token)
 
             if (success) {
                 setResult(Activity.RESULT_OK, Intent().putExtra("id", token.id))
@@ -159,7 +157,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
                 .setTitle("Account already exists")
                 .setMessage("You already have a account from '${token.issuer}'")
                 .setPositiveButton("Replace") { _, _ ->
-                    dbHelper.updateEntry(token)
+                    db.update(token)
 
                     setResult(Activity.RESULT_OK, Intent().putExtra("id", token.id))
                     finish()

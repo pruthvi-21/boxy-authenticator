@@ -24,6 +24,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import com.ps.tokky.R
 import com.ps.tokky.activities.EnterKeyDetailsActivity
 import com.ps.tokky.activities.MainActivity
+import com.ps.tokky.database.DBHelper
 import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
@@ -40,7 +41,7 @@ class TokenAdapter(
     private var currentExpanded = -1
 
     private val handler = Handler(Looper.getMainLooper())
-    private val dbHelper = DBHelper.getInstance(context)
+    private val db = DBHelper.getInstance(context)
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     private val handlerTask = object : Runnable {
@@ -200,7 +201,8 @@ class TokenAdapter(
             .setCustomTitle(titleViewBinding.root)
             .setMessage(R.string.dialog_message_delete_token)
             .setPositiveButton(R.string.dialog_remove) { _, _ ->
-                dbHelper.removeEntry(entry.id)
+                entry.id ?: return@setPositiveButton
+                db.remove(entry.id)
                 list.removeAt(position)
 
                 saveListOrder()
