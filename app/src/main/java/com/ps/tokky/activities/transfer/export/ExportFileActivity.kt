@@ -25,7 +25,7 @@ class ExportFileActivity : BaseActivity() {
 
     private val exportData: List<TokenEntry?>? by lazy {
         val data = intent?.extras?.getStringArray(INTENT_EXTRA_KEY_EXPORT_SELECTION)
-        data?.asList()?.let { dbHelper.getEntriesWithIDs(it) }
+        data?.asList()?.let { db.getEntriesWithIDs(it) }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

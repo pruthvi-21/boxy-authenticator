@@ -9,6 +9,8 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +24,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import com.ps.tokky.R
 import com.ps.tokky.activities.EnterKeyDetailsActivity
 import com.ps.tokky.activities.MainActivity
+import com.ps.tokky.database.DBHelper
 import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
@@ -38,7 +41,7 @@ class TokenAdapter(
     private var currentExpanded = -1
 
     private val handler = Handler(Looper.getMainLooper())
-    private val dbHelper = DBHelper.getInstance(context)
+    private val db = DBHelper.getInstance(context)
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     private val handlerTask = object : Runnable {
@@ -74,9 +77,11 @@ class TokenAdapter(
                 return true
             }
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            }
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
 
+            override fun isLongPressDragEnabled(): Boolean {
+                return false
+            }
         }
         ItemTouchHelper(callback)
     }
@@ -85,14 +90,21 @@ class TokenAdapter(
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = RvAuthCardBinding.inflate(layoutInflater, parent, false)
 
-        return TokenViewHolder(context, binding)
+        return TokenViewHolder(context, binding).apply {
+            touchListener = View.OnTouchListener { v, event ->
+                v.performClick()
+                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                    itemTouchHelper.startDrag(this)
+                }
+                true
+            }
+        }
     }
 
     override fun getItemCount() = list.size
 
     override fun onBindViewHolder(holder: TokenViewHolder, position: Int) {
-        holder.editModeEnabled = editModeEnabled
-        holder.bind(list[position])
+        holder.bind(list[position], editModeEnabled)
 
         holder.setCallback(this)
         setShape(holder.binding.cardView, position)
@@ -189,7 +201,8 @@ class TokenAdapter(
             .setCustomTitle(titleViewBinding.root)
             .setMessage(R.string.dialog_message_delete_token)
             .setPositiveButton(R.string.dialog_remove) { _, _ ->
-                dbHelper.removeEntry(entry.id)
+                entry.id ?: return@setPositiveButton
+                db.remove(entry.id)
                 list.removeAt(position)
 
                 saveListOrder()

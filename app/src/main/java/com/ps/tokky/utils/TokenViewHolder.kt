@@ -1,10 +1,12 @@
 package com.ps.tokky.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.View.OnTouchListener
 import androidx.recyclerview.widget.RecyclerView
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
@@ -27,7 +29,14 @@ class TokenViewHolder(
         }
     }
 
-    fun bind(entry: TokenEntry) {
+    var touchListener: OnTouchListener? = null
+        @SuppressLint("ClickableViewAccessibility")
+        set(value) {
+            field = value
+            binding.rearrange.setOnTouchListener(value)
+        }
+
+    fun bind(entry: TokenEntry, inEditMode: Boolean) {
         this.entry = entry
         binding.issuerLabel.text = entry.issuer
         if (entry.label.isNotEmpty()) {
@@ -37,13 +46,16 @@ class TokenViewHolder(
             binding.accountLabel.visibility = View.GONE
         }
 
-        setThumbnail(entry.issuer, entry.label)
-
-        if (editModeEnabled) {
+        if (inEditMode) {
+            binding.rearrange.visibility = View.VISIBLE
+            binding.thumbnailFrame.visibility = View.GONE
             binding.arrow.visibility = View.GONE
-            binding.cardHiddenLayout.visibility = View.GONE
+            binding.edit.visibility = View.VISIBLE
+            binding.delete.visibility = View.VISIBLE
+
             isExpanded = false
 
+            binding.cardView.setOnClickListener(null)
             binding.edit.setOnClickListener {
                 listener?.onEdit(entry, adapterPosition)
             }
@@ -56,13 +68,19 @@ class TokenViewHolder(
             return
         }
 
+        binding.rearrange.visibility = View.GONE
+        binding.thumbnailFrame.visibility = View.VISIBLE
         binding.arrow.visibility = View.VISIBLE
+        binding.edit.visibility = View.GONE
+        binding.delete.visibility = View.GONE
+
+        setThumbnail(entry.issuer, entry.label)
+
         binding.otpHolder.typeface = Typeface.MONOSPACE
         updateOTP()
 
         binding.progressBar.setMax(entry.period)
         binding.cardView.setOnClickListener {
-            if (editModeEnabled) return@setOnClickListener
             listener?.onExpand(this, adapterPosition, !isExpanded)
         }
 
@@ -101,19 +119,6 @@ class TokenViewHolder(
                 .rotation(if (value) 180f else 0f)
                 .setDuration(200)
                 .start()
-        }
-
-    var editModeEnabled = false
-        set(value) {
-            field = value
-
-            if (value) {
-                isExpanded = false
-            }
-
-            binding.arrow.visibility = if (value) View.GONE else View.VISIBLE
-            binding.edit.visibility = if (value) View.VISIBLE else View.GONE
-            binding.delete.visibility = binding.edit.visibility
         }
 
     fun setCallback(listener: Callback?) {

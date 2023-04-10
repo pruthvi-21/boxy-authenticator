@@ -21,7 +21,6 @@ import com.ps.tokky.activities.transfer.export.ExportActivity
 import com.ps.tokky.databinding.ActivityMainBinding
 import com.ps.tokky.databinding.BottomSheetTransferAccountsBinding
 import com.ps.tokky.utils.Constants.FILE_MIME_TYPE
-import com.ps.tokky.utils.DBHelper
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
 import kotlinx.coroutines.*
@@ -32,7 +31,6 @@ class MainActivity : BaseActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val helper = DBHelper.getInstance(this)
     private val adapter: TokenAdapter by lazy {
         TokenAdapter(this, ArrayList(), binding.recyclerView, addNewActivityLauncher)
     }
@@ -83,7 +81,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun refresh(reload: Boolean) {
-        val list = helper.getAllEntries(reload)
+        val list = db.getAll(reload)
         adapter.updateEntries(list)
         binding.emptyLayout.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
         invalidateOptionsMenu()
@@ -102,8 +100,7 @@ class MainActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (!adapter.editModeEnabled) {
             menuInflater.inflate(R.menu.menu_main, menu)
-            menu?.findItem(R.id.menu_main_edit)?.isEnabled =
-                helper.getAllEntries(false).isNotEmpty()
+            menu?.findItem(R.id.menu_main_edit)?.isEnabled = db.getAll(false).isNotEmpty()
         }
         return true
     }
@@ -173,7 +170,7 @@ class MainActivity : BaseActivity() {
                     binding.fabAddNew.show()
 
                     binding.emptyLayout.visibility =
-                        if (helper.getAllEntries(false).isEmpty()) View.VISIBLE else View.GONE
+                        if (db.getAll(false).isEmpty()) View.VISIBLE else View.GONE
                 }
                 binding.recyclerView.startAnimation(fadeInAnimation)
             }

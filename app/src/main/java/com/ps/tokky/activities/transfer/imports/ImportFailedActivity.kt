@@ -116,7 +116,7 @@ class ImportFailedActivity : BaseActivity() {
                 item.updateInfo(newIssuer, newLabel)
 
                 try {
-                    val success = dbHelper.addEntry(item)
+                    val success = db.add(item)
 
                     if (success) {
                         importList.remove(item)

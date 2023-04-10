@@ -2,6 +2,7 @@
     <string name="app_name">Tokky</string>
     <string name="cd_fab_add_new">add</string>
     <string name="empty_layout_text">No tokens available\nAdd a token by clicking <b>\'+\'</b> at the bottom</string>
+    <string name="content_description_rearrange">rearrange</string>
 
     <!-- EnterKeyDetailsActivity -->
     <string name="title_enter_account_details">Enter account details</string>

@@ -58,7 +58,7 @@ class ImportActivity : BaseActivity() {
             checkedList.forEach {
                 val token = it.token
                 try {
-                    dbHelper.addEntry(token)
+                    db.add(token)
                 } catch (exception: TokenExistsInDBException) {
                     failedList.add(token)
                 }

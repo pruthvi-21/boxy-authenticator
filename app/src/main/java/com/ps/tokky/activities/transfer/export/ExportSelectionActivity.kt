@@ -28,7 +28,7 @@ class ExportSelectionActivity : BaseActivity() {
 
         val checkedList = intent.extras?.getStringArray(INTENT_EXTRA_KEY_EXPORT_SELECTION)
 
-        val tokensList = dbHelper.getAllEntries(true)
+        val tokensList = db.getAll(true)
         val list = tokensList.map {
             var name = it.issuer
             if (it.label.isNotEmpty()) name += " (${it.label})"

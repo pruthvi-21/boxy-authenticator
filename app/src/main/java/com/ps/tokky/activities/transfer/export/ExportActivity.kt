@@ -24,11 +24,12 @@ class ExportActivity : BaseActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarLayout.toolbar)
 
-        val exportAccountsList = dbHelper.getAllEntries(false)
+        val exportAccountsList = db.getAll(false)
         val listIds = exportAccountsList.map { it.id }
         selectedListIds = listIds.toTypedArray()
 
-        binding.summaryCount.text = getString(R.string.export_selection_label_accounts_count, selectedListIds?.size ?: 0)
+        binding.summaryCount.text =
+            getString(R.string.export_selection_label_accounts_count, selectedListIds?.size ?: 0)
 
         binding.editExportListBtn.setOnClickListener {
             selectionActivityLauncher.launch(
@@ -45,7 +46,8 @@ class ExportActivity : BaseActivity() {
         }
 
         binding.exportQrCode.setOnClickListener {
-            val list = selectedListIds?.map { exportAccountsList.find { it1 -> it == it1.id }?.toJson() }
+            val list =
+                selectedListIds?.map { exportAccountsList.find { it1 -> it == it1.id }?.toJson() }
             startActivity(
                 Intent(this, ExportBarcodeActivity::class.java)
                     .putExtra(INTENT_EXTRA_KEY_EXPORT_SELECTION, JSONArray(list).toString())
@@ -68,7 +70,7 @@ class ExportActivity : BaseActivity() {
                 selectedListIds = extras.getStringArray(INTENT_EXTRA_KEY_EXPORT_SELECTION)
 
                 binding.exportListTitle.setTitle(
-                    if (selectedListIds?.size == dbHelper.getAllEntries(false).size)
+                    if (selectedListIds?.size == db.getAll(false).size)
                         R.string.export_selection_label_all_accounts
                     else R.string.export_selection_label_selected_accounts
                 )
