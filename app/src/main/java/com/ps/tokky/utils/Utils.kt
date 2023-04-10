@@ -105,3 +105,7 @@ fun String.hash(algorithm: String): String {
     val digest = md.digest(toByteArray())
     return digest.fold("") { str, it -> str + "%02x".format(it) }
 }
+
+fun String.toast(context: Context) {
+    Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
+}

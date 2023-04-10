@@ -1,6 +1,5 @@
 package com.ps.tokky.models
 
-import android.net.Uri
 import android.text.Spannable
 import android.util.Log
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.io.BaseEncoding
@@ -10,6 +9,7 @@ import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_LENGTH
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_VALIDITY
 import org.json.JSONObject
+import java.net.URI
 import java.util.*
 
 class TokenEntry {
@@ -68,28 +68,26 @@ class TokenEntry {
         this.hash = json.getString(KEY_HASH)
     }
 
-    constructor(data: String?) {
-        if (data == null)
-            throw EmptyURLContentException("URL data is null")
+    constructor(json: JSONObject) : this(UUID.randomUUID().toString(), json)
 
-        val uri = Uri.parse(data)
-
+    constructor(uri: URI) {
         if (!Utils.isValidTOTPAuthURL(uri.toString())) {
             throw BadlyFormedURLException("Invalid URL format")
         }
         this.id = UUID.randomUUID().toString()
 
-        val params = uri.query?.split("&")
-            ?.associate {
+        val params = uri.query.split("&")
+            .associate {
                 it.split("=")
                     .let { pair -> pair[0] to pair[1] }
             }
 
         //use uri.host for otp type TOTP or HOTP
-        this.issuer = params?.get("issuer") ?: ""
-        this.label = uri.path?.substring(1) ?: ""
+        this.issuer = params["issuer"] ?: ""
+        this.label = uri.path.substring(1)
 
-        val secret = params?.get("secret")?.cleanSecretKey() ?: throw IllegalArgumentException("Missing secret parameter")
+        val secret = params["secret"]?.cleanSecretKey()
+            ?: throw IllegalArgumentException("Missing secret parameter")
         if (secret.isValidSecretKey()) {
             this.secretKey = Base32().decode(secret.cleanSecretKey())
         } else throw InvalidSecretKeyException("Invalid secret key")
@@ -149,6 +147,12 @@ class TokenEntry {
             put(KEY_HASH, hash)
         }
     }
+
+    val name: String
+        get() {
+            if (label.isEmpty()) return issuer
+            return "$issuer ($label)"
+        }
 
     companion object {
         const val TAG = "TokenEntry"

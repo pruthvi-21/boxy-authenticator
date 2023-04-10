@@ -21,6 +21,7 @@ import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.*
+import java.net.URI
 
 class EnterKeyDetailsActivity : BaseActivity() {
 
@@ -50,8 +51,8 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
         if (editMode) {
             try {
-                val currentEntry = if (otpAuthUrl != null) TokenEntry(otpAuthUrl)
-                else db.getAll(false).find { it.id == editId }
+                val currentEntry = if (otpAuthUrl != null) TokenEntry(URI(otpAuthUrl!!))
+                else dbHelper.getAllEntries(false).find { it.id == editId }
 
                 binding.tilIssuer.editText?.setText(currentEntry!!.issuer)
                 binding.tilLabel.editText?.setText(currentEntry!!.label)
@@ -73,9 +74,6 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
                     updateEntryInDB(currentEntry)
                 }
-            } catch (exception: EmptyURLContentException) {
-                Log.e(TAG, "onCreate: ", exception)
-                Toast.makeText(this, "Empty URL", Toast.LENGTH_SHORT).show()
             } catch (exception: BadlyFormedURLException) {
                 Log.e(TAG, "onCreate: ", exception)
                 Toast.makeText(this, "URL is badly formed", Toast.LENGTH_SHORT).show()
@@ -143,10 +141,10 @@ class EnterKeyDetailsActivity : BaseActivity() {
     private fun addEntryInDB(token: TokenEntry, oldId: String? = null) {
         try {
             if (oldId != null) {
-                val isPresent = db.getAll(false).find { it.id == oldId } != null
-                if (isPresent && otpAuthUrl == null) db.remove(oldId)
+                val isPresent = dbHelper.getAllEntries(false).find { it.id == oldId } != null
+                if (isPresent && otpAuthUrl == null) dbHelper.removeEntry(oldId)
             }
-            val success = db.add(token)
+            val success = dbHelper.addEntry(token)
 
             if (success) {
                 setResult(Activity.RESULT_OK, Intent().putExtra("id", token.id))
@@ -157,7 +155,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
                 .setTitle("Account already exists")
                 .setMessage("You already have a account from '${token.issuer}'")
                 .setPositiveButton("Replace") { _, _ ->
-                    db.update(token)
+                    dbHelper.updateEntry(token)
 
                     setResult(Activity.RESULT_OK, Intent().putExtra("id", token.id))
                     finish()

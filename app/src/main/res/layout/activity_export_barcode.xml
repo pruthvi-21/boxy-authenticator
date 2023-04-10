@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.libx.ui.views.ToolbarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:navigationIcon="@drawable/ic_samsung_arrow_left"
+    tools:context=".activities.transfer.export.ExportBarcodeActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/screen_margin"
+        android:text="@string/qr_activity_title"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:textColor="?colorPrimary"
+        android:textSize="26sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/screen_margin"
+        android:text="@string/qr_activity_subtitle"
+        android:textSize="16sp" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="270dp"
+        android:layout_height="270dp"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        app:cardBackgroundColor="?colorSurface"
+        app:cardCornerRadius="0dp"
+        app:strokeColor="?colorOutline"
+        app:strokeWidth="2dp">
+
+        <ImageView
+            android:id="@+id/qr_code_viewer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/qr_activity_barcode_gen_failed" />
+    </com.google.android.material.card.MaterialCardView>
+</com.libx.ui.views.ToolbarLayout>

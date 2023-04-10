@@ -8,4 +8,10 @@
         <attr name="hint" format="string" />
         <attr name="icon" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="PreferenceLayoutView">
+        <attr name="title" />
+        <attr name="summary" />
+        <attr name="icon" />
+    </declare-styleable>
 </resources>

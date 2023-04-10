@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/screen_margin"
+    android:layout_marginVertical="5dp"
+    android:background="@drawable/bg_rounded"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/name_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="10dp"
+        android:textColor="?colorOnSurfaceVariant"
+        android:textSize="16sp"
+        tools:text="Label" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/edit"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="7dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        app:srcCompat="@drawable/ic_edit" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/remove"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="10dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        app:srcCompat="@drawable/ic_close" />
+
+</LinearLayout>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.libx.ui.views.ToolbarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:navigationIcon="@drawable/ic_samsung_arrow_left"
+    app:title="@string/label_export_accounts"
+    tools:context=".activities.transfer.export.ExportActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/screen_margin"
+                android:text="@string/export"
+                android:textColor="?colorPrimary"
+                android:textSize="22sp" />
+
+            <com.libx.ui.widget.XLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical"
+                app:backgroundColor="?colorSurfaceVariant"
+                app:cornerRadius="@dimen/radius_large">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.ps.tokky.views.PreferenceLayoutView
+                        android:id="@+id/export_list_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:icon="@drawable/ic_accounts"
+                        app:title="@string/export_selection_label_all_accounts" />
+
+                    <ImageButton
+                        android:id="@+id/edit_export_list_btn"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="30dp"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/export_edit_selection_content_description"
+                        android:src="@drawable/ic_edit" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginEnd="?android:listPreferredItemPaddingEnd"
+                    android:alpha=".5"
+                    android:background="?colorOutline" />
+
+                <TextView
+                    android:id="@+id/summary_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="56dp"
+                    android:paddingHorizontal="?android:attr/listPreferredItemPaddingStart"
+                    android:paddingVertical="10dp"
+                    android:text="@string/export_selection_label_accounts_count"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="?colorPrimary"
+                    tools:text="10 accounts" />
+            </com.libx.ui.widget.XLinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:paddingHorizontal="@dimen/screen_margin"
+                android:text="@string/to"
+                android:textColor="?colorPrimary"
+                android:textSize="22sp" />
+
+            <com.libx.ui.widget.XLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical"
+                app:backgroundColor="?colorSurfaceVariant"
+                app:cornerRadius="@dimen/radius_large">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginVertical="20dp"
+                    android:paddingHorizontal="?android:attr/listPreferredItemPaddingStart"
+                    android:text="@string/export_to_options_label"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="15sp" />
+
+                <com.ps.tokky.views.PreferenceLayoutView
+                    android:id="@+id/export_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:icon="@drawable/ic_export_file"
+                    app:title="@string/export_options_file" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginEnd="?android:listPreferredItemPaddingEnd"
+                    android:alpha=".5"
+                    android:background="?colorOutline" />
+
+                <com.ps.tokky.views.PreferenceLayoutView
+                    android:id="@+id/export_qr_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:icon="@drawable/ic_qr_code"
+                    app:title="@string/export_options_qr" />
+
+            </com.libx.ui.widget.XLinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</com.libx.ui.views.ToolbarLayout>
