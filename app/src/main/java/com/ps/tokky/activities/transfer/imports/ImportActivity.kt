@@ -42,7 +42,7 @@ class ImportActivity : BaseActivity() {
         importList.clear()
         for (i in 0 until jsonArray.length()) {
             val jsonObj = jsonArray.getJSONObject(i)
-            val token = TokenEntry(jsonObj)
+            val token = TokenEntry.BuildFromExportJson(jsonObj).build()
 
             importList.add(ImportItem(token, true))
         }
@@ -73,7 +73,7 @@ class ImportActivity : BaseActivity() {
 
             if (failedList.isNotEmpty()) {
                 val failedJsonArray = JSONArray()
-                failedList.forEach { failedJsonArray.put(it.toJson()) }
+                failedList.forEach { failedJsonArray.put(it.toExportJson()) }
                 val intent = Intent(context, ImportFailedActivity::class.java)
                     .putExtra(INTENT_EXTRA_FAILED_LIST, failedJsonArray.toString())
 

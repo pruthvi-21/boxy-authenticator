@@ -38,7 +38,10 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
         //Block screenshots
         if (!preferences.allowScreenshots) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
         }
 
         setContentView(binding.root)
@@ -50,8 +53,9 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
         if (editMode) {
             try {
-                val currentEntry = if (otpAuthUrl != null) TokenEntry(otpAuthUrl)
-                else db.getAll(false).find { it.id == editId }
+                val currentEntry =
+                    if (otpAuthUrl != null) TokenEntry.BuildFromUrl(otpAuthUrl).build()
+                    else db.getAll(false).find { it.id == editId }
 
                 binding.tilIssuer.editText?.setText(currentEntry!!.issuer)
                 binding.tilLabel.editText?.setText(currentEntry!!.label)
@@ -94,7 +98,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
         binding.advLayout.tilPeriod.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
         binding.tilSecretKey.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
 
-        binding.advOptionsSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.advOptionsSwitch.setOnCheckedChangeListener { _, isChecked ->
             hideKeyboard()
             showAdvancedOptions(isChecked)
         }
@@ -103,10 +107,10 @@ class EnterKeyDetailsActivity : BaseActivity() {
         binding.detailsSaveBtn.setOnClickListener {
             hideKeyboard()
 
+            val secretKey = binding.tilSecretKey.editText!!.text.toString().cleanSecretKey()
             try {
                 val issuer = binding.tilIssuer.editText!!.text.toString()
                 val label = binding.tilLabel.editText!!.text.toString()
-                val secretKey = binding.tilSecretKey.editText!!.text.toString().cleanSecretKey()
                 val period = binding.advLayout.tilPeriod.editText!!.text.toString().toInt()
 
                 val otpLength = when (binding.advLayout.otpLengthToggleGroup.checkedButtonId) {
@@ -115,22 +119,22 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     else -> 6
                 }
 
-                val algo = findViewById<Button>(binding.advLayout.algoToggleGroup.checkedButtonId).text.toString()
+                val algo =
+                    findViewById<Button>(binding.advLayout.algoToggleGroup.checkedButtonId).text.toString()
 
-                val token = TokenEntry(
-                    id = null,
-                    issuer = issuer,
-                    label = label,
-                    secretKey = secretKey,
-                    otpLength = otpLength,
-                    period = period,
-                    algorithm = algo,
-                    hash = null
-                )
-
+                val token = TokenEntry.Builder()
+                    .setIssuer(issuer)
+                    .setLabel(label)
+                    .setSecretKey(secretKey)
+                    .setAlgorithm(algo)
+                    .setPeriod(period)
+                    .setDigits(otpLength)
+                    .setAddedFrom(AccountEntryMethod.FORM)
+                    .build()
+                Log.e(TAG, "New token: $secretKey")
                 addEntryInDB(token)
             } catch (exception: InvalidSecretKeyException) {
-                Log.e(TAG, "onSaveDetails: Invalid Secret Key format")
+                Log.e(TAG, "onSaveDetails: Invalid Secret Key format $secretKey")
                 Toast.makeText(this, R.string.error_invalid_chars, Toast.LENGTH_SHORT).show()
             }
         }
@@ -202,7 +206,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
     }
 
     private fun resetAdvanceFields() {
-        binding.advLayout.tilPeriod.editText?.setText(Constants.DEFAULT_OTP_VALIDITY.toString())
+        binding.advLayout.tilPeriod.editText?.setText(Constants.DEFAULT_PERIOD.toString())
         binding.advLayout.otpLengthToggleGroup.check(binding.advLayout.btn6digits.id)
         binding.advLayout.algoToggleGroup.check(binding.advLayout.btnSha1.id)
     }

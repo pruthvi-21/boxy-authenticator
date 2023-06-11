@@ -5,7 +5,6 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.CryptoUtils
 import com.ps.tokky.utils.TokenExistsInDBException
@@ -28,7 +27,8 @@ class DBHelper private constructor(
     }
 
     override fun add(item: TokenEntry): Boolean {
-        val te: TokenEntry? = allEntries.find { (it.issuer + it.label) == (item.issuer + item.label) }
+        val te: TokenEntry? =
+            allEntries.find { (it.issuer + it.label) == (item.issuer + item.label) }
         if (te != null) {
             throw TokenExistsInDBException()
         }
@@ -57,7 +57,8 @@ class DBHelper private constructor(
     }
 
     override fun get(itemId: String): TokenEntry? {
-        val cursor = readableDatabase.rawQuery("select * from $TABLE_KEYS where $COL_ID = '$itemId'", null)
+        val cursor =
+            readableDatabase.rawQuery("select * from $TABLE_KEYS where $COL_ID = '$itemId'", null)
         return if (cursor.moveToFirst()) {
             buildTokenFromCursor(cursor)
         } else null
@@ -75,8 +76,8 @@ class DBHelper private constructor(
             } while (cursor.moveToNext())
         }
 
-        val valid = TokenEntry.validateHash(allEntries)
-        Log.i(TAG, "getAllEntries: validated tokens hash: $valid")
+//        val valid = TokenEntry.validateHash(allEntries)
+//        Log.i(TAG, "getAllEntries: validated tokens hash: $valid")
 
         cursor.close()
         return allEntries
@@ -93,7 +94,7 @@ class DBHelper private constructor(
         val data = CryptoUtils.decryptData(cipher, secretKey)
         val jsonObj = JSONObject(data)
 
-        return TokenEntry(id, jsonObj)
+        return TokenEntry.BuildFromDBJson(id, jsonObj).build()
     }
 
     fun getEntriesWithIDs(list: List<String?>): List<TokenEntry?> {

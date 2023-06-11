@@ -47,7 +47,7 @@ class ExportActivity : BaseActivity() {
 
         binding.exportQrCode.setOnClickListener {
             val list =
-                selectedListIds?.map { exportAccountsList.find { it1 -> it == it1.id }?.toJson() }
+                selectedListIds?.map { exportAccountsList.find { it1 -> it == it1.id }?.toExportJson() }
             startActivity(
                 Intent(this, ExportBarcodeActivity::class.java)
                     .putExtra(INTENT_EXTRA_KEY_EXPORT_SELECTION, JSONArray(list).toString())

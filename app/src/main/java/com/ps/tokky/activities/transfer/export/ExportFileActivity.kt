@@ -83,7 +83,7 @@ class ExportFileActivity : BaseActivity() {
             FileHelper.writeToFile(
                 context = this@ExportFileActivity,
                 uri = intent.data,
-                content = JSONArray(exportData?.map { it?.toJson() }).toString(),
+                content = JSONArray(exportData?.map { it?.toExportJson() }).toString(),
                 successCallback = successCallback,
                 failureCallback = failureCallback
             )

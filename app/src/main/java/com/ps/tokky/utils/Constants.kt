@@ -3,10 +3,23 @@ package com.ps.tokky.utils
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+
+enum class AccountEntryMethod(val value: String) {
+    FORM("form"),
+    QR_CODE("qr"),
+    RESTORED("restored")
+}
+
+enum class OTPType(val value: String) {
+    TOTP("totp"),
+    HOTP("hotp")
+}
+
 object Constants {
-    const val DEFAULT_OTP_VALIDITY = 30
-    const val DEFAULT_OTP_LENGTH = 6
+    val DEFAULT_OTP_TYPE = OTPType.TOTP
     const val DEFAULT_HASH_ALGORITHM = "SHA1"
+    const val DEFAULT_PERIOD = 30
+    const val DEFAULT_DIGITS = 6
 
     const val OTP_GENERATION_REFRESH_INTERVAL = 1000L
 
