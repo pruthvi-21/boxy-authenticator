@@ -91,7 +91,7 @@ class TokenAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun updateEntries(list: List<TokenEntry>) {
         this.list.clear()
-        this.list.addAll(list)
+        this.list.addAll(list.sortedBy { it.name })
 
         notifyDataSetChanged()
     }
