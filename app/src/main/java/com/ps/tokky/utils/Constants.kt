@@ -12,8 +12,6 @@ object Constants {
 
     const val BASE32_CHARS = "[A-Z2-7 ]+"
 
-    const val KEY_LIST_ORDER = "list_order"
-
     private const val EXPORT_FILE_NAME_PREFIX = "tokky_accounts_"
 
     val EXPORT_FILE_NAME: String

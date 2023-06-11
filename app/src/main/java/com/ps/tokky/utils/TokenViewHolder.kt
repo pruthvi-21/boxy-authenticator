@@ -29,13 +29,6 @@ class TokenViewHolder(
         }
     }
 
-    var touchListener: OnTouchListener? = null
-        @SuppressLint("ClickableViewAccessibility")
-        set(value) {
-            field = value
-            binding.rearrange.setOnTouchListener(value)
-        }
-
     fun bind(entry: TokenEntry, inEditMode: Boolean) {
         this.entry = entry
         binding.issuerLabel.text = entry.issuer
@@ -47,7 +40,6 @@ class TokenViewHolder(
         }
 
         if (inEditMode) {
-            binding.rearrange.visibility = View.VISIBLE
             binding.thumbnailFrame.visibility = View.GONE
             binding.arrow.visibility = View.GONE
             binding.edit.visibility = View.VISIBLE
@@ -68,7 +60,6 @@ class TokenViewHolder(
             return
         }
 
-        binding.rearrange.visibility = View.GONE
         binding.thumbnailFrame.visibility = View.VISIBLE
         binding.arrow.visibility = View.VISIBLE
         binding.edit.visibility = View.GONE

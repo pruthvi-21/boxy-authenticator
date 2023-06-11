@@ -9,14 +9,11 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -28,7 +25,6 @@ import com.ps.tokky.database.DBHelper
 import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
-import com.ps.tokky.utils.Constants.KEY_LIST_ORDER
 import java.util.*
 
 class TokenAdapter(
@@ -50,55 +46,12 @@ class TokenAdapter(
             handler.postDelayed(this, Constants.OTP_GENERATION_REFRESH_INTERVAL)
         }
     }
-    private val itemTouchHelper by lazy {
-        val callback = object : ItemTouchHelper.Callback() {
-            override fun getMovementFlags(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder
-            ): Int {
-                return makeMovementFlags(
-                    ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                    0
-                )
-            }
-
-            override fun onMove(
-                recyclerView: RecyclerView,
-                source: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                val fromPosition = source.adapterPosition
-                val toPosition = target.adapterPosition
-
-                Collections.swap(list, fromPosition, toPosition)
-                notifyItemMoved(fromPosition, toPosition)
-                saveListOrder()
-
-                return true
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
-
-            override fun isLongPressDragEnabled(): Boolean {
-                return false
-            }
-        }
-        ItemTouchHelper(callback)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TokenViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = RvAuthCardBinding.inflate(layoutInflater, parent, false)
 
-        return TokenViewHolder(context, binding).apply {
-            touchListener = View.OnTouchListener { v, event ->
-                v.performClick()
-                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                    itemTouchHelper.startDrag(this)
-                }
-                true
-            }
-        }
+        return TokenViewHolder(context, binding)
     }
 
     override fun getItemCount() = list.size
@@ -117,8 +70,10 @@ class TokenAdapter(
 
         if (!editModeEnabled) {
             if (list.size != 1) {
-                if (position == 0) shapeBuilder.setTopLeftCornerSize(radius).setTopRightCornerSize(radius)
-                if (position == list.size - 1) shapeBuilder.setBottomLeftCornerSize(radius).setBottomRightCornerSize(radius)
+                if (position == 0) shapeBuilder.setTopLeftCornerSize(radius)
+                    .setTopRightCornerSize(radius)
+                if (position == list.size - 1) shapeBuilder.setBottomLeftCornerSize(radius)
+                    .setBottomRightCornerSize(radius)
             } else shapeBuilder.setAllCornerSizes(radius)
         }
         card.shapeAppearanceModel = shapeBuilder.build()
@@ -137,8 +92,6 @@ class TokenAdapter(
     fun updateEntries(list: List<TokenEntry>) {
         this.list.clear()
         this.list.addAll(list)
-
-        setListOrder()
 
         notifyDataSetChanged()
     }
@@ -161,7 +114,6 @@ class TokenAdapter(
         set(value) {
             field = value
             notifyDataSetChanged()
-            itemTouchHelper.attachToRecyclerView(if (value) this.recyclerView else null)
             currentExpanded = -1
         }
 
@@ -190,12 +142,18 @@ class TokenAdapter(
         val titleViewBinding = DialogTitleDeleteWarningBinding.inflate(LayoutInflater.from(context))
 
         val ssb = SpannableStringBuilder(entry.issuer)
-        ssb.setSpan(StyleSpan(Typeface.BOLD), 0, entry.issuer.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        ssb.setSpan(
+            StyleSpan(Typeface.BOLD),
+            0,
+            entry.issuer.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
 
-        titleViewBinding.title.text = SpannableStringBuilder(context.getString(R.string.dialog_title_delete_token))
-            .append(" ")
-            .append(ssb)
-            .append("?")
+        titleViewBinding.title.text =
+            SpannableStringBuilder(context.getString(R.string.dialog_title_delete_token))
+                .append(" ")
+                .append(ssb)
+                .append("?")
 
         MaterialAlertDialogBuilder(context)
             .setCustomTitle(titleViewBinding.root)
@@ -204,8 +162,6 @@ class TokenAdapter(
                 entry.id ?: return@setPositiveButton
                 db.remove(entry.id)
                 list.removeAt(position)
-
-                saveListOrder()
 
                 notifyItemRemoved(position)
 
@@ -216,26 +172,6 @@ class TokenAdapter(
             .setNegativeButton(R.string.dialog_cancel, null)
             .create()
             .show()
-    }
-
-    private fun setListOrder() {
-        val listOrderStr = sharedPreferences.getString(KEY_LIST_ORDER, "")
-        val listOrder = listOrderStr?.split(",")?.toList()
-
-        if (listOrder?.isNotEmpty() == true) {
-            val sortedThings = list.sortedWith { a, b ->
-                listOrder.indexOf(a.id).compareTo(listOrder.indexOf(b.id))
-            }
-
-            this.list.clear()
-            this.list.addAll(sortedThings)
-        }
-    }
-
-    private fun saveListOrder() {
-        val ids = ArrayList<String>()
-        list.forEach { ids.add(it.id!!) }
-        sharedPreferences.edit().putString(KEY_LIST_ORDER, ids.joinToString(",")).apply()
     }
 
     fun onResume() {
@@ -250,6 +186,5 @@ class TokenAdapter(
         token ?: return
         list.add(token)
         notifyItemInserted(list.indexOf(token))
-        saveListOrder()
     }
 }
