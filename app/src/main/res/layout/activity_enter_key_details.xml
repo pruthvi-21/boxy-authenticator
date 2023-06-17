@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.libx.ui.views.ToolbarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
     android:id="@+id/toolbar_layout"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:navigationIcon="@drawable/ic_samsung_arrow_left"
     app:title="@string/title_enter_account_details">
@@ -17,21 +17,10 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/screen_margin">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:layout_margin="15dp"
-                android:visibility="gone"
-                app:cardBackgroundColor="?colorSurfaceVariant"
-                app:cardCornerRadius="50dp"
-                app:strokeWidth="0dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@android:drawable/ic_dialog_alert" />
-            </com.google.android.material.card.MaterialCardView>
+            <com.ps.tokky.views.ThumbnailController
+                android:id="@+id/thumbnail_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -1,12 +1,11 @@
 package com.ps.tokky.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.view.View.OnTouchListener
 import androidx.recyclerview.widget.RecyclerView
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
@@ -84,10 +83,13 @@ class TokenViewHolder(
     private fun setThumbnail(issuer: String, label: String) {
         if (preferences.displayIcon) {
             binding.thumbnailFrame.visibility = View.VISIBLE
-            val fileName = "logo_${issuer.lowercase().replace(" ", "_")}.png"
-            val logoBitmap = Utils.getThumbnailFromAssets(context.assets, fileName) ?: LetterBitmap(context)
-                .getLetterTile("$issuer$label") //appending label for different color if same issuer name
-            binding.thumbnail.setImageBitmap(logoBitmap)
+            binding.thumbnail.setBackgroundColor(entry?.thumbnailColor ?: Color.BLACK)
+            binding.initialsView.text = issuer.getInitials()
+//            val fileName = "logo_${issuer.lowercase().replace(" ", "_")}.png"
+//            val logoBitmap =
+//                Utils.getThumbnailFromAssets(context.assets, fileName) ?: LetterBitmap(context)
+//                    .getLetterTile("$issuer$label") //appending label for different color if same issuer name
+//            binding.thumbnail.setImageBitmap(logoBitmap)
         } else {
             binding.thumbnailFrame.visibility = View.GONE
         }

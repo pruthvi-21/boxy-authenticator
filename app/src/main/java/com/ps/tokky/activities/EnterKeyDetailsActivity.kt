@@ -59,6 +59,9 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
                 binding.tilIssuer.editText?.setText(currentEntry!!.issuer)
                 binding.tilLabel.editText?.setText(currentEntry!!.label)
+                binding.thumbnailContainer.setThumbnailColor(currentEntry!!.thumbnailColor)
+                binding.thumbnailContainer.setInitials(currentEntry.issuer)
+
                 binding.tilLabel.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
                 binding.tilSecretKey.visibility = View.GONE
                 binding.advOptionsSwitch.visibility = View.GONE
@@ -70,9 +73,10 @@ class EnterKeyDetailsActivity : BaseActivity() {
                 binding.detailsSaveBtn.setOnClickListener {
                     hideKeyboard()
 
-                    currentEntry!!.updateInfo(
+                    currentEntry.updateInfo(
                         issuer = binding.tilIssuer.editText?.text.toString(),
-                        label = binding.tilLabel.editText?.text.toString()
+                        label = binding.tilLabel.editText?.text.toString(),
+                        thumbnailColor = binding.thumbnailContainer.selectedColor
                     )
 
                     updateEntryInDB(currentEntry)
@@ -130,6 +134,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     .setPeriod(period)
                     .setDigits(otpLength)
                     .setAddedFrom(AccountEntryMethod.FORM)
+                    .setThumbnailColor(binding.thumbnailContainer.selectedColor)
                     .build()
                 Log.e(TAG, "New token: $secretKey")
                 addEntryInDB(token)
@@ -246,6 +251,8 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     binding.detailsSaveBtn.isEnabled =
                         isNonZeroIntegerInput(binding.advLayout.tilPeriod)
                 }
+
+                binding.thumbnailContainer.setInitials(issuer.toString())
             }
 
             private fun isNonZeroIntegerInput(til: TextInputLayout): Boolean {

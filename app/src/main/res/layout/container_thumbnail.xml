@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/thumbnail_container"
+        android:layout_width="100dp"
+        android:layout_height="68.1dp"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        android:visibility="visible"
+        app:cardCornerRadius="18dp"
+        app:strokeWidth="0dp"
+        tools:cardBackgroundColor="#C8AA4B">
+
+        <TextView
+            android:id="@+id/initials_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="28sp"
+            tools:text="PB" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@android:drawable/ic_dialog_alert"
+            android:visibility="gone" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="15dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/color_tile_container1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <View
+                android:id="@+id/color_tile1"
+                android:layout_width="@dimen/thumbnail_color_tile"
+                android:layout_height="@dimen/thumbnail_color_tile"
+                android:background="@drawable/bg_circle"
+                tools:backgroundTint="#A0522D" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/color_tile_container2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <View
+                android:id="@+id/color_tile2"
+                android:layout_width="@dimen/thumbnail_color_tile"
+                android:layout_height="@dimen/thumbnail_color_tile"
+                android:background="@drawable/bg_circle"
+                tools:backgroundTint="#376B97" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/color_tile_container3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <View
+                android:id="@+id/color_tile3"
+                android:layout_width="@dimen/thumbnail_color_tile"
+                android:layout_height="@dimen/thumbnail_color_tile"
+                android:background="@drawable/bg_circle"
+                tools:backgroundTint="#556B2F" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/color_tile_container4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <View
+                android:id="@+id/color_tile4"
+                android:layout_width="@dimen/thumbnail_color_tile"
+                android:layout_height="@dimen/thumbnail_color_tile"
+                android:background="@drawable/bg_circle"
+                tools:backgroundTint="#B18F96" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/color_tile_container5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <View
+                android:id="@+id/color_tile5"
+                android:layout_width="@dimen/thumbnail_color_tile"
+                android:layout_height="@dimen/thumbnail_color_tile"
+                android:background="@drawable/bg_circle"
+                tools:backgroundTint="#C8AA4B" />
+        </FrameLayout>
+    </LinearLayout>
+
+</LinearLayout>

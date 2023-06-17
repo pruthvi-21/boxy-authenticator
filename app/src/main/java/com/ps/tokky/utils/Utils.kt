@@ -11,11 +11,13 @@ import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.ps.tokky.R
 import java.security.MessageDigest
+import java.util.*
 
 object Utils {
     fun getThemeColorFromAttr(context: Context, colorAttr: Int): Int {
@@ -108,4 +110,16 @@ fun String.hash(algorithm: String): String {
 
 fun String.toast(context: Context) {
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
+}
+
+fun String.getInitials(): String {
+    if (isEmpty()) return "?"
+    val words = trim().split("\\s+".toRegex())
+    var initials = ""
+
+    for (i in 0 until minOf(words.size, 2)) {
+        initials += words[i][0]
+    }
+
+    return initials.uppercase()
 }

@@ -1,7 +1,9 @@
 package com.ps.tokky.models
 
+import android.graphics.Color
 import android.net.Uri
 import android.text.Spannable
+import androidx.annotation.ColorInt
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.*
 import com.ps.tokky.utils.Constants.DEFAULT_DIGITS
@@ -16,6 +18,7 @@ class TokenEntry {
     val id: String
     var issuer: String
     var label: String
+    var thumbnailColor: Int
     val type: String
     val algorithm: String
     val digits: Int
@@ -32,6 +35,7 @@ class TokenEntry {
         issuer: String,
         label: String,
         secretKey: String,
+        thumbnailColor: Int,
         type: String,
         algorithm: String,
         digits: Int,
@@ -43,6 +47,7 @@ class TokenEntry {
         this.id = id
         this.issuer = issuer
         this.label = label
+        this.thumbnailColor = thumbnailColor
         this.type = type
         this.secretKey = secretKey
 
@@ -83,9 +88,10 @@ class TokenEntry {
     val otpFormattedString: String
         get() = "$currentOTP".padStart(digits, '0')
 
-    fun updateInfo(issuer: String, label: String) {
+    fun updateInfo(issuer: String, label: String, thumbnailColor: Int = 0) {
         this.issuer = issuer
         this.label = label
+        this.thumbnailColor = thumbnailColor
         updatedOn = Date().toString()
     }
 
@@ -95,6 +101,7 @@ class TokenEntry {
             put(KEY_ISSUER, issuer) //String
             put(KEY_LABEL, label) //String
             put(KEY_SECRET_KEY, secretKey) //String
+            put(KEY_THUMBNAIL_COLOR, thumbnailColor) //Int
             put(KEY_PERIOD, period) //Int
             put(KEY_DIGITS, digits) //Int
             put(KEY_ALGORITHM, algorithm) //String
@@ -166,6 +173,8 @@ class TokenEntry {
             val label = json.getString(KEY_LABEL)
             val secretKey = json.getString(KEY_SECRET_KEY)
 
+            val thumbnailColor = json.getInt(KEY_THUMBNAIL_COLOR)
+
             val type = if (json.has(KEY_TYPE)) json.getString(KEY_TYPE)
             else DEFAULT_OTP_TYPE.value
 
@@ -188,6 +197,7 @@ class TokenEntry {
                 issuer,
                 label,
                 secretKey,
+                thumbnailColor,
                 type,
                 algorithm,
                 digits,
@@ -238,6 +248,7 @@ class TokenEntry {
         private var period = DEFAULT_PERIOD
 
         private var addedVia = AccountEntryMethod.FORM
+        private var thumbnailColor = Color.BLACK
 
         fun setIssuer(issuer: String): Builder {
             this.issuer = issuer
@@ -274,6 +285,11 @@ class TokenEntry {
             return this
         }
 
+        fun setThumbnailColor(@ColorInt color: Int): Builder {
+            this.thumbnailColor = color
+            return this
+        }
+
         fun build(): TokenEntry {
             if (this.issuer == "") throw Exception("Issuer can't be empty")
             if (this.secretKey == "") throw Exception("Secret key can't be empty")
@@ -286,6 +302,7 @@ class TokenEntry {
                 issuer,
                 label,
                 secretKey.cleanSecretKey(),
+                thumbnailColor,
                 type,
                 algorithm,
                 digits,
@@ -304,6 +321,7 @@ class TokenEntry {
         const val KEY_ISSUER = "issuer"
         const val KEY_LABEL = "label"
         const val KEY_SECRET_KEY = "secret_key"
+        const val KEY_THUMBNAIL_COLOR = "thumbnail_color"
         const val KEY_TYPE = "type"
         const val KEY_ALGORITHM = "algorithm"
         const val KEY_PERIOD = "period"
