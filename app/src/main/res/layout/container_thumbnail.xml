@@ -6,37 +6,85 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/thumbnail_container"
-        android:layout_width="100dp"
-        android:layout_height="68.1dp"
-        android:layout_gravity="center"
-        android:layout_margin="15dp"
-        android:visibility="visible"
-        app:cardCornerRadius="18dp"
-        app:strokeWidth="0dp"
-        tools:cardBackgroundColor="#C8AA4B">
-
-        <TextView
-            android:id="@+id/initials_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="#fff"
-            android:textSize="28sp"
-            tools:text="PB" />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@android:drawable/ic_dialog_alert"
-            android:visibility="gone" />
-    </com.google.android.material.card.MaterialCardView>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="15dp"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/thumbnail_selector"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:backgroundTint="#0000"
+            android:contentDescription="@null"
+            android:padding="10dp"
+            android:src="@drawable/ic_branding"
+            app:tint="?android:textColorSecondary" />
+
+        <FrameLayout
+            android:layout_width="112dp"
+            android:layout_height="80.1dp"
+            android:layout_margin="15dp"
+            app:cardCornerRadius="18dp"
+            app:strokeWidth="0dp">
+
+            <com.libx.ui.widget.XLinearLayout
+                android:id="@+id/thumbnail_container"
+                android:layout_width="100dp"
+                android:layout_height="68.1dp"
+                android:layout_gravity="center"
+                app:cornerRadius="18dp"
+                tools:backgroundColor="#C8AA4B">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/initials_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="#fff"
+                        android:textSize="28sp"
+                        tools:text="PB" />
+
+                    <ImageView
+                        android:id="@+id/thumbnail_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@null" />
+                </FrameLayout>
+            </com.libx.ui.widget.XLinearLayout>
+
+            <com.libx.ui.widget.XLinearLayout
+                android:id="@+id/thumbnail_remove"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end|top"
+                android:padding="2dp"
+                app:backgroundColor="#333"
+                app:cornerRadius="24dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_close"
+                    app:tint="#fff" />
+            </com.libx.ui.widget.XLinearLayout>
+        </FrameLayout>
+
+        <View
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tiles_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -110,5 +158,4 @@
                 tools:backgroundTint="#C8AA4B" />
         </FrameLayout>
     </LinearLayout>
-
 </LinearLayout>

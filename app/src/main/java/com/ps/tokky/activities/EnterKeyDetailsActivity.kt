@@ -61,6 +61,9 @@ class EnterKeyDetailsActivity : BaseActivity() {
                 binding.tilLabel.editText?.setText(currentEntry!!.label)
                 binding.thumbnailContainer.setThumbnailColor(currentEntry!!.thumbnailColor)
                 binding.thumbnailContainer.setInitials(currentEntry.issuer)
+                if (currentEntry.thumbnailIcon.isEmpty()) {
+                    binding.thumbnailContainer.thumbnailIcon = null
+                } else binding.thumbnailContainer.thumbnailIcon = currentEntry.thumbnailIcon
 
                 binding.tilLabel.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
                 binding.tilSecretKey.visibility = View.GONE
@@ -76,7 +79,8 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     currentEntry.updateInfo(
                         issuer = binding.tilIssuer.editText?.text.toString(),
                         label = binding.tilLabel.editText?.text.toString(),
-                        thumbnailColor = binding.thumbnailContainer.selectedColor
+                        thumbnailColor = binding.thumbnailContainer.selectedColor,
+                        thumbnailIcon = binding.thumbnailContainer.thumbnailIcon ?: ""
                     )
 
                     updateEntryInDB(currentEntry)
@@ -135,11 +139,12 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     .setDigits(otpLength)
                     .setAddedFrom(AccountEntryMethod.FORM)
                     .setThumbnailColor(binding.thumbnailContainer.selectedColor)
+                    .setThumbnailIcon(binding.thumbnailContainer.thumbnailIcon ?: "")
                     .build()
-                Log.e(TAG, "New token: $secretKey")
+
                 addEntryInDB(token)
             } catch (exception: InvalidSecretKeyException) {
-                Log.e(TAG, "onSaveDetails: Invalid Secret Key format $secretKey")
+                Log.e(TAG, "onSaveDetails: Invalid Secret Key format")
                 Toast.makeText(this, R.string.error_invalid_chars, Toast.LENGTH_SHORT).show()
             }
         }

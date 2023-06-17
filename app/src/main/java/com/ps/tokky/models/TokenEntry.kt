@@ -19,6 +19,7 @@ class TokenEntry {
     var issuer: String
     var label: String
     var thumbnailColor: Int
+    var thumbnailIcon: String
     val type: String
     val algorithm: String
     val digits: Int
@@ -36,6 +37,7 @@ class TokenEntry {
         label: String,
         secretKey: String,
         thumbnailColor: Int,
+        thumbnailIcon: String,
         type: String,
         algorithm: String,
         digits: Int,
@@ -48,6 +50,7 @@ class TokenEntry {
         this.issuer = issuer
         this.label = label
         this.thumbnailColor = thumbnailColor
+        this.thumbnailIcon = thumbnailIcon
         this.type = type
         this.secretKey = secretKey
 
@@ -88,10 +91,16 @@ class TokenEntry {
     val otpFormattedString: String
         get() = "$currentOTP".padStart(digits, '0')
 
-    fun updateInfo(issuer: String, label: String, thumbnailColor: Int = 0) {
+    fun updateInfo(
+        issuer: String,
+        label: String,
+        thumbnailColor: Int = 0,
+        thumbnailIcon: String = ""
+    ) {
         this.issuer = issuer
         this.label = label
         this.thumbnailColor = thumbnailColor
+        this.thumbnailIcon = thumbnailIcon
         updatedOn = Date().toString()
     }
 
@@ -102,6 +111,7 @@ class TokenEntry {
             put(KEY_LABEL, label) //String
             put(KEY_SECRET_KEY, secretKey) //String
             put(KEY_THUMBNAIL_COLOR, thumbnailColor) //Int
+            put(KEY_THUMBNAIL_ICON, thumbnailIcon) //String
             put(KEY_PERIOD, period) //Int
             put(KEY_DIGITS, digits) //Int
             put(KEY_ALGORITHM, algorithm) //String
@@ -174,6 +184,8 @@ class TokenEntry {
             val secretKey = json.getString(KEY_SECRET_KEY)
 
             val thumbnailColor = json.getInt(KEY_THUMBNAIL_COLOR)
+            val thumbnailIcon = if (json.has(KEY_THUMBNAIL_ICON)) json.getString(KEY_THUMBNAIL_ICON)
+            else ""
 
             val type = if (json.has(KEY_TYPE)) json.getString(KEY_TYPE)
             else DEFAULT_OTP_TYPE.value
@@ -198,6 +210,7 @@ class TokenEntry {
                 label,
                 secretKey,
                 thumbnailColor,
+                thumbnailIcon,
                 type,
                 algorithm,
                 digits,
@@ -249,6 +262,7 @@ class TokenEntry {
 
         private var addedVia = AccountEntryMethod.FORM
         private var thumbnailColor = Color.BLACK
+        private var thumbnailIcon = ""
 
         fun setIssuer(issuer: String): Builder {
             this.issuer = issuer
@@ -290,6 +304,11 @@ class TokenEntry {
             return this
         }
 
+        fun setThumbnailIcon(iconStr: String): Builder {
+            this.thumbnailIcon = iconStr
+            return this
+        }
+
         fun build(): TokenEntry {
             if (this.issuer == "") throw Exception("Issuer can't be empty")
             if (this.secretKey == "") throw Exception("Secret key can't be empty")
@@ -303,6 +322,7 @@ class TokenEntry {
                 label,
                 secretKey.cleanSecretKey(),
                 thumbnailColor,
+                thumbnailIcon,
                 type,
                 algorithm,
                 digits,
@@ -322,6 +342,7 @@ class TokenEntry {
         const val KEY_LABEL = "label"
         const val KEY_SECRET_KEY = "secret_key"
         const val KEY_THUMBNAIL_COLOR = "thumbnail_color"
+        const val KEY_THUMBNAIL_ICON = "thumbnail_icon"
         const val KEY_TYPE = "type"
         const val KEY_ALGORITHM = "algorithm"
         const val KEY_PERIOD = "period"

@@ -1,7 +1,6 @@
 package com.ps.tokky.utils
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
@@ -64,7 +63,7 @@ class TokenViewHolder(
         binding.edit.visibility = View.GONE
         binding.delete.visibility = View.GONE
 
-        setThumbnail(entry.issuer, entry.label)
+        setThumbnail()
 
         binding.otpHolder.typeface = Typeface.MONOSPACE
         updateOTP()
@@ -80,16 +79,22 @@ class TokenViewHolder(
         }
     }
 
-    private fun setThumbnail(issuer: String, label: String) {
+    private fun setThumbnail() {
+        entry ?: return
         if (preferences.displayIcon) {
-            binding.thumbnailFrame.visibility = View.VISIBLE
-            binding.thumbnail.setBackgroundColor(entry?.thumbnailColor ?: Color.BLACK)
-            binding.initialsView.text = issuer.getInitials()
-//            val fileName = "logo_${issuer.lowercase().replace(" ", "_")}.png"
-//            val logoBitmap =
-//                Utils.getThumbnailFromAssets(context.assets, fileName) ?: LetterBitmap(context)
-//                    .getLetterTile("$issuer$label") //appending label for different color if same issuer name
-//            binding.thumbnail.setImageBitmap(logoBitmap)
+            if (entry!!.thumbnailIcon.isEmpty()) {
+                binding.thumbnailFrame.visibility = View.VISIBLE
+                binding.initialsView.visibility = View.VISIBLE
+                binding.thumbnail.setBackgroundColor(entry!!.thumbnailColor)
+                binding.thumbnail.setImageBitmap(null)
+                binding.initialsView.text = entry!!.issuer.getInitials()
+            } else {
+                val fileName = entry!!.thumbnailIcon
+                val logoBitmap =
+                    Utils.getThumbnailFromAssets(context.assets, fileName)
+                binding.thumbnail.setImageBitmap(logoBitmap)
+                binding.initialsView.visibility = View.GONE
+            }
         } else {
             binding.thumbnailFrame.visibility = View.GONE
         }
