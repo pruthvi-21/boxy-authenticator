@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ps.tokky.R
+import com.ps.tokky.activities.transfer.export.ExportActivity
 import com.ps.tokky.activities.transfer.imports.ImportActivity
 import com.ps.tokky.activities.transfer.imports.ImportActivity.Companion.INTENT_EXTRA_KEY_FILE_PATH
-import com.ps.tokky.activities.transfer.export.ExportActivity
 import com.ps.tokky.databinding.ActivityMainBinding
 import com.ps.tokky.databinding.BottomSheetTransferAccountsBinding
 import com.ps.tokky.utils.Constants.FILE_MIME_TYPE
@@ -32,7 +32,7 @@ class MainActivity : BaseActivity() {
     }
 
     private val adapter: TokenAdapter by lazy {
-        TokenAdapter(this, ArrayList(), binding.recyclerView, addNewActivityLauncher)
+        TokenAdapter(this, binding.recyclerView, addNewActivityLauncher)
     }
 
     private val fadeInAnimation by lazy { AnimationUtils.loadAnimation(this, R.anim.fade_in) }
