@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.view.animation.AnimationUtils
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
@@ -23,7 +22,6 @@ import com.ps.tokky.databinding.BottomSheetTransferAccountsBinding
 import com.ps.tokky.utils.Constants.FILE_MIME_TYPE
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
-import kotlinx.coroutines.*
 
 class MainActivity : BaseActivity() {
 
@@ -34,9 +32,6 @@ class MainActivity : BaseActivity() {
     private val adapter: TokenAdapter by lazy {
         TokenAdapter(this, binding.recyclerView, addNewActivityLauncher)
     }
-
-    private val fadeInAnimation by lazy { AnimationUtils.loadAnimation(this, R.anim.fade_in) }
-    private val fadeOutAnimation by lazy { AnimationUtils.loadAnimation(this, R.anim.fade_out) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +68,7 @@ class MainActivity : BaseActivity() {
             override fun handleOnBackPressed() {
                 if (!adapter.editModeEnabled) {
                     finish()
+                    return
                 }
                 openEditMode(false)
             }
@@ -150,30 +146,21 @@ class MainActivity : BaseActivity() {
     }
 
     fun openEditMode(open: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.Main) {
-                binding.recyclerView.startAnimation(fadeOutAnimation)
-            }
-            delay(100)
-            withContext(Dispatchers.Main) {
-                invalidateOptionsMenu()
-                if (open) {
-                    binding.toolbarLayout.title = getString(R.string.edit_mode_title)
-                    binding.toolbarLayout.navigationIcon =
-                        ResourcesCompat.getDrawable(resources, R.drawable.ic_close, theme)
-                    adapter.editModeEnabled = true
-                    binding.fabAddNew.hide()
-                } else {
-                    binding.toolbarLayout.title = getString(R.string.app_name)
-                    binding.toolbarLayout.navigationIcon = null
-                    adapter.editModeEnabled = false
-                    binding.fabAddNew.show()
+        invalidateOptionsMenu()
+        if (open) {
+            binding.toolbarLayout.title = getString(R.string.edit_mode_title)
+            binding.toolbarLayout.navigationIcon =
+                ResourcesCompat.getDrawable(resources, R.drawable.ic_close, theme)
+            adapter.editModeEnabled = true
+            binding.fabAddNew.hide()
+        } else {
+            binding.toolbarLayout.title = getString(R.string.app_name)
+            binding.toolbarLayout.navigationIcon = null
+            adapter.editModeEnabled = false
+            binding.fabAddNew.show()
 
-                    binding.emptyLayout.visibility =
-                        if (db.getAll(false).isEmpty()) View.VISIBLE else View.GONE
-                }
-                binding.recyclerView.startAnimation(fadeInAnimation)
-            }
+            binding.emptyLayout.visibility =
+                if (db.getAll(false).isEmpty()) View.VISIBLE else View.GONE
         }
     }
 

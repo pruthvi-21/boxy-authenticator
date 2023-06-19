@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -86,7 +85,6 @@ class TokenAdapter(
             }
 
         setShape(holder.binding.cardView, itemPosition)
-        setMargin(holder.binding.cardView)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -97,24 +95,13 @@ class TokenAdapter(
         val shapeBuilder = ShapeAppearanceModel.Builder()
         val radius = context.resources.getDimension(R.dimen.item_radius)
 
-        if (!editModeEnabled) {
-            if (position != Position.SINGLE) {
-                if (position == Position.TOP) shapeBuilder.setTopLeftCornerSize(radius)
-                    .setTopRightCornerSize(radius)
-                if (position == Position.BOTTOM) shapeBuilder.setBottomLeftCornerSize(radius)
-                    .setBottomRightCornerSize(radius)
-            } else shapeBuilder.setAllCornerSizes(radius)
-        }
+        if (position != Position.SINGLE) {
+            if (position == Position.TOP) shapeBuilder.setTopLeftCornerSize(radius)
+                .setTopRightCornerSize(radius)
+            if (position == Position.BOTTOM) shapeBuilder.setBottomLeftCornerSize(radius)
+                .setBottomRightCornerSize(radius)
+        } else shapeBuilder.setAllCornerSizes(radius)
         card.shapeAppearanceModel = shapeBuilder.build()
-    }
-
-    private fun setMargin(card: CardView) {
-        (card.layoutParams as RecyclerView.LayoutParams).apply {
-            val marginVertical =
-                if (editModeEnabled) (context.resources.getDimension(R.dimen.rv_item_margin) / 2).toInt() else 0
-            topMargin = marginVertical
-            bottomMargin = marginVertical
-        }
     }
 
     private fun getGroupedList(list: List<TokenEntry>): ArrayList<GroupedItem> {
