@@ -277,6 +277,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
             override fun afterTextChanged(editable: Editable) {
                 val issuer = binding.tilIssuer.editText!!.text
+                binding.thumbnailContainer.setInitials(issuer.toString())
                 binding.detailsSaveBtn.isEnabled = !TextUtils.isEmpty(issuer)
             }
         }
