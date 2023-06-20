@@ -7,14 +7,11 @@
     <color name="item_bg">@color/tinted_primary</color>
     <color name="color_warning">#bea802</color>
 
-    <array name="random_tile_colors">
-        <item>#2daa9a</item>
-        <item>#8C84F3</item>
-        <item>#F18072</item>
-        <item>#e4c62e</item>
-        <item>#C075E1</item>
-        <item>#F4838D</item>
-        <item>#D64854</item>
-        <item>#6ebd64</item>
+    <array name="tile_colors">
+        <item>#A0522D</item>
+        <item>#376B97</item>
+        <item>#556B2F</item>
+        <item>#B18F96</item>
+        <item>#C8AA4B</item>
     </array>
 </resources>

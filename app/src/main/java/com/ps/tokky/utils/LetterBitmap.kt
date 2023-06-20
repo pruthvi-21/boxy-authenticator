@@ -10,7 +10,7 @@ class LetterBitmap(context: Context) {
 
     private val tileWidth = context.resources.getDimension(R.dimen.card_thumbnail_width).toInt()
     private val tileHeight = context.resources.getDimension(R.dimen.card_thumbnail_height).toInt()
-    private val tileColors = context.resources.obtainTypedArray(R.array.random_tile_colors)
+    private val tileColors = context.resources.obtainTypedArray(R.array.tile_colors)
 
     private val paint = TextPaint().apply {
         color = Utils.getThemeColorFromAttr(context, com.google.android.material.R.attr.titleTextColor)

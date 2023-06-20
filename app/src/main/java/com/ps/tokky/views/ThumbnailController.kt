@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.ps.tokky.R
 import com.ps.tokky.databinding.BottomSheetThumbnailSelectorBinding
 import com.ps.tokky.databinding.ContainerThumbnailBinding
 import com.ps.tokky.databinding.RvItemThumbnailIconBinding
@@ -78,13 +79,9 @@ class ThumbnailController @JvmOverloads constructor(
         Pair("USF", "logo_usf.png"),
     )
 
-    private val colors = arrayOf(
-        Color.parseColor("#A0522D"),
-        Color.parseColor("#376B97"),
-        Color.parseColor("#556B2F"),
-        Color.parseColor("#B18F96"),
-        Color.parseColor("#C8AA4B"),
-    )
+    private val colors = IntArray(5) { index ->
+        context.resources.obtainTypedArray(R.array.tile_colors).getColor(index, Color.GRAY)
+    }
 
     private val tiles = arrayOf(
         binding.colorTile1,
