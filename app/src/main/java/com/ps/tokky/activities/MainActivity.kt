@@ -176,11 +176,16 @@ class MainActivity : BaseActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val filePath = it.data?.data
             if (filePath != null) {
-                startActivity(
+                importAccountsLauncher.launch(
                     Intent(this, ImportActivity::class.java)
                         .putExtra(INTENT_EXTRA_KEY_FILE_PATH, filePath.toString())
                 )
             }
+        }
+
+    private val importAccountsLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            refresh(true)
         }
 
     companion object {
