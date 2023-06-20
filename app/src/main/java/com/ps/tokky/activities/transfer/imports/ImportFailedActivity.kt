@@ -37,7 +37,7 @@ class ImportFailedActivity : BaseActivity() {
         val jsonArray = JSONArray(list)
         for (i in 0 until jsonArray.length()) {
             val obj = jsonArray.getJSONObject(i)
-            importList.add(TokenEntry.BuildFromExportJson(obj).build())
+            importList.add(TokenEntry.BuildFromExportJson(this, obj).build())
         }
 
         binding.rv.adapter = ImportFailedListAdapter()

@@ -42,7 +42,7 @@ class ImportActivity : BaseActivity() {
         importList.clear()
         for (i in 0 until jsonArray.length()) {
             val jsonObj = jsonArray.getJSONObject(i)
-            val token = TokenEntry.BuildFromExportJson(jsonObj).build()
+            val token = TokenEntry.BuildFromExportJson(this, jsonObj).build()
 
             importList.add(ImportItem(token, true))
         }

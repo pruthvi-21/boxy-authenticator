@@ -1,10 +1,12 @@
 package com.ps.tokky.models
 
+import android.content.Context
 import android.graphics.Color
 import android.net.Uri
 import android.text.Spannable
 import androidx.annotation.ColorInt
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
+import com.ps.tokky.R
 import com.ps.tokky.utils.*
 import com.ps.tokky.utils.Constants.DEFAULT_DIGITS
 import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
@@ -12,6 +14,7 @@ import com.ps.tokky.utils.Constants.DEFAULT_OTP_TYPE
 import com.ps.tokky.utils.Constants.DEFAULT_PERIOD
 import org.json.JSONObject
 import java.util.*
+import kotlin.random.Random
 
 class TokenEntry {
 
@@ -221,7 +224,7 @@ class TokenEntry {
         }
     }
 
-    class BuildFromExportJson(private val json: JSONObject) {
+    class BuildFromExportJson(private val context: Context, private val json: JSONObject) {
         fun build(): TokenEntry {
             val issuer = json.getString(KEY_ISSUER)
             val label = json.getString(KEY_LABEL)
@@ -240,9 +243,15 @@ class TokenEntry {
                 json.getString(KEY_ALGORITHM)
             } else DEFAULT_HASH_ALGORITHM
 
+            val colors = context.resources.obtainTypedArray(R.array.tile_colors)
+            val randomColor = colors.getColor(Random.nextInt(0, colors.length()), Color.GRAY)
+            colors.recycle()
+
             return Builder()
                 .setIssuer(issuer)
-                .setLabel(label).setSecretKey(secretKey)
+                .setLabel(label)
+                .setSecretKey(secretKey)
+                .setThumbnailColor(randomColor)
                 .setPeriod(period)
                 .setDigits(digits)
                 .setAlgorithm(algorithm)
