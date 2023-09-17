@@ -3,7 +3,7 @@ package com.ps.tokky.preference
 import android.content.Context
 import android.util.AttributeSet
 import androidx.fragment.app.FragmentManager
-import com.libx.ui.preference.SwitchPreference
+import androidx.preference.SwitchPreference
 import com.ps.tokky.R
 import com.ps.tokky.fragments.ConfirmPinLayout
 import com.ps.tokky.utils.AppPreferences

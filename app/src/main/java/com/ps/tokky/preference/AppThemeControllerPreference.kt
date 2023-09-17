@@ -3,8 +3,7 @@ package com.ps.tokky.preference
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.app.AppCompatDelegate
-import com.libx.ui.preference.DropDownPreference
-import com.libx.ui.preference.Preference.OnPreferenceChangeListener
+import androidx.preference.DropDownPreference
 
 class AppThemeControllerPreference @JvmOverloads constructor(
     context: Context,

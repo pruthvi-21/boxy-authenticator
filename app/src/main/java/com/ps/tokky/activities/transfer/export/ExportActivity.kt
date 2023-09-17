@@ -22,7 +22,7 @@ class ExportActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbarLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         val exportAccountsList = db.getAll(false)
         val listIds = exportAccountsList.map { it.id }

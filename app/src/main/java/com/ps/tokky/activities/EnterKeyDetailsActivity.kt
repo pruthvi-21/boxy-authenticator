@@ -45,7 +45,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
         }
 
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbarLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         val editMode = editId != null || otpAuthUrl != null
 

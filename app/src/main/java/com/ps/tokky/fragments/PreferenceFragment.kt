@@ -1,7 +1,7 @@
 package com.ps.tokky.fragments
 
 import android.os.Bundle
-import com.libx.ui.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceFragmentCompat
 import com.ps.tokky.R
 import com.ps.tokky.preference.AppLockPreference
 import com.ps.tokky.preference.BiometricUnlockPreference

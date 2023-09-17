@@ -31,7 +31,7 @@ class ImportFailedActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbarLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         val list = intent.extras?.getString(INTENT_EXTRA_FAILED_LIST) ?: return
         val jsonArray = JSONArray(list)

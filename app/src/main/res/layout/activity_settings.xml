@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.libx.ui.views.ToolbarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/toolbar_layout"
-    app:navigationIcon="@drawable/ic_samsung_arrow_left"
-    app:title="@string/title_settings"
+    android:orientation="vertical"
     tools:context=".activities.SettingsActivity">
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="?android:actionBarSize"
+        app:navigationIcon="@drawable/ic_samsung_arrow_left"
+        app:title="@string/title_settings" />
 
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </androidx.core.widget.NestedScrollView>
-
-</com.libx.ui.views.ToolbarLayout>
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

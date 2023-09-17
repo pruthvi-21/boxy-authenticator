@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="radius_tiny">8dp</dimen>
+    <dimen name="radius_small">12dp</dimen>
+    <dimen name="radius_medium">15dp</dimen>
+    <dimen name="radius_large">22dp</dimen>
+    <dimen name="radius_xl">28dp</dimen>
+    <dimen name="radius_xxl">33dp</dimen>
+    <dimen name="radius_card">26dp</dimen>
+
     <dimen name="screen_margin">16dp</dimen>
     <dimen name="screen_margin_large">32dp</dimen>
 

@@ -1,6 +1,14 @@
 <resources>
 
-    <style name="Theme.Tokky" parent="LibXBaseTheme">
+    <style name="Theme.Material3.DynamicColors.DayNight.NoActionBar" parent="Theme.Material3.DynamicColors.DayNight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Tokky" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
+        <item name="android:statusBarColor">?colorSurface</item>
+        <item name="android:navigationBarColor">?colorSurface</item>
+        <item name="android:windowLightStatusBar">?isLightTheme</item>
         <item name="buttonGroupButtonStyle">@style/ButtonGroupButtonStyle</item>
         <item name="textInputStyle">@style/TextInputLayoutStyle</item>
         <item name="textInputEditTextStyle">@style/TextInputEditTextStyle</item>

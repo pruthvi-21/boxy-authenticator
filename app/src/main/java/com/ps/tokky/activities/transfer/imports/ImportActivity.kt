@@ -33,7 +33,7 @@ class ImportActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbarLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         val filePath = Uri.parse(intent.extras?.getString(INTENT_EXTRA_KEY_FILE_PATH))
 

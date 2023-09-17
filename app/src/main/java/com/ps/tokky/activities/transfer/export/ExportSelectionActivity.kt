@@ -24,7 +24,7 @@ class ExportSelectionActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbarLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         val checkedList = intent.extras?.getStringArray(INTENT_EXTRA_KEY_EXPORT_SELECTION)
 

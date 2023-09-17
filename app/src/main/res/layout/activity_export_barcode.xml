@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.libx.ui.views.ToolbarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/toolbar_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:navigationIcon="@drawable/ic_samsung_arrow_left"
     tools:context=".activities.transfer.export.ExportBarcodeActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        app:navigationIcon="@drawable/ic_samsung_arrow_left" />
 
     <TextView
         android:layout_width="match_parent"
@@ -51,4 +56,4 @@
             android:layout_gravity="center"
             android:text="@string/qr_activity_barcode_gen_failed" />
     </com.google.android.material.card.MaterialCardView>
-</com.libx.ui.views.ToolbarLayout>
+</LinearLayout>

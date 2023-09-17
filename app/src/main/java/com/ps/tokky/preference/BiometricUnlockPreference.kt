@@ -7,7 +7,7 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.libx.ui.preference.SwitchPreference
+import androidx.preference.SwitchPreference
 import com.ps.tokky.R
 
 class BiometricUnlockPreference @JvmOverloads constructor(

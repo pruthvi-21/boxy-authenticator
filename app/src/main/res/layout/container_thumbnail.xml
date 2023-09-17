@@ -28,7 +28,7 @@
             app:cardCornerRadius="18dp"
             app:strokeWidth="0dp">
 
-            <com.libx.ui.widget.XLinearLayout
+            <LinearLayout
                 android:id="@+id/thumbnail_container"
                 android:layout_width="100dp"
                 android:layout_height="68.1dp"
@@ -55,9 +55,9 @@
                         android:layout_height="match_parent"
                         android:contentDescription="@null" />
                 </FrameLayout>
-            </com.libx.ui.widget.XLinearLayout>
+            </LinearLayout>
 
-            <com.libx.ui.widget.XLinearLayout
+            <LinearLayout
                 android:id="@+id/thumbnail_remove"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
@@ -72,7 +72,7 @@
                     android:contentDescription="@null"
                     android:src="@drawable/ic_close"
                     app:tint="#fff" />
-            </com.libx.ui.widget.XLinearLayout>
+            </LinearLayout>
         </FrameLayout>
 
         <View

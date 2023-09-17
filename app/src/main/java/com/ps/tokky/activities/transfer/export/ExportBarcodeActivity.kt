@@ -23,7 +23,7 @@ class ExportBarcodeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbarLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         val qrData = intent.extras?.getString(INTENT_EXTRA_KEY_EXPORT_SELECTION)
         if (qrData == null) {

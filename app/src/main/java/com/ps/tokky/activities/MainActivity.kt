@@ -45,7 +45,7 @@ class MainActivity : BaseActivity() {
         }
 
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbarLayout.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
@@ -148,14 +148,14 @@ class MainActivity : BaseActivity() {
     fun openEditMode(open: Boolean) {
         invalidateOptionsMenu()
         if (open) {
-            binding.toolbarLayout.title = getString(R.string.edit_mode_title)
-            binding.toolbarLayout.navigationIcon =
+            binding.toolbar.title = getString(R.string.edit_mode_title)
+            binding.toolbar.navigationIcon =
                 ResourcesCompat.getDrawable(resources, R.drawable.ic_close, theme)
             adapter.editModeEnabled = true
             binding.fabAddNew.hide()
         } else {
-            binding.toolbarLayout.title = getString(R.string.app_name)
-            binding.toolbarLayout.navigationIcon = null
+            binding.toolbar.title = getString(R.string.app_name)
+            binding.toolbar.navigationIcon = null
             adapter.editModeEnabled = false
             binding.fabAddNew.show()
 

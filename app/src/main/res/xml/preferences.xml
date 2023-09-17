@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.libx.ui.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.libx.ui.preference.PreferenceCategory>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory>
         <com.ps.tokky.preference.AppLockPreference
             app:defaultValue="false"
             app:key="@string/key_app_lock"
@@ -14,14 +14,14 @@
             app:summary="@string/pref_summary_biometrics"
             app:title="@string/pref_title_biometrics" />
 
-        <com.libx.ui.preference.SwitchPreference
+        <SwitchPreference
             app:defaultValue="false"
             app:key="@string/key_screenshots"
             app:summary="@string/summary_screenshots"
             app:title="@string/title_screenshots" />
-    </com.libx.ui.preference.PreferenceCategory>
+    </PreferenceCategory>
 
-    <com.libx.ui.preference.PreferenceCategory app:title="@string/pref_cat_title_ui">
+    <PreferenceCategory app:title="@string/pref_cat_title_ui">
         <com.ps.tokky.preference.AppThemeControllerPreference
             app:defaultValue="system"
             app:entries="@array/app_theme_entries"
@@ -29,9 +29,9 @@
             app:key="@string/pref_key_app_theme"
             app:title="@string/pref_title_app_theme"
             app:useSimpleSummaryProvider="true" />
-        <com.libx.ui.preference.SwitchPreference
+        <SwitchPreference
             app:defaultValue="true"
             app:key="@string/pref_key_show_thumbnail"
             app:title="@string/pref_title_thumbnail" />
-    </com.libx.ui.preference.PreferenceCategory>
-</com.libx.ui.preference.PreferenceScreen>
+    </PreferenceCategory>
+</PreferenceScreen>
