@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         app:navigationIcon="@drawable/ic_samsung_arrow_left"
+        android:layout_marginTop="10dp"
         app:title="@string/label_import_accounts" />
 
     <androidx.recyclerview.widget.RecyclerView

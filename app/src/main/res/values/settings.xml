@@ -5,17 +5,24 @@
     <string name="key_screenshots">key_allow_screenshots</string>
     <string name="pref_key_app_theme">key_app_theme</string>
     <string name="pref_key_show_thumbnail">key_show_thumbnail</string>
+    <string name="pref_key_import_accounts">key_import_accounts</string>
+    <string name="pref_key_export_accounts">key_export_accounts</string>
 
     <string name="title_app_lock">Enable app lock</string>
     <string name="pref_title_biometrics">Use biometrics</string>
     <string name="title_screenshots">Allow screenshots</string>
     <string name="pref_cat_title_ui">User Interface</string>
+    <string name="pref_cat_title_transfers">Transfer Accounts</string>
     <string name="pref_title_app_theme">App theme</string>
     <string name="pref_title_thumbnail">Show thumbnail</string>
+    <string name="pref_title_import_accounts">Import Accounts</string>
+    <string name="pref_title_export_accounts">Export Accounts</string>
 
     <string name="summary_app_lock">Lock this app with a PIN. To change your PIN please disable app lock and enable it again</string>
     <string name="pref_summary_biometrics">You can unlock with your biometrics instead of typing PIN</string>
     <string name="summary_screenshots">This will allow you to take screenshots in this app</string>
+    <string name="pref_summary_import_accounts">Load accounts from backup file</string>
+    <string name="pref_summary_export_accounts">Take a backup of accounts</string>
 
     <string-array name="app_theme_entries">
         <item>Light</item>

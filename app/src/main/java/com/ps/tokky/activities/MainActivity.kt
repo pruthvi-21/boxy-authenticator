@@ -3,23 +3,18 @@ package com.ps.tokky.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.TranslateAnimation
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ps.tokky.R
-import com.ps.tokky.activities.transfer.export.ExportActivity
-import com.ps.tokky.activities.transfer.imports.ImportActivity
-import com.ps.tokky.activities.transfer.imports.ImportActivity.Companion.INTENT_EXTRA_KEY_FILE_PATH
 import com.ps.tokky.databinding.ActivityMainBinding
-import com.ps.tokky.databinding.BottomSheetTransferAccountsBinding
-import com.ps.tokky.utils.Constants.FILE_MIME_TYPE
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
 
@@ -74,6 +69,18 @@ class MainActivity : BaseActivity() {
             }
         })
         refresh(true)
+
+        binding.refresh.setOnClickListener {
+            refresh(true)
+        }
+
+        binding.edit.setOnClickListener {
+            openEditMode(!adapter.editModeEnabled)
+        }
+
+        binding.settings.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
     }
 
     fun refresh(reload: Boolean) {
@@ -93,53 +100,11 @@ class MainActivity : BaseActivity() {
         adapter.onPause()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (!adapter.editModeEnabled) {
-            menuInflater.inflate(R.menu.menu_main, menu)
-            menu?.findItem(R.id.menu_main_edit)?.isEnabled = db.getAll(false).isNotEmpty()
-        }
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
                 openEditMode(false)
                 return true
-            }
-            R.id.menu_main_refresh -> {
-                refresh(true)
-                return true
-            }
-            R.id.menu_main_edit -> {
-                openEditMode(!adapter.editModeEnabled)
-                return true
-            }
-            R.id.menu_main_transfer_accounts -> {
-                val dialogBinding = BottomSheetTransferAccountsBinding.inflate(layoutInflater)
-                val dialog = BottomSheetDialog(this)
-                dialog.setContentView(dialogBinding.root)
-
-                dialogBinding.btnExportAccounts.setOnClickListener {
-                    dialog.dismiss()
-                    startActivity(Intent(this@MainActivity, ExportActivity::class.java))
-                }
-
-                dialogBinding.btnImportAccounts.setOnClickListener {
-                    dialog.dismiss()
-
-                    val filePickerIntent = Intent().apply {
-                        type = FILE_MIME_TYPE
-                        action = Intent.ACTION_GET_CONTENT
-                    }
-
-                    readFileLauncher.launch(filePickerIntent)
-                }
-
-                dialog.show()
-            }
-            R.id.menu_main_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)
@@ -152,16 +117,37 @@ class MainActivity : BaseActivity() {
             binding.toolbar.navigationIcon =
                 ResourcesCompat.getDrawable(resources, R.drawable.ic_close, theme)
             adapter.editModeEnabled = true
-            binding.fabAddNew.hide()
+            slideDownBottomBar()
         } else {
             binding.toolbar.title = getString(R.string.app_name)
             binding.toolbar.navigationIcon = null
             adapter.editModeEnabled = false
-            binding.fabAddNew.show()
+            slideUpBottomBar()
 
             binding.emptyLayout.visibility =
                 if (db.getAll(false).isEmpty()) View.VISIBLE else View.GONE
         }
+    }
+
+    private fun slideDownBottomBar() {
+        val animation = TranslateAnimation(0f, 0f, 0f, binding.bottomBar.height.toFloat() - 50)
+        animation.duration = 150
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(var1: Animation?) {}
+            override fun onAnimationEnd(var1: Animation?) {
+                binding.bottomBar.visibility = View.GONE
+            }
+
+            override fun onAnimationRepeat(var1: Animation?) {}
+        })
+        binding.bottomBar.startAnimation(animation)
+    }
+
+    private fun slideUpBottomBar() {
+        binding.bottomBar.visibility = View.VISIBLE
+        val animation = TranslateAnimation(0f, 0f, binding.bottomBar.height.toFloat() - 50, 0f)
+        animation.duration = 150
+        binding.bottomBar.startAnimation(animation)
     }
 
     private val addNewActivityLauncher =
@@ -172,21 +158,6 @@ class MainActivity : BaseActivity() {
             }
         }
 
-    private val readFileLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val filePath = it.data?.data
-            if (filePath != null) {
-                importAccountsLauncher.launch(
-                    Intent(this, ImportActivity::class.java)
-                        .putExtra(INTENT_EXTRA_KEY_FILE_PATH, filePath.toString())
-                )
-            }
-        }
-
-    private val importAccountsLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            refresh(true)
-        }
 
     companion object {
         private const val TAG = "MainActivity"

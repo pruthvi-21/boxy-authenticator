@@ -45,25 +45,12 @@ class TokenViewHolder(
         val initialWidth = context.resources.getDimension(R.dimen.card_thumbnail_width).toInt()
 
         if (inEditMode) {
-            binding.editTools.visibility = View.VISIBLE
+            binding.edit.visibility = View.VISIBLE
             binding.arrow.visibility = View.GONE
 
-            ObjectAnimator.ofFloat(binding.editTools, View.ALPHA, 0f, 1f).apply {
+            ObjectAnimator.ofFloat(binding.edit, View.ALPHA, 0f, 1f).apply {
                 duration = ANIM_DURATION
-                if (binding.editTools.alpha == 0f) start()
-            }
-
-            ValueAnimator.ofInt(initialWidth, 0).apply {
-                duration = ANIM_DURATION
-                addUpdateListener { animator ->
-                    val animatedValue = animator.animatedValue as Int
-                    binding.thumbnailFrame.layoutParams =
-                        binding.thumbnailFrame.layoutParams.apply {
-                            width = animatedValue
-                        }
-                    binding.thumbnailFrame.alpha = (animatedValue.toFloat() / initialWidth)
-                }
-                start()
+                if (binding.edit.alpha == 0f) start()
             }
 
             isExpanded = false
@@ -73,40 +60,23 @@ class TokenViewHolder(
                 listener?.onEdit(entry, adapterPosition)
             }
 
-            binding.delete.setOnClickListener {
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    listener?.onDelete(entry, adapterPosition)
-                }
-            }
             return
         }
 
         if (!initialLoad) {
-            binding.editTools.visibility = View.GONE
-            ObjectAnimator.ofFloat(binding.editTools, View.ALPHA, 1f, 0f).apply {
+            binding.edit.visibility = View.GONE
+            ObjectAnimator.ofFloat(binding.edit, View.ALPHA, 1f, 0f).apply {
                 duration = ANIM_DURATION
                 addListener(object : AnimatorListenerImpl() {
                     override fun onAnimationEnd(animation: Animator) {
-                        binding.editTools.visibility = View.GONE
+                        binding.edit.visibility = View.GONE
                         binding.arrow.visibility = View.VISIBLE
                     }
                 })
-                if (binding.editTools.alpha == 1f) start()
-            }
-
-            ValueAnimator.ofInt(0, initialWidth).apply {
-                duration = ANIM_DURATION
-                addUpdateListener { animator ->
-                    val animatedValue = animator.animatedValue as Int
-                    val layoutParams = binding.thumbnailFrame.layoutParams
-                    layoutParams.width = animatedValue
-                    binding.thumbnailFrame.layoutParams = layoutParams
-                    binding.thumbnailFrame.alpha = (animatedValue.toFloat() / initialWidth)
-                }
-                start()
+                if (binding.edit.alpha == 1f) start()
             }
         } else {
-            binding.editTools.visibility = View.GONE
+            binding.edit.visibility = View.GONE
         }
 
         setThumbnail()

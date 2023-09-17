@@ -70,6 +70,8 @@ class AppPreferences private constructor(context: Context) {
         const val KEY_ALLOW_SCREENSHOTS = "key_allow_screenshots"
 
         const val KEY_SHOW_THUMBNAILS = "key_show_thumbnail"
+        const val KEY_IMPORT_ACCOUNTS = "key_import_accounts"
+        const val KEY_EXPORT_ACCOUNTS = "key_export_accounts"
 
         fun getInstance(context: Context): AppPreferences {
             if (instance == null) {

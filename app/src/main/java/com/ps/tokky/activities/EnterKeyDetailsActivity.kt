@@ -20,7 +20,15 @@ import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
 import com.ps.tokky.models.TokenEntry
-import com.ps.tokky.utils.*
+import com.ps.tokky.utils.AccountEntryMethod
+import com.ps.tokky.utils.BadlyFormedURLException
+import com.ps.tokky.utils.Constants
+import com.ps.tokky.utils.EmptyURLContentException
+import com.ps.tokky.utils.InvalidSecretKeyException
+import com.ps.tokky.utils.TokenExistsInDBException
+import com.ps.tokky.utils.cleanSecretKey
+import com.ps.tokky.utils.hideKeyboard
+import com.ps.tokky.utils.showKeyboard
 
 class EnterKeyDetailsActivity : BaseActivity() {
 
@@ -57,6 +65,8 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     if (otpAuthUrl != null) TokenEntry.BuildFromUrl(otpAuthUrl).build()
                     else db.getAll(false).find { it.id == editId }
 
+                binding.toolbar.title = "Update Details"
+
                 binding.tilIssuer.editText?.setText(currentEntry!!.issuer)
                 binding.tilLabel.editText?.setText(currentEntry!!.label)
                 binding.thumbnailContainer.setThumbnailColor(currentEntry!!.thumbnailColor)
@@ -73,6 +83,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
                 binding.detailsSaveBtn.visibility = View.VISIBLE
                 binding.tilIssuer.editText?.addTextChangedListener(editModeTextWatcher)
                 binding.tilLabel.editText?.addTextChangedListener(editModeTextWatcher)
+                binding.detailsSaveBtn.setText(R.string.label_btn_update_account)
                 binding.detailsSaveBtn.setOnClickListener {
                     hideKeyboard()
 

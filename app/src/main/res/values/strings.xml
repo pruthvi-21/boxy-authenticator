@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">Tokky</string>
-    <string name="cd_fab_add_new">add</string>
     <string name="empty_layout_text">No tokens available\nAdd a token by clicking <b>\'+\'</b> at the bottom</string>
-    <string name="content_description_rearrange">rearrange</string>
+    <string name="cd_fab_add_new">add</string>
+    <string name="cd_refresh">refresh</string>
+    <string name="cd_edit">edit</string>
+    <string name="cd_settings">settings</string>
 
     <!-- EnterKeyDetailsActivity -->
     <string name="title_enter_account_details">Enter account details</string>
     <string name="label_btn_add_account">Add account</string>
+    <string name="label_btn_update_account">Update</string>
     <string name="label_issuer">Issuer</string>
     <string name="label_label">Label</string>
     <string name="label_secret_key">Secret Key</string>
@@ -26,8 +29,6 @@
     <string name="error_saving_details">Unable to save</string>
     <string name="toast_copied_to_clipboard">Copied to clipboard</string>
     <string name="label_clipboard_content">OTP Token</string>
-    <string name="refresh">Refresh</string>
-    <string name="menu_edit">Edit</string>
     <string name="edit_mode_title">Edit tokens</string>
     <string name="auth_activity_biometric_unlock_prompt_title">Unlock to use Tokky</string>
     <string name="auth_activity_biometric_unlock_prompt_negative_text">Use PIN</string>

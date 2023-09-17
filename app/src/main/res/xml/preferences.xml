@@ -1,37 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory>
-        <com.ps.tokky.preference.AppLockPreference
-            app:defaultValue="false"
-            app:key="@string/key_app_lock"
-            app:summary="@string/summary_app_lock"
-            app:title="@string/title_app_lock" />
+    <com.ps.tokky.preference.AppLockPreference
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="@string/key_app_lock"
+        app:summary="@string/summary_app_lock"
+        app:title="@string/title_app_lock"
+        app:widgetLayout="@layout/m3_switch_layout" />
 
-        <com.ps.tokky.preference.BiometricUnlockPreference
-            app:defaultValue="false"
-            app:dependency="@string/key_app_lock"
-            app:key="@string/key_biometric_unlock"
-            app:summary="@string/pref_summary_biometrics"
-            app:title="@string/pref_title_biometrics" />
+    <com.ps.tokky.preference.BiometricUnlockPreference
+        app:defaultValue="false"
+        app:dependency="@string/key_app_lock"
+        app:iconSpaceReserved="false"
+        app:key="@string/key_biometric_unlock"
+        app:summary="@string/pref_summary_biometrics"
+        app:title="@string/pref_title_biometrics"
+        app:widgetLayout="@layout/m3_switch_layout" />
 
-        <SwitchPreference
-            app:defaultValue="false"
-            app:key="@string/key_screenshots"
-            app:summary="@string/summary_screenshots"
-            app:title="@string/title_screenshots" />
-    </PreferenceCategory>
+    <SwitchPreference
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="@string/key_screenshots"
+        app:summary="@string/summary_screenshots"
+        app:title="@string/title_screenshots"
+        app:widgetLayout="@layout/m3_switch_layout" />
 
-    <PreferenceCategory app:title="@string/pref_cat_title_ui">
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/pref_cat_title_ui">
         <com.ps.tokky.preference.AppThemeControllerPreference
             app:defaultValue="system"
             app:entries="@array/app_theme_entries"
             app:entryValues="@array/app_theme_values"
+            app:iconSpaceReserved="false"
             app:key="@string/pref_key_app_theme"
             app:title="@string/pref_title_app_theme"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:defaultValue="true"
+            app:iconSpaceReserved="false"
             app:key="@string/pref_key_show_thumbnail"
-            app:title="@string/pref_title_thumbnail" />
+            app:title="@string/pref_title_thumbnail"
+            app:widgetLayout="@layout/m3_switch_layout" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/pref_cat_title_transfers">
+        <com.ps.tokky.preference.ImportAccountsPreference
+            app:iconSpaceReserved="false"
+            app:key="@string/pref_key_import_accounts"
+            app:summary="@string/pref_summary_import_accounts"
+            app:title="@string/pref_title_import_accounts" />
+        <com.ps.tokky.preference.ExportAccountsPreference
+            app:iconSpaceReserved="false"
+            app:key="@string/pref_key_export_accounts"
+            app:summary="@string/pref_summary_export_accounts"
+            app:title="@string/pref_title_export_accounts" />
     </PreferenceCategory>
 </PreferenceScreen>

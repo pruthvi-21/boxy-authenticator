@@ -37,7 +37,7 @@
 
     <style name="TextInputLayoutStyle" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="android:textColorHint">?colorOutline</item>
-        <item name="boxBackgroundColor">?colorSurfaceVariant</item>
+        <item name="boxBackgroundColor">@color/translucent_surface_variant</item>
         <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
         <item name="startIconTint">@color/text_input_layout_icon_tint</item>
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Medium</item>
