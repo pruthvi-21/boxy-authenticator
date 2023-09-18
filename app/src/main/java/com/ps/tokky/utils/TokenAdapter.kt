@@ -2,26 +2,18 @@ package com.ps.tokky.utils
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
-import android.text.Spannable
-import android.text.SpannableStringBuilder
 import android.text.TextUtils
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.ps.tokky.R
 import com.ps.tokky.activities.EnterKeyDetailsActivity
-import com.ps.tokky.activities.MainActivity
-import com.ps.tokky.database.DBHelper
-import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.databinding.RvAuthCardHeaderBinding
 import com.ps.tokky.models.TokenEntry
@@ -36,7 +28,6 @@ class TokenAdapter(
     private var currentExpanded = -1
 
     private val handler = Handler(Looper.getMainLooper())
-    private val db = DBHelper.getInstance(context)
 
     private val tokensList = ArrayList<GroupedItem>()
 
@@ -176,59 +167,6 @@ class TokenAdapter(
         editActivityLauncher.launch(Intent(context, EnterKeyDetailsActivity::class.java).apply {
             putExtra("id", entry.id)
         })
-    }
-
-    override fun onDelete(entry: TokenEntry, position: Int) {
-        val titleViewBinding = DialogTitleDeleteWarningBinding.inflate(LayoutInflater.from(context))
-
-        val ssb = SpannableStringBuilder(entry.issuer)
-        ssb.setSpan(
-            StyleSpan(Typeface.BOLD),
-            0,
-            entry.issuer.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        titleViewBinding.title.text =
-            SpannableStringBuilder(context.getString(R.string.dialog_title_delete_token))
-                .append(" ")
-                .append(ssb)
-                .append("?")
-
-        MaterialAlertDialogBuilder(context)
-            .setCustomTitle(titleViewBinding.root)
-            .setMessage(R.string.dialog_message_delete_token)
-            .setPositiveButton(R.string.dialog_remove) { _, _ ->
-                entry.id
-                db.remove(entry.id)
-
-                //verify and remove header
-                var removeHeader = false
-                if (tokensList[position - 1].isHeader) {
-                    if (position != tokensList.size - 1) {
-                        if (tokensList[position + 1].isHeader) {
-                            removeHeader = true
-                        }
-                    } else {
-                        removeHeader = true
-                    }
-                }
-
-                tokensList.removeAt(position)
-                notifyItemRemoved(position)
-
-                if (removeHeader) {
-                    tokensList.removeAt(position - 1)
-                    notifyItemRemoved(position - 1)
-                }
-
-                if (tokensList.size == 0 && context is MainActivity) {
-                    context.openEditMode(false)
-                }
-            }
-            .setNegativeButton(R.string.dialog_cancel, null)
-            .create()
-            .show()
     }
 
     fun onResume() {

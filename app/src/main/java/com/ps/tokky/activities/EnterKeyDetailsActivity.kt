@@ -2,13 +2,18 @@ package com.ps.tokky.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.text.style.StyleSpan
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
@@ -19,10 +24,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
+import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.AccountEntryMethod
 import com.ps.tokky.utils.BadlyFormedURLException
 import com.ps.tokky.utils.Constants
+import com.ps.tokky.utils.Constants.DELETE_SUCCESS_RESULT_CODE
 import com.ps.tokky.utils.EmptyURLContentException
 import com.ps.tokky.utils.InvalidSecretKeyException
 import com.ps.tokky.utils.TokenExistsInDBException
@@ -66,6 +73,11 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     else db.getAll(false).find { it.id == editId }
 
                 binding.toolbar.title = "Update Details"
+                binding.deleteBtn.visibility = View.VISIBLE
+
+                binding.deleteBtn.setOnClickListener {
+                    currentEntry?.let { deleteToken(it) }
+                }
 
                 binding.tilIssuer.editText?.setText(currentEntry!!.issuer)
                 binding.tilLabel.editText?.setText(currentEntry!!.label)
@@ -250,6 +262,36 @@ class EnterKeyDetailsActivity : BaseActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun deleteToken(entry: TokenEntry) {
+        val titleViewBinding = DialogTitleDeleteWarningBinding.inflate(LayoutInflater.from(this))
+
+        val ssb = SpannableStringBuilder(entry.issuer)
+        ssb.setSpan(
+            StyleSpan(Typeface.BOLD),
+            0,
+            entry.issuer.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        titleViewBinding.title.text =
+            SpannableStringBuilder(getString(R.string.dialog_title_delete_token))
+                .append(" ")
+                .append(ssb)
+                .append("?")
+
+        MaterialAlertDialogBuilder(this)
+            .setCustomTitle(titleViewBinding.root)
+            .setMessage(R.string.dialog_message_delete_token)
+            .setPositiveButton(R.string.dialog_remove) { _, _ ->
+                db.remove(entry.id)
+                setResult(DELETE_SUCCESS_RESULT_CODE)
+                finish()
+            }
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .create()
+            .show()
     }
 
     private val textWatcher: TextWatcher =

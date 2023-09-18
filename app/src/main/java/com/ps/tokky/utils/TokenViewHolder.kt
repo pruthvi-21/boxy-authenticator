@@ -2,7 +2,6 @@ package com.ps.tokky.utils
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Handler
@@ -151,7 +150,6 @@ class TokenViewHolder(
     interface Callback {
         fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean)
         fun onEdit(entry: TokenEntry, position: Int)
-        fun onDelete(entry: TokenEntry, position: Int)
     }
 
     abstract class AnimatorListenerImpl : Animator.AnimatorListener {

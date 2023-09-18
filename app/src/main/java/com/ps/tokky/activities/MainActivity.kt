@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityMainBinding
+import com.ps.tokky.utils.Constants.DELETE_SUCCESS_RESULT_CODE
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
 
@@ -87,7 +88,6 @@ class MainActivity : BaseActivity() {
         val list = db.getAll(reload)
         adapter.updateEntries(list)
         binding.emptyLayout.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
-        invalidateOptionsMenu()
     }
 
     override fun onResume() {
@@ -111,7 +111,6 @@ class MainActivity : BaseActivity() {
     }
 
     fun openEditMode(open: Boolean) {
-        invalidateOptionsMenu()
         if (open) {
             binding.toolbar.title = getString(R.string.edit_mode_title)
             binding.toolbar.navigationIcon =
@@ -155,9 +154,13 @@ class MainActivity : BaseActivity() {
             val extras = it.data?.extras
             if (it.resultCode == Activity.RESULT_OK && extras != null) {
                 refresh(true)
+                openEditMode(false)
+            }
+            if (it.resultCode == DELETE_SUCCESS_RESULT_CODE) {
+                refresh(true)
+                openEditMode(false)
             }
         }
-
 
     companion object {
         private const val TAG = "MainActivity"

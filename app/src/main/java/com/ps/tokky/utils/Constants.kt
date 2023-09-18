@@ -36,4 +36,6 @@ object Constants {
         }
 
     const val FILE_MIME_TYPE = "application/json"
+
+    const val DELETE_SUCCESS_RESULT_CODE = 120
 }
