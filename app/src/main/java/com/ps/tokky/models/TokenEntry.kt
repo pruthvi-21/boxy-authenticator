@@ -6,15 +6,22 @@ import android.net.Uri
 import android.text.Spannable
 import androidx.annotation.ColorInt
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
-import com.ps.tokky.R
-import com.ps.tokky.utils.*
+import com.ps.tokky.utils.AccountEntryMethod
+import com.ps.tokky.utils.BadlyFormedURLException
 import com.ps.tokky.utils.Constants.DEFAULT_DIGITS
 import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_TYPE
 import com.ps.tokky.utils.Constants.DEFAULT_PERIOD
+import com.ps.tokky.utils.EmptyURLContentException
+import com.ps.tokky.utils.InvalidSecretKeyException
+import com.ps.tokky.utils.TokenCalculator
+import com.ps.tokky.utils.Utils
+import com.ps.tokky.utils.cleanSecretKey
+import com.ps.tokky.utils.formatOTP
+import com.ps.tokky.utils.isValidSecretKey
 import org.json.JSONObject
-import java.util.*
-import kotlin.random.Random
+import java.util.Date
+import java.util.UUID
 
 class TokenEntry {
 
@@ -133,6 +140,8 @@ class TokenEntry {
             if (period != DEFAULT_PERIOD) put(KEY_PERIOD, period) //Int
             if (digits != DEFAULT_DIGITS) put(KEY_DIGITS, digits) //Int
             if (algorithm != DEFAULT_HASH_ALGORITHM) put(KEY_ALGORITHM, algorithm) //String
+            put(KEY_THUMBNAIL_ICON, thumbnailIcon)
+            put(KEY_THUMBNAIL_COLOR, thumbnailColor)
         }
     }
 
@@ -243,15 +252,15 @@ class TokenEntry {
                 json.getString(KEY_ALGORITHM)
             } else DEFAULT_HASH_ALGORITHM
 
-            val colors = context.resources.obtainTypedArray(R.array.tile_colors)
-            val randomColor = colors.getColor(Random.nextInt(0, colors.length()), Color.GRAY)
-            colors.recycle()
+            val thumbnailIcon = json.getString(KEY_THUMBNAIL_ICON)
+            val thumbnailColor = json.getInt(KEY_THUMBNAIL_COLOR)
 
             return Builder()
                 .setIssuer(issuer)
                 .setLabel(label)
                 .setSecretKey(secretKey)
-                .setThumbnailColor(randomColor)
+                .setThumbnailColor(thumbnailColor)
+                .setThumbnailIcon(thumbnailIcon)
                 .setPeriod(period)
                 .setDigits(digits)
                 .setAlgorithm(algorithm)
