@@ -66,7 +66,6 @@
     <string name="to">To</string>
     <string name="export_to_options_label">Select where to export your accounts</string>
     <string name="export_options_file">File</string>
-    <string name="export_options_qr">QR code</string>
     <string name="export_toast_success">Accounts exported</string>
     <string name="export_toast_error">Some error occurred while exporting</string>
 

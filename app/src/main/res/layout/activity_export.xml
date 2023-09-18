@@ -112,23 +112,6 @@
                 app:icon="@drawable/ic_export_file"
                 app:title="@string/export_options_file" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height=".5dp"
-                android:layout_marginStart="70dp"
-                android:layout_marginEnd="?android:listPreferredItemPaddingEnd"
-                android:alpha=".5"
-                android:background="?colorOutline" />
-
-            <com.ps.tokky.views.PreferenceLayoutView
-                android:id="@+id/export_qr_code"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                app:icon="@drawable/ic_qr_code"
-                app:title="@string/export_options_qr" />
-
         </LinearLayout>
     </LinearLayout>
 

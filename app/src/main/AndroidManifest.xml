@@ -46,9 +46,6 @@
 
         <!-- Transfer accounts -->
         <activity
-            android:name=".activities.transfer.export.ExportBarcodeActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.transfer.export.ExportFileActivity"
             android:exported="false" />
         <activity

@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.ps.tokky.R
 import com.ps.tokky.activities.BaseActivity
 import com.ps.tokky.databinding.ActivityExportBinding
-import org.json.JSONArray
 
 class ExportActivity : BaseActivity() {
 
@@ -43,16 +42,6 @@ class ExportActivity : BaseActivity() {
                 Intent(this, ExportFileActivity::class.java)
                     .putExtra(INTENT_EXTRA_KEY_EXPORT_SELECTION, selectedListIds)
             )
-        }
-
-        binding.exportQrCode.setOnClickListener {
-            val list =
-                selectedListIds?.map { exportAccountsList.find { it1 -> it == it1.id }?.toExportJson() }
-            startActivity(
-                Intent(this, ExportBarcodeActivity::class.java)
-                    .putExtra(INTENT_EXTRA_KEY_EXPORT_SELECTION, JSONArray(list).toString())
-            )
-            finish()
         }
     }
 
