@@ -1,4 +1,4 @@
-package com.ps.tokky.activities.transfer.imports
+package com.ps.tokky.activities.transfer
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ps.tokky.R
 import com.ps.tokky.activities.BaseActivity
-import com.ps.tokky.activities.transfer.imports.ImportActivity.Companion.INTENT_EXTRA_FAILED_LIST
+import com.ps.tokky.activities.transfer.ImportActivity.Companion.INTENT_EXTRA_FAILED_LIST
 import com.ps.tokky.databinding.ActivityImportFailedBinding
 import com.ps.tokky.databinding.DialogImportEditTokenBinding
 import com.ps.tokky.databinding.ItemTransferListImportFailedBinding

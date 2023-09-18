@@ -35,7 +35,7 @@ object Constants {
             return EXPORT_FILE_NAME_PREFIX + formatted
         }
 
-    const val FILE_MIME_TYPE = "application/json"
+    const val BACKUP_FILE_MIME_TYPE = "text/plain"
 
     const val DELETE_SUCCESS_RESULT_CODE = 120
 }

@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceFragmentCompat
-import com.ps.tokky.activities.transfer.export.ExportActivity
+import com.ps.tokky.activities.transfer.ExportActivity
 import com.ps.tokky.database.DBHelper
 
 class ExportAccountsPreference @JvmOverloads constructor(

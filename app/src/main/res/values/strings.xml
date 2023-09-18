@@ -59,36 +59,23 @@
     <string name="label_export_accounts">Export accounts</string>
 
     <!-- Export Activity -->
-    <string name="export">Export</string>
-    <string name="export_selection_label_all_accounts">All accounts</string>
-    <string name="export_selection_label_selected_accounts">Selected accounts</string>
-    <string name="export_selection_label_accounts_count">%1$d accounts</string>
-    <string name="export_edit_selection_content_description">Edit selection</string>
-    <string name="to">To</string>
-    <string name="export_to_options_label">Select where to export your accounts</string>
-    <string name="export_options_file">File</string>
+    <string name="export_create_password_title">Set a Password</string>
+    <string name="export_create_password_message">Create a new password to encrypt your backup file</string>
+    <string name="export_info">All accounts will be backed up</string>
+    <string name="export_export_btn">Export</string>
     <string name="export_toast_success">Accounts exported</string>
     <string name="export_toast_error">Some error occurred while exporting</string>
-
-    <!-- Export selection -->
-    <string name="menu_export_selection_done">Done</string>
-    <string name="export_selection_no_item_selected">Please select at least one item</string>
-
-    <!-- Export barcode -->
-    <string name="qr_activity_title">Scan this QR code</string>
-    <string name="qr_activity_subtitle">Install Tokky on your new device and scan this QR code from the app.</string>
-    <string name="qr_activity_barcode_gen_failed">Something went wrong</string>
-
-    <!-- Export File -->
-    <string name="export_file_subtitle">Please set a password for your file.</string>
-    <string name="export_file_password">Password</string>
-    <string name="export_file_confirm_password">Confirm password</string>
-    <string name="export_file_password_empty">Password can\'t be empty</string>
-    <string name="export_file_password_mismatch">Password didn\'t matched</string>
-    <string name="export_file_save_btn">Export</string>
+    <string name="export_password">Password</string>
+    <string name="export_confirm_password">Confirm password</string>
+    <string name="export_password_empty">Password can\'t be empty</string>
+    <string name="export_password_mismatch">Password didn\'t matched</string>
 
     <!-- ImportActivity -->
     <string name="import_btn_title">Import</string>
+    <string name="import_password_failed_msg">Invalid password or corrupted file</string>
+    <string name="import_password_dialog_title">Enter password</string>
+    <string name="import_password_dialog_positive_btn">Decrypt</string>
+    <string name="import_password_dialog_negative_btn">Cancel</string>
     <string name="import_success_msg_singular">%1$s Account Imported</string>
     <string name="import_success_msg_plural">%1$s Accounts Imported</string>
     <string name="import_edit_dialog_title">Update account details</string>

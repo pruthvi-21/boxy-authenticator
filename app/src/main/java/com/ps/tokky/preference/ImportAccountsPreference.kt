@@ -7,7 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceFragmentCompat
-import com.ps.tokky.activities.transfer.imports.ImportActivity
+import com.ps.tokky.activities.transfer.ImportActivity
 import com.ps.tokky.utils.Constants
 
 class ImportAccountsPreference @JvmOverloads constructor(
@@ -37,7 +37,7 @@ class ImportAccountsPreference @JvmOverloads constructor(
 
         onPreferenceClickListener = OnPreferenceClickListener {
             val filePickerIntent = Intent().apply {
-                type = Constants.FILE_MIME_TYPE
+                type = Constants.BACKUP_FILE_MIME_TYPE
                 action = Intent.ACTION_GET_CONTENT
             }
 

@@ -16,6 +16,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.ps.tokky.R
+import org.json.JSONArray
+import org.json.JSONException
 import java.security.MessageDigest
 import java.util.*
 
@@ -122,4 +124,14 @@ fun String.getInitials(): String {
     }
 
     return initials.uppercase()
+}
+
+fun String?.isJsonArray(): Boolean {
+    this ?: return false
+    return try {
+        JSONArray(this)
+        true
+    } catch (e: JSONException) {
+        false
+    }
 }

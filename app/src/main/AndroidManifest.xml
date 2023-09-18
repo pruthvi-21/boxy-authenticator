@@ -46,19 +46,13 @@
 
         <!-- Transfer accounts -->
         <activity
-            android:name=".activities.transfer.export.ExportFileActivity"
+            android:name=".activities.transfer.ExportActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.transfer.export.ExportSelectionActivity"
+            android:name=".activities.transfer.ImportActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.transfer.export.ExportActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.transfer.imports.ImportActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.transfer.imports.ImportFailedActivity"
+            android:name=".activities.transfer.ImportFailedActivity"
             android:exported="false" />
     </application>
 

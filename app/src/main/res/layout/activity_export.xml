@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.transfer.export.ExportActivity">
+    tools:context=".activities.transfer.ExportActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -13,106 +13,74 @@
         android:layout_height="?android:actionBarSize"
         android:layout_marginTop="10dp"
         app:navigationIcon="@drawable/ic_samsung_arrow_left"
-        app:title="@string/label_export_accounts" />
+        app:title="@string/export_create_password_title" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/screen_margin"
+        android:text="@string/export_create_password_message" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/export_password"
+            app:passwordToggleEnabled="true"
+            app:startIconDrawable="@drawable/ic_password_lock">
+
+            <com.google.android.material.textfield.TextInputEditText
+                style="?textInputEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_confirm_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/export_confirm_password"
+            app:passwordToggleEnabled="true"
+            app:startIconDrawable="@drawable/ic_password_lock">
+
+            <com.google.android.material.textfield.TextInputEditText
+                style="?textInputEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/screen_margin"
-            android:text="@string/export"
-            android:textColor="?colorPrimary"
-            android:textSize="22sp" />
+            android:layout_marginVertical="5dp"
+            android:gravity="center"
+            android:text="@string/export_info" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/export"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.ps.tokky.views.PreferenceLayoutView
-                    android:id="@+id/export_list_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:icon="@drawable/ic_accounts"
-                    app:title="@string/export_selection_label_all_accounts" />
-
-                <ImageButton
-                    android:id="@+id/edit_export_list_btn"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="30dp"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/export_edit_selection_content_description"
-                    android:src="@drawable/ic_edit" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height=".5dp"
-                android:layout_marginStart="70dp"
-                android:layout_marginEnd="?android:listPreferredItemPaddingEnd"
-                android:alpha=".5"
-                android:background="?colorOutline" />
-
-            <TextView
-                android:id="@+id/summary_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="56dp"
-                android:paddingHorizontal="?android:attr/listPreferredItemPaddingStart"
-                android:paddingVertical="10dp"
-                android:text="@string/export_selection_label_accounts_count"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="?colorPrimary"
-                tools:text="10 accounts" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:paddingHorizontal="@dimen/screen_margin"
-            android:text="@string/to"
-            android:textColor="?colorPrimary"
-            android:textSize="22sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="4dp"
-                android:layout_marginVertical="20dp"
-                android:paddingHorizontal="?android:attr/listPreferredItemPaddingStart"
-                android:text="@string/export_to_options_label"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="15sp" />
-
-            <com.ps.tokky.views.PreferenceLayoutView
-                android:id="@+id/export_file"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                app:icon="@drawable/ic_export_file"
-                app:title="@string/export_options_file" />
-
-        </LinearLayout>
+            android:layout_marginVertical="10dp"
+            android:paddingVertical="12dp"
+            android:text="@string/export_export_btn" />
     </LinearLayout>
-
 </LinearLayout>
