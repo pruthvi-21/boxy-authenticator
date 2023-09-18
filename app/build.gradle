@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.ps.tokky'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.ps.tokky"
         minSdk 29
-        targetSdk 33
+        targetSdk 34
         versionCode 3
         versionName "1.1.1"
 

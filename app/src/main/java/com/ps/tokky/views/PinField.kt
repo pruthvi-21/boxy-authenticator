@@ -31,11 +31,11 @@ class PinField @JvmOverloads constructor(
         color = Utils.getThemeColorFromAttr(context, com.google.android.material.R.attr.colorSurfaceVariant)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         val padding = gap / 2
 
         for (i in 0 until pinLength) {
-            canvas?.drawCircle(
+            canvas.drawCircle(
                 padding + radius + (2 * i) * (padding + radius),
                 radius + padding,
                 radius,
