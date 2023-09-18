@@ -88,6 +88,7 @@ class MainActivity : BaseActivity() {
         val list = db.getAll(reload)
         adapter.updateEntries(list)
         binding.emptyLayout.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+        binding.edit.isEnabled = list.isNotEmpty()
     }
 
     override fun onResume() {
