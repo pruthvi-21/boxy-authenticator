@@ -1,14 +1,11 @@
 package com.ps.tokky.utils
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.ps.tokky.R
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 
@@ -16,8 +13,6 @@ class TokenViewHolder(
     val context: Context,
     val binding: RvAuthCardBinding
 ) : RecyclerView.ViewHolder(binding.root) {
-
-    private val preferences = AppPreferences.getInstance(context)
 
     private var listener: Callback? = null
     private var entry: TokenEntry? = null
@@ -30,8 +25,6 @@ class TokenViewHolder(
         }
     }
 
-    private var initialLoad = true
-
     fun bind(entry: TokenEntry, inEditMode: Boolean) {
         this.entry = entry
         binding.issuerLabel.text = entry.issuer
@@ -41,16 +34,10 @@ class TokenViewHolder(
         } else {
             binding.accountLabel.visibility = View.GONE
         }
-        val initialWidth = context.resources.getDimension(R.dimen.card_thumbnail_width).toInt()
 
         if (inEditMode) {
             binding.edit.visibility = View.VISIBLE
             binding.arrow.visibility = View.GONE
-
-            ObjectAnimator.ofFloat(binding.edit, View.ALPHA, 0f, 1f).apply {
-                duration = ANIM_DURATION
-                if (binding.edit.alpha == 0f) start()
-            }
 
             isExpanded = false
 
@@ -62,21 +49,8 @@ class TokenViewHolder(
             return
         }
 
-        if (!initialLoad) {
-            binding.edit.visibility = View.GONE
-            ObjectAnimator.ofFloat(binding.edit, View.ALPHA, 1f, 0f).apply {
-                duration = ANIM_DURATION
-                addListener(object : AnimatorListenerImpl() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        binding.edit.visibility = View.GONE
-                        binding.arrow.visibility = View.VISIBLE
-                    }
-                })
-                if (binding.edit.alpha == 1f) start()
-            }
-        } else {
-            binding.edit.visibility = View.GONE
-        }
+        binding.edit.visibility = View.GONE
+        binding.arrow.visibility = View.VISIBLE
 
         setThumbnail()
 
@@ -92,7 +66,6 @@ class TokenViewHolder(
             Utils.copyToClipboard(context, entry.otpFormattedString)
             true
         }
-        initialLoad = false
     }
 
     private fun setThumbnail() {
@@ -139,19 +112,9 @@ class TokenViewHolder(
         binding.otpHolder.text = entry!!.otpFormattedSpan
     }
 
-    companion object {
-        private const val ANIM_DURATION = 150L
-    }
-
     interface Callback {
         fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean)
         fun onEdit(entry: TokenEntry, position: Int)
     }
 
-    abstract class AnimatorListenerImpl : Animator.AnimatorListener {
-        override fun onAnimationStart(animation: Animator) {}
-        override fun onAnimationEnd(animation: Animator) {}
-        override fun onAnimationCancel(animation: Animator) {}
-        override fun onAnimationRepeat(animation: Animator) {}
-    }
 }
