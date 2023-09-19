@@ -6,4 +6,5 @@ interface DBInterface<T> {
     fun get(itemId: String): T?
     fun getAll(reload: Boolean = true): ArrayList<T>
     fun remove(itemId: String)
+    fun kill()
 }

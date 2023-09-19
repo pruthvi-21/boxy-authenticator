@@ -15,6 +15,7 @@
     <string name="pref_title_app_theme">App theme</string>
     <string name="pref_title_import_accounts">Import Accounts</string>
     <string name="pref_title_export_accounts">Export Accounts</string>
+    <string name="pref_title_kill">Delete all Accounts</string>
 
     <string name="summary_app_lock">Lock this app with a PIN. To change your PIN please disable app lock and enable it again</string>
     <string name="pref_summary_biometrics">You can unlock with your biometrics instead of typing PIN</string>

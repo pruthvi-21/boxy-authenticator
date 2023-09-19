@@ -42,6 +42,10 @@
     <string name="dialog_message_delete_token">Before removing please ensure that you turn off 2FA for this account.\n\nAlso, please ensure that you have alternative mechanism for generating codes.</string>
     <string name="dialog_remove">Remove account</string>
 
+    <string name="dialog_title_kill">Delete all accounts</string>
+    <string name="dialog_message_kill">This will remove all the accounts and you cannot generate TOTP codes.\n\nWe recommend you to take a backup of accounts before deleting.</string>
+    <string name="dialog_kill_positive_btn">Delete all</string>
+
     <!-- Auth Activity -->
     <string name="auth_activity_unlock_with_biometrics">Unlock with biometrics</string>
     <string name="auth_activity_title">Enter your PIN</string>

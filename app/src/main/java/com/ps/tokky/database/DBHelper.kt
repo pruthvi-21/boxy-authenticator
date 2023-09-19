@@ -101,6 +101,11 @@ class DBHelper private constructor(
         return list.map { allEntries.find { it1 -> it == it1.id } }
     }
 
+    override fun kill() {
+        writableDatabase?.execSQL("DELETE FROM $TABLE_KEYS;")
+        allEntries.clear()
+    }
+
     companion object {
         private const val TAG = "DBHelper"
 

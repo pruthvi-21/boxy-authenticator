@@ -1,10 +1,13 @@
 package com.ps.tokky.fragments
 
 import android.os.Bundle
+import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import com.ps.tokky.BuildConfig
 import com.ps.tokky.R
 import com.ps.tokky.preference.AppLockPreference
 import com.ps.tokky.preference.BiometricUnlockPreference
+import com.ps.tokky.preference.DeleteTokensPreference
 import com.ps.tokky.preference.ExportAccountsPreference
 import com.ps.tokky.preference.ImportAccountsPreference
 import com.ps.tokky.utils.AppPreferences
@@ -43,6 +46,27 @@ class PreferenceFragment : PreferenceFragmentCompat() {
 
         importAccountsPreference?.setupListeners(this)
         exportAccountsPreference?.setupListeners(this)
+
+        if (BuildConfig.DEBUG) {
+            addDeleteAllPreference()
+        }
+    }
+
+    private fun addDeleteAllPreference() {
+        val preferenceCategory = PreferenceCategory(preferenceScreen.context).apply {
+            isIconSpaceReserved = false
+            key = "kill_category"
+        }
+        preferenceScreen.addPreference(preferenceCategory)
+
+        preferenceCategory.addPreference(
+            DeleteTokensPreference(requireContext()).apply {
+                isIconSpaceReserved = false
+                layoutResource = R.layout.pref_kill_layout
+                key = "key_kill"
+                setTitle(R.string.pref_title_kill)
+            }
+        )
     }
 
     companion object {

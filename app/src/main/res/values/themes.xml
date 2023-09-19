@@ -50,4 +50,12 @@
         <item name="android:paddingStart">52.5dp</item>
     </style>
 
+    <style name="DialogKillTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarPositiveButtonStyle">@style/DialogKillPositiveButtonStyle</item>
+    </style>
+
+    <style name="DialogKillPositiveButtonStyle" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">?colorError</item>
+    </style>
+
 </resources>
