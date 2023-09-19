@@ -97,21 +97,17 @@ class TokenViewHolder(
 
     private fun setThumbnail() {
         entry ?: return
-        if (preferences.displayIcon) {
-            if (entry!!.thumbnailIcon.isEmpty()) {
-                binding.thumbnailFrame.visibility = View.VISIBLE
-                binding.initialsView.visibility = View.VISIBLE
-                binding.thumbnail.setBackgroundColor(entry!!.thumbnailColor)
-                binding.thumbnail.setImageBitmap(null)
-                binding.initialsView.text = entry!!.issuer.getInitials()
-            } else {
-                val fileName = entry!!.thumbnailIcon
-                val logoBitmap = Utils.getThumbnailFromAssets(context.assets, fileName)
-                binding.thumbnail.setImageBitmap(logoBitmap)
-                binding.initialsView.visibility = View.GONE
-            }
+        if (entry!!.thumbnailIcon.isEmpty()) {
+            binding.thumbnailFrame.visibility = View.VISIBLE
+            binding.initialsView.visibility = View.VISIBLE
+            binding.thumbnail.setBackgroundColor(entry!!.thumbnailColor)
+            binding.thumbnail.setImageBitmap(null)
+            binding.initialsView.text = entry!!.issuer.getInitials()
         } else {
-            binding.thumbnailFrame.visibility = View.GONE
+            val fileName = entry!!.thumbnailIcon
+            val logoBitmap = Utils.getThumbnailFromAssets(context.assets, fileName)
+            binding.thumbnail.setImageBitmap(logoBitmap)
+            binding.initialsView.visibility = View.GONE
         }
     }
 

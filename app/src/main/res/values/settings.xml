@@ -4,7 +4,6 @@
     <string name="key_biometric_unlock">key_biometric_unlock</string>
     <string name="key_screenshots">key_allow_screenshots</string>
     <string name="pref_key_app_theme">key_app_theme</string>
-    <string name="pref_key_show_thumbnail">key_show_thumbnail</string>
     <string name="pref_key_import_accounts">key_import_accounts</string>
     <string name="pref_key_export_accounts">key_export_accounts</string>
 
@@ -14,7 +13,6 @@
     <string name="pref_cat_title_ui">User Interface</string>
     <string name="pref_cat_title_transfers">Transfer Accounts</string>
     <string name="pref_title_app_theme">App theme</string>
-    <string name="pref_title_thumbnail">Show thumbnail</string>
     <string name="pref_title_import_accounts">Import Accounts</string>
     <string name="pref_title_export_accounts">Export Accounts</string>
 
