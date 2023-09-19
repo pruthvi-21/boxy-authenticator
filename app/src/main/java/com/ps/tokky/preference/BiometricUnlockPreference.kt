@@ -23,19 +23,20 @@ class BiometricUnlockPreference @JvmOverloads constructor(
     }
 
     fun initBiometricPrompt(activity: Fragment) {
-        biometricPrompt = BiometricPrompt(activity, executor, object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                super@BiometricUnlockPreference.onClick()
-            }
+        biometricPrompt =
+            BiometricPrompt(activity, executor, object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super@BiometricUnlockPreference.onClick()
+                }
 
-            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                Log.e(TAG, "onAuthenticationError: Failed attempt")
-            }
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    Log.e(TAG, "onAuthenticationError: Failed attempt")
+                }
 
-            override fun onAuthenticationFailed() {
-                Log.w(TAG, "onAuthenticationFailed: Incorrect attempt")
-            }
-        })
+                override fun onAuthenticationFailed() {
+                    Log.w(TAG, "onAuthenticationFailed: Incorrect attempt")
+                }
+            })
     }
 
     private val promptInfo: BiometricPrompt.PromptInfo

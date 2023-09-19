@@ -53,11 +53,6 @@
     <string name="settings_disable_pin_bottom_sheet_title">Enter your PIN to disable app lock</string>
     <string name="settings_app_lock_incorrect_pin">Incorrect PIN</string>
 
-    <string name="title_transfer_accounts">Transfer accounts</string>
-    <string name="msg_transfer_accounts">You can transfer your accounts to a new device that has Tokky. You can also encrypt and export all the accounts to a file as a backup and import it in a new device.</string>
-    <string name="label_import_accounts">Import accounts</string>
-    <string name="label_export_accounts">Export accounts</string>
-
     <!-- Export Activity -->
     <string name="export_create_password_title">Set a Password</string>
     <string name="export_create_password_message">Create a new password to encrypt your backup file</string>

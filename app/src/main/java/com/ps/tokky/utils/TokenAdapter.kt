@@ -152,6 +152,7 @@ class TokenAdapter(
                 vh.isExpanded = false
                 currentExpanded = -1
             }
+
             else -> {
                 val viewHolder = getViewHolderAt(currentExpanded)
                 if (currentExpanded != -1 && viewHolder is TokenViewHolder?) viewHolder?.isExpanded =

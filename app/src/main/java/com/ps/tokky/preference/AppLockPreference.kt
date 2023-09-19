@@ -34,7 +34,10 @@ class AppLockPreference @JvmOverloads constructor(
                     true
                 } else false
             }
-            ConfirmPinLayout(R.string.settings_setup_reenter_pin_bottom_sheet_title, reconfirmCallback).show(
+            ConfirmPinLayout(
+                R.string.settings_setup_reenter_pin_bottom_sheet_title,
+                reconfirmCallback
+            ).show(
                 fragmentManager!!,
                 "PinReconfirmSheet"
             )

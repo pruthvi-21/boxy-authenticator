@@ -24,11 +24,15 @@ class PinField @JvmOverloads constructor(
         }
 
     val paintActive = Paint().apply {
-        color = Utils.getThemeColorFromAttr(context, com.google.android.material.R.attr.colorPrimary)
+        color =
+            Utils.getThemeColorFromAttr(context, com.google.android.material.R.attr.colorPrimary)
     }
 
     val paintInactive = Paint().apply {
-        color = Utils.getThemeColorFromAttr(context, com.google.android.material.R.attr.colorSurfaceVariant)
+        color = Utils.getThemeColorFromAttr(
+            context,
+            com.google.android.material.R.attr.colorSurfaceVariant
+        )
     }
 
     override fun onDraw(canvas: Canvas) {

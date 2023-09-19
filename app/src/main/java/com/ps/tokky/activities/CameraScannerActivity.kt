@@ -11,7 +11,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.budiyev.android.codescanner.*
+import com.budiyev.android.codescanner.AutoFocusMode
+import com.budiyev.android.codescanner.CodeScanner
+import com.budiyev.android.codescanner.DecodeCallback
+import com.budiyev.android.codescanner.ErrorCallback
+import com.budiyev.android.codescanner.ScanMode
 import com.google.zxing.BarcodeFormat
 import com.ps.tokky.databinding.ActivityCameraScannerBinding
 import com.ps.tokky.utils.AppPreferences
@@ -30,7 +34,10 @@ class CameraScannerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (!preferences.allowScreenshots) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
         }
 
         requestCameraPermission()
@@ -57,7 +64,8 @@ class CameraScannerActivity : AppCompatActivity() {
                     )
                 } catch (exception: Exception) {
                     exception.printStackTrace()
-                    Toast.makeText(this, "Exception: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Exception: ${exception.message}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -76,7 +84,11 @@ class CameraScannerActivity : AppCompatActivity() {
     }
 
     private fun requestCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.CAMERA),
@@ -87,7 +99,11 @@ class CameraScannerActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_PERMISSION_CODE) {
             cameraPermissionGranted =

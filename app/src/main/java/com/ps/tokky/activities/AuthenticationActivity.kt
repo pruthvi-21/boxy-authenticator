@@ -13,7 +13,11 @@ import com.ps.tokky.databinding.ActivityAuthenticationBinding
 import com.ps.tokky.utils.AppPreferences.Companion.KEY_PASSCODE_HASH
 import com.ps.tokky.utils.CryptoUtils
 import com.ps.tokky.views.KeypadLayout
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthenticationActivity : BaseActivity(), KeypadLayout.OnKeypadKeyClickListener {
 
@@ -42,19 +46,20 @@ class AuthenticationActivity : BaseActivity(), KeypadLayout.OnKeypadKeyClickList
             loginSuccess()
         }
 
-        biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                loginSuccess()
-            }
+        biometricPrompt =
+            BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    loginSuccess()
+                }
 
-            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                Log.e(TAG, "onAuthenticationError: Failed to verify biometrics")
-            }
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    Log.e(TAG, "onAuthenticationError: Failed to verify biometrics")
+                }
 
-            override fun onAuthenticationFailed() {
-                Log.w(TAG, "onAuthenticationFailed: Incorrect attempt")
-            }
-        })
+                override fun onAuthenticationFailed() {
+                    Log.w(TAG, "onAuthenticationFailed: Incorrect attempt")
+                }
+            })
 
         binding.btnBiometrics.setOnClickListener {
             biometricPrompt?.authenticate(promptInfo)
@@ -99,12 +104,17 @@ class AuthenticationActivity : BaseActivity(), KeypadLayout.OnKeypadKeyClickList
     private suspend fun verifyPIN() {
         if (passcode.size < 4) return
 
-        val status = preferences.verifyPIN(CryptoUtils.hashPasscode(passcode.joinToString(separator = "")))
+        val status =
+            preferences.verifyPIN(CryptoUtils.hashPasscode(passcode.joinToString(separator = "")))
         if (!status) {
             passcode.clear()
             updateUI()
             withContext(Dispatchers.Main) {
-                Toast.makeText(this@AuthenticationActivity, R.string.settings_app_lock_incorrect_pin, Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    this@AuthenticationActivity,
+                    R.string.settings_app_lock_incorrect_pin,
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
         } else loginSuccess()

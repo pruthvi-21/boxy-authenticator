@@ -9,8 +9,6 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ps.tokky.R;
-
 public class CustomProgressBar extends View {
     private final float START_ANGLE = 270;
     private final Paint paintBackground;
