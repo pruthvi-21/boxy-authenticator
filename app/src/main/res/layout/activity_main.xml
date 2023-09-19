@@ -50,7 +50,7 @@
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/translucent_surface_variant"
+        android:background="?colorSurfaceContainer"
         android:gravity="center"
         android:minHeight="52dp"
         app:layout_constraintBottom_toBottomOf="parent"
