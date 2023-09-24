@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 
@@ -79,7 +80,7 @@ class TokenViewHolder(
         } else {
             val fileName = entry!!.thumbnailIcon
             val logoBitmap = Utils.getThumbnailFromAssets(context.assets, fileName)
-            binding.thumbnail.setImageBitmap(logoBitmap)
+            Glide.with(context).load(logoBitmap).into(binding.thumbnail)
             binding.initialsView.visibility = View.GONE
         }
     }

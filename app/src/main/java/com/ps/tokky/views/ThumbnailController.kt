@@ -11,6 +11,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ps.tokky.R
 import com.ps.tokky.databinding.BottomSheetThumbnailSelectorBinding
@@ -48,12 +49,11 @@ class ThumbnailController @JvmOverloads constructor(
                 return
             }
             binding.thumbnailRemove.visibility = View.VISIBLE
-            binding.thumbnailImage.setImageBitmap(
-                Utils.getThumbnailFromAssets(
-                    assets,
-                    thumbnailIcon!!
-                )
-            )
+            Glide
+                .with(context)
+                .load(Utils.getThumbnailFromAssets(assets, thumbnailIcon!!))
+                .into(binding.thumbnailImage)
+
             binding.thumbnailImage.visibility = View.VISIBLE
             binding.tilesContainer.animate()
                 .scaleY(0f)
@@ -189,7 +189,8 @@ class ThumbnailController @JvmOverloads constructor(
 
             override fun onBindViewHolder(holder: IconItemViewHolder, position: Int) {
                 val logoBitmap = Utils.getThumbnailFromAssets(assets, icons[position].second)
-                holder.binding.icon.setImageBitmap(logoBitmap)
+
+                Glide.with(context).load(logoBitmap).into(holder.binding.icon)
                 holder.binding.title.text = icons[position].first
                 holder.binding.root.setOnClickListener {
                     thumbnailIcon = icons[position].second
