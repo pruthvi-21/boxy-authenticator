@@ -95,10 +95,10 @@ class TokenEntry {
         return false
     }
 
-    val otpFormattedSpan: Spannable
+    val otpFormatted: String
         get() = currentOTP.formatOTP(digits)
 
-    val otpFormattedString: String
+    val otpClipboardFormat: String
         get() = "$currentOTP".padStart(digits, '0')
 
     fun updateInfo(

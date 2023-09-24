@@ -75,23 +75,13 @@ fun View.hideKeyboard(context: Context) {
     imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
-fun Int.formatOTP(length: Int): SpannableStringBuilder {
-    val res = "$this"
+fun Int.formatOTP(length: Int): String {
+    return "$this"
         .padStart(length, '0')
         .reversed()
         .replace(".".repeat(3).toRegex(), "$0 ")
         .trim()
         .reversed()
-
-    val split = res.split(" ")
-    val spannable = SpannableStringBuilder()
-    for (i in split) {
-        val span = SpannableString("$i ")
-        span.setSpan(RelativeSizeSpan(.5f), i.length, i.length + 1, 0)
-        span.setSpan(Typeface.MONOSPACE, 0, i.length, 0)
-        spannable.append(span)
-    }
-    return spannable
 }
 
 @SuppressLint("DefaultLocale")

@@ -64,7 +64,7 @@ class TokenViewHolder(
         }
 
         binding.otpHolder.setOnLongClickListener {
-            Utils.copyToClipboard(context, entry.otpFormattedString)
+            Utils.copyToClipboard(context, entry.otpClipboardFormat)
             true
         }
     }
@@ -110,7 +110,7 @@ class TokenViewHolder(
 
     fun updateOTP() {
         entry ?: return
-        binding.otpHolder.text = entry!!.otpFormattedSpan
+        binding.otpHolder.text = entry!!.otpFormatted
     }
 
     interface Callback {

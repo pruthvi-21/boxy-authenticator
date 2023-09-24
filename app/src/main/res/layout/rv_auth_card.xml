@@ -141,6 +141,7 @@
                 android:textColor="?android:attr/textColorPrimary"
                 android:textDirection="ltr"
                 android:textSize="34sp"
+                android:fontFamily="monospace"
                 tools:ignore="HardcodedText"
                 tools:text="012 345" />
         </LinearLayout>
