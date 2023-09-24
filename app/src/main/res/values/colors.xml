@@ -3,7 +3,6 @@
     <color name="launcher_background_color">#689F38</color>
 
     <color name="surface_color">#F2F2F2</color>
-    <color name="surface_color_variant">#252525</color>
     <color name="item_bg">#252525</color>
     <color name="color_warning">#bea802</color>
 
