@@ -28,34 +28,41 @@
             app:cardCornerRadius="18dp"
             app:strokeWidth="0dp">
 
-            <LinearLayout
-                android:id="@+id/thumbnail_container"
-                android:layout_width="100dp"
-                android:layout_height="68.1dp"
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                app:cornerRadius="18dp"
-                tools:backgroundColor="#C8AA4B">
+                app:cardCornerRadius="18dp"
+                app:strokeWidth="0dp">
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/initials_view"
+                <LinearLayout
+                    android:id="@+id/thumbnail_container"
+                    android:layout_width="100dp"
+                    android:layout_height="68.1dp"
+                    tools:backgroundColor="#C8AA4B">
+
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:textColor="#fff"
-                        android:textSize="28sp"
-                        tools:text="PB" />
+                        android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/thumbnail_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:contentDescription="@null" />
-                </FrameLayout>
-            </LinearLayout>
+                        <TextView
+                            android:id="@+id/initials_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:textColor="#fff"
+                            android:textSize="28sp"
+                            tools:text="PB" />
+
+                        <ImageView
+                            android:id="@+id/thumbnail_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@null" />
+                    </FrameLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
                 android:id="@+id/thumbnail_remove"
