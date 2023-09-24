@@ -64,22 +64,22 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/thumbnail_remove"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="end|top"
                 android:padding="2dp"
-                app:backgroundColor="#333"
-                app:cornerRadius="24dp">
+                android:background="@drawable/bg_circle"
+                android:backgroundTint="?colorSurfaceVariant">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_close"
-                    app:tint="#fff" />
-            </LinearLayout>
+                    app:tint="?android:textColorSecondary" />
+            </FrameLayout>
         </FrameLayout>
 
         <View
