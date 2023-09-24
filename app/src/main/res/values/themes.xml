@@ -13,6 +13,9 @@
         <item name="textInputStyle">@style/TextInputLayoutStyle</item>
         <item name="textInputEditTextStyle">@style/TextInputEditTextStyle</item>
         <item name="keypadButtonStyle">@style/KeypadButtonStyle</item>
+        <item name="android:dropDownSpinnerStyle">@style/SpinnerStyle</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeStyle</item>
     </style>
 
     <style name="KeypadButtonStyle">
@@ -56,6 +59,35 @@
 
     <style name="DialogKillPositiveButtonStyle" parent="Widget.Material3.Button.TextButton.Dialog">
         <item name="android:textColor">?colorError</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:popupBackground">@drawable/popup_menu_background</item>
+    </style>
+
+    <!-- Preference Style -->
+    <style name="PreferenceThemeStyle" parent="PreferenceThemeOverlay">
+        <item name="preferenceStyle">@style/PreferenceStyle</item>
+        <item name="preferenceCategoryStyle">@style/PreferenceCategoryStyle</item>
+        <item name="switchPreferenceStyle">@style/SwitchPreferenceStyle</item>
+        <item name="dropdownPreferenceStyle">@style/DropDownPreferenceStyle</item>
+    </style>
+
+    <style name="PreferenceStyle" parent="@style/Preference.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="PreferenceCategoryStyle" parent="@style/Preference.Category.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="SwitchPreferenceStyle" parent="@style/Preference.SwitchPreference.Material">
+        <item name="iconSpaceReserved">false</item>
+        <item name="widgetLayout">@layout/m3_switch_layout</item>
+    </style>
+
+    <style name="DropDownPreferenceStyle" parent="@style/Preference.DropDown.Material">
+        <item name="iconSpaceReserved">false</item>
     </style>
 
 </resources>
