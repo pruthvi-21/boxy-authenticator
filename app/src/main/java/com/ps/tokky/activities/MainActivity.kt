@@ -117,37 +117,18 @@ class MainActivity : BaseActivity() {
             binding.toolbar.navigationIcon =
                 ResourcesCompat.getDrawable(resources, R.drawable.ic_close, theme)
             adapter.editModeEnabled = true
-            slideDownBottomBar()
         } else {
             binding.toolbar.title = getString(R.string.app_name)
             binding.toolbar.navigationIcon = null
             adapter.editModeEnabled = false
-            slideUpBottomBar()
 
             binding.emptyLayout.visibility =
                 if (db.getAll(false).isEmpty()) View.VISIBLE else View.GONE
         }
-    }
 
-    private fun slideDownBottomBar() {
-        val animation = TranslateAnimation(0f, 0f, 0f, binding.bottomBar.height.toFloat() - 50)
-        animation.duration = 150
-        animation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(var1: Animation?) {}
-            override fun onAnimationEnd(var1: Animation?) {
-                binding.bottomBar.visibility = View.GONE
-            }
-
-            override fun onAnimationRepeat(var1: Animation?) {}
-        })
-        binding.bottomBar.startAnimation(animation)
-    }
-
-    private fun slideUpBottomBar() {
-        binding.bottomBar.visibility = View.VISIBLE
-        val animation = TranslateAnimation(0f, 0f, binding.bottomBar.height.toFloat() - 50, 0f)
-        animation.duration = 150
-        binding.bottomBar.startAnimation(animation)
+        binding.edit.isEnabled = !open
+        binding.settings.isEnabled = !open
+        binding.fabAddNew.isEnabled = !open
     }
 
     private val addNewActivityLauncher =
