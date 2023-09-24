@@ -32,6 +32,7 @@
                 android:layout_height="@dimen/card_thumbnail_height"
                 android:layout_marginEnd="4dp"
                 app:cardCornerRadius="@dimen/radius_small"
+                app:cardBackgroundColor="#0000"
                 app:cardElevation="0dp">
 
                 <ImageView

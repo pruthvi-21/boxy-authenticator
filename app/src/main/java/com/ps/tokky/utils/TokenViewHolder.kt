@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 
@@ -35,6 +36,7 @@ class TokenViewHolder(
         } else {
             binding.accountLabel.visibility = View.GONE
         }
+        setThumbnail()
 
         if (inEditMode) {
             binding.edit.visibility = View.VISIBLE
@@ -52,8 +54,6 @@ class TokenViewHolder(
 
         binding.edit.visibility = View.GONE
         binding.arrow.visibility = View.VISIBLE
-
-        setThumbnail()
 
         binding.otpHolder.typeface = Typeface.MONOSPACE
         updateOTP()
@@ -80,7 +80,7 @@ class TokenViewHolder(
         } else {
             val fileName = entry!!.thumbnailIcon
             val logoBitmap = Utils.getThumbnailFromAssets(context.assets, fileName)
-            Glide.with(context).load(logoBitmap).into(binding.thumbnail)
+            Glide.with(context).load(logoBitmap).transition(withCrossFade()).into(binding.thumbnail)
             binding.initialsView.visibility = View.GONE
         }
     }
