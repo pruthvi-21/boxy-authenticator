@@ -158,7 +158,7 @@ class ThumbnailController @JvmOverloads constructor(
 
     fun setThumbnailColor(colorInt: Int) {
         selectedColor = colorInt
-        binding.thumbnailContainer.setBackgroundColor(colorInt)
+        binding.thumbnailContainer.setCardBackgroundColor(colorInt)
     }
 
     private fun selectTile(tile: View) {
