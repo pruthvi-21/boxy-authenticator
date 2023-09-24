@@ -91,7 +91,7 @@
                 android:layout_marginHorizontal="6dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_settings"
-                android:padding="4.5dp"
+                android:padding="5dp"
                 android:src="@drawable/ic_settings"
                 app:tint="?android:attr/textColorSecondary" />
         </LinearLayout>
