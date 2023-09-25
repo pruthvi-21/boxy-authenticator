@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.view.animation.Animation
-import android.view.animation.TranslateAnimation
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
@@ -19,49 +17,43 @@ import com.ps.tokky.utils.Constants.DELETE_SUCCESS_RESULT_CODE
 import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), View.OnClickListener {
 
-    private val binding: ActivityMainBinding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
-
-    private val adapter: TokenAdapter by lazy {
-        TokenAdapter(this, binding.recyclerView, addNewActivityLauncher)
-    }
+    private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private val adapter: TokenAdapter by lazy { TokenAdapter(this, binding.recyclerView, addNewActivityLauncher) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //Block screenshots
         if (!preferences.allowScreenshots) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
+            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
 
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        val layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = adapter
-        val divider =
-            DividerItemDecorator(ResourcesCompat.getDrawable(resources, R.drawable.divider, null))
-        binding.recyclerView.addItemDecoration(divider)
-        (binding.recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-
-        binding.fabAddNew.setOnClickListener {
-            addNewActivityLauncher.launch(Intent(this, EnterKeyDetailsActivity::class.java))
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = this@MainActivity.adapter
+            val divider =
+                DividerItemDecorator(ResourcesCompat.getDrawable(resources, R.drawable.divider, null))
+            addItemDecoration(divider)
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        binding.fabAddNew.setOnLongClickListener {
-            addNewActivityLauncher.launch(Intent(this, CameraScannerActivity::class.java))
-            true
-        }
+        binding.expandableFab.fabManual.setOnClickListener(this)
+        binding.expandableFab.fabQr.setOnClickListener(this)
+        binding.refresh.setOnClickListener(this)
+        binding.edit.setOnClickListener(this)
+        binding.settings.setOnClickListener(this)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                if (binding.expandableFab.isFabExpanded) {
+                    binding.expandableFab.isFabExpanded = false
+                    return
+                }
                 if (!adapter.editModeEnabled) {
                     finish()
                     return
@@ -70,17 +62,31 @@ class MainActivity : BaseActivity() {
             }
         })
         refresh(true)
+    }
 
-        binding.refresh.setOnClickListener {
-            refresh(true)
-        }
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            binding.refresh.id -> {
+                refresh(true)
+            }
 
-        binding.edit.setOnClickListener {
-            openEditMode(!adapter.editModeEnabled)
-        }
+            binding.edit.id -> {
+                openEditMode(!adapter.editModeEnabled)
+            }
 
-        binding.settings.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+            binding.settings.id -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+            }
+
+            binding.expandableFab.fabManual.id -> {
+                binding.expandableFab.isFabExpanded = false
+                addNewActivityLauncher.launch(Intent(this, EnterKeyDetailsActivity::class.java))
+            }
+
+            binding.expandableFab.fabQr.id -> {
+                binding.expandableFab.isFabExpanded = false
+                addNewActivityLauncher.launch(Intent(this, CameraScannerActivity::class.java))
+            }
         }
     }
 
@@ -128,7 +134,7 @@ class MainActivity : BaseActivity() {
 
         binding.edit.isEnabled = !open
         binding.settings.isEnabled = !open
-        binding.fabAddNew.isEnabled = !open
+        binding.expandableFab.fabAddNew.isEnabled = !open
     }
 
     private val addNewActivityLauncher =

@@ -5,6 +5,8 @@
     <string name="cd_refresh">refresh</string>
     <string name="cd_edit">edit</string>
     <string name="cd_settings">settings</string>
+    <string name="expandable_fab_qr_title">Scan a QR Code</string>
+    <string name="expandable_fab_manual_title">Enter Manually</string>
 
     <!-- EnterKeyDetailsActivity -->
     <string name="title_enter_account_details">Enter account details</string>
