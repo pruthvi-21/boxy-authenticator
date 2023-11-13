@@ -81,11 +81,14 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
                 binding.tilIssuer.editText?.setText(currentEntry!!.issuer)
                 binding.tilLabel.editText?.setText(currentEntry!!.label)
-                binding.thumbnailContainer.setThumbnailColor(currentEntry!!.thumbnailColor)
-                binding.thumbnailContainer.setInitials(currentEntry.issuer)
-                if (currentEntry.thumbnailIcon.isEmpty()) {
-                    binding.thumbnailContainer.thumbnailIcon = null
-                } else binding.thumbnailContainer.thumbnailIcon = currentEntry.thumbnailIcon
+
+                binding.thumbnailContainer.setInitials(currentEntry!!.issuer)
+                if(otpAuthUrl == null){
+                    binding.thumbnailContainer.setThumbnailColor(currentEntry.thumbnailColor)
+                    if (currentEntry.thumbnailIcon.isEmpty()) {
+                        binding.thumbnailContainer.thumbnailIcon = null
+                    } else binding.thumbnailContainer.thumbnailIcon = currentEntry.thumbnailIcon
+                }
 
                 binding.tilLabel.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
                 binding.tilSecretKey.visibility = View.GONE
