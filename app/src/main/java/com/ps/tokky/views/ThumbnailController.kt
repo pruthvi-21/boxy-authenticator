@@ -81,6 +81,7 @@ class ThumbnailController @JvmOverloads constructor(
         Pair("Instagram", "instagram.png"),
         Pair("LinkedIn", "linkedin.png"),
         Pair("Microsoft", "microsoft.png"),
+        Pair("MongoDB", "mongo_db.png"),
         Pair("npm", "npm.png"),
         Pair("Nvidia", "nvidia.png"),
         Pair("Olymp Trade", "olymp_trade.png"),
@@ -88,9 +89,12 @@ class ThumbnailController @JvmOverloads constructor(
         Pair("Outlook", "outlook.png"),
         Pair("PayPal", "paypal.png"),
         Pair("Proton", "proton.png"),
+        Pair("reddit", "reddit.png"),
         Pair("Rockstar Games", "rockstar_games.png"),
         Pair("Snapchat", "snapchat.png"),
+        Pair("Trading View", "trading_view.png"),
         Pair("Twitter", "twitter.png"),
+        Pair("Upstox", "upstox.png"),
         Pair("Upwork", "upwork.png"),
     )
 
