@@ -3,7 +3,6 @@ package com.ps.tokky.models
 import android.content.Context
 import android.graphics.Color
 import android.net.Uri
-import android.text.Spannable
 import androidx.annotation.ColorInt
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.AccountEntryMethod
@@ -171,11 +170,13 @@ class TokenEntry {
 
             //use uri.host for otp type TOTP or HOTP
             val issuer = params?.get("issuer") ?: ""
-            val label = uri.path?.substring(1) ?: ""
+            var label = uri.path?.substring(1) ?: ""
             val secret = params?.get("secret")?.cleanSecretKey() ?: ""
             val algorithm = params?.get("algorithm") ?: DEFAULT_HASH_ALGORITHM
             val period = params?.get("period")?.toInt() ?: DEFAULT_PERIOD
             val digits = params?.get("digits")?.toInt() ?: DEFAULT_DIGITS
+
+            if (label.startsWith("$issuer:")) label = label.substringAfter("$issuer:")
 
             return builder
                 .setIssuer(issuer)
