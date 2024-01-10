@@ -25,7 +25,7 @@ class TokenAdapter(
     private val editActivityLauncher: ActivityResultLauncher<Intent>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), TokenViewHolder.Callback {
 
-    private var currentExpanded = -1
+    private var currentExpandedId: String? = null
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -60,7 +60,7 @@ class TokenAdapter(
 
         (holder as TokenViewHolder).bind(tokensList[position].item!!)
         holder.setCallback(this)
-        holder.isExpanded = position == currentExpanded
+        holder.isExpanded = tokensList[position].item?.id == currentExpandedId
 
         val prevItemViewType = if (position > 0) getItemViewType(position - 1) else -1
         val nextItemViewType =
@@ -138,19 +138,26 @@ class TokenAdapter(
         return recyclerView.findViewHolderForAdapterPosition(pos)
     }
 
-    override fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean) {
-        when (currentExpanded) {
-            adapterPosition -> {
+    private fun getViewHolderWithId(id: String?): RecyclerView.ViewHolder? {
+        id ?: return null
+        val entriesList = tokensList.map { it.item }
+        val idx = entriesList.indexOfFirst { it?.id == id }
+        return getViewHolderAt(idx)
+    }
+
+    override fun onExpand(vh: TokenViewHolder, id: String, expanded: Boolean) {
+        when (currentExpandedId) {
+            id -> {
                 vh.isExpanded = false
-                currentExpanded = -1
+                currentExpandedId = null
             }
 
             else -> {
-                val viewHolder = getViewHolderAt(currentExpanded)
-                if (currentExpanded != -1 && viewHolder is TokenViewHolder?) viewHolder?.isExpanded =
-                    false
+                val viewHolder = getViewHolderWithId(currentExpandedId)
+                if (currentExpandedId != null && viewHolder is TokenViewHolder?)
+                    viewHolder?.isExpanded = false
 
-                currentExpanded = adapterPosition
+                currentExpandedId = id
                 vh.isExpanded = true
             }
         }

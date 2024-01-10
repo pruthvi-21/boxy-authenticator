@@ -47,7 +47,7 @@ class TokenViewHolder(
 
         binding.progressBar.setMax(entry.period)
         binding.cardView.setOnClickListener {
-            listener?.onExpand(this, adapterPosition, !isExpanded)
+            listener?.onExpand(this, entry.id, !isExpanded)
         }
 
         binding.edit.setOnClickListener {
@@ -103,7 +103,7 @@ class TokenViewHolder(
     }
 
     interface Callback {
-        fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean)
+        fun onExpand(vh: TokenViewHolder, id: String, expanded: Boolean)
         fun onEdit(entry: TokenEntry, position: Int)
     }
 
