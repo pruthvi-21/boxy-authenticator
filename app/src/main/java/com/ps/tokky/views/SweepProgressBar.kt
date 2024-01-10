@@ -1,6 +1,7 @@
 package com.ps.tokky.views
 
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -8,7 +9,9 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
+import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.R
 import com.ps.tokky.utils.Utils
 
@@ -19,13 +22,17 @@ class SweepProgressBar @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : View(context, attrs, defStyleAttr, defStyleRes) {
 
+    private val colorSecondary = Utils.getColorFromAttr(context, R.attr.colorSecondary, Color.WHITE)
+    private val colorSurface = Utils.getColorFromAttr(context, R.attr.colorSurface, Color.BLACK)
+    private val colorError = ResourcesCompat.getColor(resources, com.ps.tokky.R.color.color_danger, null)
+
     private val paintBackground: Paint = Paint().apply {
         isAntiAlias = true
         style = Paint.Style.FILL
-        color = Utils.getColorFromAttr(context, R.attr.colorSecondary, Color.WHITE)
+        color = colorSecondary
     }
     private val paintProgress = Paint(paintBackground).apply {
-        color = Utils.getColorFromAttr(context, R.attr.colorSurface, Color.BLACK)
+        color = colorSurface
     }
     private val rectProgress = RectF()
 
@@ -79,7 +86,9 @@ class SweepProgressBar @JvmOverloads constructor(
 
         progressAnimator?.interpolator = LinearInterpolator()
         progressAnimator?.start()
-        println(percentage)
+
+        paintBackground.color = if (percentage < 70) colorSecondary
+        else colorError
 
         if (initialLoad) initialLoad = false
     }

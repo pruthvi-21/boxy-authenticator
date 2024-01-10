@@ -2,6 +2,7 @@
 <resources>
     <color name="launcher_background_color">#689F38</color>
     <color name="color_warning">#bea802</color>
+    <color name="color_danger">#E0262C</color>
 
     <color name="surface_color">@color/light_surface_color</color>
     <color name="surface_color_variant">@color/light_surface_color_variant</color>
