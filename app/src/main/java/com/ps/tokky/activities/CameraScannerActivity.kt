@@ -33,13 +33,6 @@ class CameraScannerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        if (!preferences.allowScreenshots) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
-
         requestCameraPermission()
 
         // Parameters (default values)

@@ -68,14 +68,6 @@ class EnterKeyDetailsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //Block screenshots
-        if (!preferences.allowScreenshots) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
-
         setContentView(R.layout.activity_enter_key_details)
 
         toolbar = findViewById(R.id.toolbar)

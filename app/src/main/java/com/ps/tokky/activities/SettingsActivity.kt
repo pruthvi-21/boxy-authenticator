@@ -17,13 +17,6 @@ class SettingsActivity : BaseActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        if (!preferences.allowScreenshots) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
-
         supportFragmentManager
             .beginTransaction()
             .replace(binding.fragmentContainer.id, PreferenceFragment())
