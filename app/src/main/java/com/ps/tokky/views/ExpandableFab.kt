@@ -23,7 +23,7 @@ class ExpandableFab @JvmOverloads constructor(
     val fabScrim = binding.scrim
 
     private val fadeInAnimation by lazy {
-        AlphaAnimation(SCRIM_FADE_MIN_ALPHA, SCRIM_FADE_MAX_ALPHA).apply {
+        AlphaAnimation(0f, 1f).apply {
             duration = ANIM_DURATION
             fillAfter = true
             setAnimationListener(object : Animation.AnimationListener {
@@ -36,7 +36,7 @@ class ExpandableFab @JvmOverloads constructor(
         }
     }
     private val fadeOutAnimation by lazy {
-        AlphaAnimation(SCRIM_FADE_MAX_ALPHA, SCRIM_FADE_MIN_ALPHA).apply {
+        AlphaAnimation(1f, 0f).apply {
             duration = ANIM_DURATION
             setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {}
@@ -88,10 +88,7 @@ class ExpandableFab @JvmOverloads constructor(
     }
 
     companion object {
-        private const val ANIM_DURATION = 150L
-        private const val SCRIM_FADE_MIN_ALPHA = 0f
-        private const val SCRIM_FADE_MAX_ALPHA = .6f
-
+        private const val ANIM_DURATION = 250L
     }
 
 }

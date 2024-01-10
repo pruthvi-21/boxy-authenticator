@@ -17,8 +17,7 @@
             android:layout_width="50dp"
             android:layout_height="34dp"
             android:layout_gravity="center"
-            android:contentDescription="@null"
-            tools:src="@drawable/ic_issuer" />
+            android:contentDescription="@null" />
 
         <TextView
             android:id="@+id/title"

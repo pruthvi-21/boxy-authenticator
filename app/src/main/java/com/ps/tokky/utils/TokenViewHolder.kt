@@ -80,7 +80,7 @@ class TokenViewHolder(
         } else {
             val fileName = entry!!.thumbnailIcon
             val logoBitmap = Utils.getThumbnailFromAssets(context.assets, fileName)
-            Glide.with(context).load(logoBitmap).transition(withCrossFade()).into(binding.thumbnail)
+            Glide.with(context).load(logoBitmap).into(binding.thumbnail)
             binding.initialsView.visibility = View.GONE
         }
     }
@@ -97,11 +97,7 @@ class TokenViewHolder(
             }
 
             binding.cardHiddenLayout.visibility = if (field) View.VISIBLE else View.GONE
-
-            binding.arrow.animate()
-                .rotation(if (value) 180f else 0f)
-                .setDuration(200)
-                .start()
+            binding.arrow.rotation = if (value) 180f else 0f
         }
 
     fun setCallback(listener: Callback?) {

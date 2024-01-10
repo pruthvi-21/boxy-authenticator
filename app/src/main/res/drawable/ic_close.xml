@@ -8,7 +8,7 @@
         android:fillType="nonZero"
         android:pathData="M18.352,5.648L18.352,5.648L5.648,18.352L5.648,18.352z"
         android:strokeWidth="1.5"
-        android:strokeColor="?android:attr/textColorPrimary"
+        android:strokeColor="#ffffff"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
     <path
@@ -16,7 +16,7 @@
         android:fillType="nonZero"
         android:pathData="M18.352,18.352L18.352,18.352L5.648,5.648L5.648,5.648z"
         android:strokeWidth="1.5"
-        android:strokeColor="?android:attr/textColorPrimary"
+        android:strokeColor="#ffffff"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 </vector>

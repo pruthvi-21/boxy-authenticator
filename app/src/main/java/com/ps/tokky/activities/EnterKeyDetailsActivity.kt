@@ -14,16 +14,19 @@ import android.text.TextWatcher
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
-import com.ps.tokky.databinding.ActivityEnterKeyDetailsBinding
 import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.AccountEntryMethod
@@ -36,17 +39,31 @@ import com.ps.tokky.utils.TokenExistsInDBException
 import com.ps.tokky.utils.cleanSecretKey
 import com.ps.tokky.utils.hideKeyboard
 import com.ps.tokky.utils.showKeyboard
+import com.ps.tokky.views.CollapsibleLinearLayout
+import com.ps.tokky.views.ThumbnailController
 
 class EnterKeyDetailsActivity : BaseActivity() {
 
-    private val binding: ActivityEnterKeyDetailsBinding by lazy {
-        ActivityEnterKeyDetailsBinding.inflate(layoutInflater)
-    }
-
-    private var shortAnimationDuration: Int = 0
+    private var shortAnimationDuration: Long = 0
 
     private val editId: String? by lazy { intent.extras?.getString("id") }
     private val otpAuthUrl: String? by lazy { intent.extras?.getString("otpAuth") }
+
+    private lateinit var toolbar: Toolbar
+    private lateinit var thumbnailController: ThumbnailController
+    private lateinit var issuerField: TextInputLayout
+    private lateinit var labelField: TextInputLayout
+    private lateinit var secretKeyField: TextInputLayout
+
+    private lateinit var advancedOptionsCheckbox: CheckBox
+    private lateinit var advancedLayoutView: CollapsibleLinearLayout
+    private lateinit var periodField: TextInputLayout
+    private lateinit var digitsField: TextInputLayout
+    private lateinit var algorithmToggleGroup: MaterialButtonToggleGroup
+
+    private lateinit var saveButton: Button
+
+    private var currentEntry: TokenEntry? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,58 +76,67 @@ class EnterKeyDetailsActivity : BaseActivity() {
             )
         }
 
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
+        setContentView(R.layout.activity_enter_key_details)
+
+        toolbar = findViewById(R.id.toolbar)
+        thumbnailController = findViewById(R.id.thumbnail_controller)
+        issuerField = findViewById(R.id.issuer_field)
+        labelField = findViewById(R.id.label_field)
+        secretKeyField = findViewById(R.id.secret_key_field)
+        periodField = findViewById(R.id.period_field)
+        algorithmToggleGroup = findViewById(R.id.algorithm_toggle_group)
+        digitsField = findViewById(R.id.digits_field)
+        advancedOptionsCheckbox = findViewById(R.id.adv_options_switch)
+        advancedLayoutView = findViewById(R.id.advanced_layout_view)
+        saveButton = findViewById(R.id.details_save_btn)
+
+        setSupportActionBar(toolbar)
 
         val editMode = editId != null || otpAuthUrl != null
-
         Log.i(TAG, "onCreate: In edit mode: $editMode")
 
         if (editMode) {
             try {
-                val currentEntry =
+                currentEntry =
                     if (otpAuthUrl != null) TokenEntry.BuildFromUrl(otpAuthUrl).build()
                     else db.getAll(false).find { it.id == editId }
 
-                binding.toolbar.title = "Update Details"
-                binding.deleteBtn.visibility = View.VISIBLE
+                currentEntry?.let {
+                    supportActionBar?.title = "Update Details"
 
-                binding.deleteBtn.setOnClickListener {
-                    currentEntry?.let { deleteToken(it) }
+                    issuerField.editText?.setText(it.issuer)
+                    labelField.editText?.setText(it.label)
+
+                    thumbnailController.setInitials(currentEntry!!.issuer)
+                    if (otpAuthUrl == null) {
+                        thumbnailController.setThumbnailColor(it.thumbnailColor)
+                        if (it.thumbnailIcon.isEmpty()) {
+                            thumbnailController.thumbnailIcon = null
+                        } else thumbnailController.thumbnailIcon = it.thumbnailIcon
+                    }
+
+                    labelField.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+                    secretKeyField.visibility = View.GONE
+                    advancedOptionsCheckbox.visibility = View.GONE
+
+                    saveButton.visibility = View.VISIBLE
+                    issuerField.editText?.addTextChangedListener(editModeTextWatcher)
+                    labelField.editText?.addTextChangedListener(editModeTextWatcher)
+                    saveButton.setText(R.string.label_btn_update_account)
+                    saveButton.setOnClickListener { _ ->
+                        hideKeyboard()
+
+                        it.updateInfo(
+                            issuer = issuerField.editText?.text.toString(),
+                            label = labelField.editText?.text.toString(),
+                            thumbnailColor = thumbnailController.selectedColor,
+                            thumbnailIcon = thumbnailController.thumbnailIcon ?: ""
+                        )
+
+                        updateEntryInDB(it)
+                    }
                 }
 
-                binding.tilIssuer.editText?.setText(currentEntry!!.issuer)
-                binding.tilLabel.editText?.setText(currentEntry!!.label)
-
-                binding.thumbnailContainer.setInitials(currentEntry!!.issuer)
-                if(otpAuthUrl == null){
-                    binding.thumbnailContainer.setThumbnailColor(currentEntry.thumbnailColor)
-                    if (currentEntry.thumbnailIcon.isEmpty()) {
-                        binding.thumbnailContainer.thumbnailIcon = null
-                    } else binding.thumbnailContainer.thumbnailIcon = currentEntry.thumbnailIcon
-                }
-
-                binding.tilLabel.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
-                binding.tilSecretKey.visibility = View.GONE
-                binding.advOptionsSwitch.visibility = View.GONE
-                binding.advLayout.advOptionsLayout.visibility = View.GONE
-
-                binding.detailsSaveBtn.visibility = View.VISIBLE
-                binding.tilIssuer.editText?.addTextChangedListener(editModeTextWatcher)
-                binding.tilLabel.editText?.addTextChangedListener(editModeTextWatcher)
-                binding.detailsSaveBtn.setText(R.string.label_btn_update_account)
-                binding.detailsSaveBtn.setOnClickListener {
-                    hideKeyboard()
-
-                    currentEntry.updateInfo(
-                        issuer = binding.tilIssuer.editText?.text.toString(),
-                        label = binding.tilLabel.editText?.text.toString(),
-                        thumbnailColor = binding.thumbnailContainer.selectedColor,
-                        thumbnailIcon = binding.thumbnailContainer.thumbnailIcon ?: ""
-                    )
-
-                    updateEntryInDB(currentEntry)
-                }
             } catch (exception: EmptyURLContentException) {
                 Log.e(TAG, "onCreate: ", exception)
                 Toast.makeText(this, "Empty URL", Toast.LENGTH_SHORT).show()
@@ -121,40 +147,35 @@ class EnterKeyDetailsActivity : BaseActivity() {
             return
         }
 
-        shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
+        shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
-        binding.tilIssuer.editText!!.addTextChangedListener(textWatcher)
-        binding.tilLabel.editText!!.addTextChangedListener(textWatcher)
-        binding.tilSecretKey.editText!!.addTextChangedListener(textWatcher)
-        binding.advLayout.tilPeriod.editText!!.addTextChangedListener(textWatcher)
+        issuerField.editText!!.addTextChangedListener(textWatcher)
+        labelField.editText!!.addTextChangedListener(textWatcher)
+        secretKeyField.editText!!.addTextChangedListener(textWatcher)
+        periodField.editText!!.addTextChangedListener(textWatcher)
 
-        binding.detailsSaveBtn.isEnabled = false
-        binding.advLayout.tilPeriod.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
-        binding.tilSecretKey.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
+        saveButton.isEnabled = false
+        periodField.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
+        secretKeyField.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
 
-        binding.advOptionsSwitch.setOnCheckedChangeListener { _, isChecked ->
+        advancedOptionsCheckbox.setOnCheckedChangeListener { _, isChecked ->
             hideKeyboard()
             showAdvancedOptions(isChecked)
         }
         resetAdvanceFields()
 
-        binding.detailsSaveBtn.setOnClickListener {
+        saveButton.setOnClickListener {
             hideKeyboard()
 
-            val secretKey = binding.tilSecretKey.editText!!.text.toString().cleanSecretKey()
+            val secretKey = secretKeyField.editText!!.text.toString().cleanSecretKey()
             try {
-                val issuer = binding.tilIssuer.editText!!.text.toString()
-                val label = binding.tilLabel.editText!!.text.toString()
-                val period = binding.advLayout.tilPeriod.editText!!.text.toString().toInt()
-
-                val otpLength = when (binding.advLayout.otpLengthToggleGroup.checkedButtonId) {
-                    binding.advLayout.btn4digits.id -> 4
-                    binding.advLayout.btn8digits.id -> 8
-                    else -> 6
-                }
+                val issuer = issuerField.editText!!.text.toString()
+                val label = labelField.editText!!.text.toString()
+                val period = periodField.editText!!.text.toString().toInt()
+                val digits = digitsField.editText!!.text.toString().toInt()
 
                 val algo =
-                    findViewById<Button>(binding.advLayout.algoToggleGroup.checkedButtonId).text.toString()
+                    findViewById<Button>(algorithmToggleGroup.checkedButtonId).text.toString()
 
                 val token = TokenEntry.Builder()
                     .setIssuer(issuer)
@@ -162,10 +183,10 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     .setSecretKey(secretKey)
                     .setAlgorithm(algo)
                     .setPeriod(period)
-                    .setDigits(otpLength)
+                    .setDigits(digits)
                     .setAddedFrom(AccountEntryMethod.FORM)
-                    .setThumbnailColor(binding.thumbnailContainer.selectedColor)
-                    .setThumbnailIcon(binding.thumbnailContainer.thumbnailIcon ?: "")
+                    .setThumbnailColor(thumbnailController.selectedColor)
+                    .setThumbnailIcon(thumbnailController.thumbnailIcon ?: "")
                     .build()
 
                 addEntryInDB(token)
@@ -203,10 +224,10 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     finish()
                 }
                 .setNegativeButton("Rename") { _, _ ->
-                    binding.detailsSaveBtn.isEnabled = false
-                    binding.tilIssuer.editText?.requestFocus()
-                    binding.tilIssuer.editText?.setSelection(token.issuer.length)
-                    binding.tilIssuer.editText?.showKeyboard(this, true)
+                    saveButton.isEnabled = false
+                    issuerField.editText?.requestFocus()
+                    issuerField.editText?.setSelection(token.issuer.length)
+                    issuerField.editText?.showKeyboard(this, true)
                 }
                 .create()
                 .show()
@@ -214,43 +235,41 @@ class EnterKeyDetailsActivity : BaseActivity() {
     }
 
     private fun hideKeyboard() {
-        binding.tilIssuer.editText!!.hideKeyboard(this)
-        binding.tilLabel.editText!!.hideKeyboard(this)
-        binding.tilSecretKey.editText!!.hideKeyboard(this)
-        binding.advLayout.tilPeriod.editText!!.hideKeyboard(this)
+        issuerField.editText!!.hideKeyboard(this)
+        labelField.editText!!.hideKeyboard(this)
+        secretKeyField.editText!!.hideKeyboard(this)
+        periodField.editText!!.hideKeyboard(this)
     }
 
     private fun showAdvancedOptions(show: Boolean) {
         if (show) {
-            binding.advLayout.advOptionsLayout.apply {
-                alpha = 0f
-                visibility = View.VISIBLE
-                animate()
-                    .setDuration(shortAnimationDuration.toLong())
-                    .alpha(1f)
-            }
+            advancedLayoutView.expand(50)
         } else {
-            binding.advLayout.advOptionsLayout.animate()
-                .setDuration(shortAnimationDuration.toLong())
-                .alpha(0f)
-
+            advancedLayoutView.collapse(50)
             Handler(Looper.getMainLooper()).postDelayed({
-                binding.advLayout.advOptionsLayout.visibility = View.GONE
                 resetAdvanceFields()
-            }, shortAnimationDuration.toLong())
+            }, 50)
         }
     }
 
     private fun resetAdvanceFields() {
-        binding.advLayout.tilPeriod.editText?.setText(Constants.DEFAULT_PERIOD.toString())
-        binding.advLayout.otpLengthToggleGroup.check(binding.advLayout.btn6digits.id)
-        binding.advLayout.algoToggleGroup.check(binding.advLayout.btnSha1.id)
+        periodField.editText?.setText(Constants.DEFAULT_PERIOD.toString())
+        digitsField.editText?.setText(Constants.DEFAULT_DIGITS.toString())
+        algorithmToggleGroup.check(R.id.btn_sha1)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_token, menu)
+
+        menu?.findItem(R.id.menu_token_delete)?.isEnabled = editId != null || otpAuthUrl != null
+
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                if (binding.tilSecretKey.editText!!.text.isEmpty()) {
+                if (secretKeyField.editText!!.text.isEmpty()) {
                     onBackPressedDispatcher.onBackPressed()
                 } else {
                     hideKeyboard()
@@ -263,11 +282,17 @@ class EnterKeyDetailsActivity : BaseActivity() {
                         .show()
                 }
             }
+
+            R.id.menu_token_delete -> {
+                currentEntry?.let {
+                    deleteToken(it)
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    fun deleteToken(entry: TokenEntry) {
+    private fun deleteToken(entry: TokenEntry) {
         val titleViewBinding = DialogTitleDeleteWarningBinding.inflate(LayoutInflater.from(this))
 
         val ssb = SpannableStringBuilder(entry.issuer)
@@ -303,17 +328,16 @@ class EnterKeyDetailsActivity : BaseActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(editable: Editable) {
-                val issuer = binding.tilIssuer.editText!!.text
-                val secretKey = binding.tilSecretKey.editText!!.text
+                val issuer = issuerField.editText!!.text
+                val secretKey = secretKeyField.editText!!.text
 
                 if (TextUtils.isEmpty(issuer) || TextUtils.isEmpty(secretKey)) {
-                    binding.detailsSaveBtn.isEnabled = false
+                    saveButton.isEnabled = false
                 } else {
-                    binding.detailsSaveBtn.isEnabled =
-                        isNonZeroIntegerInput(binding.advLayout.tilPeriod)
+                    saveButton.isEnabled = isNonZeroIntegerInput(periodField)
                 }
 
-                binding.thumbnailContainer.setInitials(issuer.toString())
+                thumbnailController.setInitials(issuer.toString())
             }
 
             private fun isNonZeroIntegerInput(til: TextInputLayout): Boolean {
@@ -332,9 +356,9 @@ class EnterKeyDetailsActivity : BaseActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(editable: Editable) {
-                val issuer = binding.tilIssuer.editText!!.text
-                binding.thumbnailContainer.setInitials(issuer.toString())
-                binding.detailsSaveBtn.isEnabled = !TextUtils.isEmpty(issuer)
+                val issuer = issuerField.editText!!.text
+                thumbnailController.setInitials(issuer.toString())
+                saveButton.isEnabled = !TextUtils.isEmpty(issuer)
             }
         }
 

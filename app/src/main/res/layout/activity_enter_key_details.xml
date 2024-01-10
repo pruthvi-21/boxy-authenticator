@@ -1,43 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:actionBarSize"
         android:layout_marginTop="10dp"
         app:navigationIcon="@drawable/ic_samsung_arrow_left"
-        app:title="@string/title_enter_account_details">
-
-        <ImageView
-            android:id="@+id/delete_btn"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="end"
-            android:layout_marginEnd="16dp"
-            android:background="?selectableItemBackgroundBorderless"
-            android:padding="4dp"
-            android:src="@drawable/ic_delete"
-            android:tint="?colorError"
-            android:visibility="gone" />
-    </androidx.appcompat.widget.Toolbar>
+        app:title="@string/title_enter_account_details" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingEnd="@dimen/screen_margin">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="@dimen/screen_margin">
+            android:paddingHorizontal="10dp">
 
             <com.ps.tokky.views.ThumbnailController
-                android:id="@+id/thumbnail_container"
+                android:id="@+id/thumbnail_controller"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -45,49 +36,67 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="10dp"
                 android:paddingVertical="@dimen/screen_margin">
 
+                <TextView
+                    style="@style/Theme.Tokky.TextInput.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="5dp"
+                    android:text="@string/label_issuer" />
+
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_issuer"
+                    android:id="@+id/issuer_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/label_issuer"
-                    app:startIconDrawable="@drawable/ic_issuer">
+                    android:layout_marginBottom="10dp"
+                    android:hint="@string/label_issuer">
 
                     <com.google.android.material.textfield.TextInputEditText
                         style="?textInputEditTextStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_issuer" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <TextView
+                    style="@style/Theme.Tokky.TextInput.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="5dp"
+                    android:text="@string/label_label" />
+
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_label"
+                    android:id="@+id/label_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/label_label"
-                    app:startIconDrawable="@drawable/ic_label">
+                    android:layout_marginBottom="10dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         style="?textInputEditTextStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_label" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <TextView
+                    style="@style/Theme.Tokky.TextInput.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="5dp"
+                    android:text="@string/label_secret_key" />
+
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_secret_key"
+                    android:id="@+id/secret_key_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/label_secret_key"
-                    app:startIconDrawable="@drawable/ic_secret_key">
+                    android:layout_marginBottom="10dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         style="?textInputEditTextStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_secret_key" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -99,22 +108,139 @@
                 android:layout_gravity="end"
                 android:text="@string/label_advanced_options" />
 
-            <include
-                android:id="@+id/adv_layout"
-                layout="@layout/content_enter_key_details_adv_layout" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/details_save_btn"
-                android:layout_width="220dp"
+            <com.ps.tokky.views.CollapsibleLinearLayout
+                android:id="@+id/advanced_layout_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginVertical="10dp"
-                android:padding="13dp"
-                android:text="@string/label_btn_add_account"
-                android:textColor="@color/btn_grp_text_btn_text_color_selector"
-                android:textStyle="bold"
-                app:backgroundTint="@color/btn_add_account_bg_selector"
-                app:cornerRadius="@dimen/radius_large" />
+                tools:expanded="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Theme.Tokky.TextInput.Label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:gravity="center"
+                            android:text="@string/label_algorithm" />
+
+                        <com.google.android.material.button.MaterialButtonToggleGroup
+                            android:id="@+id/algorithm_toggle_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            app:checkedButton="@id/btn_sha1"
+                            app:selectionRequired="true"
+                            app:singleSelection="true">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_sha1"
+                                style="?materialButtonOutlinedStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:text="@string/algorithm_sha1" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_sha256"
+                                style="?materialButtonOutlinedStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:text="@string/algorithm_sha256" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_sha512"
+                                style="?materialButtonOutlinedStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:text="@string/algorithm_sha512" />
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            style="@style/Theme.Tokky.TextInput.Label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:text="@string/label_period" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/period_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                style="?textInputEditTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/hint_period"
+                                android:inputType="number" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            style="@style/Theme.Tokky.TextInput.Label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:text="@string/label_digits" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/digits_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                style="?textInputEditTextStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/hint_digits"
+                                android:inputType="number" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.ps.tokky.views.CollapsibleLinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/details_save_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="26dp"
+        android:layout_marginVertical="10dp"
+        android:padding="13dp"
+        android:text="@string/label_btn_add_account"
+        android:textStyle="bold"
+        app:cornerRadius="@dimen/radius_large" />
 </LinearLayout>

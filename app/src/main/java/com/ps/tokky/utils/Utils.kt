@@ -7,13 +7,14 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Typeface
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.style.RelativeSizeSpan
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.drawable.DrawableCompat
 import com.ps.tokky.R
 import org.json.JSONArray
 import org.json.JSONException
@@ -59,6 +60,14 @@ object Utils {
         } catch (exception: Exception) {
             null
         }
+    }
+
+    @ColorInt
+    fun getColorFromAttr(context: Context, @AttrRes attr: Int, @ColorInt defaultColor: Int): Int {
+        val ta = context.obtainStyledAttributes(intArrayOf(attr))
+        val color = ta.getColor(0, defaultColor)
+        ta.recycle()
+        return color
     }
 }
 
@@ -123,4 +132,14 @@ fun String?.isJsonArray(): Boolean {
     } catch (e: JSONException) {
         false
     }
+}
+
+fun Toolbar.changeOverflowIconColor(color: Int) {
+    var drawable: Drawable? = overflowIcon
+    if (drawable != null) {
+        drawable = DrawableCompat.wrap(drawable)
+        DrawableCompat.setTint(drawable.mutate(), color)
+        overflowIcon = drawable
+    }
+    invalidate()
 }

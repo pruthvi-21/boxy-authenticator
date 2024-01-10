@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <View
+    <ImageView
         android:id="@+id/scrim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.6"
-        android:background="#000"
+        android:background="@drawable/bg_expandable_fab_scrim"
+        android:importantForAccessibility="no"
         android:visibility="gone" />
 
     <LinearLayout
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginVertical="10dp"
-            android:layout_marginEnd="@dimen/screen_margin"
+            android:layout_margin="@dimen/screen_margin"
             android:contentDescription="@string/cd_fab_add_new"
             android:src="@drawable/ic_add" />
     </LinearLayout>

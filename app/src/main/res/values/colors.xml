@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="launcher_background_color">#689F38</color>
-
-    <color name="surface_color">#F2F2F2</color>
-    <color name="item_bg">#252525</color>
     <color name="color_warning">#bea802</color>
+
+    <color name="surface_color">@color/light_surface_color</color>
+    <color name="surface_color_variant">@color/light_surface_color_variant</color>
+    <color name="surface_color_variant2">@color/light_surface_color_variant2</color>
+    <color name="divider_color">@color/light_divider_color</color>
+
+    <color name="light_surface_color">#FAF9FD</color>
+    <color name="light_surface_color_variant">#EEEEEE</color>
+    <color name="light_surface_color_variant2">#E5E5E5</color>
+    <color name="light_divider_color">#e1e1e1</color>
+
+    <color name="dark_surface_color">#111115</color>
+    <color name="dark_surface_color_variant">#1B1B1F</color>
+    <color name="dark_surface_color_variant2">#232325</color>
+    <color name="dark_text_color_secondary">#999999</color>
+    <color name="dark_divider_color">#222222</color>
 
     <array name="tile_colors">
         <item>#A0522D</item>

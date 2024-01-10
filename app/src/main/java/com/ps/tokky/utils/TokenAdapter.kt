@@ -60,6 +60,7 @@ class TokenAdapter(
 
         (holder as TokenViewHolder).bind(tokensList[position].item!!, editModeEnabled)
         holder.setCallback(this)
+        holder.isExpanded = position == currentExpanded
 
         val prevItemViewType = if (position > 0) getItemViewType(position - 1) else -1
         val nextItemViewType =
