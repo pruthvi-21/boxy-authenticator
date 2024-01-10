@@ -126,10 +126,10 @@
                 android:layout_width="@dimen/card_thumbnail_width"
                 android:layout_height="@dimen/card_thumbnail_height"
                 android:layout_gravity="center_vertical"
-                android:paddingHorizontal="17dp"
+                android:paddingHorizontal="15dp"
                 android:paddingTop="5dp">
 
-                <com.ps.tokky.views.CustomProgressBar
+                <com.ps.tokky.views.SweepProgressBar
                     android:id="@+id/progress_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />

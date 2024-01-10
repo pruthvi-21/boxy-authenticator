@@ -8,7 +8,6 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.models.TokenEntry
 
@@ -58,6 +57,8 @@ class TokenViewHolder(
             Utils.copyToClipboard(context, entry.otpClipboardFormat)
             true
         }
+
+        handler.post(handlerTask)
     }
 
     private fun setThumbnail() {
