@@ -21,6 +21,7 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.button.MaterialButtonToggleGroup
@@ -53,6 +54,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
     private lateinit var thumbnailController: ThumbnailController
     private lateinit var issuerField: TextInputLayout
     private lateinit var labelField: TextInputLayout
+    private lateinit var secretKeyLabel: TextView
     private lateinit var secretKeyField: TextInputLayout
 
     private lateinit var advancedOptionsCheckbox: CheckBox
@@ -74,6 +76,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
         thumbnailController = findViewById(R.id.thumbnail_controller)
         issuerField = findViewById(R.id.issuer_field)
         labelField = findViewById(R.id.label_field)
+        secretKeyLabel = findViewById(R.id.secret_key_label)
         secretKeyField = findViewById(R.id.secret_key_field)
         periodField = findViewById(R.id.period_field)
         algorithmToggleGroup = findViewById(R.id.algorithm_toggle_group)
@@ -108,6 +111,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
                     }
 
                     labelField.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+                    secretKeyLabel.visibility = View.GONE
                     secretKeyField.visibility = View.GONE
                     advancedOptionsCheckbox.visibility = View.GONE
 

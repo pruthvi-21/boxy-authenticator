@@ -80,6 +80,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
+                    android:id="@+id/secret_key_label"
                     style="@style/Theme.Tokky.TextInput.Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
