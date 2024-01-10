@@ -79,6 +79,7 @@ class SweepProgressBar @JvmOverloads constructor(
 
         progressAnimator?.interpolator = LinearInterpolator()
         progressAnimator?.start()
+        println(percentage)
 
         if (initialLoad) initialLoad = false
     }

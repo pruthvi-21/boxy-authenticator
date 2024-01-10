@@ -175,6 +175,10 @@ class TokenAdapter(
 
     fun onPause() {
         handler.removeCallbacks(handlerTask)
+        handler.postDelayed({
+            (getViewHolderWithId(currentExpandedId) as? TokenViewHolder)?.isExpanded = false
+            currentExpandedId = null
+        }, 200)
     }
 
     enum class Position {
