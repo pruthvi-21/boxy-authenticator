@@ -58,7 +58,7 @@ class TokenAdapter(
             return
         }
 
-        (holder as TokenViewHolder).bind(tokensList[position].item!!, editModeEnabled)
+        (holder as TokenViewHolder).bind(tokensList[position].item!!)
         holder.setCallback(this)
         holder.isExpanded = position == currentExpanded
 
@@ -125,7 +125,6 @@ class TokenAdapter(
     }
 
     fun checkAndUpdateOTP() {
-        if (editModeEnabled) return
         for (i in tokensList.indices) {
             val item = tokensList[i]
             if (item.isHeader) continue
@@ -138,14 +137,6 @@ class TokenAdapter(
         if (pos < 0 || pos > tokensList.size) return null
         return recyclerView.findViewHolderForAdapterPosition(pos)
     }
-
-    var editModeEnabled: Boolean = false
-        @SuppressLint("NotifyDataSetChanged")
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-            currentExpanded = -1
-        }
 
     override fun onExpand(vh: TokenViewHolder, adapterPosition: Int, expanded: Boolean) {
         when (currentExpanded) {
@@ -172,11 +163,11 @@ class TokenAdapter(
     }
 
     fun onResume() {
-        if (!editModeEnabled) handler.post(handlerTask)
+        handler.post(handlerTask)
     }
 
     fun onPause() {
-        if (!editModeEnabled) handler.removeCallbacks(handlerTask)
+        handler.removeCallbacks(handlerTask)
     }
 
     enum class Position {

@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -27,7 +28,7 @@ class TokenViewHolder(
         }
     }
 
-    fun bind(entry: TokenEntry, inEditMode: Boolean) {
+    fun bind(entry: TokenEntry) {
         this.entry = entry
         binding.issuerLabel.text = entry.issuer
         if (entry.label.isNotEmpty()) {
@@ -38,20 +39,6 @@ class TokenViewHolder(
         }
         setThumbnail()
 
-        if (inEditMode) {
-            binding.edit.visibility = View.VISIBLE
-            binding.arrow.visibility = View.GONE
-
-            isExpanded = false
-
-            binding.cardView.setOnClickListener(null)
-            binding.edit.setOnClickListener {
-                listener?.onEdit(entry, adapterPosition)
-            }
-
-            return
-        }
-
         binding.edit.visibility = View.GONE
         binding.arrow.visibility = View.VISIBLE
 
@@ -61,6 +48,10 @@ class TokenViewHolder(
         binding.progressBar.setMax(entry.period)
         binding.cardView.setOnClickListener {
             listener?.onExpand(this, adapterPosition, !isExpanded)
+        }
+
+        binding.edit.setOnClickListener {
+            listener?.onEdit(entry, adapterPosition)
         }
 
         binding.otpHolder.setOnLongClickListener {
@@ -98,6 +89,8 @@ class TokenViewHolder(
 
             binding.cardHiddenLayout.visibility = if (field) View.VISIBLE else View.GONE
             binding.arrow.rotation = if (value) 180f else 0f
+
+            binding.edit.isVisible = isExpanded
         }
 
     fun setCallback(listener: Callback?) {

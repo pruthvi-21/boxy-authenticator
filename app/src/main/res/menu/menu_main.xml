@@ -2,16 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_main_edit"
-        android:icon="@drawable/ic_edit"
-        android:title="@string/cd_edit"
-        app:iconTint="?colorPrimary"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/menu_main_refresh"
         android:icon="@drawable/ic_refresh"
         android:title="@string/title_refresh"
-        app:showAsAction="never" />
+        app:iconTint="?colorPrimary"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_main_settings"
         android:icon="@drawable/ic_settings"

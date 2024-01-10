@@ -83,19 +83,22 @@
 
             </LinearLayout>
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical">
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/edit"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:alpha="0.5"
                     android:background="?selectableItemBackgroundBorderless"
                     android:padding="8dp"
-                    android:tint="?android:attr/textColorSecondary"
+                    android:tint="?android:textColorSecondary"
                     app:srcCompat="@drawable/ic_edit" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -103,9 +106,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
+                    android:alpha="0.5"
                     android:padding="8dp"
+                    android:tint="?android:textColorSecondary"
                     app:srcCompat="@drawable/ic_card_arrow" />
-            </FrameLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
