@@ -27,6 +27,11 @@
             app:key="@string/key_app_theme"
             app:title="@string/pref_title_app_theme"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:defaultValue="@bool/default_use_black_theme_value"
+            app:key="@string/key_use_black_theme"
+            app:summary="@string/pref_summary_use_black_theme"
+            app:title="@string/pref_title_use_black_theme" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_category_title_transfers">

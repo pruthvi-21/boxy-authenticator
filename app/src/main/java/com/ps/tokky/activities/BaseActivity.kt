@@ -1,7 +1,9 @@
 package com.ps.tokky.activities
 
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -19,6 +21,12 @@ open class BaseActivity : AppCompatActivity(), SharedPreferences.OnSharedPrefere
             getString(R.string.app_theme_light_value) -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             getString(R.string.app_theme_dark_value) -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             getString(R.string.app_theme_follow_system_value) -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+
+        when (resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                if (AppSettings.getUseBlacksEnabled(this)) setTheme(R.style.Theme_Tokky_Black)
+            }
         }
 
         AppSettings
@@ -43,6 +51,17 @@ open class BaseActivity : AppCompatActivity(), SharedPreferences.OnSharedPrefere
         super.onResume()
 
         setScreenshotMode(AppSettings.isScreenshotModeEnabled(this))
+
+//        val colorPalette = PreferencesUtil.getAppColorPalette(this)
+//        val newTheme = when (Stylish.currentThemeMode(this)) {
+//            Stylish.ThemeMode.LIGHT -> colorPalette.themeLightId
+//            Stylish.ThemeMode.DARK -> colorPalette.themeDarkId
+//            Stylish.ThemeMode.BLACK -> colorPalette.themeBlackId
+//        }
+//        if (newTheme != currentlyAppliedThemeRes) {
+//            Log.d(this.javaClass.name, "Theme change detected, restarting activity")
+//            recreate()
+//        }
     }
 
     private fun setScreenshotMode(isEnabled: Boolean) {

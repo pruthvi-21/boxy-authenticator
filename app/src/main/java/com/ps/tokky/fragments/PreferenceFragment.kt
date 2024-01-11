@@ -1,8 +1,11 @@
 package com.ps.tokky.fragments
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import com.ps.tokky.BuildConfig
 import com.ps.tokky.R
 import com.ps.tokky.preference.AppLockPreference
@@ -19,6 +22,9 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     }
     private val biometricUnlockPreference: BiometricUnlockPreference? by lazy {
         findPreference(getString(R.string.key_biometric_unlock))
+    }
+    private val useBlackThemePreference: SwitchPreference? by lazy {
+        findPreference(getString(R.string.key_use_black_theme))
     }
     private val importAccountsPreference: ImportAccountsPreference? by lazy {
         findPreference(getString(R.string.key_import_accounts))
@@ -38,6 +44,11 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             biometricUnlockPreference?.isChecked = false
         }
         biometricUnlockPreference?.isEnabled = areBiometricsAvailable
+
+        useBlackThemePreference?.setOnPreferenceChangeListener { _, _ ->
+            Handler(Looper.getMainLooper()).postDelayed({ activity?.recreate() }, 300)
+            true
+        }
 
         importAccountsPreference?.setupListeners(this)
         exportAccountsPreference?.setupListeners(this)

@@ -17,8 +17,12 @@
     <color name="dark_surface_color">#111115</color>
     <color name="dark_surface_color_variant">#1B1B1F</color>
     <color name="dark_surface_color_variant2">#232325</color>
-    <color name="dark_text_color_secondary">#999999</color>
     <color name="dark_divider_color">#222222</color>
+
+    <color name="black_surface_color">#010101</color>
+    <color name="black_surface_color_variant">#121212</color>
+    <color name="black_surface_color_variant2">#181818</color>
+    <color name="black_divider_color">#1a1a1a</color>
 
     <array name="tile_colors">
         <item>#A0522D</item>

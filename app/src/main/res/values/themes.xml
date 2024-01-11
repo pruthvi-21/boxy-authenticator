@@ -35,6 +35,15 @@
         <item name="dropdownPreferenceStyle">@style/DropDownPreferenceStyle</item>
     </style>
 
+    <style name="Theme.Tokky.Black">
+        <item name="android:colorBackground">@color/black_surface_color</item>
+        <item name="android:windowBackground">@color/black_surface_color</item>
+        <item name="colorSurface">@color/black_surface_color</item>
+        <item name="colorSurfaceVariant">@color/black_surface_color_variant</item>
+        <item name="colorSurfaceVariant2">@color/black_surface_color_variant2</item>
+        <item name="colorDivider">@color/black_divider_color</item>
+    </style>
+
     <style name="KeypadButtonStyle">
         <item name="android:background">@drawable/bg_keypad_button</item>
         <item name="android:clickable">true</item>
