@@ -26,4 +26,5 @@
     <dimen name="thumbnail_color_tile">33dp</dimen>
     <dimen name="thumbnail_preview_width">100dp</dimen>
     <dimen name="thumbnail_preview_height">68.1818dp</dimen>
+    <dimen name="radius_preference">@dimen/radius_small</dimen>
 </resources>

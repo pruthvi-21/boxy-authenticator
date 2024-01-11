@@ -1,46 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.ps.tokky.preference.AppLockPreference
-        app:defaultValue="@bool/default_app_lock_value"
-        app:key="@string/key_app_lock"
-        app:summary="@string/pref_summary_app_lock"
-        app:title="@string/pref_title_app_lock" />
-
-    <com.ps.tokky.preference.BiometricUnlockPreference
-        app:defaultValue="@bool/default_app_lock_value"
-        app:dependency="@string/key_app_lock"
-        app:key="@string/key_biometric_unlock"
-        app:summary="@string/pref_summary_biometrics"
-        app:title="@string/pref_title_biometrics" />
-
-    <SwitchPreference
-        app:defaultValue="@bool/default_app_lock_value"
-        app:key="@string/key_allow_screenshots"
-        app:summary="@string/pref_summary_screenshots"
-        app:title="@string/pref_title_screenshots" />
-
     <PreferenceCategory app:title="@string/pref_category_title_ui">
         <com.ps.tokky.preference.AppThemeControllerPreference
             app:defaultValue="@string/default_app_theme_value"
             app:entries="@array/app_theme_entries"
             app:entryValues="@array/app_theme_values"
             app:key="@string/key_app_theme"
+            app:layout="@layout/preference_material_top"
             app:title="@string/pref_title_app_theme"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:defaultValue="@bool/default_use_black_theme_value"
             app:key="@string/key_use_black_theme"
+            app:layout="@layout/preference_material_bottom"
             app:summary="@string/pref_summary_use_black_theme"
             app:title="@string/pref_title_use_black_theme" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_category_title_security">
+        <com.ps.tokky.preference.AppLockPreference
+            app:defaultValue="@bool/default_app_lock_value"
+            app:key="@string/key_app_lock"
+            app:layout="@layout/preference_material_top"
+            app:summary="@string/pref_summary_app_lock"
+            app:title="@string/pref_title_app_lock" />
+
+        <com.ps.tokky.preference.BiometricUnlockPreference
+            app:defaultValue="@bool/default_app_lock_value"
+            app:dependency="@string/key_app_lock"
+            app:key="@string/key_biometric_unlock"
+            app:summary="@string/pref_summary_biometrics"
+            app:title="@string/pref_title_biometrics" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="@bool/default_app_lock_value"
+            app:key="@string/key_allow_screenshots"
+            app:layout="@layout/preference_material_bottom"
+            app:summary="@string/pref_summary_screenshots"
+            app:title="@string/pref_title_screenshots" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_category_title_transfers">
         <com.ps.tokky.preference.ImportAccountsPreference
             app:key="@string/key_import_accounts"
+            app:layout="@layout/preference_material_top"
             app:summary="@string/pref_summary_import_accounts"
             app:title="@string/pref_title_import_accounts" />
         <com.ps.tokky.preference.ExportAccountsPreference
             app:key="@string/key_export_accounts"
+            app:layout="@layout/preference_material_bottom"
             app:summary="@string/pref_summary_export_accounts"
             app:title="@string/pref_title_export_accounts" />
     </PreferenceCategory>

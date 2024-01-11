@@ -5,12 +5,13 @@ import android.os.Handler
 import android.os.Looper
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.ps.tokky.BuildConfig
 import com.ps.tokky.R
 import com.ps.tokky.preference.AppLockPreference
 import com.ps.tokky.preference.BiometricUnlockPreference
 import com.ps.tokky.preference.DeleteTokensPreference
+import com.ps.tokky.preference.DummyPreference
 import com.ps.tokky.preference.ExportAccountsPreference
 import com.ps.tokky.preference.ImportAccountsPreference
 import com.ps.tokky.utils.AppSettings
@@ -23,7 +24,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     private val biometricUnlockPreference: BiometricUnlockPreference? by lazy {
         findPreference(getString(R.string.key_biometric_unlock))
     }
-    private val useBlackThemePreference: SwitchPreference? by lazy {
+    private val useBlackThemePreference: SwitchPreferenceCompat? by lazy {
         findPreference(getString(R.string.key_use_black_theme))
     }
     private val importAccountsPreference: ImportAccountsPreference? by lazy {
@@ -56,6 +57,8 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         if (BuildConfig.DEBUG) {
             addDeleteAllPreference()
         }
+
+        preferenceScreen.addPreference(DummyPreference(preferenceScreen.context))
     }
 
     private fun addDeleteAllPreference() {

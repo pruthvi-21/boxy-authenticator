@@ -3,13 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_rounded_single"
     android:clipToPadding="false"
     android:gravity="center_vertical"
     android:minHeight="?attr/listPreferredItemHeightSmall"
-    android:paddingStart="?attr/listPreferredItemPaddingStart"
-    android:paddingTop="16dp"
-    android:paddingEnd="?attr/listPreferredItemPaddingEnd"
-    android:paddingBottom="16dp">
+    android:paddingHorizontal="32dp"
+    android:paddingVertical="16dp">
 
     <TextView
         android:id="@android:id/title"

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.fragment.app.FragmentManager
 import androidx.preference.SwitchPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.ps.tokky.R
 import com.ps.tokky.fragments.ConfirmPinLayout
 import com.ps.tokky.utils.AppSettings
@@ -12,7 +13,8 @@ import com.ps.tokky.utils.CryptoUtils
 class AppLockPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-) : SwitchPreference(context, attrs) {
+    themeAttr: Int = androidx.preference.R.attr.switchPreferenceStyle
+) : SwitchPreferenceCompat(context, attrs, themeAttr) {
 
     private var fragmentManager: FragmentManager? = null
 
