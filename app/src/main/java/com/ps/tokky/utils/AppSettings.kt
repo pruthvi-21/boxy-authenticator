@@ -79,6 +79,14 @@ object AppSettings {
             )
     }
 
+    fun getUseMonospaceFont(context: Context): Boolean {
+        return getPreferences(context)
+            .getBoolean(
+                context.getString(R.string.key_use_monospace_font),
+                context.resources.getBoolean(R.bool.default_use_monospace_font_value)
+            )
+    }
+
     fun getPreferences(context: Context): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context)
     }

@@ -3,6 +3,7 @@ package com.ps.tokky.models
 import android.content.Context
 import android.graphics.Color
 import android.net.Uri
+import android.text.Spannable
 import androidx.annotation.ColorInt
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.AccountEntryMethod
@@ -94,8 +95,8 @@ class TokenEntry {
         return false
     }
 
-    val otpFormatted: String
-        get() = currentOTP.formatOTP(digits)
+    val otp: Int
+        get() = currentOTP
 
     val otpClipboardFormat: String
         get() = "$currentOTP".padStart(digits, '0')

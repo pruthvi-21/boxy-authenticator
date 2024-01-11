@@ -3,7 +3,6 @@ package com.ps.tokky.activities
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -44,6 +43,7 @@ open class BaseActivity : AppCompatActivity(), SharedPreferences.OnSharedPrefere
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
             getString(R.string.key_allow_screenshots) -> setScreenshotMode(AppSettings.isScreenshotModeEnabled(this))
+            getString(R.string.key_use_monospace_font) -> if (this is MainActivity) recreate()
         }
     }
 
@@ -51,17 +51,6 @@ open class BaseActivity : AppCompatActivity(), SharedPreferences.OnSharedPrefere
         super.onResume()
 
         setScreenshotMode(AppSettings.isScreenshotModeEnabled(this))
-
-//        val colorPalette = PreferencesUtil.getAppColorPalette(this)
-//        val newTheme = when (Stylish.currentThemeMode(this)) {
-//            Stylish.ThemeMode.LIGHT -> colorPalette.themeLightId
-//            Stylish.ThemeMode.DARK -> colorPalette.themeDarkId
-//            Stylish.ThemeMode.BLACK -> colorPalette.themeBlackId
-//        }
-//        if (newTheme != currentlyAppliedThemeRes) {
-//            Log.d(this.javaClass.name, "Theme change detected, restarting activity")
-//            recreate()
-//        }
     }
 
     private fun setScreenshotMode(isEnabled: Boolean) {

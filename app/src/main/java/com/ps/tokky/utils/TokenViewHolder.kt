@@ -1,7 +1,6 @@
 package com.ps.tokky.utils
 
 import android.content.Context
-import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.view.View
@@ -46,7 +45,9 @@ class TokenViewHolder(
         binding.edit.visibility = View.GONE
         binding.arrow.visibility = View.VISIBLE
 
-        binding.otpHolder.typeface = Typeface.MONOSPACE
+        if (AppSettings.getUseMonospaceFont(context)) {
+            binding.otpHolder.applyMonospaceFont()
+        }
         updateOTP()
 
         binding.progressBar.setMax(entry.period)
@@ -106,7 +107,10 @@ class TokenViewHolder(
 
     fun updateOTP() {
         entry ?: return
-        binding.otpHolder.text = entry!!.otpFormatted
+        binding.otpHolder.text = entry!!.otp.formatOTP(
+            entry!!.digits,
+            AppSettings.getUseMonospaceFont(context)
+        )
     }
 
     interface Callback {

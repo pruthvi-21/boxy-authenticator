@@ -7,9 +7,13 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.text.Spannable
+import android.text.SpannableString
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
@@ -84,13 +88,24 @@ fun View.hideKeyboard(context: Context) {
     imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
-fun Int.formatOTP(length: Int): String {
-    return "$this"
+fun Int.formatOTP(length: Int, isMonospace: Boolean = false): SpannableString {
+    val str = "$this"
         .padStart(length, '0')
         .reversed()
         .replace(".".repeat(3).toRegex(), "$0 ")
         .trim()
         .reversed()
+
+    if (isMonospace) {
+        val spannable = SpannableString(str)
+        str.forEachIndexed { index, char ->
+            if (char.isWhitespace()) {
+                spannable.setSpan(HalfSpaceSpan(), index, index + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
+        return spannable
+    }
+    return SpannableString(str)
 }
 
 @SuppressLint("DefaultLocale")
@@ -142,4 +157,9 @@ fun Toolbar.changeOverflowIconColor(color: Int) {
         overflowIcon = drawable
     }
     invalidate()
+}
+
+fun TextView.applyMonospaceFont() {
+    val typeFace = Typeface.createFromAsset(context.assets, "fonts/FiraMono-Regular.ttf")
+    typeface = typeFace
 }

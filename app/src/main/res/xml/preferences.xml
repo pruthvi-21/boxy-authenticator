@@ -12,9 +12,14 @@
         <SwitchPreferenceCompat
             app:defaultValue="@bool/default_use_black_theme_value"
             app:key="@string/key_use_black_theme"
-            app:layout="@layout/preference_material_bottom"
             app:summary="@string/pref_summary_use_black_theme"
             app:title="@string/pref_title_use_black_theme" />
+        <SwitchPreferenceCompat
+            app:defaultValue="@bool/default_use_monospace_font_value"
+            app:key="@string/key_use_monospace_font"
+            app:layout="@layout/preference_material_bottom"
+            app:summary="@string/pref_summary_use_monospace_font"
+            app:title="@string/pref_title_use_monospace_font" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_category_title_security">
