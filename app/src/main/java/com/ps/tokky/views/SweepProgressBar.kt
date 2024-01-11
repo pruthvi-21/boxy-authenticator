@@ -73,13 +73,13 @@ class SweepProgressBar @JvmOverloads constructor(
         this.max = max
     }
 
-    fun setProgress(progress: Int) {
+    fun setProgress(progress: Int, animate: Boolean = true) {
         val percentage = (progress + 1) * 100f / max
         val targetAngle = percentage * 360 / 100
 
         progressAnimator?.cancel()
 
-        val duration = if (!initialLoad) 1000L else 0L
+        val duration = if (!initialLoad) if(animate) 1000L else 0L else 0L
 
         progressAnimator = ObjectAnimator.ofFloat(this, "swipeAngle", swipeAngle, targetAngle)
             .setDuration(duration)

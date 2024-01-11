@@ -22,10 +22,15 @@ class TokenViewHolder(
     private val handler = Handler(Looper.getMainLooper())
     private val handlerTask: Runnable = object : Runnable {
         override fun run() {
-            entry?.progressPercent?.toInt()?.let { binding.progressBar.setProgress(it) }
+            entry?.progressPercent?.toInt()?.let {
+                binding.progressBar.setProgress(it, justExpanded)
+                justExpanded = true
+            }
             handler.postDelayed(this, 1000)
         }
     }
+
+    private var justExpanded = false
 
     fun bind(entry: TokenEntry) {
         this.entry = entry
@@ -85,6 +90,7 @@ class TokenViewHolder(
                 updateOTP()
                 handler.post(handlerTask)
             } else {
+                justExpanded = false
                 handler.removeCallbacks(handlerTask)
             }
 
