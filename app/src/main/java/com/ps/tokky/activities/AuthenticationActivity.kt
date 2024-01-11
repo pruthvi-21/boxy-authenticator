@@ -10,7 +10,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityAuthenticationBinding
-import com.ps.tokky.utils.AppPreferences.Companion.KEY_PASSCODE_HASH
+import com.ps.tokky.utils.AppSettings
 import com.ps.tokky.utils.CryptoUtils
 import com.ps.tokky.views.KeypadLayout
 import kotlinx.coroutines.CoroutineScope
@@ -39,10 +39,10 @@ class AuthenticationActivity : BaseActivity(), KeypadLayout.OnKeypadKeyClickList
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        if (!preferences.appLockEnabled ||
-            preferences.sharedPreferences.getString(KEY_PASSCODE_HASH, null) == null
+        if (!AppSettings.isAppLockEnabled(this) ||
+            AppSettings.getPasscodeHash(this) == null
         ) {
-            preferences.appLockEnabled = false
+            AppSettings.setAppLockEnabled(this, false)
             loginSuccess()
         }
 
@@ -71,7 +71,9 @@ class AuthenticationActivity : BaseActivity(), KeypadLayout.OnKeypadKeyClickList
     override fun onResume() {
         super.onResume()
 
-        if (preferences.isBiometricAvailable() && preferences.biometricUnlockEnabled) {
+        if (AppSettings.isBiometricAvailable(this) &&
+            AppSettings.isBiometricUnlockEnabled(this)
+        ) {
             biometricPrompt?.authenticate(promptInfo)
             binding.btnBiometrics.visibility = View.VISIBLE
         } else {
@@ -104,8 +106,8 @@ class AuthenticationActivity : BaseActivity(), KeypadLayout.OnKeypadKeyClickList
     private suspend fun verifyPIN() {
         if (passcode.size < 4) return
 
-        val status =
-            preferences.verifyPIN(CryptoUtils.hashPasscode(passcode.joinToString(separator = "")))
+        val status = AppSettings
+            .verifyPIN(this, CryptoUtils.hashPasscode(passcode.joinToString(separator = "")))
         if (!status) {
             passcode.clear()
             updateUI()

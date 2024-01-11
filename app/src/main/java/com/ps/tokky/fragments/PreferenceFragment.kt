@@ -10,26 +10,21 @@ import com.ps.tokky.preference.BiometricUnlockPreference
 import com.ps.tokky.preference.DeleteTokensPreference
 import com.ps.tokky.preference.ExportAccountsPreference
 import com.ps.tokky.preference.ImportAccountsPreference
-import com.ps.tokky.utils.AppPreferences
-import com.ps.tokky.utils.AppPreferences.Companion.KEY_APP_LOCK
-import com.ps.tokky.utils.AppPreferences.Companion.KEY_BIOMETRIC_UNLOCK
-import com.ps.tokky.utils.AppPreferences.Companion.KEY_EXPORT_ACCOUNTS
-import com.ps.tokky.utils.AppPreferences.Companion.KEY_IMPORT_ACCOUNTS
+import com.ps.tokky.utils.AppSettings
 
 class PreferenceFragment : PreferenceFragmentCompat() {
 
-    private val preferences by lazy { AppPreferences.getInstance(requireContext()) }
-
-    private val appLockPreference: AppLockPreference? by lazy { findPreference(KEY_APP_LOCK) }
-    private val biometricUnlockPreference: BiometricUnlockPreference? by lazy {
-        findPreference(KEY_BIOMETRIC_UNLOCK)
+    private val appLockPreference: AppLockPreference? by lazy {
+        findPreference(getString(R.string.key_app_lock))
     }
-
+    private val biometricUnlockPreference: BiometricUnlockPreference? by lazy {
+        findPreference(getString(R.string.key_biometric_unlock))
+    }
     private val importAccountsPreference: ImportAccountsPreference? by lazy {
-        findPreference(KEY_IMPORT_ACCOUNTS)
+        findPreference(getString(R.string.key_import_accounts))
     }
     private val exportAccountsPreference: ExportAccountsPreference? by lazy {
-        findPreference(KEY_EXPORT_ACCOUNTS)
+        findPreference(getString(R.string.key_export_accounts))
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -38,7 +33,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         appLockPreference?.init(parentFragmentManager)
         biometricUnlockPreference?.initBiometricPrompt(this)
 
-        val areBiometricsAvailable = preferences.isBiometricAvailable()
+        val areBiometricsAvailable = AppSettings.isBiometricAvailable(requireContext())
         if (!areBiometricsAvailable) {
             biometricUnlockPreference?.isChecked = false
         }

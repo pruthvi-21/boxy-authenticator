@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.ps.tokky.preference.AppLockPreference
-        app:defaultValue="false"
+        app:defaultValue="@bool/default_app_lock_value"
         app:key="@string/key_app_lock"
-        app:summary="@string/summary_app_lock"
-        app:title="@string/title_app_lock" />
+        app:summary="@string/pref_summary_app_lock"
+        app:title="@string/pref_title_app_lock" />
 
     <com.ps.tokky.preference.BiometricUnlockPreference
-        app:defaultValue="false"
+        app:defaultValue="@bool/default_app_lock_value"
         app:dependency="@string/key_app_lock"
         app:key="@string/key_biometric_unlock"
         app:summary="@string/pref_summary_biometrics"
         app:title="@string/pref_title_biometrics" />
 
     <SwitchPreference
-        app:defaultValue="false"
-        app:key="@string/key_screenshots"
-        app:summary="@string/summary_screenshots"
-        app:title="@string/title_screenshots" />
+        app:defaultValue="@bool/default_app_lock_value"
+        app:key="@string/key_allow_screenshots"
+        app:summary="@string/pref_summary_screenshots"
+        app:title="@string/pref_title_screenshots" />
 
-    <PreferenceCategory app:title="@string/pref_cat_title_ui">
+    <PreferenceCategory app:title="@string/pref_category_title_ui">
         <com.ps.tokky.preference.AppThemeControllerPreference
-            app:defaultValue="system"
+            app:defaultValue="@string/default_app_theme_value"
             app:entries="@array/app_theme_entries"
             app:entryValues="@array/app_theme_values"
-            app:key="@string/pref_key_app_theme"
+            app:key="@string/key_app_theme"
             app:title="@string/pref_title_app_theme"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/pref_cat_title_transfers">
+    <PreferenceCategory app:title="@string/pref_category_title_transfers">
         <com.ps.tokky.preference.ImportAccountsPreference
-            app:key="@string/pref_key_import_accounts"
+            app:key="@string/key_import_accounts"
             app:summary="@string/pref_summary_import_accounts"
             app:title="@string/pref_title_import_accounts" />
         <com.ps.tokky.preference.ExportAccountsPreference
-            app:key="@string/pref_key_export_accounts"
+            app:key="@string/key_export_accounts"
             app:summary="@string/pref_summary_export_accounts"
             app:title="@string/pref_title_export_accounts" />
     </PreferenceCategory>

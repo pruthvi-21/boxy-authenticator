@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.preference.SwitchPreference
 import com.ps.tokky.R
 import com.ps.tokky.fragments.ConfirmPinLayout
-import com.ps.tokky.utils.AppPreferences
+import com.ps.tokky.utils.AppSettings
 import com.ps.tokky.utils.CryptoUtils
 
 class AppLockPreference @JvmOverloads constructor(
@@ -15,7 +15,6 @@ class AppLockPreference @JvmOverloads constructor(
 ) : SwitchPreference(context, attrs) {
 
     private var fragmentManager: FragmentManager? = null
-    private val preferences = AppPreferences.getInstance(context)
 
     override fun onClick() {
         if (isChecked) disableAppLock() else enableAppLock()
@@ -29,7 +28,7 @@ class AppLockPreference @JvmOverloads constructor(
         val setupPinCallback = { firstPasscode: String ->
             val reconfirmCallback = { secondPasscode: String ->
                 if (firstPasscode == secondPasscode) {
-                    preferences.setPIN(CryptoUtils.hashPasscode(firstPasscode))
+                    AppSettings.setPasscodeHash(context, CryptoUtils.hashPasscode(firstPasscode))
                     super.onClick()
                     true
                 } else false
@@ -53,7 +52,7 @@ class AppLockPreference @JvmOverloads constructor(
     private fun disableAppLock() {
         fragmentManager ?: return
         val callback = { passcode: String ->
-            val status = preferences.verifyPIN(CryptoUtils.hashPasscode(passcode))
+            val status = AppSettings.verifyPIN(context, CryptoUtils.hashPasscode(passcode))
             if (status) {
                 super.onClick()
             }

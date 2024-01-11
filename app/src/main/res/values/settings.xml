@@ -1,37 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="key_app_lock">key_app_lock</string>
-    <string name="key_biometric_unlock">key_biometric_unlock</string>
-    <string name="key_screenshots">key_allow_screenshots</string>
-    <string name="pref_key_app_theme">key_app_theme</string>
-    <string name="pref_key_import_accounts">key_import_accounts</string>
-    <string name="pref_key_export_accounts">key_export_accounts</string>
+    <string name="key_app_lock" translatable="false">key_app_lock</string>
+    <string name="key_app_lock_hash" translatable="false">key_app_lock_hash</string>
+    <string name="key_biometric_unlock" translatable="false">key_biometric_unlock</string>
+    <string name="key_allow_screenshots" translatable="false">key_allow_screenshots</string>
+    <string name="key_app_theme" translatable="false">key_app_theme</string>
+    <string name="key_import_accounts" translatable="false">key_import_accounts</string>
+    <string name="key_export_accounts" translatable="false">key_export_accounts</string>
 
-    <string name="title_app_lock">Enable app lock</string>
+    <string name="pref_title_app_lock">Enable app lock</string>
     <string name="pref_title_biometrics">Use biometrics</string>
-    <string name="title_screenshots">Allow screenshots</string>
-    <string name="pref_cat_title_ui">User Interface</string>
-    <string name="pref_cat_title_transfers">Transfer Accounts</string>
+    <string name="pref_title_screenshots">Allow screenshots</string>
     <string name="pref_title_app_theme">App theme</string>
     <string name="pref_title_import_accounts">Import Accounts</string>
     <string name="pref_title_export_accounts">Export Accounts</string>
     <string name="pref_title_kill">Delete all Accounts</string>
+    <string name="pref_category_title_ui">User Interface</string>
+    <string name="pref_category_title_transfers">Transfer Accounts</string>
 
-    <string name="summary_app_lock">Lock this app with a PIN. To change your PIN please disable app lock and enable it again</string>
+    <string name="pref_summary_app_lock">Lock this app with a PIN. To change your PIN please disable app lock and enable it again</string>
     <string name="pref_summary_biometrics">You can unlock with your biometrics instead of typing PIN</string>
-    <string name="summary_screenshots">This will allow you to take screenshots in this app</string>
+    <string name="pref_summary_screenshots">This will allow you to take screenshots in this app</string>
     <string name="pref_summary_import_accounts">Load accounts from backup file</string>
     <string name="pref_summary_export_accounts">Take a backup of accounts</string>
 
-    <string-array name="app_theme_entries">
-        <item>Light</item>
-        <item>Dark</item>
-        <item>System default</item>
-    </string-array>
+    <!-- Default preference values -->
+    <bool name="default_app_lock_value" translatable="false">false</bool>
+    <bool name="default_biometric_unlock_value" translatable="false">false</bool>
+    <bool name="default_allow_screenshots_value" translatable="false">false</bool>
+    <string name="default_app_theme_value" translatable="false">@string/app_theme_follow_system_value</string>
 
-    <string-array name="app_theme_values">
-        <item>light</item>
-        <item>dark</item>
-        <item>system</item>
+    <!-- App theme -->
+    <string name="app_theme_light_title">Light</string>
+    <string name="app_theme_dark_title">Dark</string>
+    <string name="app_theme_follow_system_title">System default</string>
+    <string name="app_theme_light_value" translatable="false">light</string>
+    <string name="app_theme_dark_value" translatable="false">dark</string>
+    <string name="app_theme_follow_system_value" translatable="false">system</string>
+
+    <string-array name="app_theme_entries" translatable="false">
+        <item>@string/app_theme_light_title</item>
+        <item>@string/app_theme_dark_title</item>
+        <item>@string/app_theme_follow_system_title</item>
+    </string-array>
+    <string-array name="app_theme_values" translatable="false">
+        <item>@string/app_theme_light_value</item>
+        <item>@string/app_theme_dark_value</item>
+        <item>@string/app_theme_follow_system_value</item>
     </string-array>
 </resources>

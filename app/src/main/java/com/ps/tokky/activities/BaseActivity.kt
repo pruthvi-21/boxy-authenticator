@@ -2,37 +2,47 @@ package com.ps.tokky.activities
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.ps.tokky.R
 import com.ps.tokky.database.DBHelper
-import com.ps.tokky.utils.AppPreferences
+import com.ps.tokky.utils.AppSettings
 
 open class BaseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
-    protected val preferences by lazy { AppPreferences.getInstance(this) }
     protected val db by lazy { DBHelper.getInstance(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        preferences.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+
+        when (AppSettings.getAppTheme(this)) {
+            getString(R.string.app_theme_light_value) -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            getString(R.string.app_theme_dark_value) -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            getString(R.string.app_theme_follow_system_value) -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+
+        AppSettings
+            .getPreferences(this)
+            .registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        preferences.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        AppSettings
+            .getPreferences(this)
+            .unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            AppPreferences.KEY_ALLOW_SCREENSHOTS -> setScreenshotMode(preferences.allowScreenshots)
+            getString(R.string.key_allow_screenshots) -> setScreenshotMode(AppSettings.isScreenshotModeEnabled(this))
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        setScreenshotMode(preferences.allowScreenshots)
+        setScreenshotMode(AppSettings.isScreenshotModeEnabled(this))
     }
 
     private fun setScreenshotMode(isEnabled: Boolean) {

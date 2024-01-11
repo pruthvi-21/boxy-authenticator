@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,12 +17,11 @@ import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.google.zxing.BarcodeFormat
 import com.ps.tokky.databinding.ActivityCameraScannerBinding
-import com.ps.tokky.utils.AppPreferences
+import com.ps.tokky.utils.AppSettings
 
 class CameraScannerActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityCameraScannerBinding.inflate(layoutInflater) }
-    private val preferences by lazy { AppPreferences.getInstance(this) }
 
     private val codeScanner by lazy { CodeScanner(this, binding.scannerView) }
 
