@@ -4,7 +4,7 @@
     <item
         android:id="@+id/menu_token_delete"
         android:icon="@drawable/ic_delete"
-        android:title="@string/cd_edit"
+        android:title="@string/cd_delete"
         app:iconTint="?colorError"
         app:showAsAction="ifRoom" />
 </menu>
