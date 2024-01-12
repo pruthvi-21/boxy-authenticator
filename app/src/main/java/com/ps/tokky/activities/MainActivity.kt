@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -66,6 +67,12 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+
+        menu?.findItem(R.id.menu_main_refresh)?.isEnabled = false
+        Handler(mainLooper).postDelayed({
+            menu?.findItem(R.id.menu_main_refresh)?.isEnabled = true
+        }, 2000)
+
         return true
     }
 
@@ -103,7 +110,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_main_refresh -> {
-                refresh(true)
+                recreate()
             }
 
             R.id.menu_main_settings -> {
