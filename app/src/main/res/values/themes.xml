@@ -1,4 +1,9 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.Tokky.SplashTheme" parent="Theme.Material3.DayNight">
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/ic_blank_32dp</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@color/surface_color</item>
+    </style>
 
     <style name="Theme.Tokky.Light" parent="Theme.Material3.DynamicColors.Light">
         <item name="android:colorBackground">@color/light_surface_color</item>
