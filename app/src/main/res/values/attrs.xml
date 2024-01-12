@@ -2,6 +2,7 @@
 <resources>
     <attr name="colorSurfaceVariant2" format="color" />
     <attr name="colorDivider" format="color" />
+    <attr name="colorDividerVariant" format="color" />
     <attr name="buttonGroupButtonStyle" format="reference" />
     <attr name="textInputEditTextStyle" format="reference" />
     <attr name="keypadButtonStyle" format="reference" />

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="KeypadButtonStyle">
+        <item name="android:background">@drawable/bg_keypad_button</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:gravity">center</item>
+        <item name="android:hapticFeedbackEnabled">true</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:paddingVertical">15dp</item>
+    </style>
+
+    <style name="Theme.Tokky.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">?colorDivider</item>
+    </style>
+
+    <style name="Theme.Tokky.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextColor">?colorPrimary</item>
+        <item name="navigationIconTint">?colorPrimary</item>
+    </style>
+
+    <style name="Theme.Tokky.CardView" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?colorSurfaceVariant</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <style name="Theme.Tokky.TextInputEditText" parent="ThemeOverlay.Material3.TextInputEditText">
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="DialogKillTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarPositiveButtonStyle">@style/DialogKillPositiveButtonStyle</item>
+    </style>
+
+    <style name="DialogKillPositiveButtonStyle" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">?colorError</item>
+    </style>
+
+    <style name="Theme.Keepass.PopupMenu" parent="Widget.Material3.PopupMenu.Overflow">
+        <item name="android:tint">#f00</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:popupBackground">@drawable/popup_menu_background</item>
+    </style>
+
+    <!-- Preference -->
+    <style name="Theme.Tokky.Preference.Style" parent="Preference.Material">
+        <item name="layout">@layout/preference_material_middle</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">false</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Theme.Tokky.Preference.Dialog.Style" parent="Preference.DialogPreference.Material">
+        <item name="layout">@layout/preference_material_middle</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">false</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Theme.Tokky.Preference.Dropdown.Style" parent="Preference.DropDown.Material">
+        <item name="layout">@layout/preference_material_middle</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">false</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Theme.Tokky.SwitchPreference" parent="Preference.SwitchPreferenceCompat.Material">
+        <item name="layout">@layout/preference_material_middle</item>
+        <item name="widgetLayout">@layout/m3_switch_layout</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">false</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="Theme.Tokky.Preference.Category.Style" parent="@style/Preference.Category.Material">
+        <item name="android:layout">@layout/preference_category_material</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">false</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+
+    <style name="Theme.Tokky.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">?colorSurfaceVariant</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_small</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_small</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_small</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_small</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeColor">?colorSurfaceVariant</item>
+        <item name="hintEnabled">false</item>
+    </style>
+
+    <style name="Theme.Tokky.TextInput.Label" parent="">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
+        <item name="android:paddingStart">15dp</item>
+        <item name="android:paddingEnd">15dp</item>
+    </style>
+</resources>

@@ -1,21 +1,20 @@
 <resources>
 
-    <style name="Theme.Material3.DynamicColors.DayNight.NoActionBar" parent="Theme.Material3.DynamicColors.DayNight">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.Tokky" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
-        <item name="android:colorBackground">@color/surface_color</item>
-        <item name="android:windowBackground">@color/surface_color</item>
-        <item name="colorSurface">@color/surface_color</item>
-        <item name="colorSurfaceVariant">@color/surface_color_variant</item>
-        <item name="colorSurfaceVariant2">@color/surface_color_variant2</item>
-        <item name="colorDivider">@color/divider_color</item>
+    <style name="Theme.Tokky.Light" parent="Theme.Material3.DynamicColors.Light">
+        <item name="android:colorBackground">@color/light_surface_color</item>
+        <item name="android:windowBackground">@color/light_surface_color</item>
+        <item name="colorSurface">@color/light_surface_color</item>
+        <item name="colorSurfaceVariant">@color/light_surface_color_variant</item>
+        <item name="colorSurfaceVariant2">@color/light_surface_color_variant2</item>
+        <item name="colorDivider">@color/light_divider_color</item>
+        <item name="colorDividerVariant">@color/light_divider_color_variant</item>
 
         <item name="android:statusBarColor">?colorSurface</item>
         <item name="android:navigationBarColor">?colorSurface</item>
         <item name="android:windowLightStatusBar">?isLightTheme</item>
+
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
 
         <item name="android:toolbarStyle">@style/Theme.Tokky.Toolbar</item>
         <item name="toolbarStyle">@style/Theme.Tokky.Toolbar</item>
@@ -39,118 +38,52 @@
         <item name="switchPreferenceCompatStyle">@style/Theme.Tokky.SwitchPreference</item>
     </style>
 
-    <style name="Theme.Tokky.Black">
+    <style name="Theme.Tokky.Dark" parent="Theme.Material3.DynamicColors.Dark">
+        <item name="android:colorBackground">@color/dark_surface_color</item>
+        <item name="android:windowBackground">@color/dark_surface_color</item>
+        <item name="colorSurface">@color/dark_surface_color</item>
+        <item name="colorSurfaceVariant">@color/dark_surface_color_variant</item>
+        <item name="colorSurfaceVariant2">@color/dark_surface_color_variant2</item>
+        <item name="colorDivider">@color/dark_divider_color</item>
+        <item name="colorDividerVariant">@color/dark_divider_color_variant</item>
+
+        <item name="android:statusBarColor">?colorSurface</item>
+        <item name="android:navigationBarColor">?colorSurface</item>
+        <item name="android:windowLightStatusBar">?isLightTheme</item>
+
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
+        <item name="android:toolbarStyle">@style/Theme.Tokky.Toolbar</item>
+        <item name="toolbarStyle">@style/Theme.Tokky.Toolbar</item>
+        <item name="android:actionOverflowMenuStyle">@style/Theme.Keepass.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Theme.Keepass.PopupMenu</item>
+        <item name="cardViewStyle">@style/Theme.Tokky.CardView</item>
+        <item name="materialCardViewStyle">@style/Theme.Tokky.CardView</item>
+        <item name="materialButtonOutlinedStyle">@style/Theme.Tokky.Button.Outlined</item>
+        <item name="textInputStyle">@style/Theme.Tokky.TextInputLayout</item>
+        <item name="textInputEditTextStyle">@style/Theme.Tokky.TextInputEditText</item>
+        <item name="keypadButtonStyle">@style/KeypadButtonStyle</item>
+        <item name="android:dropDownSpinnerStyle">@style/SpinnerStyle</item>
+
+        <!-- Preference -->
+        <item name="preferenceStyle">@style/Theme.Tokky.Preference.Style</item>
+        <item name="dialogPreferenceStyle">@style/Theme.Tokky.Preference.Dialog.Style</item>
+        <item name="dropdownPreferenceStyle">@style/Theme.Tokky.Preference.Dropdown.Style</item>
+        <item name="preferenceCategoryStyle">@style/Theme.Tokky.Preference.Category.Style</item>
+        <item name="android:switchPreferenceStyle">@style/Theme.Tokky.SwitchPreference</item>
+        <item name="switchPreferenceStyle">@style/Theme.Tokky.SwitchPreference</item>
+        <item name="switchPreferenceCompatStyle">@style/Theme.Tokky.SwitchPreference</item>
+    </style>
+
+    <style name="Theme.Tokky.Black" parent="Theme.Tokky.Dark">
         <item name="android:colorBackground">@color/black_surface_color</item>
         <item name="android:windowBackground">@color/black_surface_color</item>
         <item name="colorSurface">@color/black_surface_color</item>
         <item name="colorSurfaceVariant">@color/black_surface_color_variant</item>
         <item name="colorSurfaceVariant2">@color/black_surface_color_variant2</item>
         <item name="colorDivider">@color/black_divider_color</item>
-    </style>
-
-    <style name="KeypadButtonStyle">
-        <item name="android:background">@drawable/bg_keypad_button</item>
-        <item name="android:clickable">true</item>
-        <item name="android:focusable">true</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:gravity">center</item>
-        <item name="android:hapticFeedbackEnabled">true</item>
-        <item name="android:textColor">?android:textColorPrimary</item>
-        <item name="android:textSize">26sp</item>
-        <item name="android:paddingVertical">15dp</item>
-    </style>
-
-    <style name="Theme.Tokky.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="strokeColor">?colorDivider</item>
-    </style>
-
-    <style name="Theme.Tokky.Toolbar" parent="Widget.Material3.Toolbar">
-        <item name="titleTextColor">?colorPrimary</item>
-        <item name="navigationIconTint">?colorPrimary</item>
-    </style>
-
-    <style name="Theme.Tokky.CardView" parent="Widget.Material3.CardView.Filled">
-        <item name="cardBackgroundColor">?colorSurfaceVariant</item>
-        <item name="cardElevation">0dp</item>
-    </style>
-
-    <style name="Theme.Tokky.TextInputEditText" parent="ThemeOverlay.Material3.TextInputEditText">
-        <item name="android:imeOptions">actionNext</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:singleLine">true</item>
-    </style>
-
-    <style name="DialogKillTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="buttonBarPositiveButtonStyle">@style/DialogKillPositiveButtonStyle</item>
-    </style>
-
-    <style name="DialogKillPositiveButtonStyle" parent="Widget.Material3.Button.TextButton.Dialog">
-        <item name="android:textColor">?colorError</item>
-    </style>
-
-    <style name="Theme.Keepass.PopupMenu" parent="Widget.Material3.PopupMenu.Overflow">
-        <item name="android:tint">#f00</item>
-    </style>
-
-    <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
-        <item name="android:popupBackground">@drawable/popup_menu_background</item>
-    </style>
-
-    <!-- Preference -->
-    <style name="Theme.Tokky.Preference.Style" parent="Preference.Material">
-        <item name="layout">@layout/preference_material_middle</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
-    <style name="Theme.Tokky.Preference.Dialog.Style" parent="Preference.DialogPreference.Material">
-        <item name="layout">@layout/preference_material_middle</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
-    <style name="Theme.Tokky.Preference.Dropdown.Style" parent="Preference.DropDown.Material">
-        <item name="layout">@layout/preference_material_middle</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
-    <style name="Theme.Tokky.SwitchPreference" parent="Preference.SwitchPreferenceCompat.Material">
-        <item name="layout">@layout/preference_material_middle</item>
-        <item name="widgetLayout">@layout/m3_switch_layout</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
-    <style name="Theme.Tokky.Preference.Category.Style" parent="@style/Preference.Category.Material">
-        <item name="android:layout">@layout/preference_category_material</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
-
-    <style name="Theme.Tokky.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxBackgroundColor">?colorSurfaceVariant</item>
-        <item name="boxCornerRadiusTopStart">@dimen/radius_small</item>
-        <item name="boxCornerRadiusTopEnd">@dimen/radius_small</item>
-        <item name="boxCornerRadiusBottomStart">@dimen/radius_small</item>
-        <item name="boxCornerRadiusBottomEnd">@dimen/radius_small</item>
-        <item name="boxStrokeWidth">0dp</item>
-        <item name="boxStrokeColor">?colorSurfaceVariant</item>
-        <item name="hintEnabled">false</item>
-    </style>
-
-    <style name="Theme.Tokky.TextInput.Label" parent="">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">?android:textColorSecondary</item>
-        <item name="android:paddingStart">15dp</item>
-        <item name="android:paddingEnd">15dp</item>
+        <item name="colorDividerVariant">@color/black_divider_color_variant</item>
     </style>
 
 </resources>
