@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ps.tokky.R
@@ -20,7 +19,6 @@ import com.ps.tokky.databinding.DialogImportEditTokenBinding
 import com.ps.tokky.databinding.DialogImportPasswordFieldBinding
 import com.ps.tokky.databinding.ItemTransferListImportBinding
 import com.ps.tokky.models.TokenEntry
-import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.FileHelper
 import com.ps.tokky.utils.TextWatcherAdapter
 import com.ps.tokky.utils.TokenExistsInDBException
@@ -88,15 +86,6 @@ class ImportActivity : BaseActivity() {
 
                 val adapter = ImportListAdapter()
                 binding.rv.adapter = adapter
-                binding.rv.addItemDecoration(
-                    DividerItemDecorator(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.divider,
-                            null
-                        )
-                    )
-                )
 
                 binding.btnImport.setOnClickListener {
                     val checkedList = importList.filter { it.checked }

@@ -10,13 +10,11 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityMainBinding
 import com.ps.tokky.utils.Constants.DELETE_SUCCESS_RESULT_CODE
-import com.ps.tokky.utils.DividerItemDecorator
 import com.ps.tokky.utils.TokenAdapter
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.changeOverflowIconColor
@@ -43,9 +41,6 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = this@MainActivity.adapter
-            val divider =
-                DividerItemDecorator(ResourcesCompat.getDrawable(resources, R.drawable.divider, null))
-            addItemDecoration(divider)
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 

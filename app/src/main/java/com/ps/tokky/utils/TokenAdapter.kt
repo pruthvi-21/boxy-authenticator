@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -56,14 +58,14 @@ class TokenAdapter(
         holder.setCallback(this)
         holder.isExpanded = isExpanded
 
-        setShape(holder.binding.cardView, position)
+        setShape(holder.binding.cardView, holder.binding.divider, position)
     }
 
     override fun getItemViewType(position: Int): Int {
         return if (tokensList[position].isHeader) HEADER_VIEW else CONTENT_VIEW
     }
 
-    private fun setShape(card: MaterialCardView, position: Int) {
+    private fun setShape(card: MaterialCardView, divider: View, position: Int) {
         val shapeBuilder = ShapeAppearanceModel.Builder()
         val radius = context.resources.getDimension(R.dimen.item_radius)
 
@@ -85,6 +87,9 @@ class TokenAdapter(
             isLastItem || isBottom -> shapeBuilder.setBottomLeftCornerSize(radius)
                 .setBottomRightCornerSize(radius)
         }
+
+        divider.isVisible = !(isSingle || isBottom || isLastItem)
+
         card.shapeAppearanceModel = shapeBuilder.build()
     }
 
