@@ -2,8 +2,6 @@ package com.ps.tokky.utils
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -21,22 +19,13 @@ import java.util.*
 
 class TokenAdapter(
     private val context: AppCompatActivity,
-    private val recyclerView: RecyclerView,
     private val editActivityLauncher: ActivityResultLauncher<Intent>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), TokenViewHolder.Callback {
 
-    private var currentExpandedId: String? = null
-
-    private val handler = Handler(Looper.getMainLooper())
+    private var activeId: String? = null
+    private var activeViewHolder: TokenViewHolder? = null
 
     private val tokensList = ArrayList<GroupedItem>()
-
-    private val handlerTask = object : Runnable {
-        override fun run() {
-            checkAndUpdateOTP()
-            handler.postDelayed(this, Constants.OTP_GENERATION_REFRESH_INTERVAL)
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -51,48 +40,51 @@ class TokenAdapter(
 
     override fun getItemCount() = tokensList.size
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == HEADER_VIEW) {
-            (holder as TokenHeaderViewHolder).binding.title.text =
+            (viewHolder as TokenHeaderViewHolder).binding.title.text =
                 "${tokensList[position].alphabet}"
             return
         }
 
-        (holder as TokenViewHolder).bind(tokensList[position].item!!)
+        val holder = (viewHolder as TokenViewHolder)
+        val entry = tokensList[position].item!!
+        val isExpanded = entry.id == activeId
+        if (isExpanded) activeViewHolder = holder
+
+        holder.bind(entry)
         holder.setCallback(this)
-        holder.isExpanded = tokensList[position].item?.id == currentExpandedId
+        holder.isExpanded = isExpanded
 
-        val prevItemViewType = if (position > 0) getItemViewType(position - 1) else -1
-        val nextItemViewType =
-            if (position < tokensList.size - 1) getItemViewType(position + 1) else -1
-        val isLastItem = position == tokensList.size - 1
-
-        val itemPosition =
-            when {
-                prevItemViewType == HEADER_VIEW && (nextItemViewType == HEADER_VIEW || position == tokensList.size - 1) -> Position.SINGLE
-                prevItemViewType != HEADER_VIEW && nextItemViewType == HEADER_VIEW -> Position.BOTTOM
-                prevItemViewType == HEADER_VIEW -> Position.TOP
-                isLastItem -> Position.BOTTOM
-                else -> Position.MIDDLE
-            }
-
-        setShape(holder.binding.cardView, itemPosition)
+        setShape(holder.binding.cardView, position)
     }
 
     override fun getItemViewType(position: Int): Int {
         return if (tokensList[position].isHeader) HEADER_VIEW else CONTENT_VIEW
     }
 
-    private fun setShape(card: MaterialCardView, position: Position) {
+    private fun setShape(card: MaterialCardView, position: Int) {
         val shapeBuilder = ShapeAppearanceModel.Builder()
         val radius = context.resources.getDimension(R.dimen.item_radius)
 
-        if (position != Position.SINGLE) {
-            if (position == Position.TOP) shapeBuilder.setTopLeftCornerSize(radius)
+        val prevItemViewType = if (position > 0) getItemViewType(position - 1) else -1
+        val nextItemViewType =
+            if (position < tokensList.size - 1) getItemViewType(position + 1) else -1
+
+        val isSingle = prevItemViewType == HEADER_VIEW &&
+                (nextItemViewType == HEADER_VIEW || position == tokensList.size - 1)
+        val isTop = prevItemViewType == HEADER_VIEW
+        val isBottom = prevItemViewType != HEADER_VIEW && nextItemViewType == HEADER_VIEW
+        val isLastItem = position == tokensList.size - 1
+
+        when {
+            isSingle -> shapeBuilder.setAllCornerSizes(radius)
+            isTop -> shapeBuilder.setTopLeftCornerSize(radius)
                 .setTopRightCornerSize(radius)
-            if (position == Position.BOTTOM) shapeBuilder.setBottomLeftCornerSize(radius)
+
+            isLastItem || isBottom -> shapeBuilder.setBottomLeftCornerSize(radius)
                 .setBottomRightCornerSize(radius)
-        } else shapeBuilder.setAllCornerSizes(radius)
+        }
         card.shapeAppearanceModel = shapeBuilder.build()
     }
 
@@ -124,66 +116,33 @@ class TokenAdapter(
         notifyDataSetChanged()
     }
 
-    fun checkAndUpdateOTP() {
-        for (i in tokensList.indices) {
-            val item = tokensList[i]
-            if (item.isHeader) continue
-            val viewHolder = getViewHolderAt(i)
-            if (item.item!!.updateOTP() && viewHolder is TokenViewHolder?) viewHolder?.updateOTP()
-        }
-    }
-
-    private fun getViewHolderAt(pos: Int): RecyclerView.ViewHolder? {
-        if (pos < 0 || pos > tokensList.size) return null
-        return recyclerView.findViewHolderForAdapterPosition(pos)
-    }
-
-    private fun getViewHolderWithId(id: String?): RecyclerView.ViewHolder? {
-        id ?: return null
-        val entriesList = tokensList.map { it.item }
-        val idx = entriesList.indexOfFirst { it?.id == id }
-        return getViewHolderAt(idx)
-    }
-
-    override fun onExpand(vh: TokenViewHolder, id: String, expanded: Boolean) {
-        when (currentExpandedId) {
+    override fun onExpand(viewHolder: TokenViewHolder, id: String) {
+        when (activeId) {
             id -> {
-                vh.isExpanded = false
-                currentExpandedId = null
+                viewHolder.isExpanded = false
+                activeId = null
+                activeViewHolder = null
             }
 
             else -> {
-                val viewHolder = getViewHolderWithId(currentExpandedId)
-                if (currentExpandedId != null && viewHolder is TokenViewHolder?)
-                    viewHolder?.isExpanded = false
-
-                currentExpandedId = id
-                vh.isExpanded = true
+                activeViewHolder?.isExpanded = false
+                activeId = id
+                activeViewHolder = viewHolder
+                viewHolder.isExpanded = true
             }
         }
     }
 
     override fun onEdit(entry: TokenEntry, position: Int) {
-        editActivityLauncher.launch(Intent(context, EnterKeyDetailsActivity::class.java).apply {
+        val intent = Intent(context, EnterKeyDetailsActivity::class.java).apply {
             putExtra("id", entry.id)
-        })
+        }
+        editActivityLauncher.launch(intent)
     }
 
-    fun onResume() {
-        handler.post(handlerTask)
-    }
+    fun onResume() {}
 
-    fun onPause() {
-        handler.removeCallbacks(handlerTask)
-        handler.postDelayed({
-            (getViewHolderWithId(currentExpandedId) as? TokenViewHolder)?.isExpanded = false
-            currentExpandedId = null
-        }, 200)
-    }
-
-    enum class Position {
-        TOP, MIDDLE, BOTTOM, SINGLE
-    }
+    fun onPause() {}
 
     data class GroupedItem(
         val item: TokenEntry? = null,

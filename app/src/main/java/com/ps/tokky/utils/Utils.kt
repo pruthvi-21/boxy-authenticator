@@ -88,24 +88,25 @@ fun View.hideKeyboard(context: Context) {
     imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
-fun Int.formatOTP(length: Int, isMonospace: Boolean = false): SpannableString {
-    val str = "$this"
+fun Int.formatOTP(length: Int): String {
+    return "$this"
         .padStart(length, '0')
         .reversed()
         .replace(".".repeat(3).toRegex(), "$0 ")
         .trim()
         .reversed()
+}
 
+fun String.setMonospaceFontToOTP(isMonospace: Boolean = true): SpannableString {
+    val spannable = SpannableString(this)
     if (isMonospace) {
-        val spannable = SpannableString(str)
-        str.forEachIndexed { index, char ->
+        forEachIndexed { index, char ->
             if (char.isWhitespace()) {
                 spannable.setSpan(HalfSpaceSpan(), index, index + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
         }
-        return spannable
     }
-    return SpannableString(str)
+    return spannable
 }
 
 @SuppressLint("DefaultLocale")

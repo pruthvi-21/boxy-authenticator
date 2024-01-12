@@ -1,9 +1,6 @@
 package com.ps.tokky.utils
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -18,60 +15,57 @@ class TokenViewHolder(
     private var listener: Callback? = null
     private var entry: TokenEntry? = null
 
-    private val handler = Handler(Looper.getMainLooper())
-    private val handlerTask: Runnable = object : Runnable {
+    private val otpRunnable = object : Runnable {
         override fun run() {
-            entry?.progressPercent?.toInt()?.let {
-                binding.progressBar.setProgress(it, justExpanded)
-                justExpanded = true
+            entry?.let {
+                if (it.timeRemaining.toInt() == it.period) {
+                    updateOTP()
+                    binding.progressBar.startAnim(it.period, 0, 200L) {
+                        binding.progressBar.startAnim(0, it.period, it.period * 1000L - 200L)
+                    }
+                }
             }
-            handler.postDelayed(this, 1000)
+            binding.otpHolder.postDelayed(this, 1000)
         }
     }
 
-    private var justExpanded = false
-
     fun bind(entry: TokenEntry) {
         this.entry = entry
+
         binding.issuerLabel.text = entry.issuer
-        if (entry.label.isNotEmpty()) {
-            binding.accountLabel.visibility = View.VISIBLE
-            binding.accountLabel.text = entry.label
-        } else {
-            binding.accountLabel.visibility = View.GONE
-        }
+        binding.accountLabel.isVisible = entry.label.isNotEmpty()
+        binding.accountLabel.text = entry.label
+
         setThumbnail()
 
-        binding.edit.visibility = View.GONE
-        binding.arrow.visibility = View.VISIBLE
+        binding.otpHolder.apply {
+            removeCallbacks(otpRunnable)
+            if (AppSettings.getUseMonospaceFont(context)) applyMonospaceFont()
 
-        if (AppSettings.getUseMonospaceFont(context)) {
-            binding.otpHolder.applyMonospaceFont()
+            setOnLongClickListener {
+                Utils.copyToClipboard(context, "${entry.otp}".padStart(entry.digits, '0'))
+                true
+            }
         }
         updateOTP()
 
         binding.progressBar.setMax(entry.period)
-        binding.cardView.setOnClickListener {
-            listener?.onExpand(this, entry.id, !isExpanded)
-        }
 
+        binding.edit.isVisible = false
         binding.edit.setOnClickListener {
             listener?.onEdit(entry, adapterPosition)
         }
 
-        binding.otpHolder.setOnLongClickListener {
-            Utils.copyToClipboard(context, entry.otpClipboardFormat)
-            true
+        binding.cardView.setOnClickListener {
+            listener?.onExpand(this, entry.id)
         }
-
-        handler.post(handlerTask)
     }
 
     private fun setThumbnail() {
         entry ?: return
         if (entry!!.thumbnailIcon.isEmpty()) {
-            binding.thumbnailFrame.visibility = View.VISIBLE
-            binding.initialsView.visibility = View.VISIBLE
+            binding.thumbnailFrame.isVisible = true
+            binding.initialsView.isVisible = true
             binding.thumbnail.setBackgroundColor(entry!!.thumbnailColor)
             binding.thumbnail.setImageBitmap(null)
             binding.initialsView.text = entry!!.issuer.getInitials()
@@ -79,7 +73,7 @@ class TokenViewHolder(
             val fileName = entry!!.thumbnailIcon
             val logoBitmap = Utils.getThumbnailFromAssets(context.assets, fileName)
             Glide.with(context).load(logoBitmap).into(binding.thumbnail)
-            binding.initialsView.visibility = View.GONE
+            binding.initialsView.isVisible = false
         }
     }
 
@@ -87,15 +81,21 @@ class TokenViewHolder(
         set(value) {
             field = value
 
-            if (field) {
+            if (value) {
                 updateOTP()
-                handler.post(handlerTask)
+                binding.otpHolder.post(otpRunnable)
+                entry?.apply {
+                    binding.progressBar.startAnim(
+                        period - timeRemaining.toInt(),
+                        period,
+                        timeRemaining * 1000L
+                    )
+                }
             } else {
-                justExpanded = false
-                handler.removeCallbacks(handlerTask)
+                binding.otpHolder.removeCallbacks(otpRunnable)
             }
 
-            binding.cardHiddenLayout.visibility = if (field) View.VISIBLE else View.GONE
+            binding.cardHiddenLayout.isVisible = value
             binding.arrow.rotation = if (value) 180f else 0f
 
             binding.edit.isVisible = isExpanded
@@ -107,15 +107,12 @@ class TokenViewHolder(
 
     fun updateOTP() {
         entry ?: return
-        binding.otpHolder.text = entry!!.otp.formatOTP(
-            entry!!.digits,
-            AppSettings.getUseMonospaceFont(context)
-        )
+        binding.otpHolder.text = entry!!.otpFormatted
+            .setMonospaceFontToOTP(AppSettings.getUseMonospaceFont(context))
     }
 
     interface Callback {
-        fun onExpand(vh: TokenViewHolder, id: String, expanded: Boolean)
+        fun onExpand(viewHolder: TokenViewHolder, id: String)
         fun onEdit(entry: TokenEntry, position: Int)
     }
-
 }

@@ -3,7 +3,6 @@ package com.ps.tokky.models
 import android.content.Context
 import android.graphics.Color
 import android.net.Uri
-import android.text.Spannable
 import androidx.annotation.ColorInt
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base32
 import com.ps.tokky.utils.AccountEntryMethod
@@ -20,8 +19,10 @@ import com.ps.tokky.utils.cleanSecretKey
 import com.ps.tokky.utils.formatOTP
 import com.ps.tokky.utils.isValidSecretKey
 import org.json.JSONObject
+import java.lang.System.currentTimeMillis
 import java.util.Date
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 class TokenEntry {
 
@@ -75,15 +76,11 @@ class TokenEntry {
     }
 
     private var currentOTP: Int = 0
+    private var currentFormattedOTP: String = ""
     private var lastUpdatedCounter: Long = 0L
 
-    val progressPercent: Long
-        get() {
-            return (System.currentTimeMillis() / 1000 % period)
-        }
-
-    fun updateOTP(): Boolean {
-        val time = System.currentTimeMillis() / 1000
+    fun newOtpAvailable(): Boolean {
+        val time = TimeUnit.MILLISECONDS.toSeconds(currentTimeMillis())
         val count = time / period
 
         if (count > lastUpdatedCounter) {
@@ -95,11 +92,26 @@ class TokenEntry {
         return false
     }
 
-    val otp: Int
-        get() = currentOTP
+    val timeRemaining: Long
+        get() {
+            val currentTimeSeconds = TimeUnit.MILLISECONDS.toSeconds(currentTimeMillis())
+            val timeWithinCurrentOtpPeriod = currentTimeSeconds % period
+            return period - timeWithinCurrentOtpPeriod
+        }
 
-    val otpClipboardFormat: String
-        get() = "$currentOTP".padStart(digits, '0')
+    val otp: Int
+        get() {
+            newOtpAvailable()
+            return currentOTP
+        }
+
+    val otpFormatted: String
+        get() {
+            if (currentOTP != otp) {
+                currentFormattedOTP = currentOTP.formatOTP(digits)
+            }
+            return currentFormattedOTP
+        }
 
     fun updateInfo(
         issuer: String,

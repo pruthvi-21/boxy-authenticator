@@ -1,19 +1,17 @@
 package com.ps.tokky.views
 
+import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.R
-import com.ps.tokky.utils.Utils
+import com.google.android.material.color.MaterialColors
 
 class SweepProgressBar @JvmOverloads constructor(
     context: Context,
@@ -22,14 +20,14 @@ class SweepProgressBar @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : View(context, attrs, defStyleAttr, defStyleRes) {
 
-    private val colorSecondary = Utils.getColorFromAttr(context, R.attr.colorSecondary, Color.WHITE)
-    private val colorSurface = Utils.getColorFromAttr(context, R.attr.colorSurface, Color.BLACK)
+    private val colorPrimary = MaterialColors.getColor(this, R.attr.colorPrimary)
+    private val colorSurface = MaterialColors.getColor(this, R.attr.colorSurfaceContainerHigh)
     private val colorError = ResourcesCompat.getColor(resources, com.ps.tokky.R.color.color_danger, null)
 
     private val paintBackground: Paint = Paint().apply {
         isAntiAlias = true
         style = Paint.Style.FILL
-        color = colorSecondary
+        color = colorPrimary
     }
     private val paintProgress = Paint(paintBackground).apply {
         color = colorSurface
@@ -47,7 +45,6 @@ class SweepProgressBar @JvmOverloads constructor(
         }
 
     private var progressAnimator: ObjectAnimator? = null
-    private var initialLoad = true
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -65,6 +62,9 @@ class SweepProgressBar @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
+        if (swipeAngle > 360f * 0.7) {
+            paintBackground.color = colorError
+        } else paintBackground.color = colorPrimary
         canvas.drawCircle(centerX.toFloat(), centerY.toFloat(), (radius - 1).toFloat(), paintBackground)
         canvas.drawArc(rectProgress, START_ANGLE, swipeAngle, true, paintProgress)
     }
@@ -73,25 +73,27 @@ class SweepProgressBar @JvmOverloads constructor(
         this.max = max
     }
 
-    fun setProgress(progress: Int, animate: Boolean = true) {
-        //-1 just to correct the sweep animation
-        val percentage = progress * 100f / (max - 1)
-        val targetAngle = percentage * 360 / 100
+    fun startAnim(start: Int, end: Int, duration: Long, callback: (() -> Unit)? = null) {
+        val startPercent = start * 100f / max
+        val startAngle = startPercent * 360 / 100
+        val targetPercent = end * 100f / max
+        val targetAngle = targetPercent * 360 / 100
 
         progressAnimator?.cancel()
-
-        val duration = if (!initialLoad) if (animate) 1000L else 0L else 0L
-
-        progressAnimator = ObjectAnimator.ofFloat(this, "swipeAngle", swipeAngle, targetAngle)
-            .setDuration(duration)
-
-        progressAnimator?.interpolator = LinearInterpolator()
-        progressAnimator?.start()
-
-        paintBackground.color = if (percentage < 70) colorSecondary
-        else colorError
-
-        if (initialLoad) initialLoad = false
+        progressAnimator = ObjectAnimator
+            .ofFloat(this, "swipeAngle", startAngle, targetAngle).also {
+                it.setDuration(duration)
+                it.interpolator = LinearInterpolator()
+                it?.addListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator) {}
+                    override fun onAnimationCancel(animation: Animator) {}
+                    override fun onAnimationRepeat(animation: Animator) {}
+                    override fun onAnimationEnd(animation: Animator) {
+                        callback?.invoke()
+                    }
+                })
+                it.start()
+            }
     }
 
     companion object {

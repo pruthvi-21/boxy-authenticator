@@ -8,7 +8,6 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.res.ResourcesCompat
@@ -25,7 +24,7 @@ import com.ps.tokky.utils.changeOverflowIconColor
 class MainActivity : BaseActivity(), View.OnClickListener {
 
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val adapter: TokenAdapter by lazy { TokenAdapter(this, binding.recyclerView, addNewActivityLauncher) }
+    private val adapter: TokenAdapter by lazy { TokenAdapter(this, addNewActivityLauncher) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
