@@ -12,12 +12,15 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.ps.camerax.BarcodeScanningActivity
+import com.ps.camerax.BarcodeScanningActivity.Companion.SCAN_RESULT
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityMainBinding
 import com.ps.tokky.utils.Constants.DELETE_SUCCESS_RESULT_CODE
 import com.ps.tokky.utils.TokenAdapter
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.changeOverflowIconColor
+import com.ps.tokky.utils.toast
 
 class MainActivity : BaseActivity(), View.OnClickListener {
 
@@ -79,7 +82,9 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
             binding.expandableFab.fabQr.id -> {
                 binding.expandableFab.isFabExpanded = false
-                addNewActivityLauncher.launch(Intent(this, CameraScannerActivity::class.java))
+                addNewQRActivityLauncher.launch(
+                    Intent(this, BarcodeScanningActivity::class.java)
+                )
             }
         }
     }
@@ -122,6 +127,21 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             }
             if (it.resultCode == DELETE_SUCCESS_RESULT_CODE) {
                 refresh(true)
+            }
+        }
+
+    private val addNewQRActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val extras = it.data?.extras
+            if (it.resultCode == Activity.RESULT_OK && extras != null) {
+                val auth = extras.getString(SCAN_RESULT)
+                if (Utils.isValidTOTPAuthURL(auth)) {
+                    startActivity(Intent(this, EnterKeyDetailsActivity::class.java).apply {
+                        putExtra("otpAuth", auth)
+                    })
+                } else {
+                    getString(R.string.error_bad_formed_otp_url).toast(this)
+                }
             }
         }
 

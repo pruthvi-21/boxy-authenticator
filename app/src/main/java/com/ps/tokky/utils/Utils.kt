@@ -48,7 +48,8 @@ object Utils {
         Toast.makeText(context, R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG).show()
     }
 
-    fun isValidTOTPAuthURL(url: String): Boolean {
+    fun isValidTOTPAuthURL(url: String?): Boolean {
+        url ?: return false
         //TODO: need to find the regex
         val regex = Regex("")
         return true

@@ -35,8 +35,10 @@
             android:name=".activities.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.CameraScannerActivity"
-            android:exported="false" />
+            android:name="com.ps.camerax.BarcodeScanningActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".activities.EnterKeyDetailsActivity"
             android:exported="false"

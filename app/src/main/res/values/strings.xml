@@ -8,6 +8,7 @@
     <string name="cd_settings">settings</string>
     <string name="expandable_fab_qr_title">Scan a QR Code</string>
     <string name="expandable_fab_manual_title">Enter Manually</string>
+    <string name="error_bad_formed_otp_url">Badly formed URL. Please try to enter manually</string>
 
     <!-- EnterKeyDetailsActivity -->
     <string name="algorithm_sha1" translatable="false">SHA1</string>
