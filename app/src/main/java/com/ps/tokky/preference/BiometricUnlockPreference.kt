@@ -8,12 +8,13 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.SwitchPreference
+import androidx.preference.SwitchPreferenceCompat
 import com.ps.tokky.R
 
 class BiometricUnlockPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-) : SwitchPreference(context, attrs) {
+) : SwitchPreferenceCompat(context, attrs) {
 
     private val executor by lazy { ContextCompat.getMainExecutor(context) }
     private var biometricPrompt: BiometricPrompt? = null
