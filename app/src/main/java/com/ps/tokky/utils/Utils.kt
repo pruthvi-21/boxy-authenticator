@@ -161,6 +161,6 @@ fun Toolbar.changeOverflowIconColor(color: Int) {
 }
 
 fun TextView.applyMonospaceFont() {
-    val typeFace = Typeface.createFromAsset(context.assets, "fonts/FiraMono-Regular.ttf")
+    val typeFace = Typeface.createFromAsset(context.assets, "fonts/SourceCodePro-Regular.ttf")
     typeface = typeFace
 }
