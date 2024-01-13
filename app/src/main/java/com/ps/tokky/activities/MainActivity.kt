@@ -77,7 +77,9 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         when (v?.id) {
             binding.expandableFab.fabManual.id -> {
                 binding.expandableFab.isFabExpanded = false
-                addNewActivityLauncher.launch(Intent(this, EnterKeyDetailsActivity::class.java))
+                addNewActivityLauncher.launch(
+                    Intent(this, EnterKeyDetailsActivity::class.java)
+                )
             }
 
             binding.expandableFab.fabQr.id -> {
@@ -136,9 +138,11 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             if (it.resultCode == Activity.RESULT_OK && extras != null) {
                 val auth = extras.getString(SCAN_RESULT)
                 if (Utils.isValidTOTPAuthURL(auth)) {
-                    startActivity(Intent(this, EnterKeyDetailsActivity::class.java).apply {
-                        putExtra("otpAuth", auth)
-                    })
+                    addNewActivityLauncher.launch(
+                        Intent(this, EnterKeyDetailsActivity::class.java).apply {
+                            putExtra("otpAuth", auth)
+                        }
+                    )
                 } else {
                     getString(R.string.error_bad_formed_otp_url).toast(this)
                 }
