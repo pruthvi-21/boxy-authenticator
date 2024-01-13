@@ -11,8 +11,8 @@ android {
         applicationId "com.ps.tokky"
         minSdk 29
         targetSdk 34
-        versionCode 6
-        versionName "v2.2"
+        versionCode 7
+        versionName "v3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
