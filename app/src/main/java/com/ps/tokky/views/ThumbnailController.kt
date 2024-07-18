@@ -73,9 +73,11 @@ class ThumbnailController @JvmOverloads constructor(
         Pair("Cardinal Health", "cardinal_health.png"),
         Pair("CoinDCX", "coindcx.png"),
         Pair("Dashlane", "dashlane.png"),
+        Pair("Discord", "discord.png"),
         Pair("Evernote", "evernote.png"),
         Pair("Expo Go", "expo_go.png"),
         Pair("Facebook", "facebook.png"),
+        Pair("Figma", "figma.png"),
         Pair("GitHub", "github.png"),
         Pair("Google", "google.png"),
         Pair("Instagram", "instagram.png"),
@@ -93,9 +95,9 @@ class ThumbnailController @JvmOverloads constructor(
         Pair("Rockstar Games", "rockstar_games.png"),
         Pair("Snapchat", "snapchat.png"),
         Pair("Trading View", "trading_view.png"),
-        Pair("Twitter", "twitter.png"),
         Pair("Upstox", "upstox.png"),
         Pair("Upwork", "upwork.png"),
+        Pair("X", "twitter.png"),
     )
 
     private val colors = IntArray(5) { index ->
