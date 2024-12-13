@@ -1,27 +1,27 @@
 package com.ps.tokky.utils
 
 import android.annotation.SuppressLint
-import android.content.Intent
+import android.content.Context
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.ps.tokky.R
-import com.ps.tokky.activities.EnterKeyDetailsActivity
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.databinding.RvAuthCardHeaderBinding
 import com.ps.tokky.models.TokenEntry
-import java.util.*
+import com.ps.tokky.viewmodels.TokensViewModel
+import java.util.Locale
 
 class TokenAdapter(
-    private val context: AppCompatActivity,
-    private val editActivityLauncher: ActivityResultLauncher<Intent>
+    private val context: Context,
+    private val tokensViewModel: TokensViewModel,
+    private val navController: NavController
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), TokenViewHolder.Callback {
 
     private var activeId: String? = null
@@ -139,15 +139,9 @@ class TokenAdapter(
     }
 
     override fun onEdit(entry: TokenEntry, position: Int) {
-        val intent = Intent(context, EnterKeyDetailsActivity::class.java).apply {
-            putExtra("id", entry.id)
-        }
-        editActivityLauncher.launch(intent)
+        tokensViewModel.tokenToEdit = entry
+        navController.navigate(R.id.action_home_fragment_to_token_details_fragment)
     }
-
-    fun onResume() {}
-
-    fun onPause() {}
 
     data class GroupedItem(
         val item: TokenEntry? = null,

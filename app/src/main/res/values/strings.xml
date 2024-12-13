@@ -2,7 +2,6 @@
     <string name="app_name">Tokky</string>
     <string name="empty_layout_text">No tokens available\nAdd a token by clicking <b>\'+\'</b> at the bottom</string>
     <string name="cd_fab_add_new">add</string>
-    <string name="title_refresh">Refresh</string>
     <string name="cd_refresh">refresh</string>
     <string name="cd_delete">Delete</string>
     <string name="cd_settings">settings</string>

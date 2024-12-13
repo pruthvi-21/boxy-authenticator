@@ -1,11 +1,7 @@
-package com.ps.tokky.activities
+package com.ps.tokky.fragments
 
-import android.app.Activity
-import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -15,40 +11,50 @@ import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.MenuProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.ps.tokky.R
 import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
+import com.ps.tokky.databinding.FragmentTokenEntryBinding
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.AccountEntryMethod
 import com.ps.tokky.utils.BadlyFormedURLException
 import com.ps.tokky.utils.Constants
-import com.ps.tokky.utils.Constants.DELETE_SUCCESS_RESULT_CODE
 import com.ps.tokky.utils.EmptyURLContentException
 import com.ps.tokky.utils.InvalidSecretKeyException
-import com.ps.tokky.utils.TokenExistsInDBException
 import com.ps.tokky.utils.cleanSecretKey
 import com.ps.tokky.utils.hideKeyboard
 import com.ps.tokky.utils.showKeyboard
+import com.ps.tokky.viewmodels.TokensViewModel
 import com.ps.tokky.views.CollapsibleLinearLayout
 import com.ps.tokky.views.ThumbnailController
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.UUID
 
-class EnterKeyDetailsActivity : BaseActivity() {
+@AndroidEntryPoint
+class TokenEntryFragment : Fragment() {
+    private lateinit var binding: FragmentTokenEntryBinding
 
-    private var shortAnimationDuration: Long = 0
+    private val otpAuthUrl: String? by lazy { arguments?.getString("otpAuth") }
 
-    private val editId: String? by lazy { intent.extras?.getString("id") }
-    private val otpAuthUrl: String? by lazy { intent.extras?.getString("otpAuth") }
+    private val navController: NavController by lazy { findNavController() }
 
     private lateinit var toolbar: Toolbar
     private lateinit var thumbnailController: ThumbnailController
@@ -65,44 +71,47 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
     private lateinit var saveButton: Button
 
-    private var currentEntry: TokenEntry? = null
+    private val tokensViewModel: TokensViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val currentCode = UUID.randomUUID().toString()
 
-        setContentView(R.layout.activity_enter_key_details)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentTokenEntryBinding.inflate(layoutInflater, container, false)
 
-        toolbar = findViewById(R.id.toolbar)
-        thumbnailController = findViewById(R.id.thumbnail_controller)
-        issuerField = findViewById(R.id.issuer_field)
-        labelField = findViewById(R.id.label_field)
-        secretKeyLabel = findViewById(R.id.secret_key_label)
-        secretKeyField = findViewById(R.id.secret_key_field)
-        periodField = findViewById(R.id.period_field)
-        algorithmToggleGroup = findViewById(R.id.algorithm_toggle_group)
-        digitsField = findViewById(R.id.digits_field)
-        advancedOptionsCheckbox = findViewById(R.id.adv_options_switch)
-        advancedLayoutView = findViewById(R.id.advanced_layout_view)
-        saveButton = findViewById(R.id.details_save_btn)
+        toolbar = binding.toolbar
+        thumbnailController = binding.thumbnailController
+        issuerField = binding.issuerField
+        labelField = binding.labelField
+        secretKeyLabel = binding.secretKeyLabel
+        secretKeyField = binding.secretKeyField
+        periodField = binding.advLayout.periodField
+        algorithmToggleGroup = binding.advLayout.algorithmToggleGroup
+        digitsField = binding.advLayout.digitsField
+        advancedOptionsCheckbox = binding.advOptionsSwitch
+        advancedLayoutView = binding.advLayout.advancedLayoutView
+        saveButton = binding.detailsSaveBtn
 
-        setSupportActionBar(toolbar)
+        return binding.root
+    }
 
-        val editMode = editId != null || otpAuthUrl != null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val editMode = tokensViewModel.tokenToEdit != null
         Log.i(TAG, "onCreate: In edit mode: $editMode")
+
+        toolbar.addMenuProvider(menuProvider)
+        toolbar.setNavigationOnClickListener {
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
 
         if (editMode) {
             try {
-                currentEntry =
-                    if (otpAuthUrl != null) TokenEntry.BuildFromUrl(otpAuthUrl).build()
-                    else db.getAll(false).find { it.id == editId }
-
-                currentEntry?.let {
-                    supportActionBar?.title = "Update Details"
+                tokensViewModel.tokenToEdit?.let {
+                    toolbar.title = "Update Details"
 
                     issuerField.editText?.setText(it.issuer)
                     labelField.editText?.setText(it.label)
 
-                    thumbnailController.setInitials(currentEntry!!.issuer)
+                    thumbnailController.setInitials(tokensViewModel.tokenToEdit!!.issuer)
                     if (otpAuthUrl == null) {
                         thumbnailController.setThumbnailColor(it.thumbnailColor)
                         if (it.thumbnailIcon.isEmpty()) {
@@ -135,24 +144,42 @@ class EnterKeyDetailsActivity : BaseActivity() {
 
             } catch (exception: EmptyURLContentException) {
                 Log.e(TAG, "onCreate: ", exception)
-                Toast.makeText(this, "Empty URL", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Empty URL", Toast.LENGTH_SHORT).show()
             } catch (exception: BadlyFormedURLException) {
                 Log.e(TAG, "onCreate: ", exception)
-                Toast.makeText(this, "URL is badly formed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "URL is badly formed", Toast.LENGTH_SHORT).show()
             }
             return
         }
 
-        shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (secretKeyField.editText!!.text.isEmpty()) {
+                        navController.popBackStack()
+                    } else {
+                        hideKeyboard()
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(R.string.enter_details_activity_dialog_back_title)
+                            .setMessage(R.string.enter_details_activity_dialog_back_message)
+                            .setPositiveButton(R.string.dialog_go_back) { _, _ -> navController.popBackStack() }
+                            .setNegativeButton(R.string.dialog_cancel, null)
+                            .create()
+                            .show()
+                    }
+                }
+            }
+        )
 
-        issuerField.editText!!.addTextChangedListener(textWatcher)
-        labelField.editText!!.addTextChangedListener(textWatcher)
-        secretKeyField.editText!!.addTextChangedListener(textWatcher)
-        periodField.editText!!.addTextChangedListener(textWatcher)
+        issuerField.editText?.addTextChangedListener(textWatcher)
+        labelField.editText?.addTextChangedListener(textWatcher)
+        secretKeyField.editText?.addTextChangedListener(textWatcher)
+        periodField.editText?.addTextChangedListener(textWatcher)
 
         saveButton.isEnabled = false
-        periodField.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
-        secretKeyField.editText!!.imeOptions = EditorInfo.IME_ACTION_DONE
+        periodField.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+        secretKeyField.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
 
         advancedOptionsCheckbox.setOnCheckedChangeListener { _, isChecked ->
             hideKeyboard()
@@ -171,7 +198,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
                 val digits = digitsField.editText!!.text.toString().toInt()
 
                 val algo =
-                    findViewById<Button>(algorithmToggleGroup.checkedButtonId).text.toString()
+                    binding.root.findViewById<Button>(algorithmToggleGroup.checkedButtonId).text.toString()
 
                 val token = TokenEntry.Builder()
                     .setIssuer(issuer)
@@ -188,7 +215,7 @@ class EnterKeyDetailsActivity : BaseActivity() {
                 addEntryInDB(token)
             } catch (exception: InvalidSecretKeyException) {
                 Log.e(TAG, "onSaveDetails: Invalid Secret Key format")
-                Toast.makeText(this, R.string.error_invalid_chars, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.error_invalid_chars, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -198,98 +225,68 @@ class EnterKeyDetailsActivity : BaseActivity() {
     }
 
     private fun addEntryInDB(token: TokenEntry, oldId: String? = null) {
-        try {
-            if (oldId != null) {
-                val isPresent = db.getAll(false).find { it.id == oldId } != null
-                if (isPresent && otpAuthUrl == null) db.remove(oldId)
-            }
-            val success = db.add(token)
-
-            if (success) {
-                setResult(Activity.RESULT_OK, Intent().putExtra("id", token.id))
-                finish()
-            } else Toast.makeText(this, R.string.error_db_entry_failed, Toast.LENGTH_SHORT).show()
-        } catch (exception: TokenExistsInDBException) {
-            MaterialAlertDialogBuilder(this)
-                .setTitle("Account already exists")
-                .setMessage("You already have a account from '${token.issuer}'")
-                .setPositiveButton("Replace") { _, _ ->
-                    db.update(token)
-
-                    setResult(Activity.RESULT_OK, Intent().putExtra("id", token.id))
-                    finish()
-                }
-                .setNegativeButton("Rename") { _, _ ->
-                    saveButton.isEnabled = false
-                    issuerField.editText?.requestFocus()
-                    issuerField.editText?.setSelection(token.issuer.length)
-                    issuerField.editText?.showKeyboard(this, true)
-                }
-                .create()
-                .show()
+        if (oldId != null) {
+            val isPresent = tokensViewModel.findToken(oldId)
+            if (isPresent && otpAuthUrl == null) tokensViewModel.deleteToken(oldId)
         }
+        tokensViewModel.addToken(
+            token = token,
+            requestCode = currentCode,
+            onComplete = { responseCode ->
+                if (currentCode == responseCode &&
+                    navController.currentDestination?.id == R.id.token_details_fragment
+                ) {
+                    navController.popBackStack()
+                }
+            },
+            onTokenExists = { responseCode ->
+                if (currentCode == responseCode &&
+                    navController.currentDestination?.id == R.id.token_details_fragment
+                ) {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Account already exists")
+                        .setMessage("You already have a account from '${token.issuer}'")
+                        .setPositiveButton("Replace") { _, _ ->
+                            tokensViewModel.updateToken(token)
+                        }
+                        .setNegativeButton("Rename") { _, _ ->
+                            saveButton.isEnabled = false
+                            issuerField.editText?.requestFocus()
+                            issuerField.editText?.setSelection(token.issuer.length)
+                            issuerField.editText?.showKeyboard(requireContext(), true)
+                        }
+                        .create()
+                        .show()
+                }
+            }
+        )
     }
 
     private fun hideKeyboard() {
-        issuerField.editText!!.hideKeyboard(this)
-        labelField.editText!!.hideKeyboard(this)
-        secretKeyField.editText!!.hideKeyboard(this)
-        periodField.editText!!.hideKeyboard(this)
+        issuerField.editText!!.hideKeyboard(requireContext())
+        labelField.editText!!.hideKeyboard(requireContext())
+        secretKeyField.editText!!.hideKeyboard(requireContext())
+        periodField.editText!!.hideKeyboard(requireContext())
     }
 
     private fun showAdvancedOptions(show: Boolean) {
         if (show) {
             advancedLayoutView.expand(50)
         } else {
-            advancedLayoutView.collapse(50)
-            Handler(Looper.getMainLooper()).postDelayed({
+            advancedLayoutView.collapse(50) {
                 resetAdvanceFields()
-            }, 50)
+            }
         }
     }
 
     private fun resetAdvanceFields() {
-        periodField.editText?.setText(Constants.DEFAULT_PERIOD.toString())
-        digitsField.editText?.setText(Constants.DEFAULT_DIGITS.toString())
+        periodField.editText?.setText("${Constants.DEFAULT_PERIOD}")
+        digitsField.editText?.setText("${Constants.DEFAULT_DIGITS}")
         algorithmToggleGroup.check(R.id.btn_sha1)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_token, menu)
-
-        menu?.findItem(R.id.menu_token_delete)?.isEnabled = editId != null || otpAuthUrl != null
-
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                if (secretKeyField.editText!!.text.isEmpty()) {
-                    onBackPressedDispatcher.onBackPressed()
-                } else {
-                    hideKeyboard()
-                    MaterialAlertDialogBuilder(this)
-                        .setTitle(R.string.enter_details_activity_dialog_back_title)
-                        .setMessage(R.string.enter_details_activity_dialog_back_message)
-                        .setPositiveButton(R.string.dialog_go_back) { _, _ -> onBackPressedDispatcher.onBackPressed() }
-                        .setNegativeButton(R.string.dialog_cancel, null)
-                        .create()
-                        .show()
-                }
-            }
-
-            R.id.menu_token_delete -> {
-                currentEntry?.let {
-                    deleteToken(it)
-                }
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun deleteToken(entry: TokenEntry) {
-        val titleViewBinding = DialogTitleDeleteWarningBinding.inflate(LayoutInflater.from(this))
+        val titleViewBinding = DialogTitleDeleteWarningBinding.inflate(LayoutInflater.from(context))
 
         val ssb = SpannableStringBuilder(entry.issuer)
         ssb.setSpan(
@@ -305,13 +302,12 @@ class EnterKeyDetailsActivity : BaseActivity() {
                 .append(ssb)
                 .append("?")
 
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(requireContext())
             .setCustomTitle(titleViewBinding.root)
             .setMessage(R.string.dialog_message_delete_token)
             .setPositiveButton(R.string.dialog_remove) { _, _ ->
-                db.remove(entry.id)
-                setResult(DELETE_SUCCESS_RESULT_CODE)
-                finish()
+                tokensViewModel.deleteToken(entry.id)
+                navController.popBackStack()
             }
             .setNegativeButton(R.string.dialog_cancel, null)
             .create()
@@ -358,7 +354,31 @@ class EnterKeyDetailsActivity : BaseActivity() {
             }
         }
 
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            if (tokensViewModel.tokenToEdit != null) {
+                menuInflater.inflate(R.menu.menu_token, menu)
+            }
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            when (menuItem.itemId) {
+                R.id.menu_token_delete -> {
+                    tokensViewModel.tokenToEdit?.let {
+                        deleteToken(it)
+                    }
+                }
+            }
+            return true
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tokensViewModel.tokenToEdit = null
+    }
+
     companion object {
-        private const val TAG = "EnterKeyDetailsActivity"
+        private const val TAG = "TokenEntryFragment"
     }
 }

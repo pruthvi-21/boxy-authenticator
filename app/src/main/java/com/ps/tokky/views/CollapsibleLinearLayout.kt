@@ -111,7 +111,7 @@ class CollapsibleLinearLayout @JvmOverloads constructor(
         }
     }
 
-    fun collapse(timeAnim: Long = animDuration) {
+    fun collapse(timeAnim: Long = animDuration, onAnimationEnd: (() -> Unit)? = null) {
         if (isMoving) return
         listener?.onExpandChanged(false)
         isMoving = true
@@ -122,6 +122,7 @@ class CollapsibleLinearLayout @JvmOverloads constructor(
                 contentView.visibility = View.GONE
                 isExpanded = false
                 isMoving = false
+                onAnimationEnd?.invoke()
             }
             duration = timeAnim
             start()

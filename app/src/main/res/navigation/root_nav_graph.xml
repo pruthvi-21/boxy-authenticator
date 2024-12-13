@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_nav_graph"
+    app:startDestination="@id/home_fragment">
+
+    <fragment
+        android:id="@+id/home_fragment"
+        android:name="com.ps.tokky.fragments.HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_fragment_to_token_details_fragment"
+            app:destination="@id/token_details_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/token_details_fragment"
+        android:name="com.ps.tokky.fragments.TokenEntryFragment"
+        tools:layout="@layout/fragment_token_entry" />
+</navigation>
