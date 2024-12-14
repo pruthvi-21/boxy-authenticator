@@ -50,13 +50,13 @@
 
         <!-- Transfer accounts -->
         <activity
-            android:name=".activities.transfer.ExportActivity"
+            android:name=".fragments.transfer.ExportAccountsFragment"
             android:exported="false" />
         <activity
-            android:name=".activities.transfer.ImportActivity"
+            android:name=".fragments.transfer.ImportAccountsFragment"
             android:exported="false" />
         <activity
-            android:name=".activities.transfer.ImportFailedActivity"
+            android:name=".fragments.transfer.ImportedDuplicatesFragment"
             android:exported="false" />
     </application>
 

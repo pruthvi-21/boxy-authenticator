@@ -13,10 +13,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ps.camerax.BarcodeScanningActivity
@@ -24,6 +20,8 @@ import com.ps.camerax.BarcodeScanningActivity.Companion.SCAN_RESULT
 import com.ps.tokky.R
 import com.ps.tokky.activities.SettingsActivity
 import com.ps.tokky.databinding.FragmentHomeBinding
+import com.ps.tokky.fragments.transfer.ImportAccountsFragmentDirections
+import com.ps.tokky.utils.Constants
 import com.ps.tokky.utils.TokenAdapter
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.changeOverflowIconColor
@@ -32,7 +30,7 @@ import com.ps.tokky.viewmodels.TokensViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), View.OnClickListener {
+class HomeFragment : BaseFragment(), View.OnClickListener {
 
     private lateinit var binding: FragmentHomeBinding
     private val adapter: TokenAdapter by lazy {
@@ -42,10 +40,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
             navController
         )
     }
-
-    private val tokensViewModel: TokensViewModel by activityViewModels()
-
-    private val navController: NavController by lazy { findNavController() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
@@ -133,6 +127,18 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 R.id.menu_main_settings -> {
                     startActivity(Intent(context, SettingsActivity::class.java))
                 }
+                R.id.menu_main_export_accounts -> {
+                    navController.navigate(HomeFragmentDirections.actionHomeToExportAccounts())
+                }
+
+                R.id.menu_main_import_accounts -> {
+                    val filePickerIntent = Intent().apply {
+                        type = Constants.BACKUP_FILE_MIME_TYPE
+                        action = Intent.ACTION_GET_CONTENT
+                    }
+
+                    readFileLauncher.launch(filePickerIntent)
+                }
             }
             return true
         }
@@ -150,6 +156,16 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 } else {
                     getString(R.string.error_bad_formed_otp_url).toast(context)
                 }
+            }
+        }
+
+    val readFileLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val filePath = it.data?.data
+            if (filePath != null) {
+                navController.navigate(
+                    HomeFragmentDirections.actionHomeToImportAccounts(filePath.toString())
+                )
             }
         }
 }

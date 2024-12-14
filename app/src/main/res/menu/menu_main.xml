@@ -5,5 +5,15 @@
         android:id="@+id/menu_main_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/title_settings"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_main_export_accounts"
+        android:title="@string/pref_title_export_accounts"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_main_import_accounts"
+        android:title="@string/pref_title_import_accounts"
         app:showAsAction="never" />
 </menu>

@@ -1,4 +1,4 @@
-package com.ps.tokky.activities.transfer
+package com.ps.tokky.fragments.transfer
 
 import android.app.Activity
 import android.content.Intent
@@ -6,27 +6,28 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.MenuItem
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.ps.tokky.R
-import com.ps.tokky.activities.BaseActivity
-import com.ps.tokky.databinding.ActivityExportBinding
+import com.ps.tokky.databinding.FragmentExportAccountsBinding
+import com.ps.tokky.fragments.BaseFragment
 import com.ps.tokky.utils.Constants
 import com.ps.tokky.utils.Constants.BACKUP_FILE_MIME_TYPE
 import com.ps.tokky.utils.FileHelper
-import org.json.JSONArray
 
-class ExportActivity : BaseActivity() {
+class ExportAccountsFragment : BaseFragment() {
 
-    private val binding by lazy { ActivityExportBinding.inflate(layoutInflater) }
+    private lateinit var binding: FragmentExportAccountsBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentExportAccountsBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
 
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.tilPassword.editText?.addTextChangedListener(passwordTextWatcher)
         binding.tilConfirmPassword.editText?.addTextChangedListener(passwordTextWatcher)
 
@@ -61,36 +62,28 @@ class ExportActivity : BaseActivity() {
         launcher.launch(intent)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> onBackPressedDispatcher.onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private val launcher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val intent = result.data
             if (result.resultCode == Activity.RESULT_OK && intent != null) {
                 if (intent.data == null) return@registerForActivityResult
 
-                val exportData = JSONArray(db.getAll(false).map { it.toExportJson() }).toString()
-                FileHelper.writeToFile(
-                    context = this,
-                    uri = intent.data!!,
-                    content = exportData,
-                    password = binding.tilPassword.editText?.text.toString(),
-                    successCallback = {
-                        Toast.makeText(this, R.string.export_toast_success, Toast.LENGTH_SHORT)
-                            .show()
-                        Log.i(TAG, "FileTransferActivityResult: Accounts exported")
-                        finish()
-                    },
-                    failureCallback = {
-                        Toast.makeText(this, R.string.export_toast_error, Toast.LENGTH_SHORT).show()
-                        Log.e(TAG, "FileTransferActivityResult: Accounts exported failed")
-                        finish()
-                    })
+                tokensViewModel.getExportData { exportData ->
+                    FileHelper.writeToFile(
+                        context = requireContext(),
+                        uri = intent.data!!,
+                        content = exportData,
+                        password = binding.tilPassword.editText?.text.toString(),
+                        successCallback = {
+                            Toast.makeText(context, R.string.export_toast_success, Toast.LENGTH_SHORT)
+                                .show()
+                            Log.i(TAG, "FileTransferActivityResult: Accounts exported")
+                        },
+                        failureCallback = {
+                            Toast.makeText(context, R.string.export_toast_error, Toast.LENGTH_SHORT).show()
+                            Log.e(TAG, "FileTransferActivityResult: Accounts exported failed")
+                        })
+                }
             } else {
                 Log.e(TAG, "Some Error Occurred : $result")
             }

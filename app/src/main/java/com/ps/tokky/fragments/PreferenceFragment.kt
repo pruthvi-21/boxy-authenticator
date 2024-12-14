@@ -12,8 +12,6 @@ import com.ps.tokky.preference.AppLockPreference
 import com.ps.tokky.preference.BiometricUnlockPreference
 import com.ps.tokky.preference.DeleteTokensPreference
 import com.ps.tokky.preference.DummyPreference
-import com.ps.tokky.preference.ExportAccountsPreference
-import com.ps.tokky.preference.ImportAccountsPreference
 import com.ps.tokky.utils.AppSettings
 
 class PreferenceFragment : PreferenceFragmentCompat() {
@@ -26,12 +24,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     }
     private val useBlackThemePreference: SwitchPreferenceCompat? by lazy {
         findPreference(getString(R.string.key_use_black_theme))
-    }
-    private val importAccountsPreference: ImportAccountsPreference? by lazy {
-        findPreference(getString(R.string.key_import_accounts))
-    }
-    private val exportAccountsPreference: ExportAccountsPreference? by lazy {
-        findPreference(getString(R.string.key_export_accounts))
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -50,9 +42,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             Handler(Looper.getMainLooper()).postDelayed({ activity?.recreate() }, 300)
             true
         }
-
-        importAccountsPreference?.setupListeners(this)
-        exportAccountsPreference?.setupListeners(this)
 
         if (BuildConfig.DEBUG) {
             addDeleteAllPreference()

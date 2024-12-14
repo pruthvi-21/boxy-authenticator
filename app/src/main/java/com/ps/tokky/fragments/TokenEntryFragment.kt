@@ -23,10 +23,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
@@ -42,17 +38,14 @@ import com.ps.tokky.utils.InvalidSecretKeyException
 import com.ps.tokky.utils.cleanSecretKey
 import com.ps.tokky.utils.hideKeyboard
 import com.ps.tokky.utils.showKeyboard
-import com.ps.tokky.viewmodels.TokensViewModel
 import com.ps.tokky.views.CollapsibleLinearLayout
 import com.ps.tokky.views.ThumbnailController
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
 
 @AndroidEntryPoint
-class TokenEntryFragment : Fragment() {
+class TokenEntryFragment : BaseFragment() {
     private lateinit var binding: FragmentTokenEntryBinding
-
-    private val navController: NavController by lazy { findNavController() }
 
     private lateinit var toolbar: Toolbar
     private lateinit var thumbnailController: ThumbnailController
@@ -68,8 +61,6 @@ class TokenEntryFragment : Fragment() {
     private lateinit var algorithmToggleGroup: MaterialButtonToggleGroup
 
     private lateinit var saveButton: Button
-
-    private val tokensViewModel: TokensViewModel by activityViewModels()
 
     private val currentCode = UUID.randomUUID().toString()
 

@@ -45,16 +45,4 @@
             app:title="@string/pref_title_screenshots" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/pref_category_title_transfers">
-        <com.ps.tokky.preference.ImportAccountsPreference
-            app:key="@string/key_import_accounts"
-            app:layout="@layout/preference_material_top"
-            app:summary="@string/pref_summary_import_accounts"
-            app:title="@string/pref_title_import_accounts" />
-        <com.ps.tokky.preference.ExportAccountsPreference
-            app:key="@string/key_export_accounts"
-            app:layout="@layout/preference_material_bottom"
-            app:summary="@string/pref_summary_export_accounts"
-            app:title="@string/pref_title_export_accounts" />
-    </PreferenceCategory>
 </PreferenceScreen>

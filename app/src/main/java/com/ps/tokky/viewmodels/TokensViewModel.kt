@@ -9,6 +9,7 @@ import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.TokenExistsInDBException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,6 +65,12 @@ class TokensViewModel @Inject constructor(
 
     fun findToken(tokenId: String): Boolean {
         return db.getAll(false).find { it.id == tokenId } != null
+    }
+
+    fun getExportData(callback: (String) -> Unit) {
+        viewModelScope.launch {
+            callback(JSONArray(db.getAll(false).map { it.toExportJson() }).toString())
+        }
     }
 
 }

@@ -1,46 +1,43 @@
-package com.ps.tokky.activities.transfer
+package com.ps.tokky.fragments.transfer
 
 import android.content.DialogInterface
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ps.tokky.R
-import com.ps.tokky.activities.BaseActivity
-import com.ps.tokky.databinding.ActivityImportBinding
 import com.ps.tokky.databinding.DialogImportEditTokenBinding
 import com.ps.tokky.databinding.DialogImportPasswordFieldBinding
+import com.ps.tokky.databinding.FragmentImportAccountsBinding
 import com.ps.tokky.databinding.ItemTransferListImportBinding
+import com.ps.tokky.fragments.BaseFragment
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.FileHelper
 import com.ps.tokky.utils.TextWatcherAdapter
-import com.ps.tokky.utils.TokenExistsInDBException
 import com.ps.tokky.utils.isJsonArray
 import com.ps.tokky.utils.toast
 import org.json.JSONArray
 
-class ImportActivity : BaseActivity() {
+class ImportAccountsFragment : BaseFragment() {
+    private val args: ImportAccountsFragmentArgs by navArgs()
 
-    private val binding by lazy { ActivityImportBinding.inflate(layoutInflater) }
+    private lateinit var binding: FragmentImportAccountsBinding
     private val importList = ArrayList<ImportItem>()
 
     private val failedList = ArrayList<TokenEntry>()
 
-    private val context by lazy { this }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentImportAccountsBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupPasswordDialog()
     }
 
@@ -49,28 +46,20 @@ class ImportActivity : BaseActivity() {
         binding.btnImport.isEnabled = !importList.none { it.checked }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> onBackPressedDispatcher.onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun setupPasswordDialog() {
-        val dialogBinding = DialogImportPasswordFieldBinding.inflate(LayoutInflater.from(this))
+        val dialogBinding = DialogImportPasswordFieldBinding.inflate(LayoutInflater.from(requireContext()))
 
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.import_password_dialog_title)
             .setView(dialogBinding.root)
             .setPositiveButton(R.string.import_password_dialog_positive_btn) { _, _ ->
-                val filePath = Uri.parse(intent.extras?.getString(INTENT_EXTRA_KEY_FILE_PATH))
+                val filePath = Uri.parse(args.filePath)
                 val password = dialogBinding.tilPassword.editText?.text.toString()
-                val fileData = FileHelper.readFromFile(context, filePath, password)
+                val fileData = FileHelper.readFromFile(requireContext(), filePath, password)
 
                 if (!fileData.isJsonArray()) {
-                    Toast.makeText(this, R.string.import_password_failed_msg, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), R.string.import_password_failed_msg, Toast.LENGTH_SHORT)
                         .show()
-                    finish()
                     return@setPositiveButton
                 }
 
@@ -79,7 +68,7 @@ class ImportActivity : BaseActivity() {
                 importList.clear()
                 for (i in 0 until importJsonArray.length()) {
                     val jsonObj = importJsonArray.getJSONObject(i)
-                    val token = TokenEntry.BuildFromExportJson(this, jsonObj).build()
+                    val token = TokenEntry.BuildFromExportJson(requireContext(), jsonObj).build()
 
                     importList.add(ImportItem(token, true))
                 }
@@ -91,11 +80,12 @@ class ImportActivity : BaseActivity() {
                     val checkedList = importList.filter { it.checked }
                     checkedList.forEach {
                         val token = it.token
-                        try {
-                            db.add(token)
-                        } catch (exception: TokenExistsInDBException) {
-                            failedList.add(token)
-                        }
+                        tokensViewModel.addToken(token,
+                            (Math.random() * 1000).toString(),
+                            onComplete = {},
+                            onTokenExists = {
+                                failedList.add(token)
+                            })
                     }
 
                     val importedLength = checkedList.size - failedList.size
@@ -103,20 +93,20 @@ class ImportActivity : BaseActivity() {
                         if (importedLength > 1) R.string.import_success_msg_plural
                         else R.string.import_success_msg_singular,
                         "$importedLength"
-                    ).toast(context)
+                    ).toast(requireContext())
 
                     if (failedList.isNotEmpty()) {
                         val failedJsonArray = JSONArray()
                         failedList.forEach { failedJsonArray.put(it.toExportJson()) }
-                        val intent = Intent(context, ImportFailedActivity::class.java)
-                            .putExtra(INTENT_EXTRA_FAILED_LIST, failedJsonArray.toString())
-
-                        startActivity(intent)
+                        navController.navigate(
+                            ImportAccountsFragmentDirections.actionImportAccountsToImportedDuplicates(
+                                failedJsonArray.toString()
+                            )
+                        )
                     }
-                    finish()
                 }
             }
-            .setNegativeButton(R.string.import_password_dialog_negative_btn) { _, _ -> finish() }
+            .setNegativeButton(R.string.import_password_dialog_negative_btn) { _, _ -> navController.popBackStack() }
             .show()
     }
 
@@ -153,7 +143,7 @@ class ImportActivity : BaseActivity() {
                     }
                 })
 
-                val dialog = MaterialAlertDialogBuilder(context)
+                val dialog = MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.import_edit_dialog_title)
                     .setView(updateView.root)
                     .setPositiveButton(R.string.import_edit_dialog_positive_btn, null)
@@ -185,8 +175,5 @@ class ImportActivity : BaseActivity() {
 
     companion object {
         private const val TAG = "ImportActivity"
-
-        const val INTENT_EXTRA_KEY_FILE_PATH = "file_path"
-        const val INTENT_EXTRA_FAILED_LIST = "file_path"
     }
 }
