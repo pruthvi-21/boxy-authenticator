@@ -26,6 +26,7 @@ class TokensViewModel @Inject constructor(
     val tokensState: LiveData<UIState<List<TokenEntry>>> = _tokensState
 
     var tokenToEdit: TokenEntry? = null
+    var otpAuthUrl: String? = null
 
     fun fetchTokens() {
         viewModelScope.launch {

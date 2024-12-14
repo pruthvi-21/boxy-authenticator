@@ -52,8 +52,6 @@ import java.util.UUID
 class TokenEntryFragment : Fragment() {
     private lateinit var binding: FragmentTokenEntryBinding
 
-    private val otpAuthUrl: String? by lazy { arguments?.getString("otpAuth") }
-
     private val navController: NavController by lazy { findNavController() }
 
     private lateinit var toolbar: Toolbar
@@ -95,7 +93,7 @@ class TokenEntryFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val editMode = tokensViewModel.tokenToEdit != null
+        val editMode = tokensViewModel.tokenToEdit != null || tokensViewModel.otpAuthUrl != null
         Log.i(TAG, "onCreate: In edit mode: $editMode")
 
         toolbar.addMenuProvider(menuProvider)
@@ -105,14 +103,18 @@ class TokenEntryFragment : Fragment() {
 
         if (editMode) {
             try {
-                tokensViewModel.tokenToEdit?.let {
+                val token = if (tokensViewModel.otpAuthUrl != null) {
+                    TokenEntry.BuildFromUrl(tokensViewModel.otpAuthUrl).build()
+                } else tokensViewModel.tokenToEdit
+
+                token?.let {
                     toolbar.title = "Update Details"
 
                     issuerField.editText?.setText(it.issuer)
                     labelField.editText?.setText(it.label)
 
-                    thumbnailController.setInitials(tokensViewModel.tokenToEdit!!.issuer)
-                    if (otpAuthUrl == null) {
+                    thumbnailController.setInitials(it.issuer)
+                    if (tokensViewModel.otpAuthUrl == null) {
                         thumbnailController.setThumbnailColor(it.thumbnailColor)
                         if (it.thumbnailIcon.isEmpty()) {
                             thumbnailController.thumbnailIcon = null
@@ -227,7 +229,7 @@ class TokenEntryFragment : Fragment() {
     private fun addEntryInDB(token: TokenEntry, oldId: String? = null) {
         if (oldId != null) {
             val isPresent = tokensViewModel.findToken(oldId)
-            if (isPresent && otpAuthUrl == null) tokensViewModel.deleteToken(oldId)
+            if (isPresent && tokensViewModel.otpAuthUrl == null) tokensViewModel.deleteToken(oldId)
         }
         tokensViewModel.addToken(
             token = token,
@@ -376,6 +378,7 @@ class TokenEntryFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         tokensViewModel.tokenToEdit = null
+        tokensViewModel.otpAuthUrl = null
     }
 
     companion object {

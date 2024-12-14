@@ -1,5 +1,6 @@
 package com.ps.tokky.fragments
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -17,12 +19,15 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.ps.camerax.BarcodeScanningActivity
+import com.ps.camerax.BarcodeScanningActivity.Companion.SCAN_RESULT
 import com.ps.tokky.R
 import com.ps.tokky.activities.SettingsActivity
 import com.ps.tokky.databinding.FragmentHomeBinding
 import com.ps.tokky.utils.TokenAdapter
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.changeOverflowIconColor
+import com.ps.tokky.utils.toast
 import com.ps.tokky.viewmodels.TokensViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -111,9 +116,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
             binding.expandableFab.fabQr.id -> {
                 binding.expandableFab.isFabExpanded = false
-//                addNewQRActivityLauncher.launch(
-//                    Intent(context, BarcodeScanningActivity::class.java)
-//                )
+                addNewQRActivityLauncher.launch(
+                    Intent(context, BarcodeScanningActivity::class.java)
+                )
             }
         }
     }
@@ -133,4 +138,18 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
 
     }
+
+    private val addNewQRActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val extras = it.data?.extras
+            if (it.resultCode == Activity.RESULT_OK && extras != null) {
+                val auth = extras.getString(SCAN_RESULT)
+                if (Utils.isValidTOTPAuthURL(auth)) {
+                    tokensViewModel.otpAuthUrl = auth
+                    navController.navigate(R.id.action_home_fragment_to_token_details_fragment)
+                } else {
+                    getString(R.string.error_bad_formed_otp_url).toast(context)
+                }
+            }
+        }
 }
