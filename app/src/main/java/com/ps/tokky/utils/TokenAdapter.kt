@@ -14,8 +14,8 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import com.ps.tokky.R
 import com.ps.tokky.databinding.RvAuthCardBinding
 import com.ps.tokky.databinding.RvAuthCardHeaderBinding
-import com.ps.tokky.models.TokenEntry
-import com.ps.tokky.viewmodels.TokensViewModel
+import com.ps.tokky.data.models.TokenEntry
+import com.ps.tokky.ui.viewmodels.TokensViewModel
 import java.util.Locale
 
 class TokenAdapter(

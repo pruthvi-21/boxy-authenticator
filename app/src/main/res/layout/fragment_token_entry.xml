@@ -34,7 +34,7 @@
             android:orientation="vertical"
             android:paddingHorizontal="10dp">
 
-            <com.ps.tokky.views.ThumbnailController
+            <com.ps.tokky.ui.views.ThumbnailController
                 android:id="@+id/thumbnail_controller"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

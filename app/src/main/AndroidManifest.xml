@@ -22,7 +22,7 @@
         android:theme="@style/Theme.Tokky.Dark"
         tools:targetApi="31">
         <activity
-            android:name=".activities.AuthenticationActivity"
+            android:name=".ui.activities.AuthenticationActivity"
             android:exported="true"
             android:theme="@style/Theme.Tokky.SplashTheme">
             <intent-filter>
@@ -33,7 +33,7 @@
         </activity>
 
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name=".ui.activities.SettingsActivity"
             android:exported="false" />
         <activity
             android:name="com.ps.camerax.BarcodeScanningActivity"
@@ -45,18 +45,18 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".ui.activities.MainActivity"
             android:exported="false" />
 
         <!-- Transfer accounts -->
         <activity
-            android:name=".fragments.transfer.ExportAccountsFragment"
+            android:name=".ui.fragments.transfer.ExportAccountsFragment"
             android:exported="false" />
         <activity
-            android:name=".fragments.transfer.ImportAccountsFragment"
+            android:name=".ui.fragments.transfer.ImportAccountsFragment"
             android:exported="false" />
         <activity
-            android:name=".fragments.transfer.ImportedDuplicatesFragment"
+            android:name=".ui.fragments.transfer.ImportedDuplicatesFragment"
             android:exported="false" />
     </application>
 

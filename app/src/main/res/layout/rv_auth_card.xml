@@ -133,7 +133,7 @@
                     android:layout_gravity="center_vertical"
                     android:paddingHorizontal="15dp">
 
-                    <com.ps.tokky.views.SweepProgressBar
+                    <com.ps.tokky.ui.views.SweepProgressBar
                         android:id="@+id/progress_bar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />

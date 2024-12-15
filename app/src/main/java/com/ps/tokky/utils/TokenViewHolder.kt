@@ -5,7 +5,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ps.tokky.databinding.RvAuthCardBinding
-import com.ps.tokky.models.TokenEntry
+import com.ps.tokky.data.models.TokenEntry
 
 class TokenViewHolder(
     val context: Context,

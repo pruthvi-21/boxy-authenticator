@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ps.tokky.views.CollapsibleLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.ps.tokky.ui.views.CollapsibleLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/advanced_layout_view"
@@ -121,4 +121,4 @@
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </LinearLayout>
-</com.ps.tokky.views.CollapsibleLinearLayout>
+</com.ps.tokky.ui.views.CollapsibleLinearLayout>

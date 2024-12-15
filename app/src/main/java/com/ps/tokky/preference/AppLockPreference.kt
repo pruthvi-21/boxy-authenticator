@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.preference.SwitchPreference
 import androidx.preference.SwitchPreferenceCompat
 import com.ps.tokky.R
-import com.ps.tokky.fragments.ConfirmPinLayout
+import com.ps.tokky.ui.fragments.ConfirmPinLayout
 import com.ps.tokky.utils.AppSettings
 import com.ps.tokky.utils.CryptoUtils
 

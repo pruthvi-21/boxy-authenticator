@@ -47,7 +47,7 @@
         </FrameLayout>
     </LinearLayout>
 
-    <com.ps.tokky.views.ExpandableFab
+    <com.ps.tokky.ui.views.ExpandableFab
         android:id="@+id/expandable_fab"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

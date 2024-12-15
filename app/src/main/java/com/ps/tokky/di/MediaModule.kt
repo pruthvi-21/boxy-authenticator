@@ -1,9 +1,9 @@
 package com.ps.tokky.di
 
 import android.content.Context
-import com.ps.tokky.database.TokensDao
-import com.ps.tokky.database.TokensDatabase
-import com.ps.tokky.repositories.TokensRepository
+import com.ps.tokky.data.database.TokensDao
+import com.ps.tokky.data.database.TokensDatabase
+import com.ps.tokky.data.repositories.TokensRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

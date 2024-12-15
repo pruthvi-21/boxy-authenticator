@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.AuthenticationActivity">
+    tools:context=".ui.activities.AuthenticationActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                 android:text="@string/auth_activity_subtitle"
                 android:textColor="?android:textColorSecondary" />
 
-            <com.ps.tokky.views.PinField
+            <com.ps.tokky.ui.views.PinField
                 android:id="@+id/pin_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
         android:paddingVertical="15dp"
         android:text="@string/auth_activity_unlock_with_biometrics" />
 
-    <com.ps.tokky.views.KeypadLayout
+    <com.ps.tokky.ui.views.KeypadLayout
         android:id="@+id/keypad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

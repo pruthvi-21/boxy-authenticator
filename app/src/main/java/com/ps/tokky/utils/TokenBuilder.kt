@@ -2,16 +2,16 @@ package com.ps.tokky.utils
 
 import android.graphics.Color
 import android.net.Uri
-import com.ps.tokky.models.TokenEntry
-import com.ps.tokky.models.TokenEntry.Companion.KEY_ALGORITHM
-import com.ps.tokky.models.TokenEntry.Companion.KEY_DIGITS
-import com.ps.tokky.models.TokenEntry.Companion.KEY_ISSUER
-import com.ps.tokky.models.TokenEntry.Companion.KEY_LABEL
-import com.ps.tokky.models.TokenEntry.Companion.KEY_PERIOD
-import com.ps.tokky.models.TokenEntry.Companion.KEY_SECRET_KEY
-import com.ps.tokky.models.TokenEntry.Companion.KEY_THUMBNAIL_COLOR
-import com.ps.tokky.models.TokenEntry.Companion.KEY_THUMBNAIL_ICON
-import com.ps.tokky.models.TokenEntry.Companion.KEY_TYPE
+import com.ps.tokky.data.models.TokenEntry
+import com.ps.tokky.data.models.TokenEntry.Companion.KEY_ALGORITHM
+import com.ps.tokky.data.models.TokenEntry.Companion.KEY_DIGITS
+import com.ps.tokky.data.models.TokenEntry.Companion.KEY_ISSUER
+import com.ps.tokky.data.models.TokenEntry.Companion.KEY_LABEL
+import com.ps.tokky.data.models.TokenEntry.Companion.KEY_PERIOD
+import com.ps.tokky.data.models.TokenEntry.Companion.KEY_SECRET_KEY
+import com.ps.tokky.data.models.TokenEntry.Companion.KEY_THUMBNAIL_COLOR
+import com.ps.tokky.data.models.TokenEntry.Companion.KEY_THUMBNAIL_ICON
+import com.ps.tokky.data.models.TokenEntry.Companion.KEY_TYPE
 import com.ps.tokky.utils.Constants.DEFAULT_DIGITS
 import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_TYPE

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/home_fragment"
-        android:name="com.ps.tokky.fragments.HomeFragment"
+        android:name="com.ps.tokky.ui.fragments.HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_home_fragment_to_token_details_fragment"
@@ -26,17 +26,17 @@
 
     <fragment
         android:id="@+id/token_details_fragment"
-        android:name="com.ps.tokky.fragments.TokenEntryFragment"
+        android:name="com.ps.tokky.ui.fragments.TokenEntryFragment"
         tools:layout="@layout/fragment_token_entry" />
 
     <fragment
         android:id="@+id/export_accounts_fragment"
-        android:name="com.ps.tokky.fragments.transfer.ExportAccountsFragment"
+        android:name="com.ps.tokky.ui.fragments.transfer.ExportAccountsFragment"
         tools:layout="@layout/fragment_export_accounts" />
 
     <fragment
         android:id="@+id/import_accounts_fragment"
-        android:name="com.ps.tokky.fragments.transfer.ImportAccountsFragment"
+        android:name="com.ps.tokky.ui.fragments.transfer.ImportAccountsFragment"
         tools:layout="@layout/fragment_import_accounts">
         <argument
             android:name="filePath"
@@ -52,7 +52,7 @@
 
     <fragment
         android:id="@+id/imported_duplicates_fragment"
-        android:name="com.ps.tokky.fragments.transfer.ImportedDuplicatesFragment"
+        android:name="com.ps.tokky.ui.fragments.transfer.ImportedDuplicatesFragment"
         tools:layout="@layout/fragment_imported_duplicates">
         <argument
             android:name="failedTokensJsonArray"

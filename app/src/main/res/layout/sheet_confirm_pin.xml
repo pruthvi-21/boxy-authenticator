@@ -13,7 +13,7 @@
         android:text="@string/settings_disable_pin_bottom_sheet_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
-    <com.ps.tokky.views.PinField
+    <com.ps.tokky.ui.views.PinField
         android:id="@+id/pin_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         android:text="@string/settings_app_lock_incorrect_pin"
         android:textColor="?colorError" />
 
-    <com.ps.tokky.views.KeypadLayout
+    <com.ps.tokky.ui.views.KeypadLayout
         android:id="@+id/keypad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
