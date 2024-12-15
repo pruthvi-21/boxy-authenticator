@@ -5,7 +5,7 @@
         <item name="android:windowSplashScreenBackground" tools:targetApi="s">@color/surface_color</item>
     </style>
 
-    <style name="Theme.Tokky.Light" parent="Theme.Material3.DynamicColors.Light">
+    <style name="Theme.Tokky.Light" parent="Theme.Material3.DynamicColors.Light.NoActionBar">
         <item name="android:colorBackground">@color/light_surface_color</item>
         <item name="android:windowBackground">@color/light_surface_color</item>
         <item name="colorSurface">@color/light_surface_color</item>
@@ -13,13 +13,6 @@
         <item name="colorSurfaceVariant2">@color/light_surface_color_variant2</item>
         <item name="colorDivider">@color/light_divider_color</item>
         <item name="colorDividerVariant">@color/light_divider_color_variant</item>
-
-        <item name="android:statusBarColor">?colorSurface</item>
-        <item name="android:navigationBarColor">?colorSurface</item>
-        <item name="android:windowLightStatusBar">?isLightTheme</item>
-
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
 
         <item name="android:toolbarStyle">@style/Theme.Tokky.Toolbar</item>
         <item name="toolbarStyle">@style/Theme.Tokky.Toolbar</item>
@@ -43,7 +36,7 @@
         <item name="switchPreferenceCompatStyle">@style/Theme.Tokky.SwitchPreference</item>
     </style>
 
-    <style name="Theme.Tokky.Dark" parent="Theme.Material3.DynamicColors.Dark">
+    <style name="Theme.Tokky.Dark" parent="Theme.Material3.DynamicColors.Dark.NoActionBar">
         <item name="android:colorBackground">@color/dark_surface_color</item>
         <item name="android:windowBackground">@color/dark_surface_color</item>
         <item name="colorSurface">@color/dark_surface_color</item>
@@ -51,13 +44,6 @@
         <item name="colorSurfaceVariant2">@color/dark_surface_color_variant2</item>
         <item name="colorDivider">@color/dark_divider_color</item>
         <item name="colorDividerVariant">@color/dark_divider_color_variant</item>
-
-        <item name="android:statusBarColor">?colorSurface</item>
-        <item name="android:navigationBarColor">?colorSurface</item>
-        <item name="android:windowLightStatusBar">?isLightTheme</item>
-
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
 
         <item name="android:toolbarStyle">@style/Theme.Tokky.Toolbar</item>
         <item name="toolbarStyle">@style/Theme.Tokky.Toolbar</item>
