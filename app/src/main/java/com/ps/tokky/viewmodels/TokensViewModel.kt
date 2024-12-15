@@ -4,9 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ps.tokky.database.DBHelper
 import com.ps.tokky.models.TokenEntry
-import com.ps.tokky.utils.TokenExistsInDBException
+import com.ps.tokky.repositories.TokensRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONArray
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TokensViewModel @Inject constructor(
-    private val db: DBHelper
+    private val tokensRepository: TokensRepository
 ) : ViewModel() {
 
     sealed class UIState<out T> {
@@ -31,7 +30,8 @@ class TokensViewModel @Inject constructor(
 
     fun fetchTokens() {
         viewModelScope.launch {
-            _tokensState.value = UIState.Success(db.getAll(true))
+            val tokens = tokensRepository.getAllTokens()
+            _tokensState.value = UIState.Success(tokens)
         }
     }
 
@@ -39,38 +39,55 @@ class TokensViewModel @Inject constructor(
         token: TokenEntry,
         requestCode: String,
         onComplete: (String) -> Unit,
-        onTokenExists: (String) -> Unit,
+        onDuplicate: (String, TokenEntry) -> Unit
     ) {
         viewModelScope.launch {
-            try {
-                db.add(token)
+            val duplicateToken = findDuplicateToken(token)
+            if (duplicateToken != null) {
+                onDuplicate(requestCode, duplicateToken)
+            } else {
+                tokensRepository.insertToken(token)
                 onComplete(requestCode)
-            } catch (exception: TokenExistsInDBException) {
-                onTokenExists(requestCode)
             }
         }
     }
 
-    fun updateToken(token: TokenEntry) {
+    fun upsertToken(
+        token: TokenEntry,
+        requestCode: String,
+        onComplete: (String) -> Unit,
+        onDuplicate: (String, TokenEntry) -> Unit
+    ) {
         viewModelScope.launch {
-            db.update(token)
+            val duplicateToken = findDuplicateToken(token)
+            if (duplicateToken != null) {
+                onDuplicate(requestCode, duplicateToken)
+            } else {
+                tokensRepository.upsertToken(token)
+                onComplete(requestCode)
+            }
         }
     }
 
-    fun deleteToken(tokenId: String) {
+    fun replaceExistingToken(existingToken: TokenEntry, token: TokenEntry) {
         viewModelScope.launch {
-            db.remove(tokenId)
+            tokensRepository.deleteToken(existingToken.id)
+            tokensRepository.upsertToken(token)
         }
     }
 
-    fun findToken(tokenId: String): Boolean {
-        return db.getAll(false).find { it.id == tokenId } != null
+    private suspend fun findDuplicateToken(token: TokenEntry): TokenEntry? {
+        return tokensRepository.findDuplicateToken(token.issuer, token.label, token.id)
     }
 
-    fun getExportData(callback: (String) -> Unit) {
+    fun deleteToken(
+        tokenId: String,
+        requestCode: String,
+        onComplete: (String) -> Unit,
+    ) {
         viewModelScope.launch {
-            callback(JSONArray(db.getAll(false).map { it.toExportJson() }).toString())
+            tokensRepository.deleteToken(tokenId)
+            onComplete(requestCode)
         }
     }
-
 }

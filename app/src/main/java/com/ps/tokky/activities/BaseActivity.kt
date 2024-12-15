@@ -7,11 +7,9 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.ps.tokky.R
-import com.ps.tokky.database.DBHelper
 import com.ps.tokky.utils.AppSettings
 
 open class BaseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
-    protected val db by lazy { DBHelper.getInstance(this) }
     private var currentlyAppliedTheme = ThemeMode.DARK
 
     override fun onCreate(savedInstanceState: Bundle?) {

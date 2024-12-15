@@ -35,6 +35,8 @@ import com.ps.tokky.utils.BadlyFormedURLException
 import com.ps.tokky.utils.Constants
 import com.ps.tokky.utils.EmptyURLContentException
 import com.ps.tokky.utils.InvalidSecretKeyException
+import com.ps.tokky.utils.OTPType
+import com.ps.tokky.utils.TokenBuilder
 import com.ps.tokky.utils.cleanSecretKey
 import com.ps.tokky.utils.hideKeyboard
 import com.ps.tokky.utils.showKeyboard
@@ -95,7 +97,7 @@ class TokenEntryFragment : BaseFragment() {
         if (editMode) {
             try {
                 val token = if (tokensViewModel.otpAuthUrl != null) {
-                    TokenEntry.BuildFromUrl(tokensViewModel.otpAuthUrl).build()
+                    TokenBuilder.buildFromUrl(tokensViewModel.otpAuthUrl)
                 } else tokensViewModel.tokenToEdit
 
                 token?.let {
@@ -107,7 +109,7 @@ class TokenEntryFragment : BaseFragment() {
                     thumbnailController.setInitials(it.issuer)
                     if (tokensViewModel.otpAuthUrl == null) {
                         thumbnailController.setThumbnailColor(it.thumbnailColor)
-                        if (it.thumbnailIcon.isEmpty()) {
+                        if (it.thumbnailIcon?.isEmpty() == true) {
                             thumbnailController.thumbnailIcon = null
                         } else thumbnailController.thumbnailIcon = it.thumbnailIcon
                     }
@@ -131,7 +133,7 @@ class TokenEntryFragment : BaseFragment() {
                             thumbnailIcon = thumbnailController.thumbnailIcon ?: ""
                         )
 
-                        updateEntryInDB(it)
+                        upsertTokenInDB(it)
                     }
                 }
 
@@ -193,19 +195,20 @@ class TokenEntryFragment : BaseFragment() {
                 val algo =
                     binding.root.findViewById<Button>(algorithmToggleGroup.checkedButtonId).text.toString()
 
-                val token = TokenEntry.Builder()
-                    .setIssuer(issuer)
-                    .setLabel(label)
-                    .setSecretKey(secretKey)
-                    .setAlgorithm(algo)
-                    .setPeriod(period)
-                    .setDigits(digits)
-                    .setAddedFrom(AccountEntryMethod.FORM)
-                    .setThumbnailColor(thumbnailController.selectedColor)
-                    .setThumbnailIcon(thumbnailController.thumbnailIcon ?: "")
-                    .build()
+                val token = TokenBuilder.buildNewToken(
+                    issuer = issuer,
+                    label = label,
+                    secretKey = secretKey,
+                    thumbnailColor = thumbnailController.selectedColor,
+                    thumbnailIcon = thumbnailController.thumbnailIcon ?: "",
+                    type = OTPType.TOTP,
+                    algorithm = algo,
+                    digits = digits,
+                    period = period,
+                    addedFrom = AccountEntryMethod.FORM
+                )
 
-                addEntryInDB(token)
+                upsertTokenInDB(token)
             } catch (exception: InvalidSecretKeyException) {
                 Log.e(TAG, "onSaveDetails: Invalid Secret Key format")
                 Toast.makeText(context, R.string.error_invalid_chars, Toast.LENGTH_SHORT).show()
@@ -213,16 +216,8 @@ class TokenEntryFragment : BaseFragment() {
         }
     }
 
-    private fun updateEntryInDB(token: TokenEntry) {
-        addEntryInDB(token, token.id)
-    }
-
-    private fun addEntryInDB(token: TokenEntry, oldId: String? = null) {
-        if (oldId != null) {
-            val isPresent = tokensViewModel.findToken(oldId)
-            if (isPresent && tokensViewModel.otpAuthUrl == null) tokensViewModel.deleteToken(oldId)
-        }
-        tokensViewModel.addToken(
+    private fun upsertTokenInDB(token: TokenEntry) {
+        tokensViewModel.upsertToken(
             token = token,
             requestCode = currentCode,
             onComplete = { responseCode ->
@@ -232,7 +227,7 @@ class TokenEntryFragment : BaseFragment() {
                     navController.popBackStack()
                 }
             },
-            onTokenExists = { responseCode ->
+            onDuplicate = { responseCode, existingToken ->
                 if (currentCode == responseCode &&
                     navController.currentDestination?.id == R.id.token_details_fragment
                 ) {
@@ -240,7 +235,7 @@ class TokenEntryFragment : BaseFragment() {
                         .setTitle("Account already exists")
                         .setMessage("You already have a account from '${token.issuer}'")
                         .setPositiveButton("Replace") { _, _ ->
-                            tokensViewModel.updateToken(token)
+                            tokensViewModel.replaceExistingToken(existingToken = existingToken, token = token)
                         }
                         .setNegativeButton("Rename") { _, _ ->
                             saveButton.isEnabled = false
@@ -299,8 +294,9 @@ class TokenEntryFragment : BaseFragment() {
             .setCustomTitle(titleViewBinding.root)
             .setMessage(R.string.dialog_message_delete_token)
             .setPositiveButton(R.string.dialog_remove) { _, _ ->
-                tokensViewModel.deleteToken(entry.id)
-                navController.popBackStack()
+                tokensViewModel.deleteToken(entry.id, currentCode) {
+                    navController.popBackStack()
+                }
             }
             .setNegativeButton(R.string.dialog_cancel, null)
             .create()

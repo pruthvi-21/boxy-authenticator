@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import androidx.preference.Preference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ps.tokky.R
-import com.ps.tokky.database.DBHelper
 import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 
 class DeleteTokensPreference @JvmOverloads constructor(
@@ -22,7 +21,6 @@ class DeleteTokensPreference @JvmOverloads constructor(
                 .setCustomTitle(titleViewBinding.root)
                 .setMessage(R.string.dialog_message_kill)
                 .setPositiveButton(R.string.dialog_kill_positive_btn) { _, _ ->
-                    DBHelper.getInstance(context).kill()
                 }
                 .setNegativeButton(R.string.dialog_cancel, null)
                 .show()

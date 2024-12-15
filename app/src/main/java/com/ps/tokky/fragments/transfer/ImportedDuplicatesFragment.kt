@@ -16,6 +16,7 @@ import com.ps.tokky.databinding.ItemTransferListImportFailedBinding
 import com.ps.tokky.fragments.BaseFragment
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.TextWatcherAdapter
+import com.ps.tokky.utils.TokenBuilder
 import com.ps.tokky.utils.toast
 import org.json.JSONArray
 
@@ -35,7 +36,7 @@ class ImportedDuplicatesFragment : BaseFragment() {
         val jsonArray = JSONArray(list)
         for (i in 0 until jsonArray.length()) {
             val obj = jsonArray.getJSONObject(i)
-            importList.add(TokenEntry.BuildFromExportJson(requireContext(), obj).build())
+            importList.add(TokenBuilder.buildFromExportJson(obj))
         }
 
         binding.rv.adapter = ImportFailedListAdapter()
@@ -106,18 +107,23 @@ class ImportedDuplicatesFragment : BaseFragment() {
 
                 item.updateInfo(newIssuer, newLabel)
 
+                val requestCode = (Math.random() * 1000).toString()
                 tokensViewModel.addToken(
                     item,
-                    "",
-                    onComplete = {
-                        importList.remove(item)
-                        notifyItemRemoved(holder.adapterPosition)
-                        notifyItemRangeChanged(holder.adapterPosition, importList.size)
-                        dialog.dismiss()
+                    requestCode,
+                    onComplete = { code ->
+                        if (code == requestCode) {
+                            importList.remove(item)
+                            notifyItemRemoved(holder.adapterPosition)
+                            notifyItemRangeChanged(holder.adapterPosition, importList.size)
+                            dialog.dismiss()
+                        }
                     },
-                    onTokenExists = {
-                        updateView.errorHolder.visibility = View.VISIBLE
-                        updateView.errorHolder.setText(R.string.import_failed_dialog_existing_token)
+                    onDuplicate = { code, _ ->
+                        if (code == requestCode) {
+                            updateView.errorHolder.visibility = View.VISIBLE
+                            updateView.errorHolder.setText(R.string.import_failed_dialog_existing_token)
+                        }
                     }
                 )
                 if (importList.isEmpty()) navController.popBackStack()

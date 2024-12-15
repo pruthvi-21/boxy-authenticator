@@ -4,10 +4,12 @@ import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -20,8 +22,10 @@ import com.ps.tokky.fragments.BaseFragment
 import com.ps.tokky.models.TokenEntry
 import com.ps.tokky.utils.FileHelper
 import com.ps.tokky.utils.TextWatcherAdapter
+import com.ps.tokky.utils.TokenBuilder
 import com.ps.tokky.utils.isJsonArray
 import com.ps.tokky.utils.toast
+import com.ps.tokky.viewmodels.TransferAccountsViewModel
 import org.json.JSONArray
 
 class ImportAccountsFragment : BaseFragment() {
@@ -30,7 +34,7 @@ class ImportAccountsFragment : BaseFragment() {
     private lateinit var binding: FragmentImportAccountsBinding
     private val importList = ArrayList<ImportItem>()
 
-    private val failedList = ArrayList<TokenEntry>()
+    private val transferAccountsViewModel: TransferAccountsViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentImportAccountsBinding.inflate(layoutInflater, container, false)
@@ -39,6 +43,33 @@ class ImportAccountsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupPasswordDialog()
+
+        transferAccountsViewModel.importAccountsState.observe(viewLifecycleOwner) { uiState ->
+            when (uiState) {
+                is TransferAccountsViewModel.UIState.Loading -> {}
+                is TransferAccountsViewModel.UIState.Success -> {
+
+                    val importedLength = uiState.insertedAccounts.size
+                    getString(
+                        if (importedLength > 1) R.string.import_success_msg_plural
+                        else R.string.import_success_msg_singular,
+                        "$importedLength"
+                    ).toast(requireContext())
+
+                    if (uiState.duplicateAccounts.isNotEmpty()) {
+                        val failedJsonArray = JSONArray()
+                        uiState.duplicateAccounts.forEach { failedJsonArray.put(it.toExportJson()) }
+                        navController.navigate(
+                            ImportAccountsFragmentDirections.actionImportAccountsToImportedDuplicates(
+                                failedJsonArray.toString()
+                            )
+                        )
+                    } else {
+                        navController.popBackStack()
+                    }
+                }
+            }
+        }
     }
 
     private fun updateItem(item: ImportItem, isChecked: Boolean) {
@@ -68,7 +99,7 @@ class ImportAccountsFragment : BaseFragment() {
                 importList.clear()
                 for (i in 0 until importJsonArray.length()) {
                     val jsonObj = importJsonArray.getJSONObject(i)
-                    val token = TokenEntry.BuildFromExportJson(requireContext(), jsonObj).build()
+                    val token = TokenBuilder.buildFromExportJson(jsonObj)
 
                     importList.add(ImportItem(token, true))
                 }
@@ -77,33 +108,9 @@ class ImportAccountsFragment : BaseFragment() {
                 binding.rv.adapter = adapter
 
                 binding.btnImport.setOnClickListener {
-                    val checkedList = importList.filter { it.checked }
-                    checkedList.forEach {
-                        val token = it.token
-                        tokensViewModel.addToken(token,
-                            (Math.random() * 1000).toString(),
-                            onComplete = {},
-                            onTokenExists = {
-                                failedList.add(token)
-                            })
-                    }
-
-                    val importedLength = checkedList.size - failedList.size
-                    getString(
-                        if (importedLength > 1) R.string.import_success_msg_plural
-                        else R.string.import_success_msg_singular,
-                        "$importedLength"
-                    ).toast(requireContext())
-
-                    if (failedList.isNotEmpty()) {
-                        val failedJsonArray = JSONArray()
-                        failedList.forEach { failedJsonArray.put(it.toExportJson()) }
-                        navController.navigate(
-                            ImportAccountsFragmentDirections.actionImportAccountsToImportedDuplicates(
-                                failedJsonArray.toString()
-                            )
-                        )
-                    }
+                    val checkedAccounts = importList.filter { it.checked }.map { it.token }
+                    Log.e(TAG, "checkedAccounts: ${checkedAccounts.size}")
+                    transferAccountsViewModel.importAccounts(checkedAccounts)
                 }
             }
             .setNegativeButton(R.string.import_password_dialog_negative_btn) { _, _ -> navController.popBackStack() }

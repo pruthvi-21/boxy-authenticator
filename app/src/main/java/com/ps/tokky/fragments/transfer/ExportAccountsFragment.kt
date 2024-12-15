@@ -11,16 +11,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.activityViewModels
 import com.ps.tokky.R
 import com.ps.tokky.databinding.FragmentExportAccountsBinding
 import com.ps.tokky.fragments.BaseFragment
 import com.ps.tokky.utils.Constants
 import com.ps.tokky.utils.Constants.BACKUP_FILE_MIME_TYPE
 import com.ps.tokky.utils.FileHelper
+import com.ps.tokky.viewmodels.TransferAccountsViewModel
 
 class ExportAccountsFragment : BaseFragment() {
 
     private lateinit var binding: FragmentExportAccountsBinding
+    private val transferAccountsViewModel: TransferAccountsViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentExportAccountsBinding.inflate(layoutInflater, container, false)
@@ -68,7 +71,7 @@ class ExportAccountsFragment : BaseFragment() {
             if (result.resultCode == Activity.RESULT_OK && intent != null) {
                 if (intent.data == null) return@registerForActivityResult
 
-                tokensViewModel.getExportData { exportData ->
+                transferAccountsViewModel.getExportData { exportData ->
                     FileHelper.writeToFile(
                         context = requireContext(),
                         uri = intent.data!!,

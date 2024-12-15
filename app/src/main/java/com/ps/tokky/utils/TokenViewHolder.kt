@@ -63,14 +63,14 @@ class TokenViewHolder(
 
     private fun setThumbnail() {
         entry ?: return
-        if (entry!!.thumbnailIcon.isEmpty()) {
+        if (entry!!.thumbnailIcon?.isEmpty() == true) {
             binding.thumbnailFrame.isVisible = true
             binding.initialsView.isVisible = true
             binding.thumbnail.setBackgroundColor(entry!!.thumbnailColor)
             binding.thumbnail.setImageBitmap(null)
             binding.initialsView.text = entry!!.issuer.getInitials()
         } else {
-            val fileName = entry!!.thumbnailIcon
+            val fileName = entry!!.thumbnailIcon ?: ""
             val logoBitmap = Utils.getThumbnailFromAssets(context.assets, fileName)
             Glide.with(context).load(logoBitmap).into(binding.thumbnail)
             binding.initialsView.isVisible = false

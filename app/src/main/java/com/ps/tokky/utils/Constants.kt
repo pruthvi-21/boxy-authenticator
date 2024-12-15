@@ -4,15 +4,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-enum class AccountEntryMethod(val value: String) {
-    FORM("form"),
-    QR_CODE("qr"),
-    RESTORED("restored")
+enum class AccountEntryMethod {
+    FORM, QR_CODE, RESTORED,
 }
 
-enum class OTPType(val value: String) {
-    TOTP("totp"),
-    HOTP("hotp")
+enum class OTPType {
+    TOTP, HOTP,
 }
 
 object Constants {
@@ -36,6 +33,4 @@ object Constants {
         }
 
     const val BACKUP_FILE_MIME_TYPE = "text/plain"
-
-    const val DELETE_SUCCESS_RESULT_CODE = 120
 }
