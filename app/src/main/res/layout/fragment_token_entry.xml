@@ -14,7 +14,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize"
-            android:layout_marginTop="@dimen/toolbar_top_margin"
+            android:layout_marginTop="@dimen/toolbar_margin_top"
             app:navigationIcon="@drawable/ic_samsung_arrow_left"
             app:title="@string/title_enter_account_details" />
     </com.google.android.material.appbar.AppBarLayout>

@@ -1,31 +1,43 @@
 package com.ps.tokky.ui.activities
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.ps.tokky.databinding.ActivityMainBinding
+import androidx.activity.viewModels
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.ps.tokky.ui.screens.HomeScreen
+import com.ps.tokky.ui.theme.TokkyTheme
+import com.ps.tokky.ui.viewmodels.TokensViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity() {
+class MainActivity : ComponentActivity() {
 
-    private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private val tokensViewModel: TokensViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         window.isNavigationBarContrastEnforced = false
-        setContentView(binding.root)
+        setContent {
+            TokkyTheme {
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
-            val insets =
-                windowInsets.getInsets(
-                    WindowInsetsCompat.Type.systemBars() or
-                            WindowInsetsCompat.Type.displayCutout()
-                )
-            view.setPadding(insets.left, insets.top, insets.right, insets.bottom)
-            WindowInsetsCompat.CONSUMED
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = "home",
+                ) {
+                    composable("home") {
+                        HomeScreen(
+                            tokensViewModel = tokensViewModel,
+                            navController = navController,
+                        )
+                    }
+                }
+            }
         }
     }
 

@@ -1,0 +1,361 @@
+package com.ps.tokky.ui.components
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import com.ps.tokky.R
+import com.ps.tokky.data.models.TokenEntry
+import com.ps.tokky.utils.Utils
+import com.ps.tokky.utils.formatOTP
+import com.ps.tokky.utils.getInitials
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
+
+private const val SLIDE_DURATION = 150
+private val INDICATOR_SIZE = 25.dp
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TokensList(accounts: List<TokenEntry>) {
+    val groupedAccounts = accounts
+        .sortedBy { it.name }
+        .groupBy { it.name.first().uppercaseChar() }
+    val radius = dimensionResource(R.dimen.radius_large)
+
+    LazyColumn {
+        groupedAccounts.forEach { (letter, tokens) ->
+            stickyHeader {
+                Text(
+                    text = letter.toString(),
+                    modifier = Modifier.padding(vertical = 3.dp, horizontal = 37.5.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+            }
+            itemsIndexed(tokens) { index, token ->
+                val shape = when {
+                    tokens.size == 1 -> RoundedCornerShape(radius)
+                    index == 0 -> RoundedCornerShape(topStart = radius, topEnd = radius)
+                    index == tokens.lastIndex -> RoundedCornerShape(
+                        bottomStart = radius,
+                        bottomEnd = radius
+                    )
+
+                    else -> RoundedCornerShape(0.dp)
+                }
+                TokenCard(
+                    token = token,
+                    onEditClick = { },
+                    shape = shape
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TokenCard(
+    token: TokenEntry,
+    onEditClick: () -> Unit,
+    shape: Shape
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .clickable {
+                isExpanded = !isExpanded
+            }
+            .padding(horizontal = 24.dp, vertical = 15.dp)
+
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TokenThumbnail(
+                thumbnailIcon = token.thumbnailIcon,
+                thumbnailColor = Color(token.thumbnailColor),
+                text = token.issuer.getInitials(),
+            )
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            LabelsView(
+                issuer = token.issuer,
+                label = token.label,
+                modifier = Modifier.weight(1f)
+            )
+            Arrow(
+                isExpanded = isExpanded,
+                onEditClick = onEditClick
+            )
+        }
+
+        val (otpValue, setOtpValue) = remember { mutableIntStateOf(token.otp) }
+        val (remainingTime, setRemainingTime) = remember { mutableLongStateOf(token.timeRemaining) }
+        val (progressValue, setProgressValue) = remember { mutableFloatStateOf(token.timeRemaining.toFloat() / token.period) }
+
+        LaunchedEffect(Unit) {
+            while (true) {
+                setOtpValue(token.otp)
+                setRemainingTime(token.timeRemaining)
+                setProgressValue(token.timeRemaining.toFloat() / token.period)
+                delay(1.seconds)
+            }
+        }
+
+        AnimatedVisibility(
+            visible = isExpanded,
+            enter = expandVertically(
+                animationSpec = tween(SLIDE_DURATION)
+            ),
+            exit = shrinkVertically(
+                animationSpec = tween(SLIDE_DURATION)
+            )
+        ) {
+            OTPFieldView(
+                token,
+                otpValue,
+                remainingTime,
+                progressValue
+            )
+        }
+    }
+
+    HorizontalDivider(
+        modifier = Modifier
+            .padding(start = 90.dp, end = 24.dp)
+            .height(1.dp),
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+    )
+}
+
+@Composable
+fun OTPFieldView(
+    token: TokenEntry,
+    otpValue: Int,
+    remainingTime: Long,
+    progressValue: Float
+) {
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(
+                    width = dimensionResource(id = R.dimen.card_thumbnail_width),
+                    height = dimensionResource(id = R.dimen.card_thumbnail_height)
+                )
+        ) {
+//            Text(
+//                text = "$remainingTime",
+//                modifier = Modifier.align(Alignment.Center)
+//            )
+            CircularProgressIndicator(
+                progress = { 1f - progressValue },
+                strokeWidth = INDICATOR_SIZE / 2,
+                strokeCap = StrokeCap.Butt,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                trackColor = if (progressValue <= 0.3f) MaterialTheme.colorScheme.error
+                else MaterialTheme.colorScheme.primary,
+                gapSize = 0.dp,
+                modifier = Modifier
+                    .size(INDICATOR_SIZE)
+                    .align(Alignment.Center)
+            )
+        }
+
+        Text(
+            text = otpValue.formatOTP(token.digits),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontFamily = FontFamily.Monospace,
+                fontSize = 34.sp
+            ),
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(horizontal = 15.dp)
+        )
+    }
+}
+
+@Composable
+fun Arrow(
+    onEditClick: () -> Unit,
+    isExpanded: Boolean
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .height(40.dp)
+            .alpha(.5f)
+    ) {
+        val animationProgress by animateFloatAsState(
+            targetValue = if (isExpanded) 1f else 0f,
+            animationSpec = tween(SLIDE_DURATION),
+            label = "ExpandCollapseAnimation"
+        )
+
+        if (isExpanded) {
+            IconButton(
+                onClick = onEditClick,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1f / 1)
+                    .alpha(animationProgress)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_edit),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(Modifier.width(10.dp))
+        }
+
+        Icon(
+            painter = painterResource(id = R.drawable.ic_card_arrow),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .fillMaxHeight()
+                .graphicsLayer(rotationZ = animationProgress * 180f)
+        )
+    }
+}
+
+@Composable
+private fun TokenThumbnail(
+    thumbnailIcon: String? = null,
+    thumbnailColor: Color,
+    text: String = ""
+) {
+    val context = LocalContext.current
+    val fileName = thumbnailIcon ?: ""
+
+    val logoBitmap = remember(fileName) {
+        Utils.getThumbnailFromAssets(context.assets, fileName)
+    }
+
+    Box(
+        modifier = Modifier
+            .size(
+                width = dimensionResource(id = R.dimen.card_thumbnail_width),
+                height = dimensionResource(id = R.dimen.card_thumbnail_height)
+            )
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.radius_tiny)))
+            .background(thumbnailColor)
+    ) {
+        if (logoBitmap != null) {
+            Image(
+                bitmap = logoBitmap.asImageBitmap(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = Color.White,
+                    letterSpacing = 0.07.em,
+                    fontSize = 17.sp
+                ),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+}
+
+@Composable
+fun LabelsView(
+    issuer: String,
+    label: String,
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(horizontal = 12.dp)
+    ) {
+        Text(
+            text = issuer,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        if (label.isNotEmpty()) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleSmall.copy(
+                    color = Color(0xFFA6A6A6),
+                    fontSize = 13.5.sp
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}

@@ -2,27 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_nav_graph"
-    app:startDestination="@id/home_fragment">
-
-    <fragment
-        android:id="@+id/home_fragment"
-        android:name="com.ps.tokky.ui.fragments.HomeFragment"
-        tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_home_fragment_to_token_details_fragment"
-            app:destination="@id/token_details_fragment" />
-        <action
-            android:id="@+id/action_home_to_export_accounts"
-            app:destination="@id/export_accounts_fragment" />
-        <action
-            android:id="@+id/action_home_to_import_accounts"
-            app:destination="@id/import_accounts_fragment">
-            <argument
-                android:name="filePath"
-                app:argType="string" />
-        </action>
-    </fragment>
+    android:id="@+id/root_nav_graph">
 
     <fragment
         android:id="@+id/token_details_fragment"

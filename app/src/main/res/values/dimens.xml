@@ -17,7 +17,7 @@
     <dimen name="card_thumbnail_height">37.5dp</dimen>
     <dimen name="rv_item_margin">10dp</dimen>
     <dimen name="collapsing_toolbar_expanded_frame_margin_bottom">20dp</dimen>
-    <dimen name="toolbar_margin_top">12dp</dimen>
+    <dimen name="toolbar_margin_top">10dp</dimen>
     <dimen name="item_radius">@dimen/radius_small</dimen>
 
     <dimen name="lockscreen_pin_dot_radius">8dp</dimen>
@@ -27,5 +27,4 @@
     <dimen name="thumbnail_preview_width">100dp</dimen>
     <dimen name="thumbnail_preview_height">68.1818dp</dimen>
     <dimen name="radius_preference">@dimen/radius_small</dimen>
-    <dimen name="toolbar_top_margin">10dp</dimen>
 </resources>
