@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
@@ -13,16 +14,16 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ps.tokky.R
 import com.ps.tokky.databinding.ActivityAuthenticationBinding
+import com.ps.tokky.ui.views.KeypadLayout
 import com.ps.tokky.utils.AppSettings
 import com.ps.tokky.utils.CryptoUtils
-import com.ps.tokky.ui.views.KeypadLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AuthenticationActivity : BaseActivity(), KeypadLayout.OnKeypadKeyClickListener {
+class AuthenticationActivity : AppCompatActivity(), KeypadLayout.OnKeypadKeyClickListener {
 
     private val binding by lazy { ActivityAuthenticationBinding.inflate(layoutInflater) }
 

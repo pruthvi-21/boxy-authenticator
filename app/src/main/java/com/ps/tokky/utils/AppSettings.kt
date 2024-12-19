@@ -64,21 +64,6 @@ object AppSettings {
             .apply()
     }
 
-    fun getAppTheme(context: Context): String {
-        val default = context.getString(R.string.default_app_theme_value)
-        return getPreferences(context)
-            .getString(context.getString(R.string.key_app_theme), default)
-            ?: default
-    }
-
-    fun getUseBlacksEnabled(context: Context): Boolean {
-        return getPreferences(context)
-            .getBoolean(
-                context.getString(R.string.key_use_black_theme),
-                context.resources.getBoolean(R.bool.default_use_black_theme_value)
-            )
-    }
-
     fun getPreferences(context: Context): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context)
     }

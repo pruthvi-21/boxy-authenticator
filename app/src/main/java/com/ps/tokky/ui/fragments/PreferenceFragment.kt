@@ -22,9 +22,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     private val biometricUnlockPreference: BiometricUnlockPreference? by lazy {
         findPreference(getString(R.string.key_biometric_unlock))
     }
-    private val useBlackThemePreference: SwitchPreferenceCompat? by lazy {
-        findPreference(getString(R.string.key_use_black_theme))
-    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
@@ -37,11 +34,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             biometricUnlockPreference?.isChecked = false
         }
         biometricUnlockPreference?.isEnabled = areBiometricsAvailable
-
-        useBlackThemePreference?.setOnPreferenceChangeListener { _, _ ->
-            Handler(Looper.getMainLooper()).postDelayed({ activity?.recreate() }, 300)
-            true
-        }
 
         if (BuildConfig.DEBUG) {
             addDeleteAllPreference()
