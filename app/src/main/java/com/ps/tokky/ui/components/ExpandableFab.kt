@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
@@ -168,19 +169,23 @@ private fun FabItem(
     icon: Painter,
     onClick: () -> Unit
 ) {
+    val background = MaterialTheme.colorScheme.surfaceContainer
+    val onBackground = MaterialTheme.colorScheme.onSurface
+
     Row(
         modifier = Modifier
             .padding(bottom = 16.dp)
             .clip(RoundedCornerShape(dimensionResource(R.dimen.radius_tiny)))
             .clickable(onClick = onClick)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(background)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = text,
             fontWeight = FontWeight.Bold,
-            fontSize = 15.sp
+            fontSize = 15.sp,
+            color = onBackground,
         )
 
         Spacer(modifier = Modifier.width(15.dp))
@@ -189,6 +194,7 @@ private fun FabItem(
             painter = icon,
             contentDescription = null,
             contentScale = ContentScale.Fit,
+            colorFilter = ColorFilter.tint(onBackground),
             modifier = Modifier
                 .size(24.dp)
         )
