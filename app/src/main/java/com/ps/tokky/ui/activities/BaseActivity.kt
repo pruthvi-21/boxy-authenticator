@@ -38,7 +38,6 @@ open class BaseActivity : AppCompatActivity(), SharedPreferences.OnSharedPrefere
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
             getString(R.string.key_allow_screenshots) -> setScreenshotMode(AppSettings.isScreenshotModeEnabled(this))
-            getString(R.string.key_use_monospace_font) -> if (this is MainActivity) recreate()
             getString(R.string.key_app_theme) -> recreate()
         }
     }

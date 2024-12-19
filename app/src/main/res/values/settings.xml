@@ -6,14 +6,12 @@
     <string name="key_allow_screenshots" translatable="false">key_allow_screenshots</string>
     <string name="key_app_theme" translatable="false">key_app_theme</string>
     <string name="key_use_black_theme">key_use_black_theme</string>
-    <string name="key_use_monospace_font">key_use_monospace_font</string>
 
     <string name="pref_title_app_lock">Enable app lock</string>
     <string name="pref_title_biometrics">Use biometrics</string>
     <string name="pref_title_screenshots">Allow screenshots</string>
     <string name="pref_title_app_theme">App theme</string>
     <string name="pref_title_use_black_theme">Use black theme</string>
-    <string name="pref_title_use_monospace_font">Use Monospace font</string>
     <string name="pref_title_import_accounts">Import Accounts</string>
     <string name="pref_title_export_accounts">Export Accounts</string>
     <string name="pref_title_kill">Delete all Accounts</string>
@@ -24,7 +22,6 @@
     <string name="pref_summary_biometrics">You can unlock with your biometrics instead of typing PIN</string>
     <string name="pref_summary_screenshots">This will allow you to take screenshots in this app</string>
     <string name="pref_summary_use_black_theme">Background will change to black in dark mode</string>
-    <string name="pref_summary_use_monospace_font">Apply monospace font to the OTP for better visibility</string>
 
     <!-- Default preference values -->
     <bool name="default_app_lock_value" translatable="false">false</bool>
@@ -32,7 +29,6 @@
     <bool name="default_allow_screenshots_value" translatable="false">false</bool>
     <string name="default_app_theme_value" translatable="false">@string/app_theme_follow_system_value</string>
     <bool name="default_use_black_theme_value" translatable="false">false</bool>
-    <bool name="default_use_monospace_font_value" translatable="false">true</bool>
 
     <!-- App theme -->
     <string name="app_theme_light_title">Light</string>
