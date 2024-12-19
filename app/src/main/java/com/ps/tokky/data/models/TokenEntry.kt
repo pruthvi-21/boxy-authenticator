@@ -9,6 +9,7 @@ import com.ps.tokky.utils.Constants.DEFAULT_DIGITS
 import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_TYPE
 import com.ps.tokky.utils.Constants.DEFAULT_PERIOD
+import com.ps.tokky.utils.HashAlgorithm
 import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.TokenCalculator
 import org.json.JSONObject
@@ -25,7 +26,7 @@ data class TokenEntry(
     var thumbnailColor: Int,
     var thumbnailIcon: String? = null,
     val type: OTPType,
-    val algorithm: String,
+    val algorithm: HashAlgorithm,
     val digits: Int,
     val period: Int,
     val createdOn: Date,
@@ -51,7 +52,7 @@ data class TokenEntry(
 
         if (count > lastUpdatedCounter) {
             currentOTP =
-                TokenCalculator.TOTP_RFC6238(secretKeyDecoded, period, digits, algorithm, 0)
+                TokenCalculator.TOTP_RFC6238(secretKeyDecoded, period, digits, algorithm.name, 0)
             lastUpdatedCounter = count
             return true
         }

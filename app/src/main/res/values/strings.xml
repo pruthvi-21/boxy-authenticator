@@ -2,45 +2,18 @@
     <string name="app_name">Tokky</string>
     <string name="empty_layout_text">No tokens available\nAdd a token by clicking <b>\'+\'</b> at the bottom</string>
     <string name="cd_fab_add_new">add</string>
-    <string name="cd_refresh">refresh</string>
-    <string name="cd_delete">Delete</string>
-    <string name="cd_settings">settings</string>
     <string name="expandable_fab_qr_title">Scan a QR Code</string>
     <string name="expandable_fab_manual_title">Enter Manually</string>
     <string name="error_bad_formed_otp_url">Badly formed URL. Please try to enter manually</string>
+    <string name="warning">Warning</string>
+    <string name="replace">Replace</string>
+    <string name="rename">Rename</string>
+    <string name="remove">Remove</string>
+    <string name="go_back">Go back</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="remove_account">Remove account</string>
 
-    <!-- EnterKeyDetailsActivity -->
-    <string name="algorithm_sha1" translatable="false">SHA1</string>
-    <string name="algorithm_sha256" translatable="false">SHA256</string>
-    <string name="algorithm_sha512" translatable="false">SHA512</string>
-    <string name="digits_4" translatable="false">4</string>
-    <string name="digits_6" translatable="false">6</string>
-    <string name="digits_8" translatable="false">8</string>
-    <string name="title_enter_account_details">Enter account details</string>
-    <string name="label_btn_add_account">Add account</string>
-    <string name="label_btn_update_account">Update</string>
-    <string name="label_btn_delete_account">Delete</string>
-    <string name="label_issuer">Issuer</string>
-    <string name="label_label">Label</string>
-    <string name="label_secret_key">Secret Key</string>
-    <string name="label_digits">Digits</string>
-    <string name="label_period">Period</string>
-    <string name="hint_issuer">Name of issuer</string>
-    <string name="hint_label">Email or username</string>
-    <string name="hint_secret_key">Secret key</string>
-    <string name="hint_period">Period (default - 30)</string>
-    <string name="hint_digits">Digits (default - 6)</string>
-    <string name="label_algorithm">Algorithm</string>
-    <string name="label_advanced_options">Advanced options</string>
-    <string name="enter_details_activity_dialog_back_title">Warning</string>
-    <string name="enter_details_activity_dialog_back_message">Going back will clear all the fields. Are you sure to go back?</string>
-    <string name="dialog_go_back">Go back</string>
-    <string name="dialog_cancel">Cancel</string>
-
-    <string name="error_db_entry_failed">Failed to add, please try after sometime</string>
-    <string name="error_db_delete_failed">Failed to remove</string>
-    <string name="error_invalid_chars">Invalid characters entered in secret key</string>
-    <string name="error_saving_details">Unable to save</string>
     <string name="toast_copied_to_clipboard">Copied to clipboard</string>
     <string name="label_clipboard_content">OTP Token</string>
     <string name="auth_activity_biometric_unlock_prompt_title">Unlock to use Tokky</string>
@@ -50,9 +23,7 @@
     <string name="disable_app_lock_prompt">Disable biometric unlock</string>
     <string name="app_lock_prompt_negative_text">Cancel</string>
 
-    <string name="dialog_title_delete_token">Remove</string>
     <string name="dialog_message_delete_token">Before removing please ensure that you turn off 2FA for this account.\n\nAlso, please ensure that you have alternative mechanism for generating codes.</string>
-    <string name="dialog_remove">Remove account</string>
 
     <string name="dialog_title_kill">Delete all accounts</string>
     <string name="dialog_message_kill">This will remove all the accounts and you cannot generate TOTP codes.\n\nWe recommend you to take a backup of accounts before deleting.</string>
@@ -99,4 +70,32 @@
     <string name="import_failed_dialog_existing_token">Account already exists. Please enter a different name</string>
     <string name="import_failed_edit_dialog_title">Edit account details</string>
     <string name="import_failed_edit_dialog_positive_btn">Save &amp; Add</string>
+
+    <!-- TokenSetupScreen -->
+    <string name="title_enter_account_details">Enter account details</string>
+    <string name="title_update_account_details">Update account details</string>
+    <string name="label_issuer">Issuer</string>
+    <string name="label_label">Label</string>
+    <string name="label_secret_key">Secret Key</string>
+    <string name="label_digits">Digits</string>
+    <string name="label_period">Period</string>
+    <string name="label_algorithm">Algorithm</string>
+    <string name="hint_issuer">Name of issuer</string>
+    <string name="hint_label">Email or username</string>
+    <string name="hint_secret_key">Secret key</string>
+    <string name="hint_period">Period (default - 30)</string>
+    <string name="hint_digits">Digits (default - 6)</string>
+    <string name="error_issuer_empty">Issuer cannot be empty</string>
+    <string name="error_secret_key_empty">Secret Key cannot be empty</string>
+    <string name="error_secret_key_invalid">Invalid Secret Key format</string>
+    <string name="error_period_empty">Period cannot be empty</string>
+    <string name="error_period_invalid">Period must be a positive number >0</string>
+    <string name="error_digits_empty">Digits cannot be empty</string>
+    <string name="error_digits_invalid">Digits must be a positive number between 1 to 10</string>
+    <string name="label_advanced_options">Advanced options</string>
+    <string name="label_add_account">Add account</string>
+    <string name="label_update_account">Update account</string>
+    <string name="message_unsaved_changes">Going back will clear all the fields. Are you sure to go back?</string>
+    <string name="account_exists_dialog_title">Account already exists</string>
+    <string name="account_exists_dialog_message">You already have an account with name \'%1$s\'</string>
 </resources>

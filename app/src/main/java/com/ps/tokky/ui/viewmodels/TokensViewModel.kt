@@ -63,6 +63,10 @@ class TokensViewModel @Inject constructor(
                 onDuplicate(requestCode, duplicateToken)
             } else {
                 tokensRepository.upsertToken(token)
+
+                val tokens = tokensRepository.getAllTokens()
+                _tokensState.update { UIState.Success(tokens) }
+
                 onComplete(requestCode)
             }
         }

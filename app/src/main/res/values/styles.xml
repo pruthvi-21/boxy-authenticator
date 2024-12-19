@@ -98,11 +98,4 @@
         <item name="hintEnabled">false</item>
     </style>
 
-    <style name="Theme.Tokky.TextInput.Label" parent="">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">?android:textColorSecondary</item>
-        <item name="android:paddingStart">15dp</item>
-        <item name="android:paddingEnd">15dp</item>
-    </style>
 </resources>

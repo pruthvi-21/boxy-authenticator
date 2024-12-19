@@ -10,13 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -31,17 +28,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ps.camerax.BarcodeScanningActivity
 import com.ps.camerax.BarcodeScanningActivity.Companion.SCAN_RESULT
 import com.ps.tokky.R
+import com.ps.tokky.navigation.RouteBuilder
 import com.ps.tokky.ui.components.ExpandableFab
 import com.ps.tokky.ui.components.TokensList
+import com.ps.tokky.ui.components.TokkyScaffold
 import com.ps.tokky.ui.viewmodels.TokensViewModel
 import com.ps.tokky.utils.Utils
+import com.ps.tokky.utils.copy
 import com.ps.tokky.utils.toast
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -54,18 +53,12 @@ fun HomeScreen(
     tokensViewModel.fetchTokens()
     val tokensState by tokensViewModel.tokensState.collectAsStateWithLifecycle()
 
-    Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing
-    ) { contentPadding ->
+    TokkyScaffold { safePadding ->
         Box {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        bottom = contentPadding.calculateBottomPadding(),
-                        start = contentPadding.calculateLeftPadding(LayoutDirection.Ltr),
-                        end = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
-                    )
+                    .padding(safePadding.copy(top = 0.dp))
             ) {
                 val primaryColor = MaterialTheme.colorScheme.primary
                 TopAppBar(
@@ -75,7 +68,7 @@ fun HomeScreen(
                         titleContentColor = primaryColor,
                     ),
                     windowInsets = WindowInsets(
-                        top = contentPadding.calculateTopPadding() + dimensionResource(R.dimen.toolbar_margin_top)
+                        top = safePadding.calculateTopPadding() + dimensionResource(R.dimen.toolbar_margin_top)
                     ),
                 )
 
@@ -86,7 +79,12 @@ fun HomeScreen(
                         val tokens = uiState.data
 
                         if (tokens.isNotEmpty()) {
-                            TokensList(tokens)
+                            TokensList(
+                                tokens,
+                                onEdit = {
+                                    tokensViewModel.tokenToEdit = it
+                                    navController.navigate(RouteBuilder.tokenSetup(it.id))
+                                })
                         } else {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -105,14 +103,15 @@ fun HomeScreen(
                     }
                 }
             }
-            FAB(contentPadding)
+            FAB(safePadding, navController)
         }
     }
 }
 
 @Composable
 private fun FAB(
-    windowPadding: PaddingValues
+    windowPadding: PaddingValues,
+    navController: NavController
 ) {
     var isFabExpanded by remember { mutableStateOf(false) }
 
@@ -151,6 +150,7 @@ private fun FAB(
             isFabExpanded = false
         },
         onManualClick = {
+            navController.navigate(RouteBuilder.tokenSetup())
             isFabExpanded = false
         }
     )

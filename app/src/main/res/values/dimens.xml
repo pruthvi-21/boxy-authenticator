@@ -23,7 +23,7 @@
     <dimen name="lockscreen_pin_dot_radius">8dp</dimen>
     <dimen name="lockscreen_pin_dot_gap">15dp</dimen>
     <dimen name="keypad_button_stroke">0.25dp</dimen>
-    <dimen name="thumbnail_color_tile">33dp</dimen>
+    <dimen name="thumbnail_color_tile_size">36dp</dimen>
     <dimen name="thumbnail_preview_width">100dp</dimen>
     <dimen name="thumbnail_preview_height">68.1818dp</dimen>
     <dimen name="radius_preference">@dimen/radius_small</dimen>

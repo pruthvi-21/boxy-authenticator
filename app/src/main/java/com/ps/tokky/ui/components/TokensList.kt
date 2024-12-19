@@ -71,7 +71,10 @@ private val INDICATOR_SIZE = 25.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TokensList(accounts: List<TokenEntry>) {
+fun TokensList(
+    accounts: List<TokenEntry>,
+    onEdit: (token: TokenEntry) -> Unit
+) {
     val groupedAccounts = accounts
         .sortedBy { it.name }
         .groupBy { it.name.first().uppercaseChar() }
@@ -100,7 +103,7 @@ fun TokensList(accounts: List<TokenEntry>) {
                 }
                 TokenCard(
                     token = token,
-                    onEditClick = { },
+                    onEdit = onEdit,
                     shape = shape
                 )
             }
@@ -111,7 +114,7 @@ fun TokensList(accounts: List<TokenEntry>) {
 @Composable
 fun TokenCard(
     token: TokenEntry,
-    onEditClick: () -> Unit,
+    onEdit: (TokenEntry) -> Unit,
     shape: Shape
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -147,7 +150,7 @@ fun TokenCard(
             )
             Arrow(
                 isExpanded = isExpanded,
-                onEditClick = onEditClick
+                onEdit = { onEdit(token) }
             )
         }
 
@@ -191,7 +194,7 @@ fun TokenCard(
 }
 
 @Composable
-fun OTPFieldView(
+private fun OTPFieldView(
     token: TokenEntry,
     otpValue: Int,
     remainingTime: Long,
@@ -242,8 +245,8 @@ fun OTPFieldView(
 }
 
 @Composable
-fun Arrow(
-    onEditClick: () -> Unit,
+private fun Arrow(
+    onEdit: () -> Unit,
     isExpanded: Boolean
 ) {
     Row(
@@ -260,7 +263,7 @@ fun Arrow(
 
         if (isExpanded) {
             IconButton(
-                onClick = onEditClick,
+                onClick = onEdit,
                 modifier = Modifier
                     .fillMaxHeight()
                     .aspectRatio(1f / 1)
@@ -330,7 +333,7 @@ private fun TokenThumbnail(
 }
 
 @Composable
-fun LabelsView(
+private fun LabelsView(
     issuer: String,
     label: String,
     modifier: Modifier

@@ -28,7 +28,7 @@ object TokenBuilder {
         thumbnailColor: Int = Color.DKGRAY,
         thumbnailIcon: String? = null,
         type: OTPType = DEFAULT_OTP_TYPE,
-        algorithm: String = DEFAULT_HASH_ALGORITHM,
+        algorithm: HashAlgorithm = DEFAULT_HASH_ALGORITHM,
         digits: Int = DEFAULT_DIGITS,
         period: Int = DEFAULT_PERIOD,
         addedFrom: AccountEntryMethod
@@ -70,7 +70,7 @@ object TokenBuilder {
         var label = uri.path?.substring(1) ?: ""
         val secret = params?.get("secret")?.cleanSecretKey() ?: ""
         val type = uri.host?.let { OTPType.valueOf(it) } ?: OTPType.TOTP
-        val algorithm = params?.get("algorithm") ?: DEFAULT_HASH_ALGORITHM
+        val algorithm = params?.get("algorithm")?.let { HashAlgorithm.valueOf(it) } ?: DEFAULT_HASH_ALGORITHM
         val period = params?.get("period")?.toInt() ?: DEFAULT_PERIOD
         val digits = params?.get("digits")?.toInt() ?: DEFAULT_DIGITS
 
@@ -103,7 +103,7 @@ object TokenBuilder {
         else DEFAULT_DIGITS
 
         val algorithm = if (json.has(KEY_ALGORITHM)) {
-            json.getString(KEY_ALGORITHM)
+            HashAlgorithm.valueOf(json.getString(KEY_ALGORITHM))
         } else DEFAULT_HASH_ALGORITHM
 
         val thumbnailIcon = json.getString(KEY_THUMBNAIL_ICON)

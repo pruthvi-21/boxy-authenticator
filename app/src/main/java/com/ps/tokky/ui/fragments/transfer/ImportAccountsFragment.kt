@@ -154,7 +154,7 @@ class ImportAccountsFragment : BaseFragment() {
                     .setTitle(R.string.import_edit_dialog_title)
                     .setView(updateView.root)
                     .setPositiveButton(R.string.import_edit_dialog_positive_btn, null)
-                    .setNegativeButton(R.string.dialog_cancel, null)
+                    .setNegativeButton(R.string.cancel, null)
                     .create()
                 dialog.show()
 

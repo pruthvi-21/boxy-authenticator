@@ -22,7 +22,7 @@ class DeleteTokensPreference @JvmOverloads constructor(
                 .setMessage(R.string.dialog_message_kill)
                 .setPositiveButton(R.string.dialog_kill_positive_btn) { _, _ ->
                 }
-                .setNegativeButton(R.string.dialog_cancel, null)
+                .setNegativeButton(R.string.cancel, null)
                 .show()
             true
         }

@@ -90,7 +90,7 @@ class ImportedDuplicatesFragment : BaseFragment() {
                 .setTitle(R.string.import_failed_edit_dialog_title)
                 .setView(updateView.root)
                 .setPositiveButton(R.string.import_failed_edit_dialog_positive_btn, null)
-                .setNegativeButton(R.string.dialog_cancel) { _, _ ->
+                .setNegativeButton(R.string.cancel) { _, _ ->
                     item.updateInfo(currentIssuer, currentLabel)
                 }
                 .create()
