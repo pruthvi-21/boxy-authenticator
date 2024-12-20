@@ -1,9 +1,11 @@
 package com.ps.tokky.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -23,7 +25,7 @@ import com.ps.tokky.R
 import org.json.JSONArray
 import org.json.JSONException
 import java.security.MessageDigest
-import java.util.*
+
 
 object Utils {
     fun getThemeColorFromAttr(context: Context, colorAttr: Int): Int {
@@ -164,4 +166,14 @@ fun Toolbar.changeOverflowIconColor(color: Int) {
 fun TextView.applyMonospaceFont() {
     val typeFace = Typeface.createFromAsset(context.assets, "fonts/SourceCodePro-Regular.ttf")
     typeface = typeFace
+}
+
+fun Context.findActivity(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+
+    return null
 }

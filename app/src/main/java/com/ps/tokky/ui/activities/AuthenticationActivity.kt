@@ -3,29 +3,20 @@ package com.ps.tokky.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.ps.tokky.R
-import com.ps.tokky.databinding.ActivityAuthenticationBinding
-import com.ps.tokky.ui.views.KeypadLayout
+import com.ps.tokky.ui.screens.AuthenticationScreen
+import com.ps.tokky.ui.theme.TokkyTheme
 import com.ps.tokky.utils.AppSettings
-import com.ps.tokky.utils.CryptoUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import dagger.hilt.android.AndroidEntryPoint
 
-class AuthenticationActivity : AppCompatActivity(), KeypadLayout.OnKeypadKeyClickListener {
-
-    private val binding by lazy { ActivityAuthenticationBinding.inflate(layoutInflater) }
+@AndroidEntryPoint
+class AuthenticationActivity : AppCompatActivity() {
 
     private val executor by lazy { ContextCompat.getMainExecutor(this) }
     private var biometricPrompt: BiometricPrompt? = null
@@ -37,22 +28,15 @@ class AuthenticationActivity : AppCompatActivity(), KeypadLayout.OnKeypadKeyClic
             .build()
     }
 
-    private val passcode = ArrayList<String>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         window.isNavigationBarContrastEnforced = false
-        setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
-            val insets =
-                windowInsets.getInsets(
-                    WindowInsetsCompat.Type.systemBars() or
-                            WindowInsetsCompat.Type.displayCutout()
-                )
-            view.setPadding(insets.left, insets.top, insets.right, insets.bottom)
-            WindowInsetsCompat.CONSUMED
+        setContent {
+            TokkyTheme {
+                AuthenticationScreen()
+            }
         }
 
         if (!AppSettings.isAppLockEnabled(this) ||
@@ -76,12 +60,10 @@ class AuthenticationActivity : AppCompatActivity(), KeypadLayout.OnKeypadKeyClic
                     Log.w(TAG, "onAuthenticationFailed: Incorrect attempt")
                 }
             })
+    }
 
-        binding.btnBiometrics.setOnClickListener {
-            biometricPrompt?.authenticate(promptInfo)
-        }
-
-        binding.keypad.keypadKeyClickListener = this
+    fun bioPrompt() {
+        biometricPrompt?.authenticate(promptInfo)
     }
 
     override fun onResume() {
@@ -90,56 +72,13 @@ class AuthenticationActivity : AppCompatActivity(), KeypadLayout.OnKeypadKeyClic
         if (AppSettings.isBiometricAvailable(this) &&
             AppSettings.isBiometricUnlockEnabled(this)
         ) {
-            biometricPrompt?.authenticate(promptInfo)
-            binding.btnBiometrics.visibility = View.VISIBLE
-        } else {
-            binding.btnBiometrics.visibility = View.GONE
+            bioPrompt()
         }
     }
 
-    override fun onDigitClick(digit: String) {
-        if (passcode.size >= 4) return
-        passcode.add(digit)
-        updateUI()
-        if (passcode.size == 4)
-            CoroutineScope(Dispatchers.Default).launch {
-                delay(300)
-                verifyPIN()
-            }
-    }
-
-    override fun onBackspaceClick() {
-        if (passcode.size <= 0) return
-        passcode.removeAt(passcode.size - 1)
-        updateUI()
-    }
-
-    private fun loginSuccess() {
+    fun loginSuccess() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
-    }
-
-    private suspend fun verifyPIN() {
-        if (passcode.size < 4) return
-
-        val status = AppSettings
-            .verifyPIN(this, CryptoUtils.hashPasscode(passcode.joinToString(separator = "")))
-        if (!status) {
-            passcode.clear()
-            updateUI()
-            withContext(Dispatchers.Main) {
-                Toast.makeText(
-                    this@AuthenticationActivity,
-                    R.string.settings_app_lock_incorrect_pin,
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-            }
-        } else loginSuccess()
-    }
-
-    private fun updateUI() {
-        binding.pinField.currentLength = passcode.size
     }
 
     companion object {

@@ -29,11 +29,6 @@
     <string name="dialog_message_kill">This will remove all the accounts and you cannot generate TOTP codes.\n\nWe recommend you to take a backup of accounts before deleting.</string>
     <string name="dialog_kill_positive_btn">Delete all</string>
 
-    <!-- Auth Activity -->
-    <string name="auth_activity_unlock_with_biometrics">Unlock with biometrics</string>
-    <string name="auth_activity_title">Enter your PIN</string>
-    <string name="auth_activity_subtitle">Access your account with your 4-digit PIN</string>
-
     <!-- Settings Activity -->
     <string name="settings_setup_pin_bottom_sheet_title">Create a new PIN</string>
     <string name="settings_setup_reenter_pin_bottom_sheet_title">Reenter your PIN</string>
@@ -70,6 +65,11 @@
     <string name="import_failed_dialog_existing_token">Account already exists. Please enter a different name</string>
     <string name="import_failed_edit_dialog_title">Edit account details</string>
     <string name="import_failed_edit_dialog_positive_btn">Save &amp; Add</string>
+
+    <!-- Authentication Screen -->
+    <string name="unlock_vault">Unlock your vault</string>
+    <string name="unlock_vault_message">Access your account with your 4-digit passcode</string>
+    <string name="unlock_with_biometrics">Use biometrics</string>
 
     <!-- TokenSetupScreen -->
     <string name="title_enter_account_details">Enter account details</string>

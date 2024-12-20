@@ -48,4 +48,6 @@ object Constants {
         }
 
     const val BACKUP_FILE_MIME_TYPE = "text/plain"
+
+    const val LOGIN_PIN_LENGTH = 4
 }
