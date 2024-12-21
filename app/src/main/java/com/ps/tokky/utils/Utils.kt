@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.ui.unit.Dp
 import androidx.core.graphics.drawable.DrawableCompat
 import com.ps.tokky.R
 import org.json.JSONArray
@@ -176,4 +177,8 @@ fun Context.findActivity(): Activity? {
     }
 
     return null
+}
+
+fun Dp.toPx(context: Context): Int {
+    return (value * context.resources.displayMetrics.density).toInt()
 }
