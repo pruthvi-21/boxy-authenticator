@@ -44,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -78,7 +77,7 @@ fun TokensList(
     val groupedAccounts = accounts
         .sortedBy { it.name }
         .groupBy { it.name.first().uppercaseChar() }
-    val radius = dimensionResource(R.dimen.radius_large)
+    val radius = dimensionResource(R.dimen.radius_medium)
 
     LazyColumn {
         groupedAccounts.forEach { (letter, tokens) ->
@@ -104,8 +103,21 @@ fun TokensList(
                 TokenCard(
                     token = token,
                     onEdit = onEdit,
-                    shape = shape
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .clip(shape)
+
                 )
+                if (index != tokens.lastIndex) {
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .padding(start = 90.dp, end = 24.dp),
+                    )
+                }
             }
         }
     }
@@ -115,15 +127,13 @@ fun TokensList(
 fun TokenCard(
     token: TokenEntry,
     onEdit: (TokenEntry) -> Unit,
-    shape: Shape
+    modifier: Modifier = Modifier
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-            .clip(shape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable {
                 isExpanded = !isExpanded
@@ -184,13 +194,6 @@ fun TokenCard(
             )
         }
     }
-
-    HorizontalDivider(
-        modifier = Modifier
-            .padding(start = 90.dp, end = 24.dp)
-            .height(1.dp),
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-    )
 }
 
 @Composable
