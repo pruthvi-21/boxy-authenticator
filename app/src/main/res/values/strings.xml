@@ -25,10 +25,6 @@
 
     <string name="dialog_message_delete_token">Before removing please ensure that you turn off 2FA for this account.\n\nAlso, please ensure that you have alternative mechanism for generating codes.</string>
 
-    <string name="dialog_title_kill">Delete all accounts</string>
-    <string name="dialog_message_kill">This will remove all the accounts and you cannot generate TOTP codes.\n\nWe recommend you to take a backup of accounts before deleting.</string>
-    <string name="dialog_kill_positive_btn">Delete all</string>
-
     <!-- Settings Activity -->
     <string name="settings_setup_pin_bottom_sheet_title">Create a new PIN</string>
     <string name="settings_setup_reenter_pin_bottom_sheet_title">Reenter your PIN</string>
@@ -98,4 +94,5 @@
     <string name="message_unsaved_changes">Going back will clear all the fields. Are you sure to go back?</string>
     <string name="account_exists_dialog_title">Account already exists</string>
     <string name="account_exists_dialog_message">You already have an account with name \'%1$s\'</string>
+    <string name="biometric_prompt_title">Verify your identity</string>
 </resources>

@@ -19,7 +19,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,29 +29,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ps.tokky.R
-import com.ps.tokky.ui.activities.AuthenticationActivity
 import com.ps.tokky.ui.components.KeypadLayout
 import com.ps.tokky.ui.components.PinField
 import com.ps.tokky.ui.components.TokkyScaffold
 import com.ps.tokky.ui.viewmodels.AuthenticationViewModel
-import com.ps.tokky.utils.AppSettings
 
 @Composable
-fun AuthenticationScreen() {
-    val context = LocalContext.current
-
-    val authViewModel: AuthenticationViewModel = hiltViewModel()
-
-    LaunchedEffect(context) {
-        if (context is AuthenticationActivity) {
-            authViewModel.registerCallbacks(
-                onLoginSuccess = { context.loginSuccess() },
-                onBiometricPrompt = { context.bioPrompt() }
-            )
-        }
-    }
+fun AuthenticationScreen(authViewModel: AuthenticationViewModel) {
 
     TokkyScaffold { contentPadding ->
         BoxWithConstraints(
@@ -166,12 +150,11 @@ private fun Section1(authViewModel: AuthenticationViewModel, modifier: Modifier 
 @Composable
 private fun Section2(authViewModel: AuthenticationViewModel, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    if (AppSettings.isBiometricAvailable(context) &&
-        AppSettings.isBiometricUnlockEnabled(context)
-    ) {
+
+    if (authViewModel.areBiometricsEnabled(context)) {
         Button(
             onClick = {
-                authViewModel.promptForBiometrics()
+                authViewModel.promptForBiometricsIfAvailable(context)
             },
             shape = RoundedCornerShape(4.dp),
             modifier = modifier
@@ -194,17 +177,12 @@ private fun Section3(authViewModel: AuthenticationViewModel, modifier: Modifier)
             authViewModel.deleteCharacter()
         },
         onSubmit = {
-            authViewModel.verifyPin(context) { status ->
-                if (status) {
-                    authViewModel.loginSuccess()
-                } else {
-                    Toast.makeText(
-                        context,
-                        R.string.settings_app_lock_incorrect_pin,
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
+            authViewModel.verifyPasscode {
+                Toast.makeText(
+                    context,
+                    R.string.settings_app_lock_incorrect_pin,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         },
         modifier = modifier

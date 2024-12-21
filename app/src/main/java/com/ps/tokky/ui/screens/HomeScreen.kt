@@ -40,7 +40,6 @@ import com.ps.camerax.BarcodeScanningActivity
 import com.ps.camerax.BarcodeScanningActivity.Companion.SCAN_RESULT
 import com.ps.tokky.R
 import com.ps.tokky.navigation.RouteBuilder
-import com.ps.tokky.ui.activities.SettingsActivity
 import com.ps.tokky.ui.components.ExpandableFab
 import com.ps.tokky.ui.components.TokensList
 import com.ps.tokky.ui.components.TokkyScaffold
@@ -80,7 +79,7 @@ fun HomeScreen(
                     ),
                     actions = {
                         IconButton(onClick = {
-                            SettingsActivity.launch(context)
+                            navController.navigate(RouteBuilder.settings())
                         }) {
                             Image(
                                 painterResource(R.drawable.ic_settings),

@@ -5,7 +5,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ps.tokky.utils.AppSettings
+import com.ps.tokky.helpers.AppSettings
+import com.ps.tokky.helpers.BiometricsHelper
 import com.ps.tokky.utils.Constants.LOGIN_PIN_LENGTH
 import com.ps.tokky.utils.CryptoUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,20 +14,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthenticationViewModel @Inject constructor() : ViewModel() {
+class AuthenticationViewModel @Inject constructor(
+    private val biometricsHelper: BiometricsHelper,
+    private val settings: AppSettings
+) : ViewModel() {
 
     private val _passcode = mutableStateOf<List<String>>(emptyList())
     val passcode: State<List<String>> = _passcode
 
     private var onLoginSuccess: (() -> Unit)? = null
-    private var onBiometricPrompt: (() -> Unit)? = null
 
     fun registerCallbacks(
-        onLoginSuccess: () -> Unit,
-        onBiometricPrompt: () -> Unit
+        onLoginSuccess: () -> Unit
     ) {
         this.onLoginSuccess = onLoginSuccess
-        this.onBiometricPrompt = onBiometricPrompt
     }
 
     fun appendCharacter(char: String) {
@@ -41,26 +42,37 @@ class AuthenticationViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun verifyPin(context: Context, onVerify: (status: Boolean) -> Unit) {
+    fun verifyPasscode(onFailed: () -> Unit) {
         viewModelScope.launch {
-            if (_passcode.value.size < 4) onVerify(false)
+            if (_passcode.value.size < 4) onFailed()
 
-            val status = AppSettings.verifyPIN(
-                context,
-                CryptoUtils.hashPasscode(passcode.value.joinToString(separator = ""))
-            )
+            val passcodeHash = settings.getPasscodeHash()
+            val currentHash = CryptoUtils.hashPasscode(passcode.value.joinToString(separator = ""))
+
+            val status = passcodeHash == currentHash
             if (!status) {
                 _passcode.value = emptyList()
+                onFailed()
+                return@launch
             }
-            onVerify(status)
+            onLoginSuccess?.invoke()
         }
     }
 
-    fun loginSuccess() {
-        onLoginSuccess?.invoke()
+    fun areBiometricsEnabled(context: Context): Boolean {
+        return BiometricsHelper.areBiometricsAvailable(context) &&
+                settings.isBiometricUnlockEnabled()
     }
 
-    fun promptForBiometrics() {
-        onBiometricPrompt?.invoke()
+    fun promptForBiometricsIfAvailable(context: Context) {
+        if (areBiometricsEnabled(context)) {
+            biometricsHelper.authenticate(context) {
+                onLoginSuccess?.invoke()
+            }
+        }
+    }
+
+    companion object {
+        private const val TAG = "AuthenticationViewModel"
     }
 }

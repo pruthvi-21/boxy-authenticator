@@ -25,15 +25,6 @@
         <item name="textInputEditTextStyle">@style/Theme.Tokky.TextInputEditText</item>
         <item name="keypadButtonStyle">@style/KeypadButtonStyle</item>
         <item name="android:dropDownSpinnerStyle">@style/SpinnerStyle</item>
-
-        <!-- Preference -->
-        <item name="preferenceStyle">@style/Theme.Tokky.Preference.Style</item>
-        <item name="dialogPreferenceStyle">@style/Theme.Tokky.Preference.Dialog.Style</item>
-        <item name="dropdownPreferenceStyle">@style/Theme.Tokky.Preference.Dropdown.Style</item>
-        <item name="preferenceCategoryStyle">@style/Theme.Tokky.Preference.Category.Style</item>
-        <item name="android:switchPreferenceStyle">@style/Theme.Tokky.SwitchPreference</item>
-        <item name="switchPreferenceStyle">@style/Theme.Tokky.SwitchPreference</item>
-        <item name="switchPreferenceCompatStyle">@style/Theme.Tokky.SwitchPreference</item>
     </style>
 
 </resources>

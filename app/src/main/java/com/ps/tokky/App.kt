@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.ps.tokky.navigation.Routes
 import com.ps.tokky.navigation.addHomeRoute
+import com.ps.tokky.navigation.addSettingsRoute
 import com.ps.tokky.navigation.addTokenSetupRoute
 import com.ps.tokky.ui.theme.TokkyTheme
 import com.ps.tokky.ui.viewmodels.TokensViewModel
@@ -23,6 +24,7 @@ fun App() {
         ) {
             addHomeRoute(navController, tokensViewModel)
             addTokenSetupRoute(navController, tokensViewModel)
+            addSettingsRoute(navController)
         }
     }
 }

@@ -33,14 +33,6 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="DialogKillTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="buttonBarPositiveButtonStyle">@style/DialogKillPositiveButtonStyle</item>
-    </style>
-
-    <style name="DialogKillPositiveButtonStyle" parent="Widget.Material3.Button.TextButton.Dialog">
-        <item name="android:textColor">?colorError</item>
-    </style>
-
     <style name="Theme.Keepass.PopupMenu" parent="Widget.Material3.PopupMenu.Overflow">
         <item name="android:tint">#f00</item>
     </style>
@@ -48,44 +40,6 @@
     <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
         <item name="android:popupBackground">@drawable/popup_menu_background</item>
     </style>
-
-    <!-- Preference -->
-    <style name="Theme.Tokky.Preference.Style" parent="Preference.Material">
-        <item name="layout">@layout/preference_material_middle</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
-    <style name="Theme.Tokky.Preference.Dialog.Style" parent="Preference.DialogPreference.Material">
-        <item name="layout">@layout/preference_material_middle</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
-    <style name="Theme.Tokky.Preference.Dropdown.Style" parent="Preference.DropDown.Material">
-        <item name="layout">@layout/preference_material_middle</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
-    <style name="Theme.Tokky.SwitchPreference" parent="Preference.SwitchPreferenceCompat.Material">
-        <item name="layout">@layout/preference_material_middle</item>
-        <item name="widgetLayout">@layout/m3_switch_layout</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
-    <style name="Theme.Tokky.Preference.Category.Style" parent="@style/Preference.Category.Material">
-        <item name="android:layout">@layout/preference_category_material</item>
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-        <item name="iconSpaceReserved">false</item>
-    </style>
-
 
     <style name="Theme.Tokky.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">?colorSurfaceVariant</item>
