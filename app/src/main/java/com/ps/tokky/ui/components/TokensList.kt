@@ -36,9 +36,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -72,8 +71,11 @@ private val INDICATOR_SIZE = 25.dp
 @Composable
 fun TokensList(
     accounts: List<TokenEntry>,
-    onEdit: (token: TokenEntry) -> Unit
+    onEdit: (token: TokenEntry) -> Unit,
+    singleExpansion: Boolean = true
 ) {
+    val expandedStates = remember { mutableStateMapOf<TokenEntry, Boolean>() }
+
     val groupedAccounts = accounts
         .sortedBy { it.name }
         .groupBy { it.name.first().uppercaseChar() }
@@ -103,10 +105,16 @@ fun TokensList(
                 TokenCard(
                     token = token,
                     onEdit = onEdit,
+                    isExpanded = expandedStates[token] ?: false,
+                    onToggleExpand = { isExpanded ->
+                        if (singleExpansion) {
+                            expandedStates.keys.forEach { expandedStates[it] = false }
+                        }
+                        expandedStates[token] = isExpanded
+                    },
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
                         .clip(shape)
-
                 )
                 if (index != tokens.lastIndex) {
                     HorizontalDivider(
@@ -127,16 +135,16 @@ fun TokensList(
 fun TokenCard(
     token: TokenEntry,
     onEdit: (TokenEntry) -> Unit,
+    isExpanded: Boolean,
+    onToggleExpand: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable {
-                isExpanded = !isExpanded
+                onToggleExpand(!isExpanded)
             }
             .padding(horizontal = 24.dp, vertical = 15.dp)
 
