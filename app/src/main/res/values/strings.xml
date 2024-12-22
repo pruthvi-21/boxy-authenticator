@@ -31,19 +31,8 @@
     <string name="settings_disable_pin_bottom_sheet_title">Enter your PIN to disable app lock</string>
     <string name="settings_app_lock_incorrect_pin">Incorrect PIN</string>
 
-    <!-- Export Activity -->
-    <string name="export_create_password_title">Set a Password</string>
-    <string name="export_create_password_message">Create a new password to encrypt your backup file</string>
-    <string name="export_info">All accounts will be backed up</string>
-    <string name="export_export_btn">Export</string>
-    <string name="export_toast_success">Accounts exported</string>
-    <string name="export_toast_error">Some error occurred while exporting</string>
-    <string name="export_password">Password</string>
-    <string name="export_confirm_password">Confirm password</string>
-    <string name="export_password_empty">Password can\'t be empty</string>
-    <string name="export_password_mismatch">Password didn\'t matched</string>
-
     <!-- ImportActivity -->
+    <string name="export_password">Password</string>
     <string name="import_btn_title">Import</string>
     <string name="import_password_failed_msg">Invalid password or corrupted file</string>
     <string name="import_password_dialog_title">Enter password</string>
@@ -95,4 +84,16 @@
     <string name="account_exists_dialog_title">Account already exists</string>
     <string name="account_exists_dialog_message">You already have an account with name \'%1$s\'</string>
     <string name="biometric_prompt_title">Verify your identity</string>
+
+    <!-- Export tokens screen-->
+    <string name="password">Password</string>
+    <string name="enter_password_for_backup">Enter password for backup</string>
+    <string name="password_empty">Password can\'t be empty</string>
+    <string name="password_mismatch">Password didn\'t matched</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="reenter_above_password">Re-enter above password</string>
+    <string name="show_password">Show password</string>
+    <string name="export">Export</string>
+    <string name="export_success">Accounts exported</string>
+    <string name="export_error">Some error occurred while exporting</string>
 </resources>

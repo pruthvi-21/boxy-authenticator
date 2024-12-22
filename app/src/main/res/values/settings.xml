@@ -6,8 +6,10 @@
     <string name="preference_title_biometrics">Use biometrics</string>
     <string name="preference_title_screenshots">Allow screenshots</string>
     <string name="pref_title_import_accounts">Import Accounts</string>
-    <string name="pref_title_export_accounts">Export Accounts</string>
+    <string name="export_accounts">Export Accounts</string>
+    <string name="export_accounts_summary">Save your accounts securely in a backup file.</string>
     <string name="preference_category_title_security">Security</string>
+    <string name="preference_category_transfer_accounts">Transfer accounts</string>
 
     <string name="preference_summary_app_lock">Lock this app with a PIN. To change your PIN please disable app lock and enable it again</string>
     <string name="preference_summary_biometrics">You can unlock with your biometrics instead of typing PIN</string>

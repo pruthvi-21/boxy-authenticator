@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -26,6 +28,7 @@ fun StyledTextField(
     label: String,
     placeholder: String,
     errorMessage: String? = null,
+    isPasswordField: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier,
@@ -60,6 +63,7 @@ fun StyledTextField(
             ),
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
+            visualTransformation = if (!isPasswordField) VisualTransformation.None else PasswordVisualTransformation(),
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )

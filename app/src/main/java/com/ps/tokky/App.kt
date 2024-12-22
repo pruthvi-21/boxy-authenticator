@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.ps.tokky.helpers.TransitionHelper
 import com.ps.tokky.navigation.Routes
+import com.ps.tokky.navigation.addExportTokensRoute
 import com.ps.tokky.navigation.addHomeRoute
 import com.ps.tokky.navigation.addSettingsRoute
 import com.ps.tokky.navigation.addTokenSetupRoute
@@ -32,6 +33,7 @@ fun App() {
             addHomeRoute(navController, tokensViewModel)
             addTokenSetupRoute(navController, tokensViewModel)
             addSettingsRoute(navController)
+            addExportTokensRoute()
         }
     }
 }

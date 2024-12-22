@@ -6,6 +6,7 @@ sealed class Routes(val base: String) {
     data object Home : Routes("/home")
     data object TokenSetup : Routes("/token_setup")
     data object Settings : Routes("/settings")
+    data object ExportTokens : Routes("/export")
 }
 
 object RouteBuilder {
@@ -21,6 +22,10 @@ object RouteBuilder {
 
     fun settings(): String {
         return buildRoute(Routes.Settings.base, emptyMap())
+    }
+
+    fun export(): String {
+        return buildRoute(Routes.ExportTokens.base, emptyMap())
     }
 
     private fun buildRoute(base: String, queryParams: Map<String, String?>): String {

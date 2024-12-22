@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.ps.tokky.ui.screens.ExportTokensScreen
 import com.ps.tokky.ui.screens.HomeScreen
 import com.ps.tokky.ui.screens.SettingsScreen
 import com.ps.tokky.ui.screens.TokenSetupScreen
@@ -60,5 +61,11 @@ fun NavGraphBuilder.addSettingsRoute(
         SettingsScreen(
             navController = navController,
         )
+    }
+}
+
+fun NavGraphBuilder.addExportTokensRoute() {
+    composable(Routes.ExportTokens.base) {
+        ExportTokensScreen()
     }
 }

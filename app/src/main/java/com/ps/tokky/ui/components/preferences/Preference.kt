@@ -6,17 +6,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Switch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-fun PreferenceCategoryScope.switchPreference(
+fun PreferenceCategoryScope.preference(
     title: String,
     summary: String? = null,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit = {},
+    onClick: () -> Unit = {},
     disabled: Boolean = false,
     modifier: Modifier = Modifier
 ) {
@@ -25,7 +22,7 @@ fun PreferenceCategoryScope.switchPreference(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .clickable(enabled = !disabled) {
-                    onCheckedChange(!checked)
+                    onClick()
                 }
                 .padding(horizontal = 32.dp),
         ) {
@@ -39,14 +36,6 @@ fun PreferenceCategoryScope.switchPreference(
                     PreferenceSummary(summary, disabled)
                 }
             }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Switch(
-                checked = checked,
-                onCheckedChange = null,
-                enabled = !disabled
-            )
         }
     }
 }

@@ -25,8 +25,7 @@ object FileHelper {
         uri: Uri?,
         content: String,
         password: String,
-        successCallback: (() -> Unit)? = null,
-        failureCallback: (() -> Unit)? = null
+        onFinished: ((Boolean) -> Unit)? = null
     ) {
         uri ?: return
         CoroutineScope(Dispatchers.IO).launch {
@@ -35,8 +34,7 @@ object FileHelper {
                     context,
                     uri,
                     encrypt(content, password),
-                    successCallback,
-                    failureCallback
+                    onFinished
                 )
             }
         }
@@ -46,17 +44,16 @@ object FileHelper {
         context: Context,
         uri: Uri,
         content: String,
-        successCallback: (() -> Unit)? = null,
-        failureCallback: (() -> Unit)? = null
+        onFinished: ((Boolean) -> Unit)?,
     ) {
         var fileOutputStream: OutputStream? = null
         try {
             fileOutputStream = context.contentResolver.openOutputStream(uri)
             withContext(Dispatchers.IO) { fileOutputStream?.write(content.toByteArray()) }
-            withContext(Dispatchers.Main) { successCallback?.invoke() }
+            withContext(Dispatchers.Main) { onFinished?.invoke(true) }
         } catch (exception: Exception) {
             Log.e(TAG, "writeToFile: Unable to write to file", exception)
-            withContext(Dispatchers.Main) { failureCallback?.invoke() }
+            withContext(Dispatchers.Main) { onFinished?.invoke(false) }
         } finally {
             withContext(Dispatchers.IO) { fileOutputStream?.close() }
         }

@@ -43,10 +43,4 @@ class TransferAccountsViewModel @Inject constructor(
             _importAccountsState.value = UIState.Success(newAccounts, duplicateAccounts)
         }
     }
-
-    fun getExportData(callback: (String) -> Unit) {
-        viewModelScope.launch {
-            callback(JSONArray(tokensRepository.getAllTokens().map { it.toExportJson() }).toString())
-        }
-    }
 }
