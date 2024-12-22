@@ -15,7 +15,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,9 +37,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -50,12 +48,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -71,12 +67,14 @@ import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 import com.ps.tokky.ui.components.DefaultAppBarNavigationIcon
 import com.ps.tokky.ui.components.MultiToggleButton
+import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.ThumbnailController
 import com.ps.tokky.ui.components.TokkyScaffold
 import com.ps.tokky.ui.viewmodels.TokenFormEvent
 import com.ps.tokky.ui.viewmodels.TokenFormState
 import com.ps.tokky.ui.viewmodels.TokenFormValidationEvent
 import com.ps.tokky.ui.viewmodels.TokenFormViewModel
+import com.ps.tokky.ui.viewmodels.TokenSetupMode
 import com.ps.tokky.ui.viewmodels.TokensViewModel
 import com.ps.tokky.utils.HashAlgorithm
 import com.ps.tokky.utils.copy
@@ -89,6 +87,7 @@ private val radiusTiny = 4.dp
 @Composable
 fun TokenSetupScreen(
     tokenId: String? = null,
+    authUrl: String? = null,
     tokensViewModel: TokensViewModel,
     tokenFormViewModel: TokenFormViewModel = hiltViewModel(),
     navController: NavController,
@@ -98,22 +97,21 @@ fun TokenSetupScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     var state = tokenFormViewModel.uiState.value
-    var isInEditMode = tokenFormViewModel.isInEditMode
+    val tokenSetupMode = tokenFormViewModel.tokenSetupMode
 
-    LaunchedEffect(tokenId, tokensViewModel.tokenToEdit) {
+    LaunchedEffect(tokenId, authUrl, tokenSetupMode) {
         tokenId?.let {
-            tokensViewModel.tokenToEdit?.takeIf { it.id == tokenId }?.let { token ->
-                tokenFormViewModel.setInitialStateFromToken(token)
-                tokenFormViewModel.isInEditMode = true
-                tokenFormViewModel.tokenToEdit = tokensViewModel.tokenToEdit
+            tokenFormViewModel.setInitialStateFromTokenWithId(tokenId)
+            state = tokenFormViewModel.uiState.value
+        }
 
-                state = tokenFormViewModel.uiState.value
-                isInEditMode = tokenFormViewModel.isInEditMode
-            }
+        authUrl?.let {
+            tokenFormViewModel.setInitialStateFromUrl(authUrl)
+            state = tokenFormViewModel.uiState.value
         }
     }
 
-    LaunchedEffect(context, isInEditMode) {
+    LaunchedEffect(context, tokenSetupMode) {
         tokenFormViewModel.validationEvent.collect { event ->
             if (event is TokenFormValidationEvent.Success) {
                 handleFormSuccess(event.token, tokensViewModel, navController, context)
@@ -128,10 +126,11 @@ fun TokenSetupScreen(
     TokkyScaffold(
         topBar = {
             Toolbar(
-                isInEditMode,
+                tokenSetupMode,
                 onDelete = {
-                    if (isInEditMode) deleteToken(
-                        tokenFormViewModel.tokenToEdit!!,
+                    if (tokenSetupMode == TokenSetupMode.UPDATE) deleteToken(
+                        tokenId!!,
+                        state,
                         tokensViewModel,
                         navController,
                         context
@@ -200,7 +199,7 @@ fun TokenSetupScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                if (!isInEditMode) {
+                if (tokenSetupMode == TokenSetupMode.NEW) {
                     // Secret Key Field
                     StyledTextField(
                         value = state.secretKey,
@@ -212,30 +211,43 @@ fun TokenSetupScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    AdvancedOptionsToggle(state, tokenFormViewModel, keyboardController)
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    AnimatedVisibility(
-                        visible = state.enableAdvancedOptions,
-                        enter = expandVertically(animationSpec = tween(200)),
-                        exit = shrinkVertically(animationSpec = tween(200))
-                    ) {
-                        AdvancedOptions(tokenFormViewModel)
-                    }
+                    FormAdvancedOptions(
+                        showAdvancedOptions = state.enableAdvancedOptions,
+                        onShowAdvancedOptions = {
+                            keyboardController?.hide()
+                            tokenFormViewModel.onEvent(TokenFormEvent.EnableAdvancedOptionsChanged(it))
+                        },
+                        algorithm = state.algorithm.name,
+                        onAlgorithmChange = {
+                            tokenFormViewModel.onEvent(TokenFormEvent.AlgorithmChanged(HashAlgorithm.valueOf(it)))
+                        },
+                        period = state.period,
+                        onPeriodChange = {
+                            tokenFormViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
+                        },
+                        digits = state.digits,
+                        onDigitsChange = {
+                            tokenFormViewModel.onEvent(TokenFormEvent.DigitsChanged(it))
+                        }
+                    )
                 }
             }
 
-            SubmitButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
+            val buttonText = if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(R.string.label_update_account)
+            else stringResource(R.string.label_add_account)
+
+            Button(
                 onClick = {
                     keyboardController?.hide()
                     tokenFormViewModel.onEvent(TokenFormEvent.Submit)
                 },
-                isInEditMode = isInEditMode
-            )
+                shape = RoundedCornerShape(radiusTiny),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+            ) {
+                Text(text = buttonText)
+            }
         }
     }
 }
@@ -243,11 +255,11 @@ fun TokenSetupScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Toolbar(
-    isInEditMode: Boolean,
+    tokenSetupMode: TokenSetupMode,
     onDelete: () -> Unit
 ) {
     val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val title = if (isInEditMode) stringResource(R.string.title_update_account_details)
+    val title = if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(R.string.title_update_account_details)
     else stringResource(R.string.title_enter_account_details)
 
     TopAppBar(
@@ -258,7 +270,7 @@ private fun Toolbar(
             }
         },
         actions = {
-            if (isInEditMode) {
+            if (tokenSetupMode == TokenSetupMode.UPDATE) {
                 IconButton(onClick = onDelete) {
                     Icon(
                         painter = painterResource(R.drawable.ic_delete),
@@ -279,79 +291,6 @@ private fun Toolbar(
                 .top() + dimensionResource(R.dimen.toolbar_margin_top)
         ),
     )
-}
-
-@Composable
-fun StyledTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    placeholder: String,
-    errorMessage: String? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    modifier: Modifier = Modifier,
-) {
-    val hasError = !errorMessage.isNullOrEmpty()
-
-    Column(modifier = modifier) {
-        Text(
-            text = label,
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp,
-            modifier = Modifier
-                .padding(vertical = 5.dp, horizontal = 15.dp)
-        )
-        OutlinedTextField(
-            value = value,
-            onValueChange = {
-                onValueChange(it)
-            },
-            placeholder = { Text(placeholder) },
-            isError = hasError,
-            shape = RoundedCornerShape(radiusTiny),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                unfocusedIndicatorColor = Color.Transparent,
-                errorContainerColor = MaterialTheme.colorScheme.errorContainer,
-                errorIndicatorColor = Color.Transparent,
-                errorTextColor = MaterialTheme.colorScheme.onErrorContainer,
-                disabledIndicatorColor = Color.Transparent,
-            ),
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (hasError) {
-            Text(
-                text = errorMessage!!,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun SubmitButton(
-    modifier: Modifier,
-    onClick: () -> Unit,
-    isInEditMode: Boolean
-) {
-    val buttonText = if (isInEditMode) stringResource(R.string.label_update_account)
-    else stringResource(R.string.label_add_account)
-
-    Button(
-        modifier = modifier,
-        shape = RoundedCornerShape(radiusTiny),
-        onClick = onClick,
-    ) {
-        Text(text = buttonText)
-    }
 }
 
 fun handleFormSuccess(
@@ -396,18 +335,19 @@ fun handleFormSuccess(
 }
 
 private fun deleteToken(
-    token: TokenEntry,
+    tokenId: String,
+    state: TokenFormState,
     tokensViewModel: TokensViewModel,
     navController: NavController,
     context: Context
 ) {
     val titleViewBinding = DialogTitleDeleteWarningBinding.inflate(LayoutInflater.from(context))
 
-    val ssb = SpannableStringBuilder(token.issuer)
+    val ssb = SpannableStringBuilder(state.issuer)
     ssb.setSpan(
         StyleSpan(Typeface.BOLD),
         0,
-        token.issuer.length,
+        state.issuer.length,
         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
 
@@ -423,7 +363,7 @@ private fun deleteToken(
         .setPositiveButton(R.string.remove) { _, _ ->
             val requestCode = UUID.randomUUID().toString()
             tokensViewModel.deleteToken(
-                tokenId = token.id,
+                tokenId = tokenId,
                 requestCode = requestCode,
                 onComplete = { responseCode ->
                     if (requestCode == responseCode) {
@@ -434,8 +374,6 @@ private fun deleteToken(
         .setNegativeButton(R.string.cancel, null)
         .create()
         .show()
-
-
 }
 
 fun showBackPressDialog(
@@ -452,29 +390,83 @@ fun showBackPressDialog(
 }
 
 @Composable
-fun AdvancedOptionsToggle(
-    state: TokenFormState,
-    tokenFormViewModel: TokenFormViewModel,
-    keyboardController: SoftwareKeyboardController?
+fun FormAdvancedOptions(
+    showAdvancedOptions: Boolean,
+    onShowAdvancedOptions: (Boolean) -> Unit,
+    algorithm: String,
+    onAlgorithmChange: (String) -> Unit,
+    period: String,
+    onPeriodChange: (String) -> Unit,
+    digits: String,
+    onDigitsChange: (String) -> Unit,
 ) {
-    Row(
-        horizontalArrangement = Arrangement.End,
-        modifier = Modifier
-            .fillMaxWidth()
+    Column(Modifier.fillMaxWidth()) {
+        Toggle(
+            state = showAdvancedOptions,
+            onToggle = onShowAdvancedOptions,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        AnimatedVisibility(
+            visible = showAdvancedOptions,
+            enter = expandVertically(animationSpec = tween(200)),
+            exit = shrinkVertically(animationSpec = tween(200))
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.label_algorithm),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .padding(vertical = 5.dp, horizontal = 15.dp)
+                )
+                MultiToggleButton(
+                    toggleStates = HashAlgorithm.entries.map { it.name },
+                    currentSelection = algorithm,
+                    onToggleChange = onAlgorithmChange
+                )
+                Spacer(Modifier.height(10.dp))
+
+                StyledTextField(
+                    value = period,
+                    onValueChange = onPeriodChange,
+                    label = stringResource(R.string.label_period),
+                    placeholder = stringResource(R.string.hint_period),
+                )
+
+                Spacer(Modifier.height(10.dp))
+
+                StyledTextField(
+                    value = digits,
+                    onValueChange = onDigitsChange,
+                    label = stringResource(R.string.label_digits),
+                    placeholder = stringResource(R.string.hint_digits),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun Toggle(
+    state: Boolean,
+    onToggle: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.CenterEnd,
+        modifier = modifier.fillMaxWidth()
     ) {
         val progress by animateFloatAsState(
-            targetValue = if (state.enableAdvancedOptions) 90f else -90f,
+            targetValue = if (state) 90f else -90f,
             animationSpec = tween(durationMillis = 200),
             label = "AdvancedOptionsTransition"
         )
 
         Row(
             modifier = Modifier
-                .clip(RoundedCornerShape(radiusTiny))
-                .clickable {
-                    keyboardController?.hide()
-                    tokenFormViewModel.onEvent(TokenFormEvent.EnableAdvancedOptionsChanged(!state.enableAdvancedOptions))
-                }
+                .clip(RoundedCornerShape(4.dp))
+                .clickable { onToggle(!state) }
                 .padding(10.dp)
         ) {
             Text(
@@ -488,52 +480,5 @@ fun AdvancedOptionsToggle(
                 modifier = Modifier.rotate(progress)
             )
         }
-    }
-}
-
-@Composable
-fun AdvancedOptions(formViewModel: TokenFormViewModel) {
-    val state = formViewModel.uiState.value
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.label_algorithm),
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp,
-            modifier = Modifier
-                .padding(vertical = 5.dp, horizontal = 15.dp)
-        )
-        MultiToggleButton(
-            toggleStates = HashAlgorithm.entries.map { it.name },
-            currentSelection = state.algorithm.name,
-            onToggleChange = {
-                formViewModel.onEvent(TokenFormEvent.AlgorithmChanged(HashAlgorithm.valueOf(it)))
-            }
-        )
-        Spacer(Modifier.height(10.dp))
-
-        StyledTextField(
-            value = formViewModel.uiState.value.period,
-            onValueChange = {
-                formViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
-            },
-            label = stringResource(R.string.label_period),
-            placeholder = stringResource(R.string.hint_period),
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        StyledTextField(
-            value = formViewModel.uiState.value.digits,
-            onValueChange = {
-                formViewModel.onEvent(TokenFormEvent.DigitsChanged(it))
-            },
-            label = stringResource(R.string.label_digits),
-            placeholder = stringResource(R.string.hint_digits),
-        )
     }
 }

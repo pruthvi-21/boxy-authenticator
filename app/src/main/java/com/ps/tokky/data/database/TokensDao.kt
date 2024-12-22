@@ -12,6 +12,9 @@ interface TokensDao {
     @Query("SELECT * FROM token_entry")
     suspend fun getAllTokens(): List<TokenEntry>
 
+    @Query("SELECT * FROM token_entry WHERE id = :tokenId")
+    suspend fun getTokenWithId(tokenId: String): TokenEntry
+
     @Insert
     suspend fun insertAccounts(accounts: List<TokenEntry>)
 

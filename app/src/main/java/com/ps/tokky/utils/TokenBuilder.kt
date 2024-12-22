@@ -51,8 +51,8 @@ object TokenBuilder {
     }
 
     fun buildFromUrl(url: String?): TokenEntry {
-        if (url == null)
-            throw EmptyURLContentException("URL data is null")
+        if (url.isNullOrEmpty())
+            throw EmptyURLContentException("URL data is null or empty")
 
         val uri = Uri.parse(url)
 
@@ -69,7 +69,7 @@ object TokenBuilder {
         val issuer = params?.get("issuer") ?: ""
         var label = uri.path?.substring(1) ?: ""
         val secret = params?.get("secret")?.cleanSecretKey() ?: ""
-        val type = uri.host?.let { OTPType.valueOf(it) } ?: OTPType.TOTP
+        val type = uri.host?.let { OTPType.valueOf(it.uppercase()) } ?: OTPType.TOTP
         val algorithm = params?.get("algorithm")?.let { HashAlgorithm.valueOf(it) } ?: DEFAULT_HASH_ALGORITHM
         val period = params?.get("period")?.toInt() ?: DEFAULT_PERIOD
         val digits = params?.get("digits")?.toInt() ?: DEFAULT_DIGITS

@@ -24,14 +24,15 @@ class TokensViewModel @Inject constructor(
     private val _tokensState = MutableStateFlow<UIState<List<TokenEntry>>>(UIState.Loading)
     val tokensState = _tokensState.asStateFlow()
 
-    var tokenToEdit: TokenEntry? = null
-    var otpAuthUrl: String? = null
-
     fun fetchTokens() {
         viewModelScope.launch {
-            val tokens = tokensRepository.getAllTokens()
-            _tokensState.update { UIState.Success(tokens) }
+            loadTokens()
         }
+    }
+
+    private suspend fun loadTokens() {
+        val tokens = tokensRepository.getAllTokens()
+        _tokensState.update { UIState.Success(tokens) }
     }
 
     fun addToken(
@@ -63,10 +64,7 @@ class TokensViewModel @Inject constructor(
                 onDuplicate(requestCode, duplicateToken)
             } else {
                 tokensRepository.upsertToken(token)
-
-                val tokens = tokensRepository.getAllTokens()
-                _tokensState.update { UIState.Success(tokens) }
-
+                loadTokens()
                 onComplete(requestCode)
             }
         }
@@ -76,6 +74,7 @@ class TokensViewModel @Inject constructor(
         viewModelScope.launch {
             tokensRepository.deleteToken(existingToken.id)
             tokensRepository.upsertToken(token)
+            loadTokens()
         }
     }
 

@@ -55,8 +55,6 @@ fun HomeScreen(
     tokensViewModel: TokensViewModel,
     navController: NavController,
 ) {
-    val context = LocalContext.current
-
     tokensViewModel.fetchTokens()
     val tokensState by tokensViewModel.tokensState.collectAsStateWithLifecycle()
 
@@ -100,10 +98,7 @@ fun HomeScreen(
                         if (tokens.isNotEmpty()) {
                             TokensList(
                                 tokens,
-                                onEdit = {
-                                    tokensViewModel.tokenToEdit = it
-                                    navController.navigate(RouteBuilder.tokenSetup(it.id))
-                                })
+                                onEdit = { navController.navigate(RouteBuilder.tokenSetup(tokenId = it.id)) })
                         } else {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -145,9 +140,9 @@ private fun FAB(
     ) { result ->
         val extras = result.data?.extras
         if (result.resultCode == Activity.RESULT_OK && extras != null) {
-            val auth = extras.getString(SCAN_RESULT)
-            if (Utils.isValidTOTPAuthURL(auth)) {
-//                navController.navigate(R.id.action_home_fragment_to_token_details_fragment)
+            val authUrl = extras.getString(SCAN_RESULT)
+            if (Utils.isValidTOTPAuthURL(authUrl)) {
+                navController.navigate(RouteBuilder.tokenSetup(authUrl = authUrl))
             } else {
                 context.getString(R.string.error_bad_formed_otp_url).toast(context)
             }

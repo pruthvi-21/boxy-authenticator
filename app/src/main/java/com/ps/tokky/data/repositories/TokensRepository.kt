@@ -7,6 +7,8 @@ class TokensRepository(private val tokensDao: TokensDao) {
 
     suspend fun getAllTokens(): List<TokenEntry> = tokensDao.getAllTokens()
 
+    suspend fun getTokenWithId(tokenId: String) = tokensDao.getTokenWithId(tokenId)
+
     suspend fun insertAccounts(accounts: List<TokenEntry>) = tokensDao.insertAccounts(accounts)
 
     suspend fun insertToken(token: TokenEntry) = tokensDao.insertToken(token)

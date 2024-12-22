@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
+import com.ps.tokky.data.repositories.TokensRepository
 import com.ps.tokky.utils.AccountEntryMethod
 import com.ps.tokky.utils.Constants.DEFAULT_DIGITS
 import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
@@ -24,8 +25,13 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 
+enum class TokenSetupMode {
+    NEW, URL, UPDATE
+}
+
 @HiltViewModel
 class TokenFormViewModel @Inject constructor(
+    private val tokensRepository: TokensRepository,
     private val formValidator: TokenFormValidator
 ) : ViewModel() {
     private var initialState = TokenFormState()
@@ -35,10 +41,24 @@ class TokenFormViewModel @Inject constructor(
 
     val validationEvent = MutableSharedFlow<TokenFormValidationEvent>()
 
-    var isInEditMode: Boolean = false
-    var tokenToEdit: TokenEntry? = null
+    var tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW
+    private var tokenToUpdate: TokenEntry? = null
 
-    fun setInitialStateFromToken(token: TokenEntry) {
+    fun setInitialStateFromTokenWithId(tokenId: String) {
+        viewModelScope.launch {
+            val token = tokensRepository.getTokenWithId(tokenId)
+            tokenToUpdate = token
+            tokenSetupMode = TokenSetupMode.UPDATE
+            setInitialStateFromToken(token)
+        }
+    }
+
+    fun setInitialStateFromUrl(authUrl: String) {
+        tokenSetupMode = TokenSetupMode.URL
+        setInitialStateFromToken(TokenBuilder.buildFromUrl(authUrl))
+    }
+
+    private fun setInitialStateFromToken(token: TokenEntry) {
         val tokenState = TokenFormState(
             issuer = token.issuer,
             label = token.label,
@@ -125,30 +145,45 @@ class TokenFormViewModel @Inject constructor(
             if (!hasError) {
                 val state = _uiState.value
 
-                val token = if (isInEditMode) {
-                    tokenToEdit!!.copy(
-                        issuer = state.issuer,
-                        label = state.label,
-                        thumbnailColor = state.thumbnailColor,
-                        updatedOn = Date(),
-                    )
-                } else {
-                    var token = TokenBuilder.buildNewToken(
-                        issuer = state.issuer,
-                        label = state.label,
-                        secretKey = state.secretKey,
-                        thumbnailColor = state.thumbnailColor,
-                        addedFrom = AccountEntryMethod.FORM,
-                    )
-
-                    if (state.enableAdvancedOptions) {
-                        token = token.copy(
-                            algorithm = state.algorithm,
-                            period = state.period.toInt(),
-                            digits = state.digits.toInt()
+                val token = when (tokenSetupMode) {
+                    TokenSetupMode.NEW,
+                    TokenSetupMode.URL -> {
+                        var newToken = TokenBuilder.buildNewToken(
+                            issuer = state.issuer,
+                            label = state.label,
+                            secretKey = state.secretKey,
+                            thumbnailColor = state.thumbnailColor,
+                            addedFrom = AccountEntryMethod.FORM,
                         )
+
+                        if (tokenSetupMode == TokenSetupMode.URL) {
+                            newToken = newToken.copy(
+                                addedFrom = AccountEntryMethod.QR_CODE,
+                                algorithm = state.algorithm,
+                                period = state.period.toInt(),
+                                digits = state.digits.toInt()
+                            )
+                        } else {
+                            if (state.enableAdvancedOptions) {
+                                newToken = newToken.copy(
+                                    algorithm = state.algorithm,
+                                    period = state.period.toInt(),
+                                    digits = state.digits.toInt()
+                                )
+                            }
+                        }
+
+                        newToken
                     }
-                    token
+
+                    TokenSetupMode.UPDATE -> {
+                        tokenToUpdate?.copy(
+                            issuer = state.issuer,
+                            label = state.label,
+                            thumbnailColor = state.thumbnailColor,
+                            updatedOn = Date()
+                        ) ?: throw IllegalStateException("No token ID available for update")
+                    }
                 }
 
                 validationEvent.emit(TokenFormValidationEvent.Success(token))
