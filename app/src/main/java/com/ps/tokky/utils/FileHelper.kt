@@ -59,13 +59,22 @@ object FileHelper {
         }
     }
 
-    fun readFromFile(context: Context, path: Uri, password: String): String? {
-        val jsonSelectedFile = context.contentResolver.openInputStream(path);
-        val inputAsString = jsonSelectedFile?.bufferedReader().use { it?.readText() }
-        jsonSelectedFile?.close()
-
-        inputAsString ?: return ""
-        return decrypt(inputAsString, password)
+    fun readFromFile(
+        context: Context,
+        path: Uri,
+        password: String,
+    ): String? {
+        try {
+            context.contentResolver.openInputStream(path)?.use { inputStream ->
+                inputStream.bufferedReader().use { reader ->
+                    val content = reader.readText()
+                    return decrypt(content, password)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     private fun encrypt(textToEncrypt: String, password: String): String {

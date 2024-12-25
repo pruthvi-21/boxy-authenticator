@@ -21,12 +21,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.helpers.BiometricsHelper
-import com.ps.tokky.navigation.RouteBuilder
 import com.ps.tokky.ui.components.DefaultAppBarNavigationIcon
 import com.ps.tokky.ui.components.TokkyScaffold
 import com.ps.tokky.ui.components.preferences.PreferenceCategory
-import com.ps.tokky.ui.components.preferences.preference
 import com.ps.tokky.ui.components.preferences.switchPreference
+import com.ps.tokky.ui.screens.settings.TransferAccounts
 import com.ps.tokky.ui.viewmodels.SettingsViewModel
 import com.ps.tokky.utils.copy
 import com.ps.tokky.utils.top
@@ -78,17 +77,7 @@ fun SettingsScreen(navController: NavController) {
                     },
                 )
             }
-            PreferenceCategory(
-                title = context.getString(R.string.preference_category_transfer_accounts),
-            ) {
-                preference(
-                    title = context.getString(R.string.export_accounts),
-                    summary = context.getString(R.string.export_accounts_summary),
-                    onClick = {
-                        navController.navigate(RouteBuilder.export())
-                    }
-                )
-            }
+            TransferAccounts(navController)
         }
     }
 }

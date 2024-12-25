@@ -5,7 +5,8 @@
     <string name="preference_title_app_lock">Enable app lock</string>
     <string name="preference_title_biometrics">Use biometrics</string>
     <string name="preference_title_screenshots">Allow screenshots</string>
-    <string name="pref_title_import_accounts">Import Accounts</string>
+    <string name="import_accounts">Import Accounts</string>
+    <string name="import_accounts_summary">Restore your accounts from a backup file.</string>
     <string name="export_accounts">Export Accounts</string>
     <string name="export_accounts_summary">Save your accounts securely in a backup file.</string>
     <string name="preference_category_title_security">Security</string>

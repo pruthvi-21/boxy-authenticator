@@ -106,6 +106,7 @@ fun ExportTokensScreen() {
                 label = stringResource(R.string.password),
                 placeholder = stringResource(R.string.enter_password_for_backup),
                 isPasswordField = !showPassword,
+                hidePasswordVisibilityEye = true,
                 errorMessage = exportViewModel.passwordError.value,
             )
             Spacer(Modifier.height(10.dp))
@@ -117,6 +118,7 @@ fun ExportTokensScreen() {
                 label = stringResource(R.string.confirm_password),
                 placeholder = stringResource(R.string.reenter_above_password),
                 isPasswordField = !showPassword,
+                hidePasswordVisibilityEye = true,
                 errorMessage = exportViewModel.confirmPasswordError.value,
             )
             Spacer(Modifier.height(10.dp))

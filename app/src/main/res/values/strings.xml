@@ -5,6 +5,7 @@
     <string name="expandable_fab_qr_title">Scan a QR Code</string>
     <string name="expandable_fab_manual_title">Enter Manually</string>
     <string name="error_bad_formed_otp_url">Badly formed URL. Please try to enter manually</string>
+    <string name="ok">OK</string>
     <string name="warning">Warning</string>
     <string name="replace">Replace</string>
     <string name="rename">Rename</string>
@@ -96,4 +97,13 @@
     <string name="export">Export</string>
     <string name="export_success">Accounts exported</string>
     <string name="export_error">Some error occurred while exporting</string>
+
+    <!-- ImportTokensScreen -->
+    <string name="import_label">Import</string>
+    <string name="enter_password">Enter password</string>
+    <string name="enter_password_to_restore">Enter password to restore</string>
+    <string name="decrypt">Decrypt</string>
+    <string name="decrypt_your_file">Decrypt your file</string>
+    <string name="proceed">Proceed</string>
+    <string name="duplicate_warning_message">Only %1$d entries will be imported. %2$d duplicate entries will be ignored.</string>
 </resources>

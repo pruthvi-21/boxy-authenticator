@@ -106,7 +106,8 @@ object TokenBuilder {
             HashAlgorithm.valueOf(json.getString(KEY_ALGORITHM))
         } else DEFAULT_HASH_ALGORITHM
 
-        val thumbnailIcon = json.getString(KEY_THUMBNAIL_ICON)
+        val thumbnailIcon = if (json.has(KEY_THUMBNAIL_ICON)) json.getString(KEY_THUMBNAIL_ICON)
+        else null
         val thumbnailColor = json.getInt(KEY_THUMBNAIL_COLOR)
 
         return buildNewToken(

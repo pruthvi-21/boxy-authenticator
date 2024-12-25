@@ -9,6 +9,7 @@ import com.ps.tokky.helpers.TransitionHelper
 import com.ps.tokky.navigation.Routes
 import com.ps.tokky.navigation.addExportTokensRoute
 import com.ps.tokky.navigation.addHomeRoute
+import com.ps.tokky.navigation.addImportTokensRoute
 import com.ps.tokky.navigation.addSettingsRoute
 import com.ps.tokky.navigation.addTokenSetupRoute
 import com.ps.tokky.ui.theme.TokkyTheme
@@ -17,6 +18,7 @@ import com.ps.tokky.ui.viewmodels.TokensViewModel
 @Composable
 fun App() {
     val tokensViewModel: TokensViewModel = hiltViewModel()
+
     val transitions = TransitionHelper(LocalContext.current)
 
     TokkyTheme {
@@ -34,6 +36,7 @@ fun App() {
             addTokenSetupRoute(navController, tokensViewModel)
             addSettingsRoute(navController)
             addExportTokensRoute()
+            addImportTokensRoute(navController)
         }
     }
 }

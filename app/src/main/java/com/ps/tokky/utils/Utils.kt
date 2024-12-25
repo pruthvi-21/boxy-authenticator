@@ -11,6 +11,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.provider.OpenableColumns
 import android.text.Spannable
 import android.text.SpannableString
 import android.view.View
@@ -22,9 +24,9 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.ui.unit.Dp
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.navigation.NavController
 import com.ps.tokky.R
-import org.json.JSONArray
-import org.json.JSONException
+import com.ps.tokky.navigation.Routes
 import java.security.MessageDigest
 
 
@@ -144,16 +146,6 @@ fun String.getInitials(): String {
     return initials.uppercase()
 }
 
-fun String?.isJsonArray(): Boolean {
-    this ?: return false
-    return try {
-        JSONArray(this)
-        true
-    } catch (e: JSONException) {
-        false
-    }
-}
-
 fun Toolbar.changeOverflowIconColor(color: Int) {
     var drawable: Drawable? = overflowIcon
     if (drawable != null) {
@@ -181,4 +173,23 @@ fun Context.findActivity(): Activity? {
 
 fun Dp.toPx(context: Context): Int {
     return (value * context.resources.displayMetrics.density).toInt()
+}
+
+fun Uri.getName(context: Context): String? {
+    return context.contentResolver.query(this, null, null, null, null)?.use { cursor ->
+        val nameIndex = cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
+        cursor.moveToFirst()
+        cursor.getString(nameIndex)
+    }
+}
+
+fun NavController.isInRoute(route: Routes): Boolean {
+    return currentDestination?.route
+        ?.startsWith(route.base) == true
+}
+
+fun NavController.popBackStackIfInRoute(route: Routes) {
+    if (isInRoute(route)) {
+        popBackStack()
+    }
 }

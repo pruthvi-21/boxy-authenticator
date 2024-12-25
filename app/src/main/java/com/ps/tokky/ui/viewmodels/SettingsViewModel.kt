@@ -70,4 +70,6 @@ class SettingsViewModel @Inject constructor(
             context.setScreenshotMode(enabled)
         }
     }
+
+
 }

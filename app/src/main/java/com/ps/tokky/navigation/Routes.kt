@@ -7,6 +7,7 @@ sealed class Routes(val base: String) {
     data object TokenSetup : Routes("/token_setup")
     data object Settings : Routes("/settings")
     data object ExportTokens : Routes("/export")
+    data object ImportTokens : Routes("/import")
 }
 
 object RouteBuilder {
@@ -26,6 +27,14 @@ object RouteBuilder {
 
     fun export(): String {
         return buildRoute(Routes.ExportTokens.base, emptyMap())
+    }
+
+    fun import(fileUri: Uri): String {
+        return buildRoute(
+            Routes.ImportTokens.base, mapOf(
+                "file_uri" to Uri.encode(fileUri.toString())
+            )
+        )
     }
 
     private fun buildRoute(base: String, queryParams: Map<String, String?>): String {

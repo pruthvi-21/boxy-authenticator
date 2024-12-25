@@ -8,8 +8,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ps.tokky.ui.screens.ExportTokensScreen
 import com.ps.tokky.ui.screens.HomeScreen
+import com.ps.tokky.ui.screens.ImportTokensScreen
 import com.ps.tokky.ui.screens.SettingsScreen
 import com.ps.tokky.ui.screens.TokenSetupScreen
+import com.ps.tokky.ui.viewmodels.ImportViewModel
 import com.ps.tokky.ui.viewmodels.TokensViewModel
 
 fun NavGraphBuilder.addHomeRoute(
@@ -67,5 +69,21 @@ fun NavGraphBuilder.addSettingsRoute(
 fun NavGraphBuilder.addExportTokensRoute() {
     composable(Routes.ExportTokens.base) {
         ExportTokensScreen()
+    }
+}
+
+fun NavGraphBuilder.addImportTokensRoute(
+    navController: NavController
+) {
+    composable(
+        route = "${Routes.ImportTokens.base}?file_uri={file_uri}",
+        arguments = listOf(
+            navArgument("file_uri") {
+                type = NavType.StringType
+            }
+        )
+    ) { navBackStackEntry ->
+        val fileUri = navBackStackEntry.arguments?.getString("file_uri")?.let { Uri.parse(it) }
+        ImportTokensScreen(fileUri!!, navController)
     }
 }
