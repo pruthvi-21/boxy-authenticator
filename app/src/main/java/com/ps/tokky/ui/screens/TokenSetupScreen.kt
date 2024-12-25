@@ -1,11 +1,5 @@
 package com.ps.tokky.ui.screens
 
-import android.content.Context
-import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.StyleSpan
-import android.view.LayoutInflater
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
@@ -35,6 +29,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,15 +59,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
-import com.ps.tokky.databinding.DialogTitleDeleteWarningBinding
 import com.ps.tokky.ui.components.DefaultAppBarNavigationIcon
 import com.ps.tokky.ui.components.MultiToggleButton
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.ThumbnailController
 import com.ps.tokky.ui.components.TokkyScaffold
+import com.ps.tokky.ui.components.dialogs.TokkyDialog
 import com.ps.tokky.ui.viewmodels.TokenFormEvent
 import com.ps.tokky.ui.viewmodels.TokenFormState
 import com.ps.tokky.ui.viewmodels.TokenFormValidationEvent
@@ -117,13 +111,13 @@ fun TokenSetupScreen(
     LaunchedEffect(context, tokenSetupMode) {
         tokenFormViewModel.validationEvent.collect { event ->
             if (event is TokenFormValidationEvent.Success) {
-                handleFormSuccess(event.token, tokensViewModel, navController, context)
+                handleFormSuccess(event.token, tokensViewModel, tokenFormViewModel, navController)
             }
         }
     }
 
     BackHandler(enabled = tokenFormViewModel.isFormUpdated()) {
-        showBackPressDialog(context, navController)
+        tokenFormViewModel.showBackPressDialog.value = true
     }
 
     TokkyScaffold(
@@ -131,13 +125,9 @@ fun TokenSetupScreen(
             Toolbar(
                 tokenSetupMode,
                 onDelete = {
-                    if (tokenSetupMode == TokenSetupMode.UPDATE) deleteToken(
-                        tokenId!!,
-                        state,
-                        tokensViewModel,
-                        navController,
-                        context
-                    )
+                    if (tokenSetupMode == TokenSetupMode.UPDATE) {
+                        tokenFormViewModel.showDeleteTokenDialog.value = true
+                    }
                 }
             )
         }
@@ -155,6 +145,55 @@ fun TokenSetupScreen(
                     )
                 }
         ) {
+
+            if (tokenFormViewModel.showBackPressDialog.value) {
+                TokkyDialog(
+                    dialogBody = stringResource(R.string.message_unsaved_changes),
+                    confirmText = stringResource(R.string.go_back),
+                    onDismissRequest = { tokenFormViewModel.showBackPressDialog.value = false },
+                    onConfirmation = {
+                        navController.navigateUp()
+                        tokenFormViewModel.showBackPressDialog.value = false
+                    }
+                )
+            }
+
+            if (tokenFormViewModel.showDeleteTokenDialog.value) {
+                TokenDeleteDialog(
+                    tokenId = tokenId!!,
+                    state = state,
+                    tokensViewModel = tokensViewModel,
+                    tokenFormViewModel = tokenFormViewModel,
+                    navController = navController
+                )
+            }
+
+            if (tokenFormViewModel.showDuplicateTokenDialog.value.show) {
+                val args = tokenFormViewModel.showDuplicateTokenDialog.value
+                TokkyDialog(
+                    dialogTitle = stringResource(R.string.account_exists_dialog_title),
+                    dialogBody = stringResource(
+                        R.string.account_exists_dialog_message,
+                        args.token!!.name
+                    ),
+                    confirmText = stringResource(R.string.replace),
+                    dismissText = stringResource(R.string.rename),
+                    onDismissRequest = {
+                        tokenFormViewModel.showDuplicateTokenDialog.value =
+                            TokenFormViewModel.DuplicateTokenDialogArgs(false)
+                    },
+                    onConfirmation = {
+                        tokensViewModel.replaceExistingToken(
+                            existingToken = args.existingToken!!,
+                            token = args.token
+                        )
+                        navController.popBackStack()
+                        tokenFormViewModel.showDuplicateTokenDialog.value =
+                            TokenFormViewModel.DuplicateTokenDialogArgs(false)
+                    },
+                )
+            }
+
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -299,8 +338,8 @@ private fun Toolbar(
 fun handleFormSuccess(
     token: TokenEntry,
     tokensViewModel: TokensViewModel,
+    tokenFormViewModel: TokenFormViewModel,
     navController: NavController,
-    context: Context
 ) {
     val requestCode = UUID.randomUUID().toString()
     tokensViewModel.upsertToken(
@@ -313,57 +352,40 @@ fun handleFormSuccess(
         },
         onDuplicate = { responseCode, existingToken ->
             if (requestCode == responseCode) {
-                MaterialAlertDialogBuilder(context)
-                    .setTitle(R.string.account_exists_dialog_title)
-                    .setMessage(
-                        context.getString(
-                            R.string.account_exists_dialog_message,
-                            token.name
-                        )
+                tokenFormViewModel.showDuplicateTokenDialog.value =
+                    TokenFormViewModel.DuplicateTokenDialogArgs(
+                        true, token, existingToken
                     )
-                    .setPositiveButton(R.string.replace) { _, _ ->
-                        tokensViewModel.replaceExistingToken(
-                            existingToken = existingToken,
-                            token = token
-                        )
-                        navController.popBackStack()
-                    }
-                    .setNegativeButton(R.string.rename) { _, _ ->
-
-                    }
-                    .create()
-                    .show()
             }
         })
 }
 
-private fun deleteToken(
+@Composable
+fun TokenDeleteDialog(
     tokenId: String,
     state: TokenFormState,
     tokensViewModel: TokensViewModel,
+    tokenFormViewModel: TokenFormViewModel,
     navController: NavController,
-    context: Context
 ) {
-    val titleViewBinding = DialogTitleDeleteWarningBinding.inflate(LayoutInflater.from(context))
-
-    val ssb = SpannableStringBuilder(state.issuer)
-    ssb.setSpan(
-        StyleSpan(Typeface.BOLD),
-        0,
-        state.issuer.length,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-    )
-
-    titleViewBinding.title.text =
-        SpannableStringBuilder(context.getString(R.string.remove_account))
-            .append(" ")
-            .append(ssb)
-            .append("?")
-
-    MaterialAlertDialogBuilder(context)
-        .setCustomTitle(titleViewBinding.root)
-        .setMessage(R.string.dialog_message_delete_token)
-        .setPositiveButton(R.string.remove) { _, _ ->
+    TokkyDialog(
+        dialogTitle = stringResource(R.string.remove_account),
+        dialogBody = stringResource(
+            R.string.dialog_message_delete_token,
+            "${state.issuer}${if (state.label.isNotBlank()) " (${state.label})" else ""}"
+        ),
+        confirmText = stringResource(R.string.remove),
+        icon = {
+            Icon(
+                Icons.Outlined.WarningAmber,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.error
+            )
+        },
+        onDismissRequest = {
+            tokenFormViewModel.showDeleteTokenDialog.value = false
+        },
+        onConfirmation = {
             val requestCode = UUID.randomUUID().toString()
             tokensViewModel.deleteToken(
                 tokenId = tokenId,
@@ -371,25 +393,12 @@ private fun deleteToken(
                 onComplete = { responseCode ->
                     if (requestCode == responseCode) {
                         navController.popBackStack()
+                        tokenFormViewModel.showDeleteTokenDialog.value = false
                     }
-                })
+                }
+            )
         }
-        .setNegativeButton(R.string.cancel, null)
-        .create()
-        .show()
-}
-
-fun showBackPressDialog(
-    context: Context,
-    navController: NavController
-) {
-    MaterialAlertDialogBuilder(context)
-        .setMessage(R.string.message_unsaved_changes)
-        .setPositiveButton(R.string.go_back) { _, _ ->
-            navController.navigateUp()
-        }
-        .setNegativeButton(R.string.cancel, null)
-        .show()
+    )
 }
 
 @Composable

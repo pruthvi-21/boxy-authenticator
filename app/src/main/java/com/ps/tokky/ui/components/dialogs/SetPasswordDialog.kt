@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ps.tokky.R
 import com.ps.tokky.ui.components.StyledTextField
-import com.ps.tokky.ui.components.TokkyDialog
 import com.ps.tokky.ui.viewmodels.SetPasswordDialogViewModel
 
 @Composable

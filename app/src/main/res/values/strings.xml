@@ -24,8 +24,7 @@
     <string name="disable_app_lock_prompt">Disable biometric unlock</string>
     <string name="app_lock_prompt_negative_text">Cancel</string>
 
-    <string name="dialog_message_delete_token">Before removing please ensure that you turn off 2FA for this account.\n\nAlso, please ensure that you have alternative mechanism for generating codes.</string>
-
+    <string name="dialog_message_delete_token">Before removing the token \'%1$s\', please ensure that you turn off 2FA for this account.\n\nAlso, please ensure that you have an alternative mechanism for generating codes.</string>
     <!-- Settings Activity -->
     <string name="settings_setup_pin_bottom_sheet_title">Create a new PIN</string>
     <string name="settings_setup_reenter_pin_bottom_sheet_title">Reenter your PIN</string>

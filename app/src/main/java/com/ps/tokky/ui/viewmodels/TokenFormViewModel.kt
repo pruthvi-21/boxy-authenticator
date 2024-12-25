@@ -44,6 +44,16 @@ class TokenFormViewModel @Inject constructor(
     var tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW
     private var tokenToUpdate: TokenEntry? = null
 
+    val showBackPressDialog = mutableStateOf(false)
+    val showDeleteTokenDialog = mutableStateOf(false)
+    val showDuplicateTokenDialog = mutableStateOf(DuplicateTokenDialogArgs(false))
+
+    data class DuplicateTokenDialogArgs(
+        val show: Boolean,
+        val token: TokenEntry? = null,
+        val existingToken: TokenEntry? = null,
+    )
+
     fun setInitialStateFromTokenWithId(tokenId: String) {
         viewModelScope.launch {
             val token = tokensRepository.getTokenWithId(tokenId)

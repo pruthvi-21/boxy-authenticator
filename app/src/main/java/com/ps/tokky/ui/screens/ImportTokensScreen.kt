@@ -7,9 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,8 +44,8 @@ import com.ps.tokky.R
 import com.ps.tokky.navigation.Routes
 import com.ps.tokky.ui.components.DefaultAppBarNavigationIcon
 import com.ps.tokky.ui.components.StyledTextField
-import com.ps.tokky.ui.components.TokkyDialog
 import com.ps.tokky.ui.components.TokkyScaffold
+import com.ps.tokky.ui.components.dialogs.TokkyDialog
 import com.ps.tokky.ui.viewmodels.ImportViewModel
 import com.ps.tokky.ui.viewmodels.TokenFormValidator
 import com.ps.tokky.utils.popBackStackIfInRoute
@@ -160,7 +158,7 @@ fun ShowDuplicatesWarningDialog(
             dialogTitle = stringResource(R.string.warning),
             confirmText = stringResource(R.string.proceed),
             dismissText = stringResource(R.string.cancel),
-            dialogSubTitle = stringResource(
+            dialogBody = stringResource(
                 R.string.duplicate_warning_message,
                 nonDuplicateCount,
                 duplicateCount
@@ -276,6 +274,7 @@ private fun ShowPasswordDialog(
     val focusRequester = remember { FocusRequester() }
 
     if (show && fileUri != null) {
+        val fileName = fileUri.path?.split(":")?.get(1)
         TokkyDialog(
             dialogTitle = stringResource(R.string.decrypt_your_file),
             confirmText = stringResource(R.string.decrypt),
@@ -286,15 +285,10 @@ private fun ShowPasswordDialog(
             onConfirmation = {
                 onConfirm(password)
                 password = ""
-            }
+            },
+            dialogBody = fileName
         ) {
-            Column(Modifier.padding(top = 20.dp)) {
-                val fileName = fileUri.path?.split(":")?.get(1)
-                if (fileName != null) {
-                    Text(text = fileName)
-                    Spacer(Modifier.height(20.dp))
-                }
-
+            Column {
                 StyledTextField(
                     value = password,
                     onValueChange = {
@@ -303,6 +297,7 @@ private fun ShowPasswordDialog(
                     placeholder = stringResource(R.string.enter_password_to_restore),
                     isPasswordField = true,
                     modifier = Modifier
+                        .padding(top = if (fileName != null) 20.dp else 0.dp)
                         .focusRequester(focusRequester)
                         .onGloballyPositioned {
                             focusRequester.requestFocus()
