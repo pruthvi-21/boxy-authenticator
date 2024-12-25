@@ -4,17 +4,16 @@ import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.ps.tokky.helpers.AppLockManager
 import com.ps.tokky.helpers.AppSettings
 import com.ps.tokky.helpers.BiometricsHelper
 import com.ps.tokky.ui.activities.MainActivity
+import com.ps.tokky.utils.CryptoUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settings: AppSettings,
-    private val appLockManager: AppLockManager,
     private val biometricAuthHelper: BiometricsHelper
 ) : ViewModel() {
 
@@ -27,6 +26,9 @@ class SettingsViewModel @Inject constructor(
     private val _isScreenshotsModeEnabled = mutableStateOf(false)
     val isScreenshotsModeEnabled: State<Boolean> = _isScreenshotsModeEnabled
 
+    val showEnableAppLockDialog = mutableStateOf(false)
+    val showDisableAppLockDialog = mutableStateOf(false)
+
     init {
         loadSettings()
     }
@@ -35,24 +37,6 @@ class SettingsViewModel @Inject constructor(
         _isAppLockEnabled.value = settings.isAppLockEnabled()
         _isBiometricUnlockEnabled.value = settings.isBiometricUnlockEnabled()
         _isScreenshotsModeEnabled.value = settings.isScreenshotModeEnabled()
-    }
-
-    fun setAppLockEnabled(context: Context, enabled: Boolean) {
-        if (enabled) {
-            appLockManager.enableAppLock(context, settings) { status ->
-                if (status) {
-                    _isAppLockEnabled.value = true
-                }
-            }
-        } else {
-            appLockManager.disableAppLock(context, settings) { status ->
-                if (status) {
-                    _isAppLockEnabled.value = false
-                    settings.setBiometricUnlockEnabled(false)
-                    _isBiometricUnlockEnabled.value = false
-                }
-            }
-        }
     }
 
     fun setBiometricUnlockEnabled(context: Context, enabled: Boolean) {
@@ -71,5 +55,23 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun enableAppLock(password: String) {
+        settings.setPasscodeHash(CryptoUtils.hashPasscode(password))
+        settings.setAppLockEnabled(true)
+        _isAppLockEnabled.value = true
+    }
 
+    fun disableAppLock(password: String): Boolean {
+        val passwordHash = CryptoUtils.hashPasscode(password)
+        val status = passwordHash == settings.getPasscodeHash()
+        if (status) {
+            settings.setAppLockEnabled(false)
+            _isAppLockEnabled.value = false
+
+            settings.setBiometricUnlockEnabled(false)
+            _isBiometricUnlockEnabled.value = false
+        }
+
+        return status
+    }
 }

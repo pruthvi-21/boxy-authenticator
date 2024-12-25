@@ -5,7 +5,6 @@ import android.content.res.Resources
 import com.ps.tokky.data.database.TokensDao
 import com.ps.tokky.data.database.TokensDatabase
 import com.ps.tokky.data.repositories.TokensRepository
-import com.ps.tokky.helpers.AppLockManager
 import com.ps.tokky.helpers.BiometricsHelper
 import com.ps.tokky.ui.viewmodels.TokenFormValidator
 import dagger.Module
@@ -45,11 +44,5 @@ object TokensModule {
     @Singleton
     fun provideBiometricsHelper(): BiometricsHelper {
         return BiometricsHelper()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAppLockManager(): AppLockManager {
-        return AppLockManager()
     }
 }

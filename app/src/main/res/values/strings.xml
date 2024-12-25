@@ -106,4 +106,7 @@
     <string name="decrypt_your_file">Decrypt your file</string>
     <string name="proceed">Proceed</string>
     <string name="duplicate_warning_message">Only %1$d entries will be imported. %2$d duplicate entries will be ignored.</string>
+    <string name="set_password">Set password</string>
+    <string name="password_min_length_error">Password should have atleast 6 characters</string>
+    <string name="remove_password">Remove password</string>
 </resources>
