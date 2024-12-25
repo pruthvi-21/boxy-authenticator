@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +33,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -80,7 +82,7 @@ fun HomeScreen(
                             navController.navigate(RouteBuilder.settings())
                         }) {
                             Image(
-                                painterResource(R.drawable.ic_settings),
+                                imageVector = Icons.TwoTone.Settings,
                                 contentDescription = "",
                                 contentScale = ContentScale.Crop,
                                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),

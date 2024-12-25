@@ -26,12 +26,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,7 +57,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -273,7 +276,7 @@ private fun Toolbar(
             if (tokenSetupMode == TokenSetupMode.UPDATE) {
                 IconButton(onClick = onDelete) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_delete),
+                        imageVector = Icons.Outlined.Delete,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error,
                     )
@@ -475,9 +478,11 @@ private fun Toggle(
             )
             Spacer(Modifier.width(10.dp))
             Icon(
-                painter = painterResource(R.drawable.ic_samsung_arrow_left),
+                imageVector = Icons.Rounded.ArrowBackIosNew,
                 contentDescription = null,
-                modifier = Modifier.rotate(progress)
+                modifier = Modifier
+                    .size(20.dp)
+                    .rotate(progress),
             )
         }
     }

@@ -22,11 +22,14 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.EditNote
+import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,10 +43,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
@@ -128,13 +129,13 @@ fun ExpandableFab(
                 ) {
                     FabItem(
                         text = stringResource(R.string.expandable_fab_qr_title),
-                        icon = painterResource(R.drawable.ic_add_qr),
+                        icon = Icons.Outlined.QrCodeScanner,
                         onClick = onQrClick
                     )
 
                     FabItem(
                         text = stringResource(R.string.expandable_fab_manual_title),
-                        icon = painterResource(R.drawable.ic_add_manual),
+                        icon = Icons.Outlined.Edit,
                         onClick = onManualClick
                     )
 
@@ -166,8 +167,8 @@ fun ExpandableFab(
 @Composable
 private fun FabItem(
     text: String,
-    icon: Painter,
-    onClick: () -> Unit
+    icon: ImageVector,
+    onClick: () -> Unit,
 ) {
     val background = MaterialTheme.colorScheme.surfaceContainer
     val onBackground = MaterialTheme.colorScheme.onSurface
@@ -191,12 +192,9 @@ private fun FabItem(
         Spacer(modifier = Modifier.width(15.dp))
 
         Image(
-            painter = icon,
+            imageVector = icon,
             contentDescription = null,
-            contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(onBackground),
-            modifier = Modifier
-                .size(24.dp)
         )
     }
 }

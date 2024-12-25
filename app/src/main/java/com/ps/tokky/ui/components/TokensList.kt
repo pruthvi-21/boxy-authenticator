@@ -24,6 +24,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -49,7 +52,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -277,25 +279,27 @@ private fun Arrow(
                 onClick = onEdit,
                 modifier = Modifier
                     .fillMaxHeight()
+                    .size(24.dp)
                     .aspectRatio(1f / 1)
                     .alpha(animationProgress)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_edit),
+                    imageVector = Icons.Outlined.Edit,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
-            Spacer(Modifier.width(10.dp))
+            Spacer(Modifier.width(20.dp))
         }
 
         Icon(
-            painter = painterResource(id = R.drawable.ic_card_arrow),
+            imageVector = Icons.Rounded.ArrowBackIosNew,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier
+                .size(20.dp)
                 .fillMaxHeight()
-                .graphicsLayer(rotationZ = animationProgress * 180f)
+                .graphicsLayer(rotationZ = -90f + animationProgress * 180f)
         )
     }
 }
