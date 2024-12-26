@@ -178,11 +178,7 @@ private fun Section3(authViewModel: AuthenticationViewModel, modifier: Modifier)
         },
         onSubmit = {
             authViewModel.verifyPasscode {
-                Toast.makeText(
-                    context,
-                    R.string.settings_app_lock_incorrect_pin,
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(context, R.string.incorrect_password, Toast.LENGTH_SHORT).show()
             }
         },
         modifier = modifier

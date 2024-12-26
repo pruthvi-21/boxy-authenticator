@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="key_biometric_unlock" translatable="false">key_biometric_unlock</string>
-
     <string name="preference_title_app_lock">Enable app lock</string>
     <string name="preference_title_biometrics">Use biometrics</string>
     <string name="preference_title_screenshots">Allow screenshots</string>
@@ -15,8 +13,4 @@
     <string name="preference_summary_app_lock">Lock this app with a PIN. To change your PIN please disable app lock and enable it again</string>
     <string name="preference_summary_biometrics">You can unlock with your biometrics instead of typing PIN</string>
     <string name="preference_summary_screenshots">This will allow you to take screenshots in this app</string>
-
-    <!-- Default preference values -->
-    <bool name="default_biometric_unlock_value" translatable="false">false</bool>
-
 </resources>
