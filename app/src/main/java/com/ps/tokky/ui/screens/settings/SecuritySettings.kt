@@ -1,15 +1,16 @@
 package com.ps.tokky.ui.screens.settings
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.jw.preferences.PreferenceCategory
+import com.jw.preferences.SwitchPreference
 import com.ps.tokky.R
 import com.ps.tokky.helpers.BiometricsHelper
 import com.ps.tokky.ui.components.dialogs.RemovePasswordDialog
 import com.ps.tokky.ui.components.dialogs.SetPasswordDialog
-import com.ps.tokky.ui.components.preferences.PreferenceCategory
-import com.ps.tokky.ui.components.preferences.switchPreference
 import com.ps.tokky.ui.viewmodels.SettingsViewModel
 
 @Composable
@@ -23,13 +24,13 @@ fun SecuritySettings() {
     val isScreenshotsModeEnabled = settingsViewModel.isScreenshotsModeEnabled.value
 
     PreferenceCategory(
-        title = stringResource(R.string.preference_category_title_security)
+        title = { Text(stringResource(R.string.preference_category_title_security)) },
     ) {
-        switchPreference(
-            title = context.getString(R.string.preference_title_app_lock),
-            summary = context.getString(R.string.preference_summary_app_lock),
-            checked = isAppLockEnabled,
-            onCheckedChange = {
+        SwitchPreference(
+            title = { Text(stringResource(R.string.preference_title_app_lock)) },
+            summary = { Text(stringResource(R.string.preference_summary_app_lock)) },
+            value = isAppLockEnabled,
+            onValueChange = {
                 if (it) {
                     settingsViewModel.showEnableAppLockDialog.value = true
                     settingsViewModel.showDisableAppLockDialog.value = false
@@ -39,22 +40,23 @@ fun SecuritySettings() {
                 }
             },
         )
-        switchPreference(
-            title = context.getString(R.string.preference_title_biometrics),
-            summary = context.getString(R.string.preference_summary_biometrics),
-            checked = isBiometricUnlockEnabled,
-            disabled = !(BiometricsHelper.areBiometricsAvailable(context) and settingsViewModel.isAppLockEnabled.value),
-            onCheckedChange = {
+        SwitchPreference(
+            title = { Text(stringResource(R.string.preference_title_biometrics)) },
+            summary = { Text(stringResource(R.string.preference_summary_biometrics)) },
+            enabled = BiometricsHelper.areBiometricsAvailable(context) and settingsViewModel.isAppLockEnabled.value,
+            value = isBiometricUnlockEnabled,
+            onValueChange = {
                 settingsViewModel.setBiometricUnlockEnabled(context, it)
             },
         )
-        switchPreference(
-            title = context.getString(R.string.preference_title_screenshots),
-            summary = context.getString(R.string.preference_summary_screenshots),
-            checked = isScreenshotsModeEnabled,
-            onCheckedChange = {
+        SwitchPreference(
+            title = { Text(stringResource(R.string.preference_title_screenshots)) },
+            summary = { Text(stringResource(R.string.preference_summary_screenshots)) },
+            value = isScreenshotsModeEnabled,
+            onValueChange = {
                 settingsViewModel.setScreenshotModeEnabled(context, it)
             },
+            showDivider = false,
         )
     }
 

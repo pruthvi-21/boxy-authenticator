@@ -1,11 +1,11 @@
 package com.ps.tokky.ui.screens
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,6 +17,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jw.preferences.PreferenceScreen
+import com.jw.preferences.PreferenceTheme
 import com.ps.tokky.R
 import com.ps.tokky.ui.components.DefaultAppBarNavigationIcon
 import com.ps.tokky.ui.components.TokkyScaffold
@@ -31,11 +33,12 @@ fun SettingsScreen(navController: NavController) {
     TokkyScaffold(
         topBar = { Toolbar() }
     ) { contentPadding ->
-        Column(
-            modifier = Modifier.padding(contentPadding)
+        PreferenceScreen(
+            theme = PreferenceTheme.Default.copy(categoryShape = RoundedCornerShape(15.dp)),
+            modifier = Modifier.padding(contentPadding),
         ) {
-            SecuritySettings()
-            TransferAccounts(navController)
+            item { SecuritySettings() }
+            item { TransferAccounts(navController) }
         }
     }
 }
