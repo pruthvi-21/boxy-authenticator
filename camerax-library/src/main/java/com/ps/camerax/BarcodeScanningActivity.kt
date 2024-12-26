@@ -40,7 +40,7 @@ class BarcodeScanningActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_barcode_scanning)
-        setTheme(R.style.FullscreenTheme)
+        setTheme(com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar)
 
         previewView = findViewById(R.id.camera_preview_view)
         viewFinderOverlay = findViewById(R.id.view_finder_overlay)

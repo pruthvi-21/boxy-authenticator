@@ -5,14 +5,17 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        maven { url = uri("https://www.jitpack.io") }
     }
 }
-rootProject.name = "Tokky"
-include ':app'
-include ':camerax-library'
+
+rootProject.name = "tokky"
+include(":app")
+include(":camerax-library")
