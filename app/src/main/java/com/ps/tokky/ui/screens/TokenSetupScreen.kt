@@ -13,13 +13,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -32,13 +29,11 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,7 +46,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -61,11 +55,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
-import com.ps.tokky.ui.components.DefaultAppBarNavigationIcon
 import com.ps.tokky.ui.components.MultiToggleButton
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.ThumbnailController
-import com.ps.tokky.ui.components.TokkyScaffold
+import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.components.dialogs.TokkyDialog
 import com.ps.tokky.ui.viewmodels.TokenFormEvent
 import com.ps.tokky.ui.viewmodels.TokenFormState
@@ -74,9 +67,7 @@ import com.ps.tokky.ui.viewmodels.TokenFormViewModel
 import com.ps.tokky.ui.viewmodels.TokenSetupMode
 import com.ps.tokky.ui.viewmodels.TokensViewModel
 import com.ps.tokky.utils.HashAlgorithm
-import com.ps.tokky.utils.copy
 import com.ps.tokky.utils.getInitials
-import com.ps.tokky.utils.top
 import java.util.UUID
 
 private val radiusTiny = 4.dp
@@ -92,6 +83,7 @@ fun TokenSetupScreen(
     val context = LocalContext.current
     val localFocus = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     var state = tokenFormViewModel.uiState.value
     val tokenSetupMode = tokenFormViewModel.tokenSetupMode
@@ -120,15 +112,29 @@ fun TokenSetupScreen(
         tokenFormViewModel.showBackPressDialog.value = true
     }
 
-    TokkyScaffold(
+    Scaffold(
         topBar = {
+            val title =
+                if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(R.string.title_update_account_details)
+                else stringResource(R.string.title_enter_account_details)
+
             Toolbar(
-                tokenSetupMode,
-                onDelete = {
+                title = title,
+                showDefaultNavigationIcon = true,
+                onNavigationIconClick = { backPressedDispatcher?.onBackPressed() },
+                actions = {
                     if (tokenSetupMode == TokenSetupMode.UPDATE) {
-                        tokenFormViewModel.showDeleteTokenDialog.value = true
+                        IconButton(onClick = {
+                            tokenFormViewModel.showDeleteTokenDialog.value = true
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                            )
+                        }
                     }
-                }
+                },
             )
         }
     ) { safePadding ->
@@ -292,47 +298,6 @@ fun TokenSetupScreen(
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun Toolbar(
-    tokenSetupMode: TokenSetupMode,
-    onDelete: () -> Unit
-) {
-    val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val title = if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(R.string.title_update_account_details)
-    else stringResource(R.string.title_enter_account_details)
-
-    TopAppBar(
-        title = { Text(text = title) },
-        navigationIcon = {
-            DefaultAppBarNavigationIcon {
-                backPressedDispatcher?.onBackPressed()
-            }
-        },
-        actions = {
-            if (tokenSetupMode == TokenSetupMode.UPDATE) {
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
-                    )
-                }
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            navigationIconContentColor = MaterialTheme.colorScheme.primary,
-            actionIconContentColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
-        windowInsets = WindowInsets.safeDrawing.copy(
-            bottom = 0.dp,
-            top = WindowInsets.safeDrawing.asPaddingValues()
-                .top() + dimensionResource(R.dimen.toolbar_margin_top)
-        ),
-    )
 }
 
 fun handleFormSuccess(

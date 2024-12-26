@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,13 +33,12 @@ import androidx.compose.ui.unit.dp
 import com.ps.tokky.R
 import com.ps.tokky.ui.components.KeypadLayout
 import com.ps.tokky.ui.components.PinField
-import com.ps.tokky.ui.components.TokkyScaffold
 import com.ps.tokky.ui.viewmodels.AuthenticationViewModel
 
 @Composable
 fun AuthenticationScreen(authViewModel: AuthenticationViewModel) {
 
-    TokkyScaffold { contentPadding ->
+    Scaffold { contentPadding ->
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()

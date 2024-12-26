@@ -17,12 +17,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,9 +41,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.navigation.Routes
-import com.ps.tokky.ui.components.DefaultAppBarNavigationIcon
 import com.ps.tokky.ui.components.StyledTextField
-import com.ps.tokky.ui.components.TokkyScaffold
+import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.components.dialogs.TokkyDialog
 import com.ps.tokky.ui.viewmodels.ImportViewModel
 import com.ps.tokky.ui.viewmodels.TokenFormValidator
@@ -53,7 +51,6 @@ import com.ps.tokky.utils.toast
 
 private const val TAG = "ImportTokensScreen"
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImportTokensScreen(
     fileUri: Uri,
@@ -70,20 +67,12 @@ fun ImportTokensScreen(
         }
     }
 
-    TokkyScaffold(
+    Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(R.string.import_accounts),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                },
-                navigationIcon = {
-                    DefaultAppBarNavigationIcon {
-                        onBackPressedDispatcher?.onBackPressed()
-                    }
-                }
+            Toolbar(
+                title = stringResource(R.string.import_accounts),
+                showDefaultNavigationIcon = true,
+                onNavigationIconClick = { onBackPressedDispatcher?.onBackPressed() }
             )
         }
     ) { contentPadding ->
