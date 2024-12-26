@@ -2,5 +2,5 @@
 
     <style name="Theme.Tokky" parent="Base.Theme.Tokky" />
 
-    <style name="Base.Theme.Tokky" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar" />
+    <style name="Base.Theme.Tokky" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 </resources>
