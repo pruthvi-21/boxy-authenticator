@@ -40,6 +40,7 @@ import com.ps.tokky.ui.components.TokensList
 import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.viewmodels.TokensViewModel
 import com.ps.tokky.utils.Utils
+import com.ps.tokky.utils.copy
 import com.ps.tokky.utils.toast
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -51,30 +52,27 @@ fun HomeScreen(
     tokensViewModel.fetchTokens()
     val tokensState by tokensViewModel.tokensState.collectAsStateWithLifecycle()
 
-    Scaffold(
-        topBar = {
-            Toolbar(
-                title = stringResource(R.string.app_name),
-                showDefaultNavigationIcon = false,
-                actions = {
-                    IconButton(onClick = {
-                        navController.navigate(RouteBuilder.settings())
-                    }) {
-                        Icon(
-                            imageVector = Icons.TwoTone.Settings,
-                            contentDescription = "",
-                        )
-                    }
-                },
-            )
-        }
-    ) { safePadding ->
+    Scaffold { safePadding ->
         Box {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(safePadding)
+                    .padding(safePadding.copy(top = 0.dp))
             ) {
+                Toolbar(
+                    title = stringResource(R.string.app_name),
+                    showDefaultNavigationIcon = false,
+                    actions = {
+                        IconButton(onClick = {
+                            navController.navigate(RouteBuilder.settings())
+                        }) {
+                            Icon(
+                                imageVector = Icons.TwoTone.Settings,
+                                contentDescription = "",
+                            )
+                        }
+                    },
+                )
                 when (val uiState = tokensState) {
                     is TokensViewModel.UIState.Loading -> {}
 
