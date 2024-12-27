@@ -1,11 +1,25 @@
 package com.ps.tokky.helpers
 
 import com.ps.tokky.data.preferences.PreferenceStore
+import com.ps.tokky.utils.AppTheme
 import javax.inject.Inject
 
 class AppSettings @Inject constructor(
     private val store: PreferenceStore
 ) {
+
+    fun setAppTheme(theme: AppTheme) {
+        store.putString(Keys.APP_THEME, theme.name)
+    }
+
+    fun getAppTheme(): AppTheme {
+        val themeName = store.getString(Keys.APP_THEME)
+        return try {
+            AppTheme.valueOf(themeName ?: AppTheme.SYSTEM.name)
+        } catch (e: IllegalArgumentException) {
+            AppTheme.SYSTEM
+        }
+    }
 
     fun setAppLockEnabled(isEnabled: Boolean) {
         store.putBoolean(Keys.APP_LOCK, isEnabled)
@@ -54,6 +68,7 @@ class AppSettings @Inject constructor(
 
     companion object {
         object Keys {
+            const val APP_THEME = "key_app_theme"
             const val APP_LOCK = "key_app_lock"
             const val APP_LOCK_HASH = "key_app_lock_hash"
             const val BIOMETRIC_UNLOCK = "key_biometric_unlock"

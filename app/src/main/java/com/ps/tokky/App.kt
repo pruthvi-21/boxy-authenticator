@@ -13,15 +13,17 @@ import com.ps.tokky.navigation.addImportTokensRoute
 import com.ps.tokky.navigation.addSettingsRoute
 import com.ps.tokky.navigation.addTokenSetupRoute
 import com.ps.tokky.ui.theme.TokkyTheme
+import com.ps.tokky.ui.viewmodels.SettingsViewModel
 import com.ps.tokky.ui.viewmodels.TokensViewModel
 
 @Composable
 fun App() {
     val tokensViewModel: TokensViewModel = hiltViewModel()
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
 
     val transitions = TransitionHelper(LocalContext.current)
 
-    TokkyTheme {
+    TokkyTheme(theme = settingsViewModel.appTheme.value) {
         val navController = rememberNavController()
 
         NavHost(
@@ -32,9 +34,9 @@ fun App() {
             popEnterTransition = { transitions.screenPopEnterAnim },
             popExitTransition = { transitions.screenPopExitAnim }
         ) {
-            addHomeRoute(navController, tokensViewModel)
-            addTokenSetupRoute(navController, tokensViewModel)
-            addSettingsRoute(navController)
+            addHomeRoute(tokensViewModel, navController)
+            addTokenSetupRoute(tokensViewModel, navController)
+            addSettingsRoute(settingsViewModel, navController)
             addExportTokensRoute()
             addImportTokensRoute(navController)
         }

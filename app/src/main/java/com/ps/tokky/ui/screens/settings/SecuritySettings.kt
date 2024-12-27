@@ -14,10 +14,8 @@ import com.ps.tokky.ui.components.dialogs.SetPasswordDialog
 import com.ps.tokky.ui.viewmodels.SettingsViewModel
 
 @Composable
-fun SecuritySettings() {
+fun SecuritySettings(settingsViewModel: SettingsViewModel) {
     val context = LocalContext.current
-
-    val settingsViewModel: SettingsViewModel = hiltViewModel()
 
     val isAppLockEnabled = settingsViewModel.isAppLockEnabled.value
     val isBiometricUnlockEnabled = settingsViewModel.isBiometricUnlockEnabled.value

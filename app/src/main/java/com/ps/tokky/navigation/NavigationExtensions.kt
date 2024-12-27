@@ -11,12 +11,12 @@ import com.ps.tokky.ui.screens.HomeScreen
 import com.ps.tokky.ui.screens.ImportTokensScreen
 import com.ps.tokky.ui.screens.SettingsScreen
 import com.ps.tokky.ui.screens.TokenSetupScreen
-import com.ps.tokky.ui.viewmodels.ImportViewModel
+import com.ps.tokky.ui.viewmodels.SettingsViewModel
 import com.ps.tokky.ui.viewmodels.TokensViewModel
 
 fun NavGraphBuilder.addHomeRoute(
+    tokensViewModel: TokensViewModel,
     navController: NavController,
-    tokensViewModel: TokensViewModel
 ) {
     composable(Routes.Home.base) {
         HomeScreen(
@@ -27,8 +27,8 @@ fun NavGraphBuilder.addHomeRoute(
 }
 
 fun NavGraphBuilder.addTokenSetupRoute(
+    tokensViewModel: TokensViewModel,
     navController: NavController,
-    tokensViewModel: TokensViewModel
 ) {
     composable(
         route = "${Routes.TokenSetup.base}?token_id={token_id}&auth_url={auth_url}",
@@ -57,10 +57,12 @@ fun NavGraphBuilder.addTokenSetupRoute(
 }
 
 fun NavGraphBuilder.addSettingsRoute(
+    settingsViewModel: SettingsViewModel,
     navController: NavController,
 ) {
     composable(Routes.Settings.base) {
         SettingsScreen(
+            settingsViewModel = settingsViewModel,
             navController = navController,
         )
     }
@@ -73,7 +75,7 @@ fun NavGraphBuilder.addExportTokensRoute() {
 }
 
 fun NavGraphBuilder.addImportTokensRoute(
-    navController: NavController
+    navController: NavController,
 ) {
     composable(
         route = "${Routes.ImportTokens.base}?file_uri={file_uri}",

@@ -13,11 +13,16 @@ import com.jw.preferences.PreferenceScreen
 import com.jw.preferences.PreferenceTheme
 import com.ps.tokky.R
 import com.ps.tokky.ui.components.Toolbar
+import com.ps.tokky.ui.screens.settings.AppearanceSettings
 import com.ps.tokky.ui.screens.settings.SecuritySettings
 import com.ps.tokky.ui.screens.settings.TransferAccounts
+import com.ps.tokky.ui.viewmodels.SettingsViewModel
 
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen(
+    settingsViewModel: SettingsViewModel,
+    navController: NavController,
+) {
     val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     Scaffold(
@@ -33,7 +38,8 @@ fun SettingsScreen(navController: NavController) {
             theme = PreferenceTheme.Default.copy(categoryShape = RoundedCornerShape(15.dp)),
             modifier = Modifier.padding(contentPadding),
         ) {
-            item { SecuritySettings() }
+            item { AppearanceSettings(settingsViewModel) }
+            item { SecuritySettings(settingsViewModel) }
             item { TransferAccounts(navController) }
         }
     }

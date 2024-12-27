@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.ps.tokky.helpers.AppSettings
 import com.ps.tokky.helpers.BiometricsHelper
 import com.ps.tokky.ui.activities.MainActivity
+import com.ps.tokky.utils.AppTheme
 import com.ps.tokky.utils.HashUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,6 +17,9 @@ class SettingsViewModel @Inject constructor(
     private val settings: AppSettings,
     private val biometricAuthHelper: BiometricsHelper
 ) : ViewModel() {
+
+    private val _appTheme = mutableStateOf(AppTheme.SYSTEM)
+    val appTheme: State<AppTheme> = _appTheme
 
     private val _isAppLockEnabled = mutableStateOf(false)
     val isAppLockEnabled: State<Boolean> = _isAppLockEnabled
@@ -33,7 +37,13 @@ class SettingsViewModel @Inject constructor(
         loadSettings()
     }
 
+    fun setAppTheme(theme: AppTheme) {
+        settings.setAppTheme(theme)
+        _appTheme.value = theme
+    }
+
     private fun loadSettings() {
+        _appTheme.value = settings.getAppTheme()
         _isAppLockEnabled.value = settings.isAppLockEnabled()
         _isBiometricUnlockEnabled.value = settings.isBiometricUnlockEnabled()
         _isScreenshotsModeEnabled.value = settings.isScreenshotModeEnabled()

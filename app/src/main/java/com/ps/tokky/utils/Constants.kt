@@ -4,6 +4,10 @@ import android.graphics.Color
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+enum class AppTheme {
+    LIGHT, DARK, SYSTEM
+}
+
 enum class AccountEntryMethod {
     FORM, QR_CODE, RESTORED,
 }
