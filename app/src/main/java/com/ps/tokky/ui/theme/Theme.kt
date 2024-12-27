@@ -65,7 +65,8 @@ private fun buildLightColorScheme(context: Context, dynamicColor: Boolean): Colo
     else lightColorScheme()
 
     return lightScheme.copy(
-        surfaceVariant = lightScheme.surfaceContainer
+        surfaceVariant = lightScheme.surfaceContainer,
+        outlineVariant = lightScheme.outlineVariant.copy(0.7f)
     )
 }
 
@@ -78,6 +79,7 @@ private fun buildDarkColorScheme(context: Context, dynamicColor: Boolean): Color
         background = Color.Black,
         surface = Color.Black,
         surfaceVariant = darkScheme.surface.mixWith(darkScheme.primary, .005f),
+        outlineVariant = darkScheme.outlineVariant.copy(0.5f),
     )
 }
 
