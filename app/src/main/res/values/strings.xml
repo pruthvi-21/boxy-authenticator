@@ -23,9 +23,9 @@
     <string name="incorrect_password">Incorrect Password</string>
 
     <!-- AuthenticationScreen -->
-    <string name="unlock_vault">Unlock your vault</string>
-    <string name="unlock_vault_message">Access your account with your 6-digit passcode</string>
-    <string name="unlock_with_biometrics">Use biometrics</string>
+    <string name="unlock_vault">Unlock Vault</string>
+    <string name="unlock_vault_message">Use your password to access the vault</string>
+    <string name="use_biometrics">Use biometrics</string>
 
     <!-- TokenSetupScreen -->
     <string name="title_enter_account_details">Enter account details</string>
@@ -78,4 +78,6 @@
     <string name="set_password">Set password</string>
     <string name="password_min_length_error">Password should have at least 6 characters</string>
     <string name="remove_password">Remove password</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="unlock">Unlock</string>
 </resources>

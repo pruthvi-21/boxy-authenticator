@@ -35,9 +35,6 @@ fun RemovePasswordDialog(
                 label = stringResource(R.string.password),
                 placeholder = "Enter current password",
                 isPasswordField = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                ),
             )
         }
     }

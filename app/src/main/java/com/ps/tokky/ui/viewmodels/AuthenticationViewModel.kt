@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.helpers.AppSettings
 import com.ps.tokky.helpers.BiometricsHelper
-import com.ps.tokky.utils.Constants.LOGIN_PIN_LENGTH
 import com.ps.tokky.utils.CryptoUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,8 +18,8 @@ class AuthenticationViewModel @Inject constructor(
     private val settings: AppSettings
 ) : ViewModel() {
 
-    private val _passcode = mutableStateOf<List<String>>(emptyList())
-    val passcode: State<List<String>> = _passcode
+    private val _password = mutableStateOf("")
+    val password: State<String> get() = _password
 
     private var onLoginSuccess: (() -> Unit)? = null
 
@@ -30,28 +29,14 @@ class AuthenticationViewModel @Inject constructor(
         this.onLoginSuccess = onLoginSuccess
     }
 
-    fun appendCharacter(char: String) {
-        if (_passcode.value.size < LOGIN_PIN_LENGTH) {
-            _passcode.value += char
-        }
-    }
-
-    fun deleteCharacter() {
-        if (_passcode.value.isNotEmpty()) {
-            _passcode.value = _passcode.value.dropLast(1)
-        }
-    }
-
-    fun verifyPasscode(onFailed: () -> Unit) {
+    fun verifyPassword(onFailed: () -> Unit) {
         viewModelScope.launch {
-            if (_passcode.value.size < 4) onFailed()
-
             val passcodeHash = settings.getPasscodeHash()
-            val currentHash = CryptoUtils.hashPasscode(passcode.value.joinToString(separator = ""))
+            val currentHash = CryptoUtils.hashPasscode(password.value)
 
             val status = passcodeHash == currentHash
             if (!status) {
-                _passcode.value = emptyList()
+                _password.value = ""
                 onFailed()
                 return@launch
             }
@@ -70,6 +55,10 @@ class AuthenticationViewModel @Inject constructor(
                 onLoginSuccess?.invoke()
             }
         }
+    }
+
+    fun updatePassword(password: String) {
+        _password.value = password
     }
 
     companion object {

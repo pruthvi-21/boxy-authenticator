@@ -26,15 +26,13 @@ class SetPasswordDialogViewModel @Inject constructor() : ViewModel() {
     val showPassword get() = _showPassword.value
 
     fun updatePassword(value: String) {
-        val numericInput = value.filter { it.isDigit() }
-        _password.value = numericInput
+        _password.value = value
         _passwordError.value = null
         _confirmPasswordError.value = null
     }
 
     fun updateConfirmPassword(value: String) {
-        val numericInput = value.filter { it.isDigit() }
-        _confirmPassword.value = numericInput
+        _confirmPassword.value = value
         _passwordError.value = null
         _confirmPasswordError.value = null
     }

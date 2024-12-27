@@ -12,8 +12,7 @@ class RemovePasswordDialogViewModel @Inject constructor() : ViewModel() {
     val password get() = _password.value
 
     fun updatePassword(value: String) {
-        val numericInput = value.filter { it.isDigit() }
-        _password.value = numericInput
+        _password.value = value
     }
 
     fun reset() {

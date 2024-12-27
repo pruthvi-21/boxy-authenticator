@@ -65,7 +65,6 @@ fun SetPasswordDialog(
                 hidePasswordVisibilityEye = true,
                 errorMessage = viewModel.passwordError,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
@@ -85,7 +84,6 @@ fun SetPasswordDialog(
                 hidePasswordVisibilityEye = true,
                 errorMessage = viewModel.confirmPasswordError,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
