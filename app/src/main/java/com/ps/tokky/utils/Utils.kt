@@ -12,8 +12,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.navigation.Routes
-import java.security.MessageDigest
-
 
 object Utils {
     fun copyToClipboard(context: Context, text: String?) {
@@ -60,12 +58,6 @@ fun String.cleanSecretKey(): String {
 
 fun String.isValidSecretKey(): Boolean {
     return Regex(Constants.BASE32_CHARS).matches(this)
-}
-
-fun String.hash(algorithm: String): String {
-    val md = MessageDigest.getInstance(algorithm)
-    val digest = md.digest(toByteArray())
-    return digest.fold("") { str, it -> str + "%02x".format(it) }
 }
 
 fun String.toast(context: Context?) {

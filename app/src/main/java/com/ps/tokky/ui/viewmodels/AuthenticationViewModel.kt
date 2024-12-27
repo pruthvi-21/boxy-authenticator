@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.helpers.AppSettings
 import com.ps.tokky.helpers.BiometricsHelper
-import com.ps.tokky.utils.CryptoUtils
+import com.ps.tokky.utils.HashUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,10 +31,7 @@ class AuthenticationViewModel @Inject constructor(
 
     fun verifyPassword(onFailed: () -> Unit) {
         viewModelScope.launch {
-            val passcodeHash = settings.getPasscodeHash()
-            val currentHash = CryptoUtils.hashPasscode(password.value)
-
-            val status = passcodeHash == currentHash
+            val status = HashUtils.verifyString(password.value, settings.getPasscodeHash() ?: "")
             if (!status) {
                 _password.value = ""
                 onFailed()

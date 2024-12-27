@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.ps.tokky.helpers.AppSettings
 import com.ps.tokky.helpers.BiometricsHelper
 import com.ps.tokky.ui.activities.MainActivity
-import com.ps.tokky.utils.CryptoUtils
+import com.ps.tokky.utils.HashUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -56,14 +56,13 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun enableAppLock(password: String) {
-        settings.setPasscodeHash(CryptoUtils.hashPasscode(password))
+        settings.setPasscodeHash(HashUtils.hash(password))
         settings.setAppLockEnabled(true)
         _isAppLockEnabled.value = true
     }
 
     fun disableAppLock(password: String): Boolean {
-        val passwordHash = CryptoUtils.hashPasscode(password)
-        val status = passwordHash == settings.getPasscodeHash()
+        val status = HashUtils.verifyString(password, settings.getPasscodeHash() ?: "")
         if (status) {
             settings.setAppLockEnabled(false)
             _isAppLockEnabled.value = false
