@@ -1,4 +1,4 @@
-package com.ps.tokky.ui.activities
+package com.ps.tokky.ui
 
 import android.os.Bundle
 import android.view.WindowManager

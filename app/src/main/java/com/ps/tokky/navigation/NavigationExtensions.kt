@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.ps.tokky.ui.screens.AuthenticationScreen
 import com.ps.tokky.ui.screens.ExportTokensScreen
 import com.ps.tokky.ui.screens.HomeScreen
 import com.ps.tokky.ui.screens.ImportTokensScreen
@@ -13,6 +14,16 @@ import com.ps.tokky.ui.screens.SettingsScreen
 import com.ps.tokky.ui.screens.TokenSetupScreen
 import com.ps.tokky.ui.viewmodels.SettingsViewModel
 import com.ps.tokky.ui.viewmodels.TokensViewModel
+
+fun NavGraphBuilder.addAuthRoute(
+    navController: NavController,
+) {
+    composable(Routes.Auth.base) {
+        AuthenticationScreen(
+            navController = navController,
+        )
+    }
+}
 
 fun NavGraphBuilder.addHomeRoute(
     tokensViewModel: TokensViewModel,

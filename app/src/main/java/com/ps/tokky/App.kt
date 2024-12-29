@@ -1,12 +1,16 @@
 package com.ps.tokky
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.ps.tokky.helpers.TransitionHelper
 import com.ps.tokky.navigation.Routes
+import com.ps.tokky.navigation.addAuthRoute
 import com.ps.tokky.navigation.addExportTokensRoute
 import com.ps.tokky.navigation.addHomeRoute
 import com.ps.tokky.navigation.addImportTokensRoute
@@ -23,17 +27,20 @@ fun App() {
 
     val transitions = TransitionHelper(LocalContext.current)
 
+    val isAppLockEnabled by remember { mutableStateOf(settingsViewModel.isAppLockEnabled.value) }
+
     TokkyTheme(theme = settingsViewModel.appTheme.value) {
         val navController = rememberNavController()
 
         NavHost(
             navController = navController,
-            startDestination = Routes.Home.base,
+            startDestination = if (isAppLockEnabled) Routes.Auth.base else Routes.Home.base,
             enterTransition = { transitions.screenEnterAnim },
             exitTransition = { transitions.screenExitAnim },
             popEnterTransition = { transitions.screenPopEnterAnim },
             popExitTransition = { transitions.screenPopExitAnim }
         ) {
+            addAuthRoute(navController)
             addHomeRoute(tokensViewModel, navController)
             addTokenSetupRoute(tokensViewModel, navController)
             addSettingsRoute(settingsViewModel, navController)

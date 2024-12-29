@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.ps.tokky.helpers.AppSettings
 import com.ps.tokky.helpers.BiometricsHelper
-import com.ps.tokky.ui.activities.MainActivity
+import com.ps.tokky.ui.MainActivity
 import com.ps.tokky.utils.AppTheme
 import com.ps.tokky.utils.HashUtils
 import dagger.hilt.android.lifecycle.HiltViewModel

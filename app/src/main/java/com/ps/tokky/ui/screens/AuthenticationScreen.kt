@@ -20,10 +20,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -31,14 +38,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.viewmodels.AuthenticationViewModel
 
 @Composable
-fun AuthenticationScreen(authViewModel: AuthenticationViewModel) {
+fun AuthenticationScreen(navController: NavController) {
+    val authViewModel: AuthenticationViewModel = hiltViewModel()
 
     val context = LocalContext.current
+    val focusRequester = remember { FocusRequester() }
+
+    val areBiometricsAvailable = authViewModel.areBiometricsEnabled(context)
+    var passwordErrorMsg by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        if (areBiometricsAvailable) {
+            authViewModel.promptForBiometricsIfAvailable(context) {
+                navigateToHome(navController)
+            }
+        } else {
+            focusRequester.requestFocus()
+        }
+    }
 
     Scaffold { contentPadding ->
         Column(
@@ -85,10 +109,13 @@ fun AuthenticationScreen(authViewModel: AuthenticationViewModel) {
                 StyledTextField(
                     value = authViewModel.password.value,
                     onValueChange = {
+                        passwordErrorMsg = null
                         authViewModel.updatePassword(it)
                     },
                     placeholder = stringResource(R.string.enter_your_password),
                     isPasswordField = true,
+                    errorMessage = passwordErrorMsg,
+                    modifier = Modifier.focusRequester(focusRequester)
                 )
 
                 Spacer(Modifier.height(20.dp))
@@ -96,9 +123,13 @@ fun AuthenticationScreen(authViewModel: AuthenticationViewModel) {
                 Row(
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    if (authViewModel.areBiometricsEnabled(context)) {
+                    if (areBiometricsAvailable) {
                         TextButton(
-                            onClick = { authViewModel.promptForBiometricsIfAvailable(context) },
+                            onClick = {
+                                authViewModel.promptForBiometricsIfAvailable(context) {
+                                    navigateToHome(navController)
+                                }
+                            },
                             shape = RoundedCornerShape(4.dp),
                         ) {
                             Text(stringResource(R.string.use_biometrics))
@@ -109,13 +140,10 @@ fun AuthenticationScreen(authViewModel: AuthenticationViewModel) {
 
                     Button(
                         onClick = {
-                            authViewModel.verifyPassword {
-                                Toast.makeText(
-                                    context,
-                                    R.string.incorrect_password,
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
+                            if (authViewModel.verifyPassword()) {
+                                navigateToHome(navController)
+                            } else {
+                                passwordErrorMsg = context.getString(R.string.incorrect_password)
                             }
                         },
                         enabled = authViewModel.password.value.isNotEmpty(),
@@ -137,5 +165,11 @@ fun AuthenticationScreen(authViewModel: AuthenticationViewModel) {
 
             }
         }
+    }
+}
+
+fun navigateToHome(navController: NavController) {
+    navController.navigate("/home") {
+        popUpTo("/auth") { inclusive = true }
     }
 }

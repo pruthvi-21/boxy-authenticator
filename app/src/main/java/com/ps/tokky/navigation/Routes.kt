@@ -3,6 +3,7 @@ package com.ps.tokky.navigation
 import android.net.Uri
 
 sealed class Routes(val base: String) {
+    data object Auth : Routes("/auth")
     data object Home : Routes("/home")
     data object TokenSetup : Routes("/token_setup")
     data object Settings : Routes("/settings")
