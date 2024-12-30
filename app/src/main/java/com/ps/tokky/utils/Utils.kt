@@ -42,9 +42,8 @@ object Utils {
     }
 }
 
-fun Int.formatOTP(length: Int): String {
-    return "$this"
-        .padStart(length, '0')
+fun String.formatOTP(): String {
+    return this
         .reversed()
         .replace(".".repeat(3).toRegex(), "$0 ")
         .trim()

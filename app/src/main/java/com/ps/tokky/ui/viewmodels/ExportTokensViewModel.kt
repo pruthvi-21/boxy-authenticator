@@ -57,7 +57,7 @@ class ExportTokensViewModel @Inject constructor(
 
     fun exportTokens(context: Context, filePath: Uri, onFinished: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val exportData = JSONArray(tokensRepository.getAllTokens().map { it.toExportJson() }).toString()
+            val exportData = JSONArray(tokensRepository.getAllTokens().map { /*TODO*/ }).toString()
 
             FileHelper.writeToFile(
                 context = context,

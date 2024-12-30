@@ -36,7 +36,7 @@ import com.ps.camerax.BarcodeScanningActivity.Companion.SCAN_RESULT
 import com.ps.tokky.R
 import com.ps.tokky.navigation.RouteBuilder
 import com.ps.tokky.ui.components.ExpandableFab
-import com.ps.tokky.ui.components.TokensList
+import com.ps.tokky.ui.screens.home.TokensList
 import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.viewmodels.TokensViewModel
 import com.ps.tokky.utils.Utils

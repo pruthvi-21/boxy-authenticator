@@ -67,7 +67,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.biometric.ktx)
     implementation(libs.androidx.preference.ktx)
-    implementation(libs.firebase.crashlytics.buildtools)
+    implementation(libs.guava)
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.bumptech.glide)

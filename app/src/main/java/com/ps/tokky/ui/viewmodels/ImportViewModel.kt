@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.data.repositories.TokensRepository
 import com.ps.tokky.utils.FileHelper
-import com.ps.tokky.utils.TokenBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONArray
@@ -109,7 +108,7 @@ class ImportViewModel @Inject constructor(
 
             for (i in 0 until jsonArray.length()) {
                 val jsonObj = jsonArray.getJSONObject(i)
-                val token = TokenBuilder.buildFromExportJson(jsonObj)
+                val token = TokenEntry.buildFromExportJson(jsonObj)
 
                 importList.add(token)
             }

@@ -7,16 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
+import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_ALGORITHM
+import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_DIGITS
+import com.ps.tokky.data.models.otp.TotpInfo
+import com.ps.tokky.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.ps.tokky.data.repositories.TokensRepository
 import com.ps.tokky.utils.AccountEntryMethod
-import com.ps.tokky.utils.Constants.DEFAULT_DIGITS
-import com.ps.tokky.utils.Constants.DEFAULT_HASH_ALGORITHM
-import com.ps.tokky.utils.Constants.DEFAULT_PERIOD
+import com.ps.tokky.utils.Base32
 import com.ps.tokky.utils.Constants.DIGITS_MAX_VALUE
 import com.ps.tokky.utils.Constants.DIGITS_MIN_VALUE
 import com.ps.tokky.utils.Constants.THUMBNAIL_COlORS
-import com.ps.tokky.utils.HashAlgorithm
-import com.ps.tokky.utils.TokenBuilder
 import com.ps.tokky.utils.cleanSecretKey
 import com.ps.tokky.utils.isValidSecretKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -65,18 +65,18 @@ class TokenFormViewModel @Inject constructor(
 
     fun setInitialStateFromUrl(authUrl: String) {
         tokenSetupMode = TokenSetupMode.URL
-        setInitialStateFromToken(TokenBuilder.buildFromUrl(authUrl))
+        setInitialStateFromToken(TokenEntry.buildFromUrl(authUrl))
     }
 
     private fun setInitialStateFromToken(token: TokenEntry) {
         val tokenState = TokenFormState(
             issuer = token.issuer,
             label = token.label,
-            secretKey = token.secretKey,
+            secretKey = Base32.encode(token.otpInfo.secretKey),
             thumbnailColor = token.thumbnailColor,
-            algorithm = token.algorithm,
-            period = token.period.toString(),
-            digits = token.digits.toString()
+            algorithm = token.otpInfo.algorithm,
+            period = (token.otpInfo as TotpInfo).period.toString(),
+            digits = token.otpInfo.digits.toString()
         )
 
         initialState = tokenState
@@ -157,30 +157,23 @@ class TokenFormViewModel @Inject constructor(
 
                 val token = when (tokenSetupMode) {
                     TokenSetupMode.NEW,
-                    TokenSetupMode.URL -> {
-                        var newToken = TokenBuilder.buildNewToken(
+                    TokenSetupMode.URL,
+                        -> {
+                        var newToken = TokenEntry.buildNewToken(
                             issuer = state.issuer,
                             label = state.label,
-                            secretKey = state.secretKey,
                             thumbnailColor = state.thumbnailColor,
+                            otpInfo = TotpInfo(
+                                Base32.decode(state.secretKey),
+                                state.algorithm,
+                                state.digits.toInt(),
+                                state.period.toInt(),
+                            ),
                             addedFrom = AccountEntryMethod.FORM,
                         )
 
                         if (tokenSetupMode == TokenSetupMode.URL) {
-                            newToken = newToken.copy(
-                                addedFrom = AccountEntryMethod.QR_CODE,
-                                algorithm = state.algorithm,
-                                period = state.period.toInt(),
-                                digits = state.digits.toInt()
-                            )
-                        } else {
-                            if (state.enableAdvancedOptions) {
-                                newToken = newToken.copy(
-                                    algorithm = state.algorithm,
-                                    period = state.period.toInt(),
-                                    digits = state.digits.toInt()
-                                )
-                            }
+                            newToken = newToken.copy(addedFrom = AccountEntryMethod.QR_CODE)
                         }
 
                         newToken
@@ -292,11 +285,11 @@ data class TokenFormState(
     val label: String = "",
     val secretKey: String = "",
     val thumbnailColor: Int = THUMBNAIL_COlORS.random(),
-    val algorithm: HashAlgorithm = DEFAULT_HASH_ALGORITHM,
+    val algorithm: String = DEFAULT_ALGORITHM,
     val period: String = "$DEFAULT_PERIOD",
     val digits: String = "$DEFAULT_DIGITS",
     val enableAdvancedOptions: Boolean = false,
-    val validationErrors: Map<String, String?> = emptyMap()
+    val validationErrors: Map<String, String?> = emptyMap(),
 )
 
 sealed class TokenFormEvent {
@@ -304,7 +297,7 @@ sealed class TokenFormEvent {
     data class LabelChanged(val label: String) : TokenFormEvent()
     data class SecretKeyChanged(val secretKey: String) : TokenFormEvent()
     data class ThumbnailColorChanged(val thumbnailColor: Int) : TokenFormEvent()
-    data class AlgorithmChanged(val algorithm: HashAlgorithm) : TokenFormEvent()
+    data class AlgorithmChanged(val algorithm: String) : TokenFormEvent()
     data class PeriodChanged(val period: String) : TokenFormEvent()
     data class DigitsChanged(val digits: String) : TokenFormEvent()
     data class EnableAdvancedOptionsChanged(val enableAdvancedOptions: Boolean) : TokenFormEvent()

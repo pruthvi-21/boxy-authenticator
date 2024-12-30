@@ -7,7 +7,7 @@ cameraxVersion = "1.4.1"
 composeCompiler = "1.5.15"
 coreKtx = "1.15.0"
 espressoCore = "3.6.1"
-firebaseCrashlyticsBuildtools = "3.0.2"
+guava = "33.4.0-android"
 hiltAndroid = "2.53"
 hiltNavigationCompose = "1.2.0"
 junit = "4.13.2"
@@ -53,7 +53,7 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", versi
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiTooling" }
 bumptech-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 bumptech-glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
-firebase-crashlytics-buildtools = { module = "com.google.firebase:firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
 junit = { module = "junit:junit", version.ref = "junit" }

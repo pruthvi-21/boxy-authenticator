@@ -1,7 +1,12 @@
-package com.ps.tokky.ui.components
+package com.ps.tokky.ui.screens.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -35,12 +40,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -59,13 +64,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
+import com.ps.tokky.data.models.otp.TotpInfo
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.formatOTP
 import com.ps.tokky.utils.getInitials
 import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.launch
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 private const val SLIDE_DURATION = 150
 private val INDICATOR_SIZE = 25.dp
@@ -75,7 +86,7 @@ private val INDICATOR_SIZE = 25.dp
 fun TokensList(
     accounts: List<TokenEntry>,
     onEdit: (token: TokenEntry) -> Unit,
-    singleExpansion: Boolean = true
+    singleExpansion: Boolean = true,
 ) {
     val expandedStates = remember { mutableStateMapOf<TokenEntry, Boolean>() }
 
@@ -151,7 +162,7 @@ fun TokenCard(
     onEdit: (TokenEntry) -> Unit,
     isExpanded: Boolean,
     onToggleExpand: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -186,19 +197,6 @@ fun TokenCard(
             )
         }
 
-        val (otpValue, setOtpValue) = remember { mutableIntStateOf(token.otp) }
-        val (remainingTime, setRemainingTime) = remember { mutableLongStateOf(token.timeRemaining) }
-        val (progressValue, setProgressValue) = remember { mutableFloatStateOf(token.timeRemaining.toFloat() / token.period) }
-
-        LaunchedEffect(Unit) {
-            while (true) {
-                setOtpValue(token.otp)
-                setRemainingTime(token.timeRemaining)
-                setProgressValue(token.timeRemaining.toFloat() / token.period)
-                delay(1.seconds)
-            }
-        }
-
         AnimatedVisibility(
             visible = isExpanded,
             enter = expandVertically(
@@ -208,12 +206,7 @@ fun TokenCard(
                 animationSpec = tween(SLIDE_DURATION)
             )
         ) {
-            OTPFieldView(
-                token,
-                otpValue,
-                remainingTime,
-                progressValue
-            )
+            OTPFieldView(token)
         }
     }
 }
@@ -221,10 +214,66 @@ fun TokenCard(
 @Composable
 private fun OTPFieldView(
     token: TokenEntry,
-    otpValue: Int,
-    remainingTime: Long,
-    progressValue: Float
 ) {
+    val otpInfo = remember(token) { token.otpInfo as TotpInfo }
+
+    data class OtpState(
+        val value: String,
+        val progress: Float,
+        val duration: Long,
+        val isAnimating: Boolean = true,
+    )
+
+    val coroutineScope = rememberCoroutineScope()
+    val totalPeriodMillis = otpInfo.period * 1000L
+
+    val otpState = remember {
+        mutableStateOf(
+            OtpState(
+                value = otpInfo.getOtp(),
+                progress = otpInfo.getMillisTillNextRotation().toFloat() / totalPeriodMillis,
+                duration = otpInfo.getMillisTillNextRotation() % totalPeriodMillis
+            )
+        )
+    }
+
+    LaunchedEffect(otpInfo) {
+        while (true) {
+            delay(otpState.value.duration)
+            otpState.value = OtpState(
+                value = otpInfo.getOtp(),
+                progress = 1f,
+                duration = totalPeriodMillis
+            )
+        }
+    }
+
+    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateFlow.collectAsState()
+    LaunchedEffect(lifecycleState) {
+        if (lifecycleState == Lifecycle.State.RESUMED) {
+            coroutineScope.launch {
+                otpState.value = OtpState(
+                    value = otpInfo.getOtp(),
+                    progress = otpInfo.getMillisTillNextRotation().toFloat() / totalPeriodMillis,
+                    duration = otpInfo.getMillisTillNextRotation() % totalPeriodMillis
+                )
+            }
+        }
+    }
+
+    val infiniteTransition = rememberInfiniteTransition(label = "OTP Progress")
+    val progressAnimationValue by infiniteTransition.animateFloat(
+        initialValue = otpState.value.progress,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = otpState.value.duration.toInt(),
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "OTP Progress Animation"
+    )
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -232,47 +281,60 @@ private fun OTPFieldView(
             .fillMaxWidth()
             .padding(top = 10.dp)
     ) {
-        Box(
+        OTPProgressIndicator(
+            progress = progressAnimationValue,
             modifier = Modifier
                 .size(
                     width = dimensionResource(id = R.dimen.card_thumbnail_width),
                     height = dimensionResource(id = R.dimen.card_thumbnail_height)
                 )
-        ) {
-//            Text(
-//                text = "$remainingTime",
-//                modifier = Modifier.align(Alignment.Center)
-//            )
-            CircularProgressIndicator(
-                progress = { 1f - progressValue },
-                strokeWidth = INDICATOR_SIZE / 2,
-                strokeCap = StrokeCap.Butt,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                trackColor = if (progressValue <= 0.3f) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.primary,
-                gapSize = 0.dp,
-                modifier = Modifier
-                    .size(INDICATOR_SIZE)
-                    .align(Alignment.Center)
-            )
-        }
+        )
 
-        Text(
-            text = otpValue.formatOTP(token.digits),
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontFamily = FontFamily.Monospace,
-                fontSize = 34.sp
-            ),
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 15.dp)
+        OTPValueDisplay(
+            value = otpState.value.value
         )
     }
 }
 
 @Composable
+private fun OTPProgressIndicator(
+    progress: Float,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        CircularProgressIndicator(
+            progress = { progress },
+            strokeWidth = INDICATOR_SIZE / 2,
+            strokeCap = StrokeCap.Butt,
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            modifier = Modifier
+                .size(INDICATOR_SIZE)
+                .align(Alignment.Center)
+        )
+    }
+}
+
+@Composable
+private fun OTPValueDisplay(
+    value: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = value.formatOTP(),
+        style = MaterialTheme.typography.titleLarge.copy(
+            fontFamily = FontFamily.Monospace,
+            fontSize = 34.sp
+        ),
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = modifier.padding(horizontal = 15.dp)
+    )
+}
+
+@Composable
 private fun Arrow(
     onEdit: () -> Unit,
-    isExpanded: Boolean
+    isExpanded: Boolean,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -320,7 +382,7 @@ private fun Arrow(
 private fun TokenThumbnail(
     thumbnailIcon: String? = null,
     thumbnailColor: Color,
-    text: String = ""
+    text: String = "",
 ) {
     val context = LocalContext.current
     val fileName = thumbnailIcon ?: ""
@@ -363,7 +425,7 @@ private fun TokenThumbnail(
 private fun LabelsView(
     issuer: String,
     label: String,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     Column(
         modifier = modifier

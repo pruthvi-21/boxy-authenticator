@@ -66,7 +66,6 @@ import com.ps.tokky.ui.viewmodels.TokenFormValidationEvent
 import com.ps.tokky.ui.viewmodels.TokenFormViewModel
 import com.ps.tokky.ui.viewmodels.TokenSetupMode
 import com.ps.tokky.ui.viewmodels.TokensViewModel
-import com.ps.tokky.utils.HashAlgorithm
 import com.ps.tokky.utils.getInitials
 import java.util.UUID
 
@@ -265,9 +264,9 @@ fun TokenSetupScreen(
                             keyboardController?.hide()
                             tokenFormViewModel.onEvent(TokenFormEvent.EnableAdvancedOptionsChanged(it))
                         },
-                        algorithm = state.algorithm.name,
+                        algorithm = state.algorithm,
                         onAlgorithmChange = {
-                            tokenFormViewModel.onEvent(TokenFormEvent.AlgorithmChanged(HashAlgorithm.valueOf(it)))
+                            tokenFormViewModel.onEvent(TokenFormEvent.AlgorithmChanged(it))
                         },
                         period = state.period,
                         onPeriodChange = {
@@ -398,7 +397,7 @@ fun FormAdvancedOptions(
                         .padding(vertical = 5.dp, horizontal = 15.dp)
                 )
                 MultiToggleButton(
-                    toggleStates = HashAlgorithm.entries.map { it.name },
+                    toggleStates = listOf("SHA1", "SHA256", "SHA512"),
                     currentSelection = algorithm,
                     onToggleChange = onAlgorithmChange
                 )
