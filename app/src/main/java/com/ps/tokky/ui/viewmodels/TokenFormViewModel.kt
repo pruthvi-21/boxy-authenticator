@@ -1,6 +1,7 @@
 package com.ps.tokky.ui.viewmodels
 
 import android.content.res.Resources
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -225,40 +226,44 @@ class TokenFormViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val otpInfo = buildOtpInfo()
+            try {
+                val otpInfo = buildOtpInfo()
 
-            val token = when (tokenSetupMode) {
-                TokenSetupMode.NEW,
-                TokenSetupMode.URL,
-                    -> {
-                    var newToken = TokenEntry.buildNewToken(
-                        issuer = state.issuer,
-                        label = state.label,
-                        type = state.type,
-                        thumbnailColor = state.thumbnailColor,
-                        otpInfo = otpInfo,
-                        addedFrom = AccountEntryMethod.FORM,
-                    )
+                val token = when (tokenSetupMode) {
+                    TokenSetupMode.NEW,
+                    TokenSetupMode.URL,
+                        -> {
+                        var newToken = TokenEntry.buildNewToken(
+                            issuer = state.issuer,
+                            label = state.label,
+                            type = state.type,
+                            thumbnailColor = state.thumbnailColor,
+                            otpInfo = otpInfo,
+                            addedFrom = AccountEntryMethod.FORM,
+                        )
 
-                    if (tokenSetupMode == TokenSetupMode.URL) {
-                        newToken = newToken.copy(addedFrom = AccountEntryMethod.QR_CODE)
+                        if (tokenSetupMode == TokenSetupMode.URL) {
+                            newToken = newToken.copy(addedFrom = AccountEntryMethod.QR_CODE)
+                        }
+
+                        newToken
                     }
 
-                    newToken
+                    TokenSetupMode.UPDATE -> {
+                        tokenToUpdate?.copy(
+                            issuer = state.issuer,
+                            label = state.label,
+                            thumbnailColor = state.thumbnailColor,
+                            updatedOn = Date()
+                        ) ?: throw IllegalStateException("No token ID available for update")
+                    }
                 }
 
-                TokenSetupMode.UPDATE -> {
-                    tokenToUpdate?.copy(
-                        issuer = state.issuer,
-                        label = state.label,
-                        thumbnailColor = state.thumbnailColor,
-                        updatedOn = Date()
-                    ) ?: throw IllegalStateException("No token ID available for update")
-                }
+                validationEvent.emit(TokenFormValidationEvent.Success(token))
+                onValidationSuccess()
+            } catch (e: Exception) {
+                Log.i(TAG, "validateInputs: ", e)
             }
-
-            validationEvent.emit(TokenFormValidationEvent.Success(token))
-            onValidationSuccess()
         }
     }
 
