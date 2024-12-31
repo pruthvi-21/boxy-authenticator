@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -429,6 +430,9 @@ fun FormAdvancedOptions(
                             label = stringResource(R.string.label_period),
                             placeholder = stringResource(R.string.hint_period),
                             errorMessage = state.validationErrors["period"],
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                            ),
                             containerModifier = Modifier.weight(1f),
                         )
                     }
@@ -443,6 +447,9 @@ fun FormAdvancedOptions(
                             label = stringResource(R.string.label_counter),
                             placeholder = stringResource(R.string.hint_counter),
                             errorMessage = state.validationErrors["counter"],
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                            ),
                             containerModifier = Modifier.weight(1f),
                         )
                     }
