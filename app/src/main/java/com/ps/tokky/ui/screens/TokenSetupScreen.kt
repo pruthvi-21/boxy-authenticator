@@ -54,6 +54,7 @@ import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.data.models.otp.OtpInfo
+import com.ps.tokky.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.ps.tokky.ui.components.DropdownTextField
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.ThumbnailController
@@ -428,7 +429,7 @@ fun FormAdvancedOptions(
                                 tokenFormViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
                             },
                             label = stringResource(R.string.label_period),
-                            placeholder = stringResource(R.string.hint_period),
+                            placeholder = "$DEFAULT_PERIOD (${stringResource(R.string.default_value)})",
                             errorMessage = state.validationErrors["period"],
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,

@@ -41,7 +41,6 @@
     <string name="hint_issuer">Name of issuer</string>
     <string name="hint_label">Email or username</string>
     <string name="hint_secret_key">Secret key</string>
-    <string name="hint_period">Period (default - 30)</string>
     <string name="hint_counter">Counter</string>
     <string name="error_issuer_empty">Issuer cannot be empty</string>
     <string name="error_secret_key_empty">Secret Key cannot be empty</string>
