@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
+import com.ps.tokky.data.models.otp.HotpInfo
+import com.ps.tokky.data.models.otp.HotpInfo.Companion.COUNTER_MIN_VALUE
+import com.ps.tokky.data.models.otp.HotpInfo.Companion.DEFAULT_COUNTER
+import com.ps.tokky.data.models.otp.OtpInfo
 import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_ALGORITHM
 import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_DIGITS
 import com.ps.tokky.data.models.otp.TotpInfo
@@ -17,6 +21,7 @@ import com.ps.tokky.utils.Base32
 import com.ps.tokky.utils.Constants.DIGITS_MAX_VALUE
 import com.ps.tokky.utils.Constants.DIGITS_MIN_VALUE
 import com.ps.tokky.utils.Constants.THUMBNAIL_COlORS
+import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.cleanSecretKey
 import com.ps.tokky.utils.isValidSecretKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +30,8 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 
+private const val TAG = "TokenFormViewModel"
+
 enum class TokenSetupMode {
     NEW, URL, UPDATE
 }
@@ -32,7 +39,7 @@ enum class TokenSetupMode {
 @HiltViewModel
 class TokenFormViewModel @Inject constructor(
     private val tokensRepository: TokensRepository,
-    private val formValidator: TokenFormValidator
+    private val formValidator: TokenFormValidator,
 ) : ViewModel() {
     private var initialState = TokenFormState()
 
@@ -69,15 +76,21 @@ class TokenFormViewModel @Inject constructor(
     }
 
     private fun setInitialStateFromToken(token: TokenEntry) {
-        val tokenState = TokenFormState(
+        var tokenState = TokenFormState(
             issuer = token.issuer,
             label = token.label,
-            secretKey = Base32.encode(token.otpInfo.secretKey),
             thumbnailColor = token.thumbnailColor,
+            type = token.type,
+            secretKey = Base32.encode(token.otpInfo.secretKey),
             algorithm = token.otpInfo.algorithm,
-            period = (token.otpInfo as TotpInfo).period.toString(),
             digits = token.otpInfo.digits.toString()
         )
+
+        tokenState = when (token.type) {
+            OTPType.TOTP -> tokenState.copy(period = (token.otpInfo as TotpInfo).period.toString())
+
+            OTPType.HOTP -> tokenState.copy(counter = (token.otpInfo as HotpInfo).counter.toString())
+        }
 
         initialState = tokenState
         _uiState.value = tokenState
@@ -86,7 +99,12 @@ class TokenFormViewModel @Inject constructor(
     fun onEvent(event: TokenFormEvent) {
         when (event) {
             is TokenFormEvent.IssuerChanged -> {
-                updateState { copy(issuer = event.issuer, validationErrors = validationErrors - "issuer") }
+                updateState {
+                    copy(
+                        issuer = event.issuer,
+                        validationErrors = validationErrors - "issuer"
+                    )
+                }
             }
 
             is TokenFormEvent.LabelChanged -> {
@@ -102,6 +120,10 @@ class TokenFormViewModel @Inject constructor(
                 }
             }
 
+            is TokenFormEvent.TypeChanged -> {
+                updateState { copy(type = event.type) }
+            }
+
             is TokenFormEvent.ThumbnailColorChanged -> {
                 updateState { copy(thumbnailColor = event.thumbnailColor) }
             }
@@ -111,11 +133,30 @@ class TokenFormViewModel @Inject constructor(
             }
 
             is TokenFormEvent.PeriodChanged -> {
-                updateState { copy(period = event.period, validationErrors = validationErrors - "period") }
+                updateState {
+                    copy(
+                        period = event.period,
+                        validationErrors = validationErrors - "period"
+                    )
+                }
             }
 
             is TokenFormEvent.DigitsChanged -> {
-                updateState { copy(digits = event.digits, validationErrors = validationErrors - "digits") }
+                updateState {
+                    copy(
+                        digits = event.digits,
+                        validationErrors = validationErrors - "digits"
+                    )
+                }
+            }
+
+            is TokenFormEvent.CounterChanged -> {
+                updateState {
+                    copy(
+                        counter = event.counter,
+                        validationErrors = validationErrors - "counter"
+                    )
+                }
             }
 
             is TokenFormEvent.EnableAdvancedOptionsChanged -> {
@@ -137,61 +178,87 @@ class TokenFormViewModel @Inject constructor(
         val secretKeyResult = formValidator.validateSecretKey(_uiState.value.secretKey)
         val periodResult = formValidator.validatePeriod(_uiState.value.period)
         val digitsResult = formValidator.validateDigits(_uiState.value.digits)
+        val counterResult = formValidator.validateCounter(_uiState.value.counter)
 
         _uiState.value = _uiState.value.copy(
             validationErrors = mapOf(
                 "issuer" to issuerResult.errorMessage.takeIf { !issuerResult.isValid },
                 "secretKey" to secretKeyResult.errorMessage.takeIf { !secretKeyResult.isValid },
                 "period" to periodResult.errorMessage.takeIf { !periodResult.isValid },
-                "digits" to digitsResult.errorMessage.takeIf { !digitsResult.isValid }
+                "digits" to digitsResult.errorMessage.takeIf { !digitsResult.isValid },
+                "counter" to counterResult.errorMessage.takeIf { !counterResult.isValid }
             )
         )
-        val hasError = listOf(
-            issuerResult,
-            secretKeyResult,
-        ).any { !it.isValid }
 
-        viewModelScope.launch {
-            if (!hasError) {
-                val state = _uiState.value
+        val state = _uiState.value
 
-                val token = when (tokenSetupMode) {
-                    TokenSetupMode.NEW,
-                    TokenSetupMode.URL,
-                        -> {
-                        var newToken = TokenEntry.buildNewToken(
-                            issuer = state.issuer,
-                            label = state.label,
-                            thumbnailColor = state.thumbnailColor,
-                            otpInfo = TotpInfo(
-                                Base32.decode(state.secretKey),
-                                state.algorithm,
-                                state.digits.toInt(),
-                                state.period.toInt(),
-                            ),
-                            addedFrom = AccountEntryMethod.FORM,
-                        )
+        fun buildOtpInfo(): OtpInfo {
+            return when (state.type) {
+                OTPType.TOTP -> {
+                    val totpResults =
+                        listOf(issuerResult, secretKeyResult, digitsResult, periodResult)
+                    val hasError = totpResults.any { !it.isValid }
+                    if (hasError) throw Exception()
 
-                        if (tokenSetupMode == TokenSetupMode.URL) {
-                            newToken = newToken.copy(addedFrom = AccountEntryMethod.QR_CODE)
-                        }
-
-                        newToken
-                    }
-
-                    TokenSetupMode.UPDATE -> {
-                        tokenToUpdate?.copy(
-                            issuer = state.issuer,
-                            label = state.label,
-                            thumbnailColor = state.thumbnailColor,
-                            updatedOn = Date()
-                        ) ?: throw IllegalStateException("No token ID available for update")
-                    }
+                    TotpInfo(
+                        Base32.decode(uiState.value.secretKey),
+                        state.algorithm,
+                        state.digits.toInt(),
+                        state.period.toInt(),
+                    )
                 }
 
-                validationEvent.emit(TokenFormValidationEvent.Success(token))
-                onValidationSuccess()
+                OTPType.HOTP -> {
+                    val hotpResults =
+                        listOf(issuerResult, secretKeyResult, digitsResult, counterResult)
+                    val hasError = hotpResults.any { !it.isValid }
+                    if (hasError) throw Exception()
+
+                    HotpInfo(
+                        Base32.decode(uiState.value.secretKey),
+                        state.algorithm,
+                        state.digits.toInt(),
+                        state.counter.toLong(),
+                    )
+                }
             }
+        }
+
+        viewModelScope.launch {
+            val otpInfo = buildOtpInfo()
+
+            val token = when (tokenSetupMode) {
+                TokenSetupMode.NEW,
+                TokenSetupMode.URL,
+                    -> {
+                    var newToken = TokenEntry.buildNewToken(
+                        issuer = state.issuer,
+                        label = state.label,
+                        type = state.type,
+                        thumbnailColor = state.thumbnailColor,
+                        otpInfo = otpInfo,
+                        addedFrom = AccountEntryMethod.FORM,
+                    )
+
+                    if (tokenSetupMode == TokenSetupMode.URL) {
+                        newToken = newToken.copy(addedFrom = AccountEntryMethod.QR_CODE)
+                    }
+
+                    newToken
+                }
+
+                TokenSetupMode.UPDATE -> {
+                    tokenToUpdate?.copy(
+                        issuer = state.issuer,
+                        label = state.label,
+                        thumbnailColor = state.thumbnailColor,
+                        updatedOn = Date()
+                    ) ?: throw IllegalStateException("No token ID available for update")
+                }
+            }
+
+            validationEvent.emit(TokenFormValidationEvent.Success(token))
+            onValidationSuccess()
         }
     }
 
@@ -222,12 +289,12 @@ sealed class TokenFormValidationEvent {
 }
 
 class TokenFormValidator @Inject constructor(
-    val resources: Resources
+    val resources: Resources,
 ) {
 
     data class Result(
         val isValid: Boolean = false,
-        val errorMessage: String? = null
+        val errorMessage: String? = null,
     )
 
     fun validateIssuer(issuer: String): Result {
@@ -278,16 +345,34 @@ class TokenFormValidator @Inject constructor(
             Result(false, errorMessage)
         }
     }
+
+    fun validateCounter(counter: String): Result {
+        val errorMessage = when {
+            counter.isEmpty() ||
+                    counter.toIntOrNull() == null ||
+                    counter.toInt() < COUNTER_MIN_VALUE -> resources.getString(R.string.error_counter_invalid)
+
+            else -> null
+        }
+
+        return if (errorMessage == null) {
+            Result(true)
+        } else {
+            Result(false, errorMessage)
+        }
+    }
 }
 
 data class TokenFormState(
     val issuer: String = "",
     val label: String = "",
     val secretKey: String = "",
+    val type: OTPType = OTPType.TOTP,
     val thumbnailColor: Int = THUMBNAIL_COlORS.random(),
     val algorithm: String = DEFAULT_ALGORITHM,
     val period: String = "$DEFAULT_PERIOD",
     val digits: String = "$DEFAULT_DIGITS",
+    val counter: String = "$DEFAULT_COUNTER",
     val enableAdvancedOptions: Boolean = false,
     val validationErrors: Map<String, String?> = emptyMap(),
 )
@@ -296,10 +381,12 @@ sealed class TokenFormEvent {
     data class IssuerChanged(val issuer: String) : TokenFormEvent()
     data class LabelChanged(val label: String) : TokenFormEvent()
     data class SecretKeyChanged(val secretKey: String) : TokenFormEvent()
+    data class TypeChanged(val type: OTPType) : TokenFormEvent()
     data class ThumbnailColorChanged(val thumbnailColor: Int) : TokenFormEvent()
     data class AlgorithmChanged(val algorithm: String) : TokenFormEvent()
     data class PeriodChanged(val period: String) : TokenFormEvent()
     data class DigitsChanged(val digits: String) : TokenFormEvent()
+    data class CounterChanged(val counter: String) : TokenFormEvent()
     data class EnableAdvancedOptionsChanged(val enableAdvancedOptions: Boolean) : TokenFormEvent()
     data object Submit : TokenFormEvent()
 }

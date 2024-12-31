@@ -1,6 +1,7 @@
 package com.ps.tokky.utils
 
 import android.graphics.Color
+import com.ps.tokky.data.models.otp.HotpInfo
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

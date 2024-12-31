@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,6 +33,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,10 +44,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -68,7 +72,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
+import com.ps.tokky.data.models.otp.HotpInfo
 import com.ps.tokky.data.models.otp.TotpInfo
+import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.formatOTP
 import com.ps.tokky.utils.getInitials
@@ -206,7 +212,44 @@ fun TokenCard(
                 animationSpec = tween(SLIDE_DURATION)
             )
         ) {
-            OTPFieldView(token)
+            when (token.type) {
+                OTPType.TOTP -> OTPFieldView(token)
+                OTPType.HOTP -> HOTPFieldView(token.otpInfo as HotpInfo)
+            }
+        }
+    }
+}
+
+@Composable
+private fun HOTPFieldView(otpInfo: HotpInfo) {
+    var counter by remember { mutableLongStateOf(otpInfo.counter) }
+    var otp by remember { mutableStateOf(otpInfo.getOtp()) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = dimensionResource(id = R.dimen.card_thumbnail_height))
+            .padding(top = 10.dp)
+    ) {
+        Text(
+            text = "#$counter",
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.5f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .width(dimensionResource(id = R.dimen.card_thumbnail_width))
+        )
+        OTPValueDisplay(value = otp)
+
+        Spacer(Modifier.weight(1f))
+
+        IconButton(onClick = {
+            otpInfo.incrementCounter()
+            counter = otpInfo.counter
+            otp = otpInfo.getOtp()
+        }) {
+            Icon(Icons.Rounded.Refresh, contentDescription = null)
         }
     }
 }

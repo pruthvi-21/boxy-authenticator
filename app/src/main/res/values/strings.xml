@@ -34,6 +34,7 @@
     <string name="label_label">Label</string>
     <string name="label_secret_key">Secret Key</string>
     <string name="label_digits">Digits</string>
+    <string name="label_counter">Counter</string>
     <string name="label_period">Period</string>
     <string name="label_algorithm">Algorithm</string>
     <string name="hint_issuer">Name of issuer</string>
@@ -41,6 +42,7 @@
     <string name="hint_secret_key">Secret key</string>
     <string name="hint_period">Period (default - 30)</string>
     <string name="hint_digits">Digits (default - 6)</string>
+    <string name="hint_counter">Counter</string>
     <string name="error_issuer_empty">Issuer cannot be empty</string>
     <string name="error_secret_key_empty">Secret Key cannot be empty</string>
     <string name="error_secret_key_invalid">Invalid Secret Key format</string>
@@ -48,6 +50,7 @@
     <string name="error_period_invalid">Period must be a positive number >0</string>
     <string name="error_digits_empty">Digits cannot be empty</string>
     <string name="error_digits_invalid">Digits must be a positive number between 1 to 10</string>
+    <string name="error_counter_invalid">Counter must be ≥ 0</string>
     <string name="label_advanced_options">Advanced options</string>
     <string name="label_add_account">Add account</string>
     <string name="label_update_account">Update account</string>

@@ -1,9 +1,10 @@
 package com.ps.tokky.data.models
 
-import android.graphics.Color
 import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.ps.tokky.data.models.otp.HotpInfo
+import com.ps.tokky.data.models.otp.HotpInfo.Companion.DEFAULT_COUNTER
 import com.ps.tokky.data.models.otp.OtpInfo
 import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_ALGORITHM
 import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_DIGITS
@@ -12,6 +13,7 @@ import com.ps.tokky.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.ps.tokky.utils.AccountEntryMethod
 import com.ps.tokky.utils.BadlyFormedURLException
 import com.ps.tokky.utils.Base32
+import com.ps.tokky.utils.Constants
 import com.ps.tokky.utils.Constants.DEFAULT_OTP_TYPE
 import com.ps.tokky.utils.EmptyURLContentException
 import com.ps.tokky.utils.OTPType
@@ -44,20 +46,21 @@ data class TokenEntry(
     companion object {
         const val TAG = "TokenEntry"
 
-        const val KEY_ISSUER = "issuer"
-        const val KEY_LABEL = "label"
-        const val KEY_SECRET_KEY = "secret_key"
-        const val KEY_THUMBNAIL_COLOR = "thumbnail_color"
-        const val KEY_THUMBNAIL_ICON = "thumbnail_icon"
-        const val KEY_TYPE = "type"
-        const val KEY_ALGORITHM = "algorithm"
-        const val KEY_PERIOD = "period"
-        const val KEY_DIGITS = "digits"
+        private const val ISSUER = "issuer"
+        private const val LABEL = "label"
+        private const val SECRET = "secret"
+        private const val THUMBNAIL_COLOR = "thumbnail_color"
+        private const val THUMBNAIL_ICON = "thumbnail_icon"
+        private const val TYPE = "type"
+        private const val ALGORITHM = "algorithm"
+        private const val DIGITS = "digits"
+        private const val PERIOD = "period"
+        private const val COUNTER = "counter"
 
         fun buildNewToken(
             issuer: String,
             label: String,
-            thumbnailColor: Int = Color.DKGRAY,
+            thumbnailColor: Int = Constants.THUMBNAIL_COlORS.random(),
             thumbnailIcon: String? = null,
             type: OTPType = DEFAULT_OTP_TYPE,
             otpInfo: OtpInfo,
@@ -93,46 +96,59 @@ data class TokenEntry(
                         .let { pair -> pair[0] to pair[1] }
                 }
 
-            val issuer = params?.get("issuer") ?: ""
-            var label = uri.path?.substring(1) ?: ""
-            val secret = params?.get("secret")?.cleanSecretKey() ?: ""
             val type = uri.host?.let { OTPType.valueOf(it.uppercase()) } ?: OTPType.TOTP
-            val algorithm = params?.get("algorithm") ?: DEFAULT_ALGORITHM
-            val period = params?.get("period")?.toInt() ?: DEFAULT_PERIOD
-            val digits = params?.get("digits")?.toInt() ?: DEFAULT_DIGITS
+
+            val issuer = params?.get(ISSUER) ?: ""
+            var label = uri.path?.substring(1) ?: ""
 
             if (label.startsWith("$issuer:")) label = label.substringAfter("$issuer:")
+
+            val secret = params?.get(SECRET)?.cleanSecretKey() ?: ""
+            val algorithm = params?.get(ALGORITHM) ?: DEFAULT_ALGORITHM
+            val digits = params?.get(DIGITS)?.toInt() ?: DEFAULT_DIGITS
+
+            val otpInfo = when (type) {
+                OTPType.TOTP -> {
+                    val period = params?.get(PERIOD)?.toInt() ?: DEFAULT_PERIOD
+                    TotpInfo(Base32.decode(secret), algorithm, digits, period)
+                }
+
+                OTPType.HOTP -> {
+                    val counter = params?.get(COUNTER)?.toLong() ?: DEFAULT_COUNTER
+                    HotpInfo(Base32.decode(secret), algorithm, digits, counter)
+                }
+            }
 
             return buildNewToken(
                 issuer = issuer,
                 label = label,
                 type = type,
-                otpInfo = TotpInfo(Base32.decode(secret), algorithm, digits, period),
+                otpInfo = otpInfo,
                 addedFrom = AccountEntryMethod.QR_CODE
             )
         }
 
         fun buildFromExportJson(json: JSONObject): TokenEntry {
-            val issuer = json.getString(KEY_ISSUER)
-            val label = json.getString(KEY_LABEL)
-            val secretKey = json.getString(KEY_SECRET_KEY)
+            val issuer = json.getString(ISSUER)
+            val label = json.getString(LABEL)
+            val secretKey = json.getString(SECRET)
 
-            val type = if (json.has(KEY_TYPE)) OTPType.valueOf(json.getString(KEY_TYPE))
+            val type = if (json.has(TYPE)) OTPType.valueOf(json.getString(TYPE))
             else DEFAULT_OTP_TYPE
 
-            val period = if (json.has(KEY_PERIOD)) json.getInt(KEY_PERIOD)
+            val period = if (json.has(PERIOD)) json.getInt(PERIOD)
             else DEFAULT_PERIOD
 
-            val digits = if (json.has(KEY_DIGITS)) json.getInt(KEY_DIGITS)
+            val digits = if (json.has(DIGITS)) json.getInt(DIGITS)
             else DEFAULT_DIGITS
 
-            val algorithm = if (json.has(KEY_ALGORITHM)) {
-                json.getString(KEY_ALGORITHM)
+            val algorithm = if (json.has(ALGORITHM)) {
+                json.getString(ALGORITHM)
             } else DEFAULT_ALGORITHM
 
-            val thumbnailIcon = if (json.has(KEY_THUMBNAIL_ICON)) json.getString(KEY_THUMBNAIL_ICON)
+            val thumbnailIcon = if (json.has(THUMBNAIL_ICON)) json.getString(THUMBNAIL_ICON)
             else null
-            val thumbnailColor = json.getInt(KEY_THUMBNAIL_COLOR)
+            val thumbnailColor = json.getInt(THUMBNAIL_COLOR)
 
             return buildNewToken(
                 issuer = issuer,

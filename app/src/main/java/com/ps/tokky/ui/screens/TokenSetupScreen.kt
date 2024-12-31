@@ -9,6 +9,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,16 +20,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +42,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,6 +74,7 @@ import com.ps.tokky.ui.viewmodels.TokenFormValidationEvent
 import com.ps.tokky.ui.viewmodels.TokenFormViewModel
 import com.ps.tokky.ui.viewmodels.TokenSetupMode
 import com.ps.tokky.ui.viewmodels.TokensViewModel
+import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.getInitials
 import java.util.UUID
 
@@ -217,6 +226,13 @@ fun TokenSetupScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                OtpTypeDropdown(
+                    value = state.type.name,
+                    onItemSelected = {
+                        tokenFormViewModel.onEvent(TokenFormEvent.TypeChanged(it))
+                    }
+                )
+
                 // Issuer Field
                 StyledTextField(
                     value = state.issuer,
@@ -264,17 +280,25 @@ fun TokenSetupScreen(
                             keyboardController?.hide()
                             tokenFormViewModel.onEvent(TokenFormEvent.EnableAdvancedOptionsChanged(it))
                         },
+                        type = state.type,
                         algorithm = state.algorithm,
                         onAlgorithmChange = {
                             tokenFormViewModel.onEvent(TokenFormEvent.AlgorithmChanged(it))
                         },
                         period = state.period,
+                        periodError = state.validationErrors["period"],
                         onPeriodChange = {
                             tokenFormViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
                         },
                         digits = state.digits,
+                        digitsError = state.validationErrors["digits"],
                         onDigitsChange = {
                             tokenFormViewModel.onEvent(TokenFormEvent.DigitsChanged(it))
+                        },
+                        counter = state.counter,
+                        counterError = state.validationErrors["counter"],
+                        onCounterChange = {
+                            tokenFormViewModel.onEvent(TokenFormEvent.CounterChanged(it))
                         }
                     )
                 }
@@ -294,6 +318,42 @@ fun TokenSetupScreen(
                     .padding(horizontal = 16.dp, vertical = 10.dp),
             ) {
                 Text(text = buttonText)
+            }
+        }
+    }
+}
+
+@Composable
+private fun OtpTypeDropdown(
+    value: String,
+    onItemSelected: (OTPType) -> Unit,
+) {
+    Box {
+        var showTypeDropdown by remember { mutableStateOf(false) }
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .clickable { showTypeDropdown = true }
+                .padding(10.dp)
+        ) {
+            Text(text = value, modifier = Modifier.widthIn(min = 75.dp))
+            Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
+        }
+
+        DropdownMenu(
+            expanded = showTypeDropdown,
+            onDismissRequest = {
+                showTypeDropdown = false
+            }
+        ) {
+            OTPType.entries.forEach {
+                DropdownMenuItem(
+                    text = { Text(it.name) },
+                    onClick = {
+                        onItemSelected(it)
+                        showTypeDropdown = false
+                    }
+                )
             }
         }
     }
@@ -369,12 +429,18 @@ fun TokenDeleteDialog(
 fun FormAdvancedOptions(
     showAdvancedOptions: Boolean,
     onShowAdvancedOptions: (Boolean) -> Unit,
+    type: OTPType,
     algorithm: String,
     onAlgorithmChange: (String) -> Unit,
     period: String,
+    periodError: String?,
     onPeriodChange: (String) -> Unit,
     digits: String,
+    digitsError: String?,
     onDigitsChange: (String) -> Unit,
+    counter: String,
+    counterError: String?,
+    onCounterChange: (String) -> Unit,
 ) {
     Column(Modifier.fillMaxWidth()) {
         Toggle(
@@ -388,7 +454,9 @@ fun FormAdvancedOptions(
             enter = expandVertically(animationSpec = tween(200)),
             exit = shrinkVertically(animationSpec = tween(200))
         ) {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
                 Text(
                     text = stringResource(R.string.label_algorithm),
                     fontWeight = FontWeight.Bold,
@@ -401,23 +469,34 @@ fun FormAdvancedOptions(
                     currentSelection = algorithm,
                     onToggleChange = onAlgorithmChange
                 )
-                Spacer(Modifier.height(10.dp))
-
-                StyledTextField(
-                    value = period,
-                    onValueChange = onPeriodChange,
-                    label = stringResource(R.string.label_period),
-                    placeholder = stringResource(R.string.hint_period),
-                )
-
-                Spacer(Modifier.height(10.dp))
 
                 StyledTextField(
                     value = digits,
                     onValueChange = onDigitsChange,
                     label = stringResource(R.string.label_digits),
                     placeholder = stringResource(R.string.hint_digits),
+                    errorMessage = digitsError,
                 )
+
+                if (type == OTPType.TOTP) {
+                    StyledTextField(
+                        value = period,
+                        onValueChange = onPeriodChange,
+                        label = stringResource(R.string.label_period),
+                        placeholder = stringResource(R.string.hint_period),
+                        errorMessage = periodError,
+                    )
+                }
+
+                if (type == OTPType.HOTP) {
+                    StyledTextField(
+                        value = counter,
+                        onValueChange = onCounterChange,
+                        label = stringResource(R.string.label_counter),
+                        placeholder = stringResource(R.string.hint_counter),
+                        errorMessage = counterError,
+                    )
+                }
             }
         }
     }
