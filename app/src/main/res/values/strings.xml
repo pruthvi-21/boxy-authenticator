@@ -13,6 +13,7 @@
     <string name="go_back">Go back</string>
     <string name="cancel">Cancel</string>
     <string name="remove_account">Remove account</string>
+    <string name="default_value">Default</string>
 
     <string name="toast_copied_to_clipboard">Copied to clipboard</string>
     <string name="label_clipboard_content">OTP Token</string>
@@ -41,7 +42,6 @@
     <string name="hint_label">Email or username</string>
     <string name="hint_secret_key">Secret key</string>
     <string name="hint_period">Period (default - 30)</string>
-    <string name="hint_digits">Digits (default - 6)</string>
     <string name="hint_counter">Counter</string>
     <string name="error_issuer_empty">Issuer cannot be empty</string>
     <string name="error_secret_key_empty">Secret Key cannot be empty</string>

@@ -3,7 +3,6 @@ package com.ps.tokky.ui.screens
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -17,23 +16,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,10 +36,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,21 +46,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
-import com.ps.tokky.ui.components.MultiToggleButton
+import com.ps.tokky.data.models.otp.OtpInfo
+import com.ps.tokky.ui.components.DropdownTextField
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.ThumbnailController
 import com.ps.tokky.ui.components.Toolbar
+import com.ps.tokky.ui.components.dialogs.TokenDeleteDialog
 import com.ps.tokky.ui.components.dialogs.TokkyDialog
 import com.ps.tokky.ui.viewmodels.TokenFormEvent
-import com.ps.tokky.ui.viewmodels.TokenFormState
 import com.ps.tokky.ui.viewmodels.TokenFormValidationEvent
 import com.ps.tokky.ui.viewmodels.TokenFormViewModel
 import com.ps.tokky.ui.viewmodels.TokenSetupMode
@@ -77,8 +67,6 @@ import com.ps.tokky.ui.viewmodels.TokensViewModel
 import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.getInitials
 import java.util.UUID
-
-private val radiusTiny = 4.dp
 
 @Composable
 fun TokenSetupScreen(
@@ -174,11 +162,24 @@ fun TokenSetupScreen(
 
             if (tokenFormViewModel.showDeleteTokenDialog.value) {
                 TokenDeleteDialog(
-                    tokenId = tokenId!!,
-                    state = state,
-                    tokensViewModel = tokensViewModel,
-                    tokenFormViewModel = tokenFormViewModel,
-                    navController = navController
+                    issuer = state.issuer,
+                    label = state.label,
+                    onDismiss = {
+                        tokenFormViewModel.showDeleteTokenDialog.value = false
+                    },
+                    onConfirm = {
+                        val requestCode = UUID.randomUUID().toString()
+                        tokensViewModel.deleteToken(
+                            tokenId = tokenId!!,
+                            requestCode = requestCode,
+                            onComplete = { responseCode ->
+                                if (requestCode == responseCode) {
+                                    navController.popBackStack()
+                                    tokenFormViewModel.showDeleteTokenDialog.value = false
+                                }
+                            }
+                        )
+                    }
                 )
             }
 
@@ -226,13 +227,6 @@ fun TokenSetupScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OtpTypeDropdown(
-                    value = state.type.name,
-                    onItemSelected = {
-                        tokenFormViewModel.onEvent(TokenFormEvent.TypeChanged(it))
-                    }
-                )
-
                 // Issuer Field
                 StyledTextField(
                     value = state.issuer,
@@ -266,7 +260,13 @@ fun TokenSetupScreen(
                     // Secret Key Field
                     StyledTextField(
                         value = state.secretKey,
-                        onValueChange = { tokenFormViewModel.onEvent(TokenFormEvent.SecretKeyChanged(it)) },
+                        onValueChange = {
+                            tokenFormViewModel.onEvent(
+                                TokenFormEvent.SecretKeyChanged(
+                                    it
+                                )
+                            )
+                        },
                         label = stringResource(R.string.label_secret_key),
                         placeholder = stringResource(R.string.hint_secret_key),
                         errorMessage = state.validationErrors["secretKey"],
@@ -275,85 +275,35 @@ fun TokenSetupScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     FormAdvancedOptions(
-                        showAdvancedOptions = state.enableAdvancedOptions,
                         onShowAdvancedOptions = {
                             keyboardController?.hide()
-                            tokenFormViewModel.onEvent(TokenFormEvent.EnableAdvancedOptionsChanged(it))
+                            tokenFormViewModel.onEvent(
+                                TokenFormEvent.EnableAdvancedOptionsChanged(
+                                    it
+                                )
+                            )
                         },
-                        type = state.type,
-                        algorithm = state.algorithm,
-                        onAlgorithmChange = {
-                            tokenFormViewModel.onEvent(TokenFormEvent.AlgorithmChanged(it))
-                        },
-                        period = state.period,
-                        periodError = state.validationErrors["period"],
-                        onPeriodChange = {
-                            tokenFormViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
-                        },
-                        digits = state.digits,
-                        digitsError = state.validationErrors["digits"],
-                        onDigitsChange = {
-                            tokenFormViewModel.onEvent(TokenFormEvent.DigitsChanged(it))
-                        },
-                        counter = state.counter,
-                        counterError = state.validationErrors["counter"],
-                        onCounterChange = {
-                            tokenFormViewModel.onEvent(TokenFormEvent.CounterChanged(it))
-                        }
+                        tokenFormViewModel = tokenFormViewModel,
                     )
                 }
             }
 
-            val buttonText = if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(R.string.label_update_account)
-            else stringResource(R.string.label_add_account)
+            val buttonText =
+                if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(R.string.label_update_account)
+                else stringResource(R.string.label_add_account)
 
             Button(
                 onClick = {
                     keyboardController?.hide()
                     tokenFormViewModel.onEvent(TokenFormEvent.Submit)
                 },
-                shape = RoundedCornerShape(radiusTiny),
+                shape = RoundedCornerShape(4.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .heightIn(min = 46.dp),
             ) {
                 Text(text = buttonText)
-            }
-        }
-    }
-}
-
-@Composable
-private fun OtpTypeDropdown(
-    value: String,
-    onItemSelected: (OTPType) -> Unit,
-) {
-    Box {
-        var showTypeDropdown by remember { mutableStateOf(false) }
-        Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(4.dp))
-                .clickable { showTypeDropdown = true }
-                .padding(10.dp)
-        ) {
-            Text(text = value, modifier = Modifier.widthIn(min = 75.dp))
-            Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
-        }
-
-        DropdownMenu(
-            expanded = showTypeDropdown,
-            onDismissRequest = {
-                showTypeDropdown = false
-            }
-        ) {
-            OTPType.entries.forEach {
-                DropdownMenuItem(
-                    text = { Text(it.name) },
-                    onClick = {
-                        onItemSelected(it)
-                        showTypeDropdown = false
-                    }
-                )
             }
         }
     }
@@ -385,157 +335,119 @@ fun handleFormSuccess(
 }
 
 @Composable
-fun TokenDeleteDialog(
-    tokenId: String,
-    state: TokenFormState,
-    tokensViewModel: TokensViewModel,
-    tokenFormViewModel: TokenFormViewModel,
-    navController: NavController,
-) {
-    TokkyDialog(
-        dialogTitle = stringResource(R.string.remove_account),
-        dialogBody = stringResource(
-            R.string.dialog_message_delete_token,
-            "${state.issuer}${if (state.label.isNotBlank()) " (${state.label})" else ""}"
-        ),
-        confirmText = stringResource(R.string.remove),
-        icon = {
-            Icon(
-                Icons.Outlined.WarningAmber,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.error
-            )
-        },
-        onDismissRequest = {
-            tokenFormViewModel.showDeleteTokenDialog.value = false
-        },
-        onConfirmation = {
-            val requestCode = UUID.randomUUID().toString()
-            tokensViewModel.deleteToken(
-                tokenId = tokenId,
-                requestCode = requestCode,
-                onComplete = { responseCode ->
-                    if (requestCode == responseCode) {
-                        navController.popBackStack()
-                        tokenFormViewModel.showDeleteTokenDialog.value = false
-                    }
-                }
-            )
-        }
-    )
-}
-
-@Composable
 fun FormAdvancedOptions(
-    showAdvancedOptions: Boolean,
     onShowAdvancedOptions: (Boolean) -> Unit,
-    type: OTPType,
-    algorithm: String,
-    onAlgorithmChange: (String) -> Unit,
-    period: String,
-    periodError: String?,
-    onPeriodChange: (String) -> Unit,
-    digits: String,
-    digitsError: String?,
-    onDigitsChange: (String) -> Unit,
-    counter: String,
-    counterError: String?,
-    onCounterChange: (String) -> Unit,
+    tokenFormViewModel: TokenFormViewModel,
 ) {
+    val state = tokenFormViewModel.uiState.value
+
     Column(Modifier.fillMaxWidth()) {
-        Toggle(
-            state = showAdvancedOptions,
-            onToggle = onShowAdvancedOptions,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        if (!state.enableAdvancedOptions) {
+            Box(
+                contentAlignment = Alignment.CenterEnd,
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .fillMaxWidth()
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .clickable {
+                            onShowAdvancedOptions(true)
+                        }
+                        .padding(10.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.label_advanced_options),
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Icon(
+                        imageVector = Icons.Rounded.ArrowBackIosNew,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .rotate(-90f),
+                    )
+                }
+            }
+        }
 
         AnimatedVisibility(
-            visible = showAdvancedOptions,
+            visible = state.enableAdvancedOptions,
             enter = expandVertically(animationSpec = tween(200)),
             exit = shrinkVertically(animationSpec = tween(200))
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.label_algorithm),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .padding(vertical = 5.dp, horizontal = 15.dp)
-                )
-                MultiToggleButton(
-                    toggleStates = listOf("SHA1", "SHA256", "SHA512"),
-                    currentSelection = algorithm,
-                    onToggleChange = onAlgorithmChange
-                )
+                Row {
+                    DropdownTextField(
+                        label = "Type",
+                        value = state.type.name,
+                        values = OTPType.entries.map { it.name },
+                        defaultValue = OTPType.TOTP.name,
+                        onItemSelected = {
+                            tokenFormViewModel.onEvent(TokenFormEvent.TypeChanged(OTPType.valueOf(it)))
+                        },
+                        modifier = Modifier.weight(1f),
+                    )
 
-                StyledTextField(
-                    value = digits,
-                    onValueChange = onDigitsChange,
-                    label = stringResource(R.string.label_digits),
-                    placeholder = stringResource(R.string.hint_digits),
-                    errorMessage = digitsError,
-                )
+                    Spacer(Modifier.width(20.dp))
 
-                if (type == OTPType.TOTP) {
-                    StyledTextField(
-                        value = period,
-                        onValueChange = onPeriodChange,
-                        label = stringResource(R.string.label_period),
-                        placeholder = stringResource(R.string.hint_period),
-                        errorMessage = periodError,
+                    DropdownTextField(
+                        label = "Algorithm",
+                        value = state.algorithm,
+                        values = listOf("SHA1", "SHA256", "SHA512"),
+                        defaultValue = OtpInfo.DEFAULT_ALGORITHM,
+                        onItemSelected = {
+                            tokenFormViewModel.onEvent(TokenFormEvent.AlgorithmChanged(it))
+                        },
+                        modifier = Modifier.weight(1f),
                     )
                 }
 
-                if (type == OTPType.HOTP) {
-                    StyledTextField(
-                        value = counter,
-                        onValueChange = onCounterChange,
-                        label = stringResource(R.string.label_counter),
-                        placeholder = stringResource(R.string.hint_counter),
-                        errorMessage = counterError,
+                Row {
+                    DropdownTextField(
+                        label = "Digits",
+                        value = state.digits,
+                        values = listOf("4", "5", "6", "7", "8", "9", "10"),
+                        defaultValue = "${OtpInfo.DEFAULT_DIGITS}",
+                        onItemSelected = {
+                            tokenFormViewModel.onEvent(TokenFormEvent.DigitsChanged(it))
+                        },
+                        modifier = Modifier.weight(1f),
                     )
+
+                    if (state.type == OTPType.TOTP) {
+                        Spacer(Modifier.width(20.dp))
+                        StyledTextField(
+                            value = state.period,
+                            onValueChange = {
+                                tokenFormViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
+                            },
+                            label = stringResource(R.string.label_period),
+                            placeholder = stringResource(R.string.hint_period),
+                            errorMessage = state.validationErrors["period"],
+                            containerModifier = Modifier.weight(1f),
+                        )
+                    }
+
+                    if (state.type == OTPType.HOTP) {
+                        Spacer(Modifier.width(20.dp))
+                        StyledTextField(
+                            value = state.counter,
+                            onValueChange = {
+                                tokenFormViewModel.onEvent(TokenFormEvent.CounterChanged(it))
+                            },
+                            label = stringResource(R.string.label_counter),
+                            placeholder = stringResource(R.string.hint_counter),
+                            errorMessage = state.validationErrors["counter"],
+                            containerModifier = Modifier.weight(1f),
+                        )
+                    }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun Toggle(
-    state: Boolean,
-    onToggle: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        contentAlignment = Alignment.CenterEnd,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        val progress by animateFloatAsState(
-            targetValue = if (state) 90f else -90f,
-            animationSpec = tween(durationMillis = 200),
-            label = "AdvancedOptionsTransition"
-        )
-
-        Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(4.dp))
-                .clickable { onToggle(!state) }
-                .padding(10.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.label_advanced_options),
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-            Spacer(Modifier.width(10.dp))
-            Icon(
-                imageVector = Icons.Rounded.ArrowBackIosNew,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(20.dp)
-                    .rotate(progress),
-            )
         }
     }
 }

@@ -33,27 +33,30 @@ fun StyledTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String? = null,
-    placeholder: String,
+    placeholder: String = "",
     errorMessage: String? = null,
     isPasswordField: Boolean = false,
     hidePasswordVisibilityEye: Boolean = !isPasswordField,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    textFieldModifier: Modifier = Modifier,
+    readOnly: Boolean = false,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    containerModifier: Modifier = Modifier,
     modifier: Modifier = Modifier,
 ) {
     val hasError = !errorMessage.isNullOrEmpty()
 
     val showPassword = remember { mutableStateOf(false) }
 
-    Column(modifier = modifier) {
+    Column(modifier = containerModifier) {
         if (!label.isNullOrEmpty()) {
             Text(
                 text = label,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 modifier = Modifier
-                    .padding(vertical = 5.dp, horizontal = 15.dp)
+                    .padding(vertical = 2.dp, horizontal = 15.dp)
             )
         }
         OutlinedTextField(
@@ -74,6 +77,8 @@ fun StyledTextField(
                 errorTextColor = MaterialTheme.colorScheme.onErrorContainer,
                 disabledIndicatorColor = Color.Transparent,
             ),
+            readOnly = readOnly,
+            leadingIcon = leadingIcon,
             trailingIcon = if (isPasswordField && !hidePasswordVisibilityEye) {
                 {
                     val image = if (showPassword.value) Icons.Filled.VisibilityOff
@@ -89,7 +94,7 @@ fun StyledTextField(
                         )
                     }
                 }
-            } else null,
+            } else trailingIcon,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             visualTransformation = if (isPasswordField && !showPassword.value) {
@@ -98,15 +103,12 @@ fun StyledTextField(
                 VisualTransformation.None
             },
             singleLine = true,
-            modifier = textFieldModifier.fillMaxWidth()
+            supportingText = if (hasError) {
+                { Text(errorMessage!!) }
+            } else null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(modifier)
         )
-        if (hasError) {
-            Text(
-                text = errorMessage!!,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
-            )
-        }
     }
 }
