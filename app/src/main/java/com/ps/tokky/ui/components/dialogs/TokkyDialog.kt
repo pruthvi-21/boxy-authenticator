@@ -56,23 +56,24 @@ fun TokkyDialog(
                 .clip(RoundedCornerShape(4.dp))
                 .background(MaterialTheme.colorScheme.surfaceContainer),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 54.dp)
-                    .padding(horizontal = 24.dp)
-                    .padding(top = 18.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                icon?.invoke()
-                if (dialogTitle != null) {
-                    if (icon != null) Spacer(Modifier.height(5.dp))
-                    else Spacer(Modifier.height(10.dp))
-                    Text(
-                        text = dialogTitle,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+            Spacer(Modifier.height(18.dp))
+            if (dialogTitle != null || icon != null) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 54.dp)
+                        .padding(horizontal = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    icon?.invoke()
+                    if (dialogTitle != null) {
+                        Spacer(Modifier.height(if (icon != null) 5.dp else 10.dp))
+                        Text(
+                            text = dialogTitle,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
             }
 
