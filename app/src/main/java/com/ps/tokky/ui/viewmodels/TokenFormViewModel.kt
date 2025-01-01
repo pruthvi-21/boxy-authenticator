@@ -95,6 +95,7 @@ class TokenFormViewModel @Inject constructor(
 
             OTPType.STEAM -> tokenState
         }
+        tokenState = updateFieldVisibilityState(tokenState)
 
         initialState = tokenState
         _uiState.value = tokenState
@@ -126,6 +127,7 @@ class TokenFormViewModel @Inject constructor(
 
             is TokenFormEvent.TypeChanged -> {
                 updateState { copy(type = event.type) }
+                _uiState.value = updateFieldVisibilityState(_uiState.value)
             }
 
             is TokenFormEvent.ThumbnailColorChanged -> {
@@ -282,6 +284,31 @@ class TokenFormViewModel @Inject constructor(
 
     }
 
+    private fun updateFieldVisibilityState(state: TokenFormState): TokenFormState {
+        return when (state.type) {
+            OTPType.TOTP -> state.copy(
+                isAlgorithmFieldVisible = true,
+                isDigitsFieldVisible = true,
+                isPeriodFieldVisible = true,
+                isCounterFieldVisible = false,
+            )
+
+            OTPType.HOTP -> state.copy(
+                isAlgorithmFieldVisible = true,
+                isDigitsFieldVisible = true,
+                isPeriodFieldVisible = false,
+                isCounterFieldVisible = true,
+            )
+
+            OTPType.STEAM -> state.copy(
+                isAlgorithmFieldVisible = false,
+                isDigitsFieldVisible = false,
+                isPeriodFieldVisible = false,
+                isCounterFieldVisible = false,
+            )
+        }
+    }
+
     // Reset form
     fun dispose() {
         val resetState = TokenFormState()
@@ -295,7 +322,11 @@ class TokenFormViewModel @Inject constructor(
         val currentState = _uiState.value
         return currentState.copy(
             enableAdvancedOptions = initialState.enableAdvancedOptions,
-            validationErrors = initialState.validationErrors
+            validationErrors = initialState.validationErrors,
+            isAlgorithmFieldVisible = initialState.isAlgorithmFieldVisible,
+            isDigitsFieldVisible = initialState.isDigitsFieldVisible,
+            isPeriodFieldVisible = initialState.isPeriodFieldVisible,
+            isCounterFieldVisible = initialState.isCounterFieldVisible
         ) != initialState
     }
 }
@@ -390,6 +421,10 @@ data class TokenFormState(
     val digits: String = "$DEFAULT_DIGITS",
     val counter: String = "$DEFAULT_COUNTER",
     val enableAdvancedOptions: Boolean = false,
+    val isAlgorithmFieldVisible: Boolean = true,
+    val isDigitsFieldVisible: Boolean = true,
+    val isPeriodFieldVisible: Boolean = true,
+    val isCounterFieldVisible: Boolean = false,
     val validationErrors: Map<String, String?> = emptyMap(),
 )
 

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -381,7 +380,7 @@ fun FormAdvancedOptions(
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Row {
+                Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                     DropdownTextField(
                         label = "Type",
                         value = state.type.name,
@@ -393,9 +392,7 @@ fun FormAdvancedOptions(
                         modifier = Modifier.weight(1f),
                     )
 
-                    if (state.type != OTPType.STEAM) {
-                        Spacer(Modifier.width(20.dp))
-
+                    if (state.isAlgorithmFieldVisible) {
                         DropdownTextField(
                             label = "Algorithm",
                             value = state.algorithm,
@@ -409,8 +406,8 @@ fun FormAdvancedOptions(
                     }
                 }
 
-                if (state.type != OTPType.STEAM) {
-                    Row {
+                Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                    if(state.isDigitsFieldVisible) {
                         DropdownTextField(
                             label = "Digits",
                             value = state.digits,
@@ -421,40 +418,38 @@ fun FormAdvancedOptions(
                             },
                             modifier = Modifier.weight(1f),
                         )
+                    }
 
-                        if (state.type == OTPType.TOTP) {
-                            Spacer(Modifier.width(20.dp))
-                            StyledTextField(
-                                value = state.period,
-                                onValueChange = {
-                                    tokenFormViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
-                                },
-                                label = stringResource(R.string.label_period),
-                                placeholder = "$DEFAULT_PERIOD (${stringResource(R.string.default_value)})",
-                                errorMessage = state.validationErrors["period"],
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number,
-                                ),
-                                containerModifier = Modifier.weight(1f),
-                            )
-                        }
+                    if (state.isPeriodFieldVisible) {
+                        StyledTextField(
+                            value = state.period,
+                            onValueChange = {
+                                tokenFormViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
+                            },
+                            label = stringResource(R.string.label_period),
+                            placeholder = "$DEFAULT_PERIOD (${stringResource(R.string.default_value)})",
+                            errorMessage = state.validationErrors["period"],
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                            ),
+                            containerModifier = Modifier.weight(1f),
+                        )
+                    }
 
-                        if (state.type == OTPType.HOTP) {
-                            Spacer(Modifier.width(20.dp))
-                            StyledTextField(
-                                value = state.counter,
-                                onValueChange = {
-                                    tokenFormViewModel.onEvent(TokenFormEvent.CounterChanged(it))
-                                },
-                                label = stringResource(R.string.label_counter),
-                                placeholder = stringResource(R.string.hint_counter),
-                                errorMessage = state.validationErrors["counter"],
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number,
-                                ),
-                                containerModifier = Modifier.weight(1f),
-                            )
-                        }
+                    if (state.isCounterFieldVisible) {
+                        StyledTextField(
+                            value = state.counter,
+                            onValueChange = {
+                                tokenFormViewModel.onEvent(TokenFormEvent.CounterChanged(it))
+                            },
+                            label = stringResource(R.string.label_counter),
+                            placeholder = stringResource(R.string.hint_counter),
+                            errorMessage = state.validationErrors["counter"],
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                            ),
+                            containerModifier = Modifier.weight(1f),
+                        )
                     }
                 }
             }
