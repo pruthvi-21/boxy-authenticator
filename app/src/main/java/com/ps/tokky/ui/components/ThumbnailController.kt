@@ -13,18 +13,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.ps.tokky.R
 import com.ps.tokky.utils.Constants.THUMBNAIL_COlORS
-
-private val radiusTiny = 4.dp
 
 @Composable
 fun ThumbnailController(
@@ -46,7 +44,7 @@ fun ThumbnailController(
                 )
                 .background(
                     androidx.compose.ui.graphics.Color(colorValue),
-                    shape = RoundedCornerShape(radiusTiny)
+                    shape = MaterialTheme.shapes.extraSmall,
                 ),
             contentAlignment = Alignment.Center
         ) {
@@ -67,11 +65,11 @@ fun ThumbnailController(
                 Box(
                     modifier = Modifier
                         .size(dimensionResource(R.dimen.thumbnail_color_tile_size))
-                        .background(
-                            androidx.compose.ui.graphics.Color(color),
+                        .clip(
                             if (color == colorValue) CircleShape
-                            else RoundedCornerShape(radiusTiny)
+                            else MaterialTheme.shapes.extraSmall
                         )
+                        .background(androidx.compose.ui.graphics.Color(color))
                         .clickable {
                             onColorChanged(color)
                         }

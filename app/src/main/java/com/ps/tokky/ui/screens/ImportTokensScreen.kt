@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +41,7 @@ import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.navigation.Routes
 import com.ps.tokky.ui.components.StyledTextField
+import com.ps.tokky.ui.components.TokkyButton
 import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.components.dialogs.TokkyDialog
 import com.ps.tokky.ui.viewmodels.ImportViewModel
@@ -113,7 +113,7 @@ fun ImportTokensScreen(
                     )
                 }
             }
-            Button(
+            TokkyButton(
                 onClick = {
                     if (importViewModel.tokensToImport.value.any { it.isDuplicate }) {
                         importViewModel.showDuplicateWarningDialog.value = true
@@ -121,7 +121,6 @@ fun ImportTokensScreen(
                         importViewModel.importAccounts()
                     }
                 },
-                shape = RoundedCornerShape(4.dp),
                 enabled = importViewModel.tokensToImport.value.any { it.checked },
                 modifier = Modifier
                     .fillMaxWidth()

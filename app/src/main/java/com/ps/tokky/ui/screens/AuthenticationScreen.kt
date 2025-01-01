@@ -1,6 +1,5 @@
 package com.ps.tokky.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,12 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,6 +38,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.ui.components.StyledTextField
+import com.ps.tokky.ui.components.TokkyButton
+import com.ps.tokky.ui.components.TokkyTextButton
 import com.ps.tokky.ui.viewmodels.AuthenticationViewModel
 
 @Composable
@@ -124,13 +122,12 @@ fun AuthenticationScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     if (areBiometricsAvailable) {
-                        TextButton(
+                        TokkyTextButton(
                             onClick = {
                                 authViewModel.promptForBiometricsIfAvailable(context) {
                                     navigateToHome(navController)
                                 }
                             },
-                            shape = RoundedCornerShape(4.dp),
                         ) {
                             Text(stringResource(R.string.use_biometrics))
                         }
@@ -138,7 +135,7 @@ fun AuthenticationScreen(navController: NavController) {
 
                     Spacer(Modifier.weight(1f))
 
-                    Button(
+                    TokkyButton(
                         onClick = {
                             if (authViewModel.verifyPassword()) {
                                 navigateToHome(navController)
@@ -147,7 +144,6 @@ fun AuthenticationScreen(navController: NavController) {
                             }
                         },
                         enabled = authViewModel.password.value.isNotEmpty(),
-                        shape = RoundedCornerShape(4.dp),
                     ) {
                         Text(stringResource(R.string.unlock))
                     }

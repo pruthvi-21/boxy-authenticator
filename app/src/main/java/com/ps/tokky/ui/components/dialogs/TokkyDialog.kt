@@ -11,10 +11,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.ps.tokky.R
+import com.ps.tokky.ui.components.TokkyTextButton
 
 @Composable
 fun TokkyDialog(
@@ -53,7 +52,7 @@ fun TokkyDialog(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .widthIn(max = 500.dp)
-                .clip(RoundedCornerShape(4.dp))
+                .clip(MaterialTheme.shapes.large)
                 .background(MaterialTheme.colorScheme.surfaceContainer),
         ) {
             Spacer(Modifier.height(18.dp))
@@ -102,17 +101,17 @@ fun TokkyDialog(
                     .heightIn(min = 54.dp)
             ) {
                 Spacer(Modifier.weight(1f))
-                TextButton(
+                TokkyTextButton(
                     onClick = { onDismissRequest() },
-                    shape = RoundedCornerShape(4.dp),
+                    shape = MaterialTheme.shapes.extraSmall,
                     modifier = Modifier.widthIn(min = 70.dp)
                 ) {
                     Text(text = dismissText)
                 }
                 Spacer(Modifier.width(5.dp))
-                TextButton(
+                TokkyTextButton(
                     onClick = { onConfirmation() },
-                    shape = RoundedCornerShape(4.dp),
+                    shape = MaterialTheme.shapes.extraSmall,
                     modifier = Modifier.widthIn(min = 70.dp)
                 ) {
                     Text(text = confirmText)

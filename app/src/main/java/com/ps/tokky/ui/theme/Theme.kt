@@ -55,6 +55,7 @@ fun TokkyTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        shapes = TokkyShapes,
         content = content
     )
 }

@@ -21,14 +21,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -58,6 +56,7 @@ import com.ps.tokky.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.ps.tokky.ui.components.DropdownTextField
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.ThumbnailController
+import com.ps.tokky.ui.components.TokkyButton
 import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.components.dialogs.TokenDeleteDialog
 import com.ps.tokky.ui.components.dialogs.TokkyDialog
@@ -294,12 +293,11 @@ fun TokenSetupScreen(
                 if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(R.string.label_update_account)
                 else stringResource(R.string.label_add_account)
 
-            Button(
+            TokkyButton(
                 onClick = {
                     keyboardController?.hide()
                     tokenFormViewModel.onEvent(TokenFormEvent.Submit)
                 },
-                shape = RoundedCornerShape(4.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 10.dp)
@@ -354,7 +352,7 @@ fun FormAdvancedOptions(
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(MaterialTheme.shapes.small)
                         .clickable {
                             onShowAdvancedOptions(true)
                         }

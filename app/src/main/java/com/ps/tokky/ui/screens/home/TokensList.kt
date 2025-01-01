@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
@@ -55,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
@@ -99,7 +100,8 @@ fun TokensList(
     val groupedAccounts = accounts
         .sortedBy { it.name }
         .groupBy { it.name.first().uppercaseChar() }
-    val radius = dimensionResource(R.dimen.radius_medium)
+
+    val cardShape = MaterialTheme.shapes.medium
 
     LazyColumn {
         groupedAccounts.forEach { (letter, tokens) ->
@@ -113,14 +115,18 @@ fun TokensList(
             }
             itemsIndexed(tokens) { index, token ->
                 val shape = when {
-                    tokens.size == 1 -> RoundedCornerShape(radius)
-                    index == 0 -> RoundedCornerShape(topStart = radius, topEnd = radius)
-                    index == tokens.lastIndex -> RoundedCornerShape(
-                        bottomStart = radius,
-                        bottomEnd = radius
+                    tokens.size == 1 -> cardShape
+                    index == 0 -> cardShape.copy(
+                        bottomStart = CornerSize(0.dp),
+                        bottomEnd = CornerSize(0.dp),
                     )
 
-                    else -> RoundedCornerShape(0.dp)
+                    index == tokens.lastIndex -> cardShape.copy(
+                        topStart = CornerSize(0.dp),
+                        topEnd = CornerSize(0.dp),
+                    )
+
+                    else -> RectangleShape
                 }
                 TokenCard(
                     token = token,
@@ -440,7 +446,7 @@ private fun TokenThumbnail(
                 width = dimensionResource(id = R.dimen.card_thumbnail_width),
                 height = dimensionResource(id = R.dimen.card_thumbnail_height)
             )
-            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.radius_tiny)))
+            .clip(MaterialTheme.shapes.extraSmall)
             .background(thumbnailColor)
     ) {
         if (logoBitmap != null) {
