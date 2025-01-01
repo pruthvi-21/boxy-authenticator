@@ -34,7 +34,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,7 +55,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -75,6 +73,7 @@ import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.data.models.otp.HotpInfo
 import com.ps.tokky.data.models.otp.TotpInfo
+import com.ps.tokky.ui.components.RectangularProgressBar
 import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.formatOTP
@@ -86,7 +85,6 @@ import kotlin.collections.component2
 import kotlin.collections.set
 
 private const val SLIDE_DURATION = 150
-private val INDICATOR_SIZE = 25.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -219,7 +217,7 @@ fun TokenCard(
             )
         ) {
             when (token.type) {
-                OTPType.TOTP -> OTPFieldView(token)
+                OTPType.TOTP -> TOTPFieldView(token)
                 OTPType.HOTP -> HOTPFieldView(token.otpInfo as HotpInfo)
             }
         }
@@ -261,7 +259,7 @@ private fun HOTPFieldView(otpInfo: HotpInfo) {
 }
 
 @Composable
-private fun OTPFieldView(
+private fun TOTPFieldView(
     token: TokenEntry,
 ) {
     val otpInfo = remember(token) { token.otpInfo as TotpInfo }
@@ -330,36 +328,22 @@ private fun OTPFieldView(
             .fillMaxWidth()
             .padding(top = 10.dp)
     ) {
-        OTPProgressIndicator(
-            progress = progressAnimationValue,
+        Box(
             modifier = Modifier
                 .size(
                     width = dimensionResource(id = R.dimen.card_thumbnail_width),
                     height = dimensionResource(id = R.dimen.card_thumbnail_height)
-                )
-        )
+                ), contentAlignment = Alignment.Center
+        ) {
+            RectangularProgressBar(
+                progress = progressAnimationValue,
+                width = 28.dp,
+                height = 28.dp,
+            )
+        }
 
         OTPValueDisplay(
             value = otpState.value.value
-        )
-    }
-}
-
-@Composable
-private fun OTPProgressIndicator(
-    progress: Float,
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier = modifier) {
-        CircularProgressIndicator(
-            progress = { progress },
-            strokeWidth = INDICATOR_SIZE / 2,
-            strokeCap = StrokeCap.Butt,
-            color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            modifier = Modifier
-                .size(INDICATOR_SIZE)
-                .align(Alignment.Center)
         )
     }
 }
