@@ -14,6 +14,7 @@ import com.ps.tokky.data.models.otp.HotpInfo.Companion.DEFAULT_COUNTER
 import com.ps.tokky.data.models.otp.OtpInfo
 import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_ALGORITHM
 import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_DIGITS
+import com.ps.tokky.data.models.otp.SteamInfo
 import com.ps.tokky.data.models.otp.TotpInfo
 import com.ps.tokky.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.ps.tokky.data.repositories.TokensRepository
@@ -91,6 +92,8 @@ class TokenFormViewModel @Inject constructor(
             OTPType.TOTP -> tokenState.copy(period = (token.otpInfo as TotpInfo).period.toString())
 
             OTPType.HOTP -> tokenState.copy(counter = (token.otpInfo as HotpInfo).counter.toString())
+
+            OTPType.STEAM -> tokenState
         }
 
         initialState = tokenState
@@ -221,6 +224,14 @@ class TokenFormViewModel @Inject constructor(
                         state.digits.toInt(),
                         state.counter.toLong(),
                     )
+                }
+
+                OTPType.STEAM -> {
+                    val steamResults = listOf(issuerResult, secretKeyResult)
+                    val hasError = steamResults.any { !it.isValid }
+                    if (hasError) throw Exception()
+
+                    SteamInfo(Base32.decode(uiState.value.secretKey))
                 }
             }
         }

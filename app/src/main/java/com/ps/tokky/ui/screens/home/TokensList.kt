@@ -72,6 +72,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.data.models.otp.HotpInfo
+import com.ps.tokky.data.models.otp.SteamInfo
 import com.ps.tokky.data.models.otp.TotpInfo
 import com.ps.tokky.ui.components.RectangularProgressBar
 import com.ps.tokky.utils.OTPType
@@ -217,7 +218,7 @@ fun TokenCard(
             )
         ) {
             when (token.type) {
-                OTPType.TOTP -> TOTPFieldView(token)
+                OTPType.TOTP, OTPType.STEAM -> TOTPFieldView(token.otpInfo as TotpInfo)
                 OTPType.HOTP -> HOTPFieldView(token.otpInfo as HotpInfo)
             }
         }
@@ -260,10 +261,8 @@ private fun HOTPFieldView(otpInfo: HotpInfo) {
 
 @Composable
 private fun TOTPFieldView(
-    token: TokenEntry,
+    otpInfo: TotpInfo,
 ) {
-    val otpInfo = remember(token) { token.otpInfo as TotpInfo }
-
     data class OtpState(
         val value: String,
         val progress: Float,
@@ -343,7 +342,8 @@ private fun TOTPFieldView(
         }
 
         OTPValueDisplay(
-            value = otpState.value.value
+            value = otpState.value.value,
+            formatOTP = otpInfo !is SteamInfo
         )
     }
 }
@@ -351,10 +351,11 @@ private fun TOTPFieldView(
 @Composable
 private fun OTPValueDisplay(
     value: String,
+    formatOTP: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = value.formatOTP(),
+        text = if (formatOTP) value.formatOTP() else value,
         style = MaterialTheme.typography.titleLarge.copy(
             fontFamily = FontFamily.Monospace,
             fontSize = 34.sp

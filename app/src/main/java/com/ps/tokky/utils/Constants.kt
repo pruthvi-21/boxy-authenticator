@@ -14,7 +14,7 @@ enum class AccountEntryMethod {
 }
 
 enum class OTPType {
-    TOTP, HOTP,
+    TOTP, HOTP, STEAM,
 }
 
 object Constants {

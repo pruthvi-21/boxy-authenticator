@@ -65,12 +65,21 @@ abstract class OtpInfo @JvmOverloads constructor(
             try {
                 val type = obj.getString("type")
                 val secret = decode(obj.getString("secret"))
-                val algo = obj.getString("algo")
-                val digits = obj.getInt("digits")
 
                 info = when (type) {
-                    TotpInfo.ID -> TotpInfo(secret, algo, digits, obj.getInt("period"))
-                    HotpInfo.ID -> HotpInfo(secret, algo, digits, obj.getLong("counter"))
+                    TotpInfo.ID -> {
+                        val algo = obj.getString("algo")
+                        val digits = obj.getInt("digits")
+                        val period = obj.getInt("period")
+                        TotpInfo(secret, algo, digits, period)
+                    }
+                    HotpInfo.ID -> {
+                        val algo = obj.getString("algo")
+                        val digits = obj.getInt("digits")
+                        val counter = obj.getLong("counter")
+                        HotpInfo(secret, algo, digits, counter)
+                    }
+                    SteamInfo.ID -> SteamInfo(secret)
                     else -> throw OtpInfoException("unsupported otp type: $type")
                 }
             } catch (e: EncodingException) {

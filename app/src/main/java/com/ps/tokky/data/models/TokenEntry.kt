@@ -8,6 +8,7 @@ import com.ps.tokky.data.models.otp.HotpInfo.Companion.DEFAULT_COUNTER
 import com.ps.tokky.data.models.otp.OtpInfo
 import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_ALGORITHM
 import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_DIGITS
+import com.ps.tokky.data.models.otp.SteamInfo
 import com.ps.tokky.data.models.otp.TotpInfo
 import com.ps.tokky.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.ps.tokky.utils.AccountEntryMethod
@@ -104,18 +105,23 @@ data class TokenEntry(
             if (label.startsWith("$issuer:")) label = label.substringAfter("$issuer:")
 
             val secret = params?.get(SECRET)?.cleanSecretKey() ?: ""
+            val secretDecoded = Base32.decode(secret)
             val algorithm = params?.get(ALGORITHM) ?: DEFAULT_ALGORITHM
             val digits = params?.get(DIGITS)?.toInt() ?: DEFAULT_DIGITS
 
             val otpInfo = when (type) {
                 OTPType.TOTP -> {
                     val period = params?.get(PERIOD)?.toInt() ?: DEFAULT_PERIOD
-                    TotpInfo(Base32.decode(secret), algorithm, digits, period)
+                    TotpInfo(secretDecoded, algorithm, digits, period)
                 }
 
                 OTPType.HOTP -> {
                     val counter = params?.get(COUNTER)?.toLong() ?: DEFAULT_COUNTER
-                    HotpInfo(Base32.decode(secret), algorithm, digits, counter)
+                    HotpInfo(secretDecoded, algorithm, digits, counter)
+                }
+
+                OTPType.STEAM -> {
+                    SteamInfo(secretDecoded)
                 }
             }
 

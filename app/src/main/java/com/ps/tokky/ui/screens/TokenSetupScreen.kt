@@ -393,64 +393,68 @@ fun FormAdvancedOptions(
                         modifier = Modifier.weight(1f),
                     )
 
-                    Spacer(Modifier.width(20.dp))
-
-                    DropdownTextField(
-                        label = "Algorithm",
-                        value = state.algorithm,
-                        values = listOf("SHA1", "SHA256", "SHA512"),
-                        defaultValue = OtpInfo.DEFAULT_ALGORITHM,
-                        onItemSelected = {
-                            tokenFormViewModel.onEvent(TokenFormEvent.AlgorithmChanged(it))
-                        },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-
-                Row {
-                    DropdownTextField(
-                        label = "Digits",
-                        value = state.digits,
-                        values = listOf("4", "5", "6", "7", "8", "9", "10"),
-                        defaultValue = "${OtpInfo.DEFAULT_DIGITS}",
-                        onItemSelected = {
-                            tokenFormViewModel.onEvent(TokenFormEvent.DigitsChanged(it))
-                        },
-                        modifier = Modifier.weight(1f),
-                    )
-
-                    if (state.type == OTPType.TOTP) {
+                    if (state.type != OTPType.STEAM) {
                         Spacer(Modifier.width(20.dp))
-                        StyledTextField(
-                            value = state.period,
-                            onValueChange = {
-                                tokenFormViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
+
+                        DropdownTextField(
+                            label = "Algorithm",
+                            value = state.algorithm,
+                            values = listOf("SHA1", "SHA256", "SHA512"),
+                            defaultValue = OtpInfo.DEFAULT_ALGORITHM,
+                            onItemSelected = {
+                                tokenFormViewModel.onEvent(TokenFormEvent.AlgorithmChanged(it))
                             },
-                            label = stringResource(R.string.label_period),
-                            placeholder = "$DEFAULT_PERIOD (${stringResource(R.string.default_value)})",
-                            errorMessage = state.validationErrors["period"],
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Number,
-                            ),
-                            containerModifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f),
                         )
                     }
+                }
 
-                    if (state.type == OTPType.HOTP) {
-                        Spacer(Modifier.width(20.dp))
-                        StyledTextField(
-                            value = state.counter,
-                            onValueChange = {
-                                tokenFormViewModel.onEvent(TokenFormEvent.CounterChanged(it))
+                if (state.type != OTPType.STEAM) {
+                    Row {
+                        DropdownTextField(
+                            label = "Digits",
+                            value = state.digits,
+                            values = listOf("4", "5", "6", "7", "8", "9", "10"),
+                            defaultValue = "${OtpInfo.DEFAULT_DIGITS}",
+                            onItemSelected = {
+                                tokenFormViewModel.onEvent(TokenFormEvent.DigitsChanged(it))
                             },
-                            label = stringResource(R.string.label_counter),
-                            placeholder = stringResource(R.string.hint_counter),
-                            errorMessage = state.validationErrors["counter"],
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Number,
-                            ),
-                            containerModifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f),
                         )
+
+                        if (state.type == OTPType.TOTP) {
+                            Spacer(Modifier.width(20.dp))
+                            StyledTextField(
+                                value = state.period,
+                                onValueChange = {
+                                    tokenFormViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
+                                },
+                                label = stringResource(R.string.label_period),
+                                placeholder = "$DEFAULT_PERIOD (${stringResource(R.string.default_value)})",
+                                errorMessage = state.validationErrors["period"],
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                ),
+                                containerModifier = Modifier.weight(1f),
+                            )
+                        }
+
+                        if (state.type == OTPType.HOTP) {
+                            Spacer(Modifier.width(20.dp))
+                            StyledTextField(
+                                value = state.counter,
+                                onValueChange = {
+                                    tokenFormViewModel.onEvent(TokenFormEvent.CounterChanged(it))
+                                },
+                                label = stringResource(R.string.label_counter),
+                                placeholder = stringResource(R.string.hint_counter),
+                                errorMessage = state.validationErrors["counter"],
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                ),
+                                containerModifier = Modifier.weight(1f),
+                            )
+                        }
                     }
                 }
             }

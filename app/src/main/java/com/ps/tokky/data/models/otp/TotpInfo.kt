@@ -7,7 +7,7 @@ import org.json.JSONObject
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 
-class TotpInfo @JvmOverloads constructor(
+open class TotpInfo @JvmOverloads constructor(
     secretKey: ByteArray,
     algorithm: String = DEFAULT_ALGORITHM,
     digits: Int = DEFAULT_DIGITS,
@@ -20,7 +20,7 @@ class TotpInfo @JvmOverloads constructor(
     }
 
     @Throws(OtpInfoException::class)
-    fun getOtp(time: Long): String {
+    open fun getOtp(time: Long): String {
         try {
             val otp = TOTP.generateOTP(secretKey, algorithm, digits, period.toLong(), time)
             return otp.toString()
