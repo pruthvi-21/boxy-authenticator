@@ -39,13 +39,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ps.tokky.R
+import com.ps.tokky.helpers.TokenFormValidator
 import com.ps.tokky.navigation.Routes
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.TokkyButton
 import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.components.dialogs.TokkyDialog
 import com.ps.tokky.ui.viewmodels.ImportViewModel
-import com.ps.tokky.ui.viewmodels.TokenFormValidator
 import com.ps.tokky.utils.popBackStackIfInRoute
 import com.ps.tokky.utils.toast
 
@@ -214,7 +214,7 @@ private fun ImportListItem(
             dialogTitle = "Rename",
             onDismissRequest = { showRenameDialog = false },
             onConfirmation = {
-                val validator = TokenFormValidator(context.resources)
+                val validator = TokenFormValidator(context)
                 val issuerResult = validator.validateIssuer(issuer.value)
 
                 if (issuerResult.isValid) {

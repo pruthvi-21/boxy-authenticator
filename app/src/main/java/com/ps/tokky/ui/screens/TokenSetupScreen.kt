@@ -52,6 +52,8 @@ import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.data.models.otp.OtpInfo
 import com.ps.tokky.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
+import com.ps.tokky.domain.models.TokenFormEvent
+import com.ps.tokky.helpers.TokenFormValidator
 import com.ps.tokky.ui.components.DropdownTextField
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.ThumbnailController
@@ -59,8 +61,6 @@ import com.ps.tokky.ui.components.TokkyButton
 import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.components.dialogs.TokenDeleteDialog
 import com.ps.tokky.ui.components.dialogs.TokkyDialog
-import com.ps.tokky.ui.viewmodels.TokenFormEvent
-import com.ps.tokky.ui.viewmodels.TokenFormValidationEvent
 import com.ps.tokky.ui.viewmodels.TokenFormViewModel
 import com.ps.tokky.ui.viewmodels.TokenSetupMode
 import com.ps.tokky.ui.viewmodels.TokensViewModel
@@ -98,7 +98,7 @@ fun TokenSetupScreen(
 
     LaunchedEffect(context, tokenSetupMode) {
         tokenFormViewModel.validationEvent.collect { event ->
-            if (event is TokenFormValidationEvent.Success) {
+            if (event is TokenFormValidator.TokenFormValidationEvent.Success) {
                 handleFormSuccess(event.token, tokensViewModel, tokenFormViewModel, navController)
             }
         }

@@ -1,31 +1,23 @@
 package com.ps.tokky.ui.viewmodels
 
-import android.content.res.Resources
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.data.models.otp.HotpInfo
-import com.ps.tokky.data.models.otp.HotpInfo.Companion.COUNTER_MIN_VALUE
-import com.ps.tokky.data.models.otp.HotpInfo.Companion.DEFAULT_COUNTER
 import com.ps.tokky.data.models.otp.OtpInfo
-import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_ALGORITHM
-import com.ps.tokky.data.models.otp.OtpInfo.Companion.DEFAULT_DIGITS
 import com.ps.tokky.data.models.otp.SteamInfo
 import com.ps.tokky.data.models.otp.TotpInfo
-import com.ps.tokky.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.ps.tokky.data.repositories.TokensRepository
+import com.ps.tokky.domain.models.TokenFormEvent
+import com.ps.tokky.domain.models.TokenFormState
+import com.ps.tokky.helpers.TokenFormValidator
 import com.ps.tokky.utils.AccountEntryMethod
 import com.ps.tokky.utils.Base32
-import com.ps.tokky.utils.Constants.DIGITS_MAX_VALUE
-import com.ps.tokky.utils.Constants.DIGITS_MIN_VALUE
-import com.ps.tokky.utils.Constants.THUMBNAIL_COlORS
 import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.cleanSecretKey
-import com.ps.tokky.utils.isValidSecretKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -48,7 +40,7 @@ class TokenFormViewModel @Inject constructor(
     private var _uiState = mutableStateOf(initialState)
     val uiState: State<TokenFormState> = _uiState
 
-    val validationEvent = MutableSharedFlow<TokenFormValidationEvent>()
+    val validationEvent = MutableSharedFlow<TokenFormValidator.TokenFormValidationEvent>()
 
     var tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW
     private var tokenToUpdate: TokenEntry? = null
@@ -272,7 +264,7 @@ class TokenFormViewModel @Inject constructor(
                     }
                 }
 
-                validationEvent.emit(TokenFormValidationEvent.Success(token))
+                validationEvent.emit(TokenFormValidator.TokenFormValidationEvent.Success(token))
                 onValidationSuccess()
             } catch (e: Exception) {
                 Log.i(TAG, "validateInputs: ", e)
@@ -329,115 +321,4 @@ class TokenFormViewModel @Inject constructor(
             isCounterFieldVisible = initialState.isCounterFieldVisible
         ) != initialState
     }
-}
-
-sealed class TokenFormValidationEvent {
-    data class Success(val token: TokenEntry) : TokenFormValidationEvent()
-}
-
-class TokenFormValidator @Inject constructor(
-    val resources: Resources,
-) {
-
-    data class Result(
-        val isValid: Boolean = false,
-        val errorMessage: String? = null,
-    )
-
-    fun validateIssuer(issuer: String): Result {
-        return if (issuer.isNotEmpty()) {
-            Result(true)
-        } else {
-            Result(false, resources.getString(R.string.error_issuer_empty))
-        }
-    }
-
-    fun validateSecretKey(secretKey: String): Result {
-        return if (secretKey.isEmpty()) {
-            Result(false, resources.getString(R.string.error_secret_key_empty))
-        } else if (!secretKey.isValidSecretKey()) {
-            Result(false, resources.getString(R.string.error_secret_key_invalid))
-        } else {
-            Result(true)
-        }
-    }
-
-    fun validatePeriod(period: String): Result {
-        val errorMessage = when {
-            period.isEmpty() -> resources.getString(R.string.error_period_empty)
-            period.toIntOrNull() == null || period.toInt() == 0 -> resources.getString(R.string.error_period_invalid)
-            else -> null
-        }
-
-        return if (errorMessage == null) {
-            Result(true)
-        } else {
-            Result(false, errorMessage)
-        }
-    }
-
-    fun validateDigits(digits: String): Result {
-        val errorMessage = when {
-            digits.isEmpty() -> resources.getString(R.string.error_digits_empty)
-            digits.toIntOrNull() == null ||
-                    digits.toInt() < DIGITS_MIN_VALUE ||
-                    digits.toInt() > DIGITS_MAX_VALUE -> resources.getString(R.string.error_digits_invalid)
-
-            else -> null
-        }
-
-        return if (errorMessage == null) {
-            Result(true)
-        } else {
-            Result(false, errorMessage)
-        }
-    }
-
-    fun validateCounter(counter: String): Result {
-        val errorMessage = when {
-            counter.isEmpty() ||
-                    counter.toIntOrNull() == null ||
-                    counter.toInt() < COUNTER_MIN_VALUE -> resources.getString(R.string.error_counter_invalid)
-
-            else -> null
-        }
-
-        return if (errorMessage == null) {
-            Result(true)
-        } else {
-            Result(false, errorMessage)
-        }
-    }
-}
-
-data class TokenFormState(
-    val issuer: String = "",
-    val label: String = "",
-    val secretKey: String = "",
-    val type: OTPType = OTPType.TOTP,
-    val thumbnailColor: Int = THUMBNAIL_COlORS.random(),
-    val algorithm: String = DEFAULT_ALGORITHM,
-    val period: String = "$DEFAULT_PERIOD",
-    val digits: String = "$DEFAULT_DIGITS",
-    val counter: String = "$DEFAULT_COUNTER",
-    val enableAdvancedOptions: Boolean = false,
-    val isAlgorithmFieldVisible: Boolean = true,
-    val isDigitsFieldVisible: Boolean = true,
-    val isPeriodFieldVisible: Boolean = true,
-    val isCounterFieldVisible: Boolean = false,
-    val validationErrors: Map<String, String?> = emptyMap(),
-)
-
-sealed class TokenFormEvent {
-    data class IssuerChanged(val issuer: String) : TokenFormEvent()
-    data class LabelChanged(val label: String) : TokenFormEvent()
-    data class SecretKeyChanged(val secretKey: String) : TokenFormEvent()
-    data class TypeChanged(val type: OTPType) : TokenFormEvent()
-    data class ThumbnailColorChanged(val thumbnailColor: Int) : TokenFormEvent()
-    data class AlgorithmChanged(val algorithm: String) : TokenFormEvent()
-    data class PeriodChanged(val period: String) : TokenFormEvent()
-    data class DigitsChanged(val digits: String) : TokenFormEvent()
-    data class CounterChanged(val counter: String) : TokenFormEvent()
-    data class EnableAdvancedOptionsChanged(val enableAdvancedOptions: Boolean) : TokenFormEvent()
-    data object Submit : TokenFormEvent()
 }

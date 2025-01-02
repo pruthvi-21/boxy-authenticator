@@ -1,12 +1,11 @@
 package com.ps.tokky.di
 
 import android.content.Context
-import android.content.res.Resources
 import com.ps.tokky.data.database.TokensDao
 import com.ps.tokky.data.database.TokensDatabase
 import com.ps.tokky.data.repositories.TokensRepository
 import com.ps.tokky.helpers.BiometricsHelper
-import com.ps.tokky.ui.viewmodels.TokenFormValidator
+import com.ps.tokky.helpers.TokenFormValidator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,13 +30,8 @@ object TokensModule {
     }
 
     @Provides
-    fun provideResources(@ApplicationContext context: Context): Resources {
-        return context.resources
-    }
-
-    @Provides
-    fun provideTokenFormValidator(resources: Resources): TokenFormValidator {
-        return TokenFormValidator(resources)
+    fun provideTokenFormValidator(@ApplicationContext context: Context): TokenFormValidator {
+        return TokenFormValidator(context)
     }
 
     @Provides
