@@ -4,9 +4,15 @@ import android.content.Context
 import com.ps.tokky.data.database.TokensDao
 import com.ps.tokky.data.database.TokensDatabase
 import com.ps.tokky.data.repositories.TokensRepository
+import com.ps.tokky.domain.usecases.DeleteTokenUseCase
+import com.ps.tokky.domain.usecases.FetchTokenByIdUseCase
+import com.ps.tokky.domain.usecases.FetchTokenByNameUseCase
+import com.ps.tokky.domain.usecases.FetchTokensUseCase
+import com.ps.tokky.domain.usecases.InsertTokenUseCase
+import com.ps.tokky.domain.usecases.InsertTokensUseCase
+import com.ps.tokky.domain.usecases.ReplaceExistingTokenUseCase
 import com.ps.tokky.helpers.BiometricsHelper
 import com.ps.tokky.helpers.TokenFormValidator
-import com.ps.tokky.helpers.TokensManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,9 +37,38 @@ object TokensModule {
     }
 
     @Provides
-    @Singleton
-    fun provideTokensManager(tokensRepository: TokensRepository): TokensManager {
-        return TokensManager(tokensRepository)
+    fun provideFetchTokensUseCase(tokensRepository: TokensRepository): FetchTokensUseCase {
+        return FetchTokensUseCase(tokensRepository)
+    }
+
+    @Provides
+    fun provideFetchTokenByIdUseCase(tokensRepository: TokensRepository): FetchTokenByIdUseCase {
+        return FetchTokenByIdUseCase(tokensRepository)
+    }
+
+    @Provides
+    fun provideFetchTokenByNameUseCase(tokensRepository: TokensRepository): FetchTokenByNameUseCase {
+        return FetchTokenByNameUseCase(tokensRepository)
+    }
+
+    @Provides
+    fun provideInsertTokenUseCase(tokensRepository: TokensRepository): InsertTokenUseCase {
+        return InsertTokenUseCase(tokensRepository)
+    }
+
+    @Provides
+    fun provideInsertTokensUseCase(tokensRepository: TokensRepository): InsertTokensUseCase {
+        return InsertTokensUseCase(tokensRepository)
+    }
+
+    @Provides
+    fun provideDeleteTokenUseCase(tokensRepository: TokensRepository): DeleteTokenUseCase {
+        return DeleteTokenUseCase(tokensRepository)
+    }
+
+    @Provides
+    fun provideReplaceExistingTokenUseCase(tokensRepository: TokensRepository): ReplaceExistingTokenUseCase {
+        return ReplaceExistingTokenUseCase(tokensRepository)
     }
 
     @Provides

@@ -3,7 +3,7 @@ package com.ps.tokky.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.data.models.TokenEntry
-import com.ps.tokky.helpers.TokensManager
+import com.ps.tokky.domain.usecases.FetchTokensUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +15,7 @@ private const val TAG = "HomeViewModel"
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val tokensManager: TokensManager,
+    private val fetchTokensUseCase: FetchTokensUseCase,
 ) : ViewModel() {
 
     sealed class UIState<out T> {
@@ -30,15 +30,15 @@ class HomeViewModel @Inject constructor(
     fun loadTokens() {
         _tokensState.update { UIState.Loading }
         viewModelScope.launch {
-            when (val result = tokensManager.fetchTokens()) {
-                is TokensManager.Result.Error -> {
-                    _tokensState.update { UIState.Error(result.exception.message) }
+            val result = fetchTokensUseCase()
+            result.fold(
+                onSuccess = { tokens ->
+                    _tokensState.update { UIState.Success(tokens) }
+                },
+                onFailure = { exception ->
+                    _tokensState.update { UIState.Error(exception.message ?: "Unknown error") }
                 }
-
-                is TokensManager.Result.Success -> {
-                    _tokensState.update { UIState.Success(result.data) }
-                }
-            }
+            )
         }
     }
 }

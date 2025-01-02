@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.R
-import com.ps.tokky.helpers.TokensManager
+import com.ps.tokky.domain.usecases.FetchTokensUseCase
 import com.ps.tokky.utils.FileHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ private const val TAG = "ExportTokensViewModel"
 
 @HiltViewModel
 class ExportTokensViewModel @Inject constructor(
-    private val tokensManager: TokensManager,
+    private val fetchTokensUseCase: FetchTokensUseCase,
 ) : ViewModel() {
 
     private var _password = mutableStateOf("")
@@ -59,23 +59,23 @@ class ExportTokensViewModel @Inject constructor(
 
     fun exportTokens(context: Context, filePath: Uri, onFinished: (Boolean) -> Unit) {
         viewModelScope.launch {
-            when (val result = tokensManager.fetchTokens()) {
-                is TokensManager.Result.Error -> {
-                    //TODO: handle error
-                }
+            fetchTokensUseCase()
+                .fold(
+                    onSuccess = { tokens ->
+                        val exportData = JSONArray(tokens.map { /*TODO*/ }).toString()
 
-                is TokensManager.Result.Success -> {
-                    val exportData = JSONArray(result.data.map { /*TODO*/ }).toString()
-
-                    FileHelper.writeToFile(
-                        context = context,
-                        uri = filePath,
-                        content = exportData,
-                        password = _password.value,
-                        onFinished = onFinished
-                    )
-                }
-            }
+                        FileHelper.writeToFile(
+                            context = context,
+                            uri = filePath,
+                            content = exportData,
+                            password = _password.value,
+                            onFinished = onFinished
+                        )
+                    },
+                    onFailure = {
+                        //TODO: handle error
+                    }
+                )
         }
     }
 

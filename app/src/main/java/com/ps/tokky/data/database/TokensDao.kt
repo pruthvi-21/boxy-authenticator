@@ -13,7 +13,7 @@ interface TokensDao {
     suspend fun getAllTokens(): List<TokenEntry>
 
     @Query("SELECT * FROM token_entry WHERE id = :tokenId")
-    suspend fun findTokenWithId(tokenId: String): TokenEntry
+    suspend fun findTokenWithId(tokenId: String): TokenEntry?
 
     @Query(
         """

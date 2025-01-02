@@ -7,7 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.data.models.TokenEntry
-import com.ps.tokky.helpers.TokensManager
+import com.ps.tokky.domain.usecases.FetchTokenByNameUseCase
+import com.ps.tokky.domain.usecases.FetchTokensUseCase
+import com.ps.tokky.domain.usecases.InsertTokensUseCase
 import com.ps.tokky.utils.FileHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,7 +21,9 @@ private const val TAG = "ImportTokensViewModel"
 
 @HiltViewModel
 class ImportTokensViewModel @Inject constructor(
-    private val tokensManager: TokensManager,
+    private val fetchTokensUseCase: FetchTokensUseCase,
+    private val insertTokensUseCase: InsertTokensUseCase,
+    private val fetchTokenByNameUseCase: FetchTokenByNameUseCase,
 ) : ViewModel() {
 
     data class ImportItem internal constructor(
@@ -42,7 +46,7 @@ class ImportTokensViewModel @Inject constructor(
     fun importAccounts() {
         viewModelScope.launch {
             val tokens = _tokensToImport.value.filter { !it.isDuplicate }.map { it.token }
-            tokensManager.insertTokens(tokens)
+            insertTokensUseCase(tokens)
         }
     }
 
@@ -76,38 +80,38 @@ class ImportTokensViewModel @Inject constructor(
 
     private fun buildTokensToImportList(tokens: List<TokenEntry>) {
         viewModelScope.launch {
-            when (val result = tokensManager.fetchTokens()) {
-                is TokensManager.Result.Error -> {
-                    //TODO: handle errors
-                }
+            fetchTokensUseCase()
+                .fold(
+                    onSuccess = { data ->
+                        val existingAccountNames = data
+                            .map { it.name }
+                            .toSet()
 
-                is TokensManager.Result.Success -> {
-                    val existingAccountNames = result.data
-                        .map { it.name }
-                        .toSet()
+                        val newAccounts = mutableListOf<TokenEntry>()
+                        val duplicateAccounts = mutableListOf<TokenEntry>()
 
-                    val newAccounts = mutableListOf<TokenEntry>()
-                    val duplicateAccounts = mutableListOf<TokenEntry>()
+                        val importItems = tokens.map { token ->
+                            val isDuplicate = existingAccountNames.contains(token.name)
 
-                    val importItems = tokens.map { token ->
-                        val isDuplicate = existingAccountNames.contains(token.name)
+                            if (isDuplicate) {
+                                duplicateAccounts.add(token)
+                            } else {
+                                newAccounts.add(token)
+                            }
 
-                        if (isDuplicate) {
-                            duplicateAccounts.add(token)
-                        } else {
-                            newAccounts.add(token)
+                            ImportItem(
+                                token = token,
+                                checked = true,
+                                isDuplicate = isDuplicate,
+                            )
                         }
 
-                        ImportItem(
-                            token = token,
-                            checked = true,
-                            isDuplicate = isDuplicate,
-                        )
+                        _tokensToImport.value = importItems.sortedBy { it.token.name }
+                    },
+                    onFailure = {
+                        //TODO: handle errors
                     }
-
-                    _tokensToImport.value = importItems.sortedBy { it.token.name }
-                }
-            }
+                )
         }
     }
 
@@ -143,9 +147,10 @@ class ImportTokensViewModel @Inject constructor(
     }
 
     private suspend fun checkIfDuplicate(token: TokenEntry): Boolean {
-        return when (val result = tokensManager.fetchTokenByName(token.issuer, token.label)) {
-            is TokensManager.Result.Error -> true
-            is TokensManager.Result.Success -> result.data != null
-        }
+        return fetchTokenByNameUseCase(token.issuer, token.label)
+            .fold(
+                onSuccess = { it != null },
+                onFailure = { false }
+            )
     }
 }

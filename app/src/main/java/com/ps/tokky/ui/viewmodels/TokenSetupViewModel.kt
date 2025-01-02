@@ -12,8 +12,11 @@ import com.ps.tokky.data.models.otp.SteamInfo
 import com.ps.tokky.data.models.otp.TotpInfo
 import com.ps.tokky.domain.models.TokenFormEvent
 import com.ps.tokky.domain.models.TokenFormState
+import com.ps.tokky.domain.usecases.DeleteTokenUseCase
+import com.ps.tokky.domain.usecases.FetchTokenByIdUseCase
+import com.ps.tokky.domain.usecases.InsertTokenUseCase
+import com.ps.tokky.domain.usecases.ReplaceExistingTokenUseCase
 import com.ps.tokky.helpers.TokenFormValidator
-import com.ps.tokky.helpers.TokensManager
 import com.ps.tokky.utils.AccountEntryMethod
 import com.ps.tokky.utils.Base32
 import com.ps.tokky.utils.OTPType
@@ -29,7 +32,10 @@ private const val TAG = "TokenSetupViewModel"
 
 @HiltViewModel
 class TokenSetupViewModel @Inject constructor(
-    private val tokensManager: TokensManager,
+    private val insertTokenUseCase: InsertTokenUseCase,
+    private val fetchTokenByIdUseCase: FetchTokenByIdUseCase,
+    private val deleteTokenUseCase: DeleteTokenUseCase,
+    private val replaceExistingTokenUseCase: ReplaceExistingTokenUseCase,
     private val formValidator: TokenFormValidator,
 ) : ViewModel() {
     private var initialState = TokenFormState()
@@ -52,14 +58,19 @@ class TokenSetupViewModel @Inject constructor(
 
     fun setInitialStateFromTokenWithId(tokenId: String) {
         viewModelScope.launch {
-            when (val result = tokensManager.fetchTokenById(tokenId)) {
-                is TokensManager.Result.Error -> {}
-                is TokensManager.Result.Success -> {
-                    tokenToUpdate = result.data
-                    tokenSetupMode = TokenSetupMode.UPDATE
-                    setInitialStateFromToken(result.data)
-                }
-            }
+            fetchTokenByIdUseCase(tokenId)
+                .fold(
+                    onSuccess = { token ->
+                        if (token != null) {
+                            tokenToUpdate = token
+                            tokenSetupMode = TokenSetupMode.UPDATE
+                            setInitialStateFromToken(token)
+                        }
+                    },
+                    onFailure = {
+
+                    }
+                )
         }
     }
 
@@ -269,21 +280,23 @@ class TokenSetupViewModel @Inject constructor(
 
     private fun onValidationSuccess(token: TokenEntry, event: TokenFormEvent.Submit) {
         viewModelScope.launch {
-            when (val result = tokensManager.insertToken(token, true)) {
-                is TokensManager.Result.Error -> {
-                    if (result.exception is TokenNameExistsException) {
-                        result.exception.token?.let { event.onDuplicate(token, it) }
-                    } else {
-                        Log.e(
-                            TAG,
-                            "onValidationSuccess: Unknown error while inserting",
-                            result.exception
-                        )
+            insertTokenUseCase(token, true)
+                .fold(
+                    onSuccess = {
+                        event.onComplete()
+                    },
+                    onFailure = { exception ->
+                        if (exception is TokenNameExistsException) {
+                            exception.token?.let { event.onDuplicate(token, it) }
+                        } else {
+                            Log.e(
+                                TAG,
+                                "onValidationSuccess: Unknown error while inserting",
+                                exception
+                            )
+                        }
                     }
-                }
-
-                is TokensManager.Result.Success -> event.onComplete()
-            }
+                )
         }
     }
 
@@ -331,14 +344,14 @@ class TokenSetupViewModel @Inject constructor(
 
     fun deleteToken(tokenId: String, onComplete: () -> Unit) {
         viewModelScope.launch {
-            tokensManager.deleteToken(tokenId)
+            deleteTokenUseCase(tokenId)
             onComplete()
         }
     }
 
     fun replaceExistingToken(existingToken: TokenEntry, token: TokenEntry) {
         viewModelScope.launch {
-            tokensManager.replaceExistingToken(existingToken, token)
+            replaceExistingTokenUseCase(existingToken, token)
         }
     }
 }
