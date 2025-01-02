@@ -10,6 +10,8 @@ import com.ps.tokky.utils.HashUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+private const val TAG = "AuthenticationViewModel"
+
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
     private val biometricsHelper: BiometricsHelper,

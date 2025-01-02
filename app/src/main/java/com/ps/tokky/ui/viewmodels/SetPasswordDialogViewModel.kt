@@ -7,6 +7,8 @@ import com.ps.tokky.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+private const val TAG = "SetPasswordDialogViewModel"
+
 @HiltViewModel
 class SetPasswordDialogViewModel @Inject constructor() : ViewModel() {
 

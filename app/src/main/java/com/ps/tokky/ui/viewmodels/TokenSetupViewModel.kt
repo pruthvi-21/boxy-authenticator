@@ -10,37 +10,32 @@ import com.ps.tokky.data.models.otp.HotpInfo
 import com.ps.tokky.data.models.otp.OtpInfo
 import com.ps.tokky.data.models.otp.SteamInfo
 import com.ps.tokky.data.models.otp.TotpInfo
-import com.ps.tokky.data.repositories.TokensRepository
 import com.ps.tokky.domain.models.TokenFormEvent
 import com.ps.tokky.domain.models.TokenFormState
 import com.ps.tokky.helpers.TokenFormValidator
+import com.ps.tokky.helpers.TokensManager
 import com.ps.tokky.utils.AccountEntryMethod
 import com.ps.tokky.utils.Base32
 import com.ps.tokky.utils.OTPType
+import com.ps.tokky.utils.TokenNameExistsException
+import com.ps.tokky.utils.TokenSetupMode
 import com.ps.tokky.utils.cleanSecretKey
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 
-private const val TAG = "TokenFormViewModel"
-
-enum class TokenSetupMode {
-    NEW, URL, UPDATE
-}
+private const val TAG = "TokenSetupViewModel"
 
 @HiltViewModel
-class TokenFormViewModel @Inject constructor(
-    private val tokensRepository: TokensRepository,
+class TokenSetupViewModel @Inject constructor(
+    private val tokensManager: TokensManager,
     private val formValidator: TokenFormValidator,
 ) : ViewModel() {
     private var initialState = TokenFormState()
 
     private var _uiState = mutableStateOf(initialState)
     val uiState: State<TokenFormState> = _uiState
-
-    val validationEvent = MutableSharedFlow<TokenFormValidator.TokenFormValidationEvent>()
 
     var tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW
     private var tokenToUpdate: TokenEntry? = null
@@ -57,10 +52,14 @@ class TokenFormViewModel @Inject constructor(
 
     fun setInitialStateFromTokenWithId(tokenId: String) {
         viewModelScope.launch {
-            val token = tokensRepository.getTokenWithId(tokenId)
-            tokenToUpdate = token
-            tokenSetupMode = TokenSetupMode.UPDATE
-            setInitialStateFromToken(token)
+            when (val result = tokensManager.fetchTokenById(tokenId)) {
+                is TokensManager.Result.Error -> {}
+                is TokensManager.Result.Success -> {
+                    tokenToUpdate = result.data
+                    tokenSetupMode = TokenSetupMode.UPDATE
+                    setInitialStateFromToken(result.data)
+                }
+            }
         }
     }
 
@@ -162,7 +161,7 @@ class TokenFormViewModel @Inject constructor(
             }
 
             is TokenFormEvent.Submit -> {
-                validateInputs()
+                validateInputs(event)
             }
         }
     }
@@ -171,11 +170,10 @@ class TokenFormViewModel @Inject constructor(
         _uiState.value = _uiState.value.newState()
     }
 
-    private fun validateInputs() {
+    private fun validateInputs(event: TokenFormEvent.Submit) {
         val issuerResult = formValidator.validateIssuer(_uiState.value.issuer)
         val secretKeyResult = formValidator.validateSecretKey(_uiState.value.secretKey)
         val periodResult = formValidator.validatePeriod(_uiState.value.period)
-        val digitsResult = formValidator.validateDigits(_uiState.value.digits)
         val counterResult = formValidator.validateCounter(_uiState.value.counter)
 
         _uiState.value = _uiState.value.copy(
@@ -183,7 +181,6 @@ class TokenFormViewModel @Inject constructor(
                 "issuer" to issuerResult.errorMessage.takeIf { !issuerResult.isValid },
                 "secretKey" to secretKeyResult.errorMessage.takeIf { !secretKeyResult.isValid },
                 "period" to periodResult.errorMessage.takeIf { !periodResult.isValid },
-                "digits" to digitsResult.errorMessage.takeIf { !digitsResult.isValid },
                 "counter" to counterResult.errorMessage.takeIf { !counterResult.isValid }
             )
         )
@@ -194,7 +191,7 @@ class TokenFormViewModel @Inject constructor(
             return when (state.type) {
                 OTPType.TOTP -> {
                     val totpResults =
-                        listOf(issuerResult, secretKeyResult, digitsResult, periodResult)
+                        listOf(issuerResult, secretKeyResult, periodResult)
                     val hasError = totpResults.any { !it.isValid }
                     if (hasError) throw Exception()
 
@@ -208,7 +205,7 @@ class TokenFormViewModel @Inject constructor(
 
                 OTPType.HOTP -> {
                     val hotpResults =
-                        listOf(issuerResult, secretKeyResult, digitsResult, counterResult)
+                        listOf(issuerResult, secretKeyResult, counterResult)
                     val hasError = hotpResults.any { !it.isValid }
                     if (hasError) throw Exception()
 
@@ -263,17 +260,31 @@ class TokenFormViewModel @Inject constructor(
                         ) ?: throw IllegalStateException("No token ID available for update")
                     }
                 }
-
-                validationEvent.emit(TokenFormValidator.TokenFormValidationEvent.Success(token))
-                onValidationSuccess()
+                onValidationSuccess(token, event)
             } catch (e: Exception) {
                 Log.i(TAG, "validateInputs: ", e)
             }
         }
     }
 
-    private fun onValidationSuccess() {
+    private fun onValidationSuccess(token: TokenEntry, event: TokenFormEvent.Submit) {
+        viewModelScope.launch {
+            when (val result = tokensManager.insertToken(token, true)) {
+                is TokensManager.Result.Error -> {
+                    if (result.exception is TokenNameExistsException) {
+                        result.exception.token?.let { event.onDuplicate(token, it) }
+                    } else {
+                        Log.e(
+                            TAG,
+                            "onValidationSuccess: Unknown error while inserting",
+                            result.exception
+                        )
+                    }
+                }
 
+                is TokensManager.Result.Success -> event.onComplete()
+            }
+        }
     }
 
     private fun updateFieldVisibilityState(state: TokenFormState): TokenFormState {
@@ -315,10 +326,19 @@ class TokenFormViewModel @Inject constructor(
         return currentState.copy(
             enableAdvancedOptions = initialState.enableAdvancedOptions,
             validationErrors = initialState.validationErrors,
-            isAlgorithmFieldVisible = initialState.isAlgorithmFieldVisible,
-            isDigitsFieldVisible = initialState.isDigitsFieldVisible,
-            isPeriodFieldVisible = initialState.isPeriodFieldVisible,
-            isCounterFieldVisible = initialState.isCounterFieldVisible
         ) != initialState
+    }
+
+    fun deleteToken(tokenId: String, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            tokensManager.deleteToken(tokenId)
+            onComplete()
+        }
+    }
+
+    fun replaceExistingToken(existingToken: TokenEntry, token: TokenEntry) {
+        viewModelScope.launch {
+            tokensManager.replaceExistingToken(existingToken, token)
+        }
     }
 }

@@ -45,7 +45,7 @@ import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.TokkyButton
 import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.components.dialogs.TokkyDialog
-import com.ps.tokky.ui.viewmodels.ImportViewModel
+import com.ps.tokky.ui.viewmodels.ImportTokensViewModel
 import com.ps.tokky.utils.popBackStackIfInRoute
 import com.ps.tokky.utils.toast
 
@@ -59,11 +59,11 @@ fun ImportTokensScreen(
     val context = LocalContext.current
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-    val importViewModel: ImportViewModel = hiltViewModel()
+    val importTokensViewModel: ImportTokensViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
-        if (!importViewModel.isFileUnlocked.value) {
-            importViewModel.showPasswordDialog.value = true
+        if (!importTokensViewModel.isFileUnlocked.value) {
+            importTokensViewModel.showPasswordDialog.value = true
         }
     }
 
@@ -83,17 +83,17 @@ fun ImportTokensScreen(
         ) {
             ShowPasswordDialog(
                 fileUri = fileUri,
-                show = importViewModel.showPasswordDialog.value,
+                show = importTokensViewModel.showPasswordDialog.value,
                 onDismiss = {
-                    importViewModel.showPasswordDialog.value = false
+                    importTokensViewModel.showPasswordDialog.value = false
                     navController.popBackStackIfInRoute(Routes.ImportTokens)
                 },
                 onConfirm = { password ->
-                    importViewModel.importAccountsFromFile(context, fileUri, password)
+                    importTokensViewModel.importAccountsFromFile(context, fileUri, password)
 
-                    importViewModel.showPasswordDialog.value = false
-                    if (importViewModel.importError.value != null) {
-                        importViewModel.importError.value!!.toast(context)
+                    importTokensViewModel.showPasswordDialog.value = false
+                    if (importTokensViewModel.importError.value != null) {
+                        importTokensViewModel.importError.value!!.toast(context)
                         navController.popBackStackIfInRoute(Routes.ImportTokens)
                         return@ShowPasswordDialog
                     }
@@ -101,27 +101,27 @@ fun ImportTokensScreen(
                 }
             )
 
-            ShowDuplicatesWarningDialog(importViewModel)
+            ShowDuplicatesWarningDialog(importTokensViewModel)
 
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
-                items(importViewModel.tokensToImport.value, key = { it.token.id }) {
+                items(importTokensViewModel.tokensToImport.value, key = { it.token.id }) {
                     ImportListItem(
                         item = it,
-                        importViewModel = importViewModel
+                        importTokensViewModel = importTokensViewModel
                     )
                 }
             }
             TokkyButton(
                 onClick = {
-                    if (importViewModel.tokensToImport.value.any { it.isDuplicate }) {
-                        importViewModel.showDuplicateWarningDialog.value = true
+                    if (importTokensViewModel.tokensToImport.value.any { it.isDuplicate }) {
+                        importTokensViewModel.showDuplicateWarningDialog.value = true
                     } else {
-                        importViewModel.importAccounts()
+                        importTokensViewModel.importAccounts()
                     }
                 },
-                enabled = importViewModel.tokensToImport.value.any { it.checked },
+                enabled = importTokensViewModel.tokensToImport.value.any { it.checked },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp)
@@ -135,10 +135,10 @@ fun ImportTokensScreen(
 
 @Composable
 fun ShowDuplicatesWarningDialog(
-    importViewModel: ImportViewModel,
+    importTokensViewModel: ImportTokensViewModel,
 ) {
-    if (importViewModel.showDuplicateWarningDialog.value) {
-        val tokens = importViewModel.tokensToImport.value
+    if (importTokensViewModel.showDuplicateWarningDialog.value) {
+        val tokens = importTokensViewModel.tokensToImport.value
         val duplicateCount = tokens.count { it.isDuplicate }
         val nonDuplicateCount = tokens.size - duplicateCount
 
@@ -152,10 +152,10 @@ fun ShowDuplicatesWarningDialog(
                 duplicateCount
             ),
             onDismissRequest = {
-                importViewModel.showDuplicateWarningDialog.value = false
+                importTokensViewModel.showDuplicateWarningDialog.value = false
             },
             onConfirmation = {
-                importViewModel.importAccounts()
+                importTokensViewModel.importAccounts()
             }
         )
     }
@@ -163,8 +163,8 @@ fun ShowDuplicatesWarningDialog(
 
 @Composable
 private fun ImportListItem(
-    item: ImportViewModel.ImportItem,
-    importViewModel: ImportViewModel,
+    item: ImportTokensViewModel.ImportItem,
+    importTokensViewModel: ImportTokensViewModel,
 ) {
     val context = LocalContext.current
     var showRenameDialog by remember { mutableStateOf(false) }
@@ -179,14 +179,14 @@ private fun ImportListItem(
                 else MaterialTheme.colorScheme.errorContainer
             )
             .clickable {
-                importViewModel.checkToken(item.token.id, !item.checked)
+                importTokensViewModel.checkToken(item.token.id, !item.checked)
             }
             .padding(horizontal = 16.dp, vertical = 7.dp),
         horizontalArrangement = Arrangement.Center,
     ) {
         Checkbox(
             checked = if (item.isDuplicate) false else item.checked,
-            onCheckedChange = { importViewModel.checkToken(item.token.id, it) }
+            onCheckedChange = { importTokensViewModel.checkToken(item.token.id, it) }
         )
         Text(
             item.token.name,
@@ -218,7 +218,7 @@ private fun ImportListItem(
                 val issuerResult = validator.validateIssuer(issuer.value)
 
                 if (issuerResult.isValid) {
-                    importViewModel.updateToken(
+                    importTokensViewModel.updateToken(
                         tokenId = item.token.id,
                         issuer = issuer.value,
                         label = label.value,

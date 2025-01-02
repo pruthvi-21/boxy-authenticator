@@ -55,10 +55,6 @@ fun String.cleanSecretKey(): String {
     return this.replace("\\s", "").uppercase()
 }
 
-fun String.isValidSecretKey(): Boolean {
-    return Regex(Constants.BASE32_CHARS).matches(this)
-}
-
 fun String.toast(context: Context?) {
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
 }

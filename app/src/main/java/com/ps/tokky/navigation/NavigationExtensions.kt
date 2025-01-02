@@ -13,7 +13,6 @@ import com.ps.tokky.ui.screens.ImportTokensScreen
 import com.ps.tokky.ui.screens.SettingsScreen
 import com.ps.tokky.ui.screens.TokenSetupScreen
 import com.ps.tokky.ui.viewmodels.SettingsViewModel
-import com.ps.tokky.ui.viewmodels.TokensViewModel
 
 fun NavGraphBuilder.addAuthRoute(
     navController: NavController,
@@ -26,19 +25,16 @@ fun NavGraphBuilder.addAuthRoute(
 }
 
 fun NavGraphBuilder.addHomeRoute(
-    tokensViewModel: TokensViewModel,
     navController: NavController,
 ) {
     composable(Routes.Home.base) {
         HomeScreen(
-            tokensViewModel = tokensViewModel,
             navController = navController,
         )
     }
 }
 
 fun NavGraphBuilder.addTokenSetupRoute(
-    tokensViewModel: TokensViewModel,
     navController: NavController,
 ) {
     composable(
@@ -61,7 +57,6 @@ fun NavGraphBuilder.addTokenSetupRoute(
         TokenSetupScreen(
             tokenId = tokenId,
             authUrl = authUrl,
-            tokensViewModel = tokensViewModel,
             navController = navController
         )
     }

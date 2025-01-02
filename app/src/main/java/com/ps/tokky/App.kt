@@ -18,15 +18,13 @@ import com.ps.tokky.navigation.addSettingsRoute
 import com.ps.tokky.navigation.addTokenSetupRoute
 import com.ps.tokky.ui.theme.TokkyTheme
 import com.ps.tokky.ui.viewmodels.SettingsViewModel
-import com.ps.tokky.ui.viewmodels.TokensViewModel
 
 @Composable
 fun App() {
-    val tokensViewModel: TokensViewModel = hiltViewModel()
+    val context = LocalContext.current
+    val transitions = TransitionHelper(context)
+
     val settingsViewModel: SettingsViewModel = hiltViewModel()
-
-    val transitions = TransitionHelper(LocalContext.current)
-
     val isAppLockEnabled by remember { mutableStateOf(settingsViewModel.isAppLockEnabled.value) }
 
     TokkyTheme(theme = settingsViewModel.appTheme.value) {
@@ -41,8 +39,8 @@ fun App() {
             popExitTransition = { transitions.screenPopExitAnim }
         ) {
             addAuthRoute(navController)
-            addHomeRoute(tokensViewModel, navController)
-            addTokenSetupRoute(tokensViewModel, navController)
+            addHomeRoute(navController)
+            addTokenSetupRoute(navController)
             addSettingsRoute(settingsViewModel, navController)
             addExportTokensRoute()
             addImportTokensRoute(navController)

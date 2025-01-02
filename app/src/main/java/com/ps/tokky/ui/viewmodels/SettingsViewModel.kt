@@ -12,6 +12,8 @@ import com.ps.tokky.utils.HashUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+private const val TAG = "SettingsViewModel"
+
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settings: AppSettings,

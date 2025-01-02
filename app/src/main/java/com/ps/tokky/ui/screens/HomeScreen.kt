@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ps.camerax.BarcodeScanningActivity
@@ -36,9 +39,9 @@ import com.ps.camerax.BarcodeScanningActivity.Companion.SCAN_RESULT
 import com.ps.tokky.R
 import com.ps.tokky.navigation.RouteBuilder
 import com.ps.tokky.ui.components.ExpandableFab
-import com.ps.tokky.ui.screens.home.TokensList
 import com.ps.tokky.ui.components.Toolbar
-import com.ps.tokky.ui.viewmodels.TokensViewModel
+import com.ps.tokky.ui.screens.home.TokensList
+import com.ps.tokky.ui.viewmodels.HomeViewModel
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.copy
 import com.ps.tokky.utils.toast
@@ -46,11 +49,15 @@ import com.ps.tokky.utils.toast
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
-    tokensViewModel: TokensViewModel,
     navController: NavController,
 ) {
-    tokensViewModel.fetchTokens()
-    val tokensState by tokensViewModel.tokensState.collectAsStateWithLifecycle()
+    val homeViewModel: HomeViewModel = hiltViewModel()
+
+    val tokensState by homeViewModel.tokensState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        homeViewModel.loadTokens()
+    }
 
     Scaffold { safePadding ->
         Box {
@@ -74,9 +81,9 @@ fun HomeScreen(
                     },
                 )
                 when (val uiState = tokensState) {
-                    is TokensViewModel.UIState.Loading -> {}
+                    is HomeViewModel.UIState.Loading -> {}
 
-                    is TokensViewModel.UIState.Success -> {
+                    is HomeViewModel.UIState.Success -> {
                         val tokens = uiState.data
 
                         if (tokens.isNotEmpty()) {
@@ -97,6 +104,17 @@ fun HomeScreen(
                                     lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.5f
                                 )
                             }
+                        }
+                    }
+
+                    is HomeViewModel.UIState.Error -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Unable to load")
+                            //TODO: display error
                         }
                     }
                 }
@@ -152,6 +170,4 @@ private fun FAB(
             isFabExpanded = false
         }
     )
-
-
 }

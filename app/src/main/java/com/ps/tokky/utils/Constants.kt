@@ -17,11 +17,12 @@ enum class OTPType {
     TOTP, HOTP, STEAM,
 }
 
+enum class TokenSetupMode {
+    NEW, URL, UPDATE
+}
+
 object Constants {
     val DEFAULT_OTP_TYPE = OTPType.TOTP
-
-    const val DIGITS_MIN_VALUE = 1
-    const val DIGITS_MAX_VALUE = 10
 
     val THUMBNAIL_COlORS = listOf(
         Color.parseColor("#A0522D"),
@@ -30,8 +31,6 @@ object Constants {
         Color.parseColor("#B18F96"),
         Color.parseColor("#C8AA4B"),
     )
-
-    const val BASE32_CHARS = "[A-Z2-7 ]+"
 
     private const val EXPORT_FILE_NAME_PREFIX = "tokky_accounts_"
 

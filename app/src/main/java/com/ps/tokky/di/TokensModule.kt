@@ -6,6 +6,7 @@ import com.ps.tokky.data.database.TokensDatabase
 import com.ps.tokky.data.repositories.TokensRepository
 import com.ps.tokky.helpers.BiometricsHelper
 import com.ps.tokky.helpers.TokenFormValidator
+import com.ps.tokky.helpers.TokensManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,6 +28,12 @@ object TokensModule {
     @Singleton
     fun provideTokensRepository(tokensDao: TokensDao): TokensRepository {
         return TokensRepository(tokensDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTokensManager(tokensRepository: TokensRepository): TokensManager {
+        return TokensManager(tokensRepository)
     }
 
     @Provides

@@ -13,10 +13,20 @@ interface TokensDao {
     suspend fun getAllTokens(): List<TokenEntry>
 
     @Query("SELECT * FROM token_entry WHERE id = :tokenId")
-    suspend fun getTokenWithId(tokenId: String): TokenEntry
+    suspend fun findTokenWithId(tokenId: String): TokenEntry
+
+    @Query(
+        """
+            SELECT * FROM token_entry 
+            WHERE issuer = :issuer COLLATE NOCASE 
+            AND label = :label COLLATE NOCASE
+            LIMIT 1
+        """
+    )
+    suspend fun findTokenWithName(issuer: String, label: String): TokenEntry?
 
     @Insert
-    suspend fun insertAccounts(accounts: List<TokenEntry>)
+    suspend fun insertTokens(tokens: List<TokenEntry>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertToken(token: TokenEntry)
@@ -26,15 +36,4 @@ interface TokensDao {
 
     @Query("DELETE FROM token_entry WHERE id = :tokenId")
     suspend fun deleteToken(tokenId: String)
-
-    @Query(
-        """
-            SELECT * FROM token_entry 
-            WHERE issuer = :issuer COLLATE NOCASE 
-            AND label = :label COLLATE NOCASE
-            AND (:ignoreId IS NULL OR id != :ignoreId)
-            LIMIT 1
-        """
-    )
-    suspend fun findDuplicateToken(issuer: String, label: String, ignoreId: String?): TokenEntry?
 }

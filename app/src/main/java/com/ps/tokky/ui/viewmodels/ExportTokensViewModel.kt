@@ -7,16 +7,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.R
-import com.ps.tokky.data.repositories.TokensRepository
+import com.ps.tokky.helpers.TokensManager
 import com.ps.tokky.utils.FileHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import javax.inject.Inject
 
+private const val TAG = "ExportTokensViewModel"
+
 @HiltViewModel
 class ExportTokensViewModel @Inject constructor(
-    private val tokensRepository: TokensRepository,
+    private val tokensManager: TokensManager,
 ) : ViewModel() {
 
     private var _password = mutableStateOf("")
@@ -57,15 +59,23 @@ class ExportTokensViewModel @Inject constructor(
 
     fun exportTokens(context: Context, filePath: Uri, onFinished: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val exportData = JSONArray(tokensRepository.getAllTokens().map { /*TODO*/ }).toString()
+            when (val result = tokensManager.fetchTokens()) {
+                is TokensManager.Result.Error -> {
+                    //TODO: handle error
+                }
 
-            FileHelper.writeToFile(
-                context = context,
-                uri = filePath,
-                content = exportData,
-                password = _password.value,
-                onFinished = onFinished
-            )
+                is TokensManager.Result.Success -> {
+                    val exportData = JSONArray(result.data.map { /*TODO*/ }).toString()
+
+                    FileHelper.writeToFile(
+                        context = context,
+                        uri = filePath,
+                        content = exportData,
+                        password = _password.value,
+                        onFinished = onFinished
+                    )
+                }
+            }
         }
     }
 

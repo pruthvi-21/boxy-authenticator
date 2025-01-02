@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ps.tokky.data.models.TokenEntry
-import com.ps.tokky.data.repositories.TokensRepository
+import com.ps.tokky.helpers.TokensManager
 import com.ps.tokky.utils.FileHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,9 +15,11 @@ import org.json.JSONArray
 import org.json.JSONException
 import javax.inject.Inject
 
+private const val TAG = "ImportTokensViewModel"
+
 @HiltViewModel
-class ImportViewModel @Inject constructor(
-    private val tokensRepository: TokensRepository,
+class ImportTokensViewModel @Inject constructor(
+    private val tokensManager: TokensManager,
 ) : ViewModel() {
 
     data class ImportItem internal constructor(
@@ -40,7 +42,7 @@ class ImportViewModel @Inject constructor(
     fun importAccounts() {
         viewModelScope.launch {
             val tokens = _tokensToImport.value.filter { !it.isDuplicate }.map { it.token }
-            tokensRepository.insertAccounts(tokens)
+            tokensManager.insertTokens(tokens)
         }
     }
 
@@ -74,30 +76,38 @@ class ImportViewModel @Inject constructor(
 
     private fun buildTokensToImportList(tokens: List<TokenEntry>) {
         viewModelScope.launch {
-            val existingAccountNames = tokensRepository.getAllTokens()
-                .map { it.name }
-                .toSet()
-
-            val newAccounts = mutableListOf<TokenEntry>()
-            val duplicateAccounts = mutableListOf<TokenEntry>()
-
-            val importItems = tokens.map { token ->
-                val isDuplicate = existingAccountNames.contains(token.name)
-
-                if (isDuplicate) {
-                    duplicateAccounts.add(token)
-                } else {
-                    newAccounts.add(token)
+            when (val result = tokensManager.fetchTokens()) {
+                is TokensManager.Result.Error -> {
+                    //TODO: handle errors
                 }
 
-                ImportItem(
-                    token = token,
-                    checked = true,
-                    isDuplicate = isDuplicate,
-                )
-            }
+                is TokensManager.Result.Success -> {
+                    val existingAccountNames = result.data
+                        .map { it.name }
+                        .toSet()
 
-            _tokensToImport.value = importItems.sortedBy { it.token.name }
+                    val newAccounts = mutableListOf<TokenEntry>()
+                    val duplicateAccounts = mutableListOf<TokenEntry>()
+
+                    val importItems = tokens.map { token ->
+                        val isDuplicate = existingAccountNames.contains(token.name)
+
+                        if (isDuplicate) {
+                            duplicateAccounts.add(token)
+                        } else {
+                            newAccounts.add(token)
+                        }
+
+                        ImportItem(
+                            token = token,
+                            checked = true,
+                            isDuplicate = isDuplicate,
+                        )
+                    }
+
+                    _tokensToImport.value = importItems.sortedBy { it.token.name }
+                }
+            }
         }
     }
 
@@ -133,6 +143,9 @@ class ImportViewModel @Inject constructor(
     }
 
     private suspend fun checkIfDuplicate(token: TokenEntry): Boolean {
-        return tokensRepository.findDuplicateToken(token.issuer, token.label, token.id) != null
+        return when (val result = tokensManager.fetchTokenByName(token.issuer, token.label)) {
+            is TokensManager.Result.Error -> true
+            is TokensManager.Result.Success -> result.data != null
+        }
     }
 }

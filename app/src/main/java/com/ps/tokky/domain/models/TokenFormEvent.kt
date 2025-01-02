@@ -1,5 +1,6 @@
 package com.ps.tokky.domain.models
 
+import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.utils.OTPType
 
 sealed class TokenFormEvent {
@@ -13,5 +14,8 @@ sealed class TokenFormEvent {
     data class DigitsChanged(val digits: String) : TokenFormEvent()
     data class CounterChanged(val counter: String) : TokenFormEvent()
     data class EnableAdvancedOptionsChanged(val enableAdvancedOptions: Boolean) : TokenFormEvent()
-    data object Submit : TokenFormEvent()
+    data class Submit(
+        val onComplete: () -> Unit,
+        val onDuplicate: (TokenEntry, TokenEntry) -> Unit,
+    ) : TokenFormEvent()
 }
