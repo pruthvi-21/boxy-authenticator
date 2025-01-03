@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jw.preferences.PreferenceScreen
 import com.jw.preferences.PreferenceTheme
@@ -37,7 +38,9 @@ fun SettingsScreen(
             theme = PreferenceTheme.Default.copy(
                 categoryShape = MaterialTheme.shapes.medium,
             ),
-            modifier = Modifier.padding(contentPadding),
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(horizontal = 10.dp),
         ) {
             item { AppearanceSettings(settingsViewModel) }
             item { SecuritySettings(settingsViewModel) }
