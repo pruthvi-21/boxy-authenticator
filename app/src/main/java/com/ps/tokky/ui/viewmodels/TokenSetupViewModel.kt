@@ -291,6 +291,7 @@ class TokenSetupViewModel(
                                 "onValidationSuccess: Unknown error while inserting",
                                 exception
                             )
+                            // TODO: display a error
                         }
                     }
                 )
