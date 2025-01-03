@@ -52,7 +52,7 @@ data class PreferenceTheme(
                 titleTextStyle = MaterialTheme.typography.bodyLarge,
                 summaryColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
                 summaryTextStyle = MaterialTheme.typography.bodyMedium,
-                dropdownShape = RoundedCornerShape(24.dp),
+                dropdownShape = RoundedCornerShape(2.dp),
                 dividerThickness = 1.dp,
                 dividerColor = MaterialTheme.colorScheme.outlineVariant,
                 addPaddingToDivider = true,

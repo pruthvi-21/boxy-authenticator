@@ -53,6 +53,7 @@ android {
 
 dependencies {
     implementation(project(":camerax-library"))
+    implementation(project(":design"))
     implementation(project(":preferences"))
 
     implementation(libs.androidx.compose.compiler)

@@ -28,8 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.jw.design.components.StyledTextField
 import com.ps.tokky.R
-import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.TokkyButton
 import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.viewmodels.ExportTokensViewModel

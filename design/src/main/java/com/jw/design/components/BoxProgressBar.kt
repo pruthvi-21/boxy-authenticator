@@ -1,4 +1,4 @@
-package com.ps.tokky.ui.components
+package com.jw.design.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RectangularProgressBar(
+fun BoxProgressBar(
     progress: Float,
     width: Dp = 24.dp,
     height: Dp = 24.dp,

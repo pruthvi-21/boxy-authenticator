@@ -19,4 +19,5 @@ dependencyResolutionManagement {
 rootProject.name = "tokky"
 include(":app")
 include(":camerax-library")
+include(":design")
 include(":preferences")

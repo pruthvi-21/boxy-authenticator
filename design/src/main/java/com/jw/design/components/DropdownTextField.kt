@@ -1,4 +1,4 @@
-package com.ps.tokky.ui.components
+package com.jw.design.components
 
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,7 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.ps.tokky.R
+import com.jw.design.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

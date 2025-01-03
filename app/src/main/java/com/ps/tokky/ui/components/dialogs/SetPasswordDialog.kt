@@ -22,8 +22,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.jw.design.components.StyledTextField
 import com.ps.tokky.R
-import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.viewmodels.SetPasswordDialogViewModel
 import org.koin.androidx.compose.koinViewModel
 

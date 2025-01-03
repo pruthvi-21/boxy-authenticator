@@ -1,11 +1,10 @@
 package com.ps.tokky.ui.components.dialogs
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.jw.design.components.StyledTextField
 import com.ps.tokky.R
-import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.viewmodels.RemovePasswordDialogViewModel
 import org.koin.androidx.compose.koinViewModel
 

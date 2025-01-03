@@ -46,12 +46,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jw.design.components.DropdownTextField
+import com.jw.design.components.StyledTextField
 import com.ps.tokky.R
 import com.ps.tokky.data.models.otp.OtpInfo
 import com.ps.tokky.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.ps.tokky.domain.models.TokenFormEvent
-import com.ps.tokky.ui.components.DropdownTextField
-import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.ThumbnailController
 import com.ps.tokky.ui.components.TokkyButton
 import com.ps.tokky.ui.components.Toolbar

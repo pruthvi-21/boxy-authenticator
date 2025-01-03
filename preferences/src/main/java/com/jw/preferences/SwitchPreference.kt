@@ -5,7 +5,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
-import com.jw.preferences.components.BoxSwitch
+import com.jw.design.components.BoxSwitch
 import com.jw.preferences.utils.copy
 
 @Composable

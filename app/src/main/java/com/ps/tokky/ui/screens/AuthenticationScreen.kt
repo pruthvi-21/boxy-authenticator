@@ -35,8 +35,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jw.design.components.StyledTextField
 import com.ps.tokky.R
-import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.TokkyButton
 import com.ps.tokky.ui.components.TokkyTextButton
 import com.ps.tokky.ui.viewmodels.AuthenticationViewModel

@@ -1,4 +1,4 @@
-package com.ps.tokky.ui.components
+package com.jw.design.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

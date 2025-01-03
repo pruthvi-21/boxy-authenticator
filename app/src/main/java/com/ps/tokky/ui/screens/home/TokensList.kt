@@ -69,12 +69,12 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.jw.design.components.BoxProgressBar
 import com.ps.tokky.R
 import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.data.models.otp.HotpInfo
 import com.ps.tokky.data.models.otp.SteamInfo
 import com.ps.tokky.data.models.otp.TotpInfo
-import com.ps.tokky.ui.components.RectangularProgressBar
 import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.formatOTP
@@ -334,7 +334,7 @@ private fun TOTPFieldView(
                     height = dimensionResource(id = R.dimen.card_thumbnail_height)
                 ), contentAlignment = Alignment.Center
         ) {
-            RectangularProgressBar(
+            BoxProgressBar(
                 progress = progressAnimationValue,
                 width = 28.dp,
                 height = 28.dp,
