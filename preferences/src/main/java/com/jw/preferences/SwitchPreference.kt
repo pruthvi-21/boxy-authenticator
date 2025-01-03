@@ -2,10 +2,10 @@ package com.jw.preferences
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import com.jw.preferences.components.BoxSwitch
 import com.jw.preferences.utils.copy
 
 @Composable
@@ -27,7 +27,7 @@ fun SwitchPreference(
         summary = summary,
         widgetContainer = {
             val theme = LocalPreferenceTheme.current
-            Switch(
+            BoxSwitch(
                 checked = value,
                 onCheckedChange = null,
                 modifier = Modifier.padding(theme.padding.copy(start = theme.horizontalSpacing)),
