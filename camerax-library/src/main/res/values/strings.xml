@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cd_turn_flash_on_off">Turn Flash On/Off</string>
+    <string name="camera_permission_required">Camera permission is required</string>
 </resources>

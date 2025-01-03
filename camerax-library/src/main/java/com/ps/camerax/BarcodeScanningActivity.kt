@@ -1,15 +1,19 @@
 package com.ps.camerax
 //From https://github.com/maulikhirani/scannerX
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Size
 import android.view.OrientationEventListener
 import android.view.Surface
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -33,7 +37,7 @@ class BarcodeScanningActivity : AppCompatActivity() {
     private lateinit var flashControlImageView: ImageView
 
     /** Blocking camera operations are performed using this executor */
-    private lateinit var cameraExecutor: ExecutorService
+    private var cameraExecutor: ExecutorService? = null
     private var flashEnabled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +50,16 @@ class BarcodeScanningActivity : AppCompatActivity() {
         viewFinderOverlay = findViewById(R.id.view_finder_overlay)
         flashControlImageView = findViewById(R.id.flash_control)
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            initializeCamera()
+        } else {
+            requestCameraPermission()
+        }
+    }
+
+    private fun initializeCamera() {
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -106,9 +120,9 @@ class BarcodeScanningActivity : AppCompatActivity() {
                 finish()
             }
         }
-        imageAnalysis.setAnalyzer(cameraExecutor, analyzer)
+        cameraExecutor?.let { imageAnalysis.setAnalyzer(it, analyzer) }
 
-        preview.setSurfaceProvider(previewView.surfaceProvider)
+        preview.surfaceProvider = previewView.surfaceProvider
 
         val camera = cameraProvider?.bindToLifecycle(this, cameraSelector, imageAnalysis, preview)
 
@@ -133,9 +147,24 @@ class BarcodeScanningActivity : AppCompatActivity() {
         }
     }
 
+    private fun requestCameraPermission() {
+        val permissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                initializeCamera()
+            } else {
+                Toast.makeText(this, R.string.camera_permission_required, Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+
+        permissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        cameraExecutor.shutdown()
+        cameraExecutor?.shutdown()
     }
 
     companion object {
