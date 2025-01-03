@@ -2,13 +2,10 @@ package com.ps.tokky.ui.viewmodels
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
 private const val TAG = "RemovePasswordDialogViewModel"
 
-@HiltViewModel
-class RemovePasswordDialogViewModel @Inject constructor() : ViewModel() {
+class RemovePasswordDialogViewModel : ViewModel() {
 
     private val _password = mutableStateOf("")
     val password get() = _password.value

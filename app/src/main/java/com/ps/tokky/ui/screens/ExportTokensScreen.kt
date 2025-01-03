@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ps.tokky.R
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.TokkyButton
@@ -36,6 +35,7 @@ import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.viewmodels.ExportTokensViewModel
 import com.ps.tokky.utils.Constants
 import com.ps.tokky.utils.Constants.BACKUP_FILE_MIME_TYPE
+import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "ExportTokensScreen"
 
@@ -44,7 +44,7 @@ fun ExportTokensScreen() {
     val context = LocalContext.current
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-    val exportViewModel: ExportTokensViewModel = hiltViewModel()
+    val exportViewModel: ExportTokensViewModel = koinViewModel()
 
     val exportFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()

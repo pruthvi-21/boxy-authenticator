@@ -2,9 +2,8 @@ package com.ps.tokky.helpers
 
 import com.ps.tokky.data.preferences.PreferenceStore
 import com.ps.tokky.utils.AppTheme
-import javax.inject.Inject
 
-class AppSettings @Inject constructor(
+class AppSettings(
     private val store: PreferenceStore
 ) {
 

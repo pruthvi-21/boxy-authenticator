@@ -11,16 +11,13 @@ import com.ps.tokky.domain.usecases.FetchTokenByNameUseCase
 import com.ps.tokky.domain.usecases.FetchTokensUseCase
 import com.ps.tokky.domain.usecases.InsertTokensUseCase
 import com.ps.tokky.utils.FileHelper
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONException
-import javax.inject.Inject
 
 private const val TAG = "ImportTokensViewModel"
 
-@HiltViewModel
-class ImportTokensViewModel @Inject constructor(
+class ImportTokensViewModel(
     private val fetchTokensUseCase: FetchTokensUseCase,
     private val insertTokensUseCase: InsertTokensUseCase,
     private val fetchTokenByNameUseCase: FetchTokenByNameUseCase,

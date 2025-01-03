@@ -34,17 +34,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.components.TokkyButton
 import com.ps.tokky.ui.components.TokkyTextButton
 import com.ps.tokky.ui.viewmodels.AuthenticationViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AuthenticationScreen(navController: NavController) {
-    val authViewModel: AuthenticationViewModel = hiltViewModel()
+    val authViewModel: AuthenticationViewModel = koinViewModel()
 
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }

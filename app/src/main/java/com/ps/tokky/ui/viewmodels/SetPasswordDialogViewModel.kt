@@ -4,13 +4,10 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.ps.tokky.R
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
 private const val TAG = "SetPasswordDialogViewModel"
 
-@HiltViewModel
-class SetPasswordDialogViewModel @Inject constructor() : ViewModel() {
+class SetPasswordDialogViewModel : ViewModel() {
 
     private val _password = mutableStateOf("")
     val password get() = _password.value

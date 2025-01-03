@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.compose)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.dagger.hilt.android)
 }
 
 android {
@@ -73,9 +72,11 @@ dependencies {
     implementation(libs.bumptech.glide)
     implementation(libs.bumptech.glide.compose)
 
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    api(libs.koin.core)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

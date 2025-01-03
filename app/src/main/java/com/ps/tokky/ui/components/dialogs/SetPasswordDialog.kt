@@ -21,12 +21,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ps.tokky.R
 import com.ps.tokky.ui.components.StyledTextField
 import com.ps.tokky.ui.viewmodels.SetPasswordDialogViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SetPasswordDialog(
@@ -37,7 +36,7 @@ fun SetPasswordDialog(
 
     val focusRequester = remember { FocusRequester() }
 
-    val viewModel: SetPasswordDialogViewModel = hiltViewModel()
+    val viewModel: SetPasswordDialogViewModel = koinViewModel()
 
     TokkyDialog(
         dialogTitle = stringResource(R.string.set_password),

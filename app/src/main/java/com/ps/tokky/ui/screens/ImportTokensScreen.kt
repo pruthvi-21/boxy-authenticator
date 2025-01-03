@@ -36,7 +36,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.helpers.TokenFormValidator
@@ -48,6 +47,7 @@ import com.ps.tokky.ui.components.dialogs.TokkyDialog
 import com.ps.tokky.ui.viewmodels.ImportTokensViewModel
 import com.ps.tokky.utils.popBackStackIfInRoute
 import com.ps.tokky.utils.toast
+import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "ImportTokensScreen"
 
@@ -59,7 +59,7 @@ fun ImportTokensScreen(
     val context = LocalContext.current
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-    val importTokensViewModel: ImportTokensViewModel = hiltViewModel()
+    val importTokensViewModel: ImportTokensViewModel = koinViewModel()
 
     LaunchedEffect(Unit) {
         if (!importTokensViewModel.isFileUnlocked.value) {

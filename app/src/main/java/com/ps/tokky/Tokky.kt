@@ -1,7 +1,12 @@
 package com.ps.tokky
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import com.ps.tokky.di.initKoin
 
-@HiltAndroidApp
-class Tokky : Application() {}
+class Tokky : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        initKoin(applicationContext)
+    }
+}

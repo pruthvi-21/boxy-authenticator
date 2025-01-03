@@ -9,15 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.ps.tokky.R
 import com.ps.tokky.domain.usecases.FetchTokensUseCase
 import com.ps.tokky.utils.FileHelper
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONArray
-import javax.inject.Inject
 
 private const val TAG = "ExportTokensViewModel"
 
-@HiltViewModel
-class ExportTokensViewModel @Inject constructor(
+class ExportTokensViewModel(
     private val fetchTokensUseCase: FetchTokensUseCase,
 ) : ViewModel() {
 

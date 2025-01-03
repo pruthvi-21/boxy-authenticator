@@ -23,15 +23,12 @@ import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.TokenNameExistsException
 import com.ps.tokky.utils.TokenSetupMode
 import com.ps.tokky.utils.cleanSecretKey
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.Date
-import javax.inject.Inject
 
 private const val TAG = "TokenSetupViewModel"
 
-@HiltViewModel
-class TokenSetupViewModel @Inject constructor(
+class TokenSetupViewModel(
     private val insertTokenUseCase: InsertTokenUseCase,
     private val fetchTokenByIdUseCase: FetchTokenByIdUseCase,
     private val deleteTokenUseCase: DeleteTokenUseCase,

@@ -5,9 +5,8 @@ import androidx.annotation.StringRes
 import com.ps.tokky.R
 import com.ps.tokky.data.models.otp.HotpInfo.Companion.COUNTER_MIN_VALUE
 import com.ps.tokky.utils.Base32
-import javax.inject.Inject
 
-class TokenFormValidator @Inject constructor(context: Context) {
+class TokenFormValidator(context: Context) {
 
     data class Result(
         val isValid: Boolean = false,

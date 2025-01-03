@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ps.camerax.BarcodeScanningActivity
@@ -45,13 +44,14 @@ import com.ps.tokky.ui.viewmodels.HomeViewModel
 import com.ps.tokky.utils.Utils
 import com.ps.tokky.utils.copy
 import com.ps.tokky.utils.toast
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     navController: NavController,
 ) {
-    val homeViewModel: HomeViewModel = hiltViewModel()
+    val homeViewModel: HomeViewModel = koinViewModel()
 
     val tokensState by homeViewModel.tokensState.collectAsStateWithLifecycle()
 

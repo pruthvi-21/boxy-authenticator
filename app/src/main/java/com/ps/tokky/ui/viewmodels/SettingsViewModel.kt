@@ -9,13 +9,10 @@ import com.ps.tokky.helpers.BiometricsHelper
 import com.ps.tokky.ui.MainActivity
 import com.ps.tokky.utils.AppTheme
 import com.ps.tokky.utils.HashUtils
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
 private const val TAG = "SettingsViewModel"
 
-@HiltViewModel
-class SettingsViewModel @Inject constructor(
+class SettingsViewModel(
     private val settings: AppSettings,
     private val biometricAuthHelper: BiometricsHelper
 ) : ViewModel() {

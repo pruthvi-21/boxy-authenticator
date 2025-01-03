@@ -45,7 +45,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ps.tokky.R
 import com.ps.tokky.data.models.otp.OtpInfo
@@ -62,6 +61,7 @@ import com.ps.tokky.ui.viewmodels.TokenSetupViewModel
 import com.ps.tokky.utils.OTPType
 import com.ps.tokky.utils.TokenSetupMode
 import com.ps.tokky.utils.getInitials
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TokenSetupScreen(
@@ -69,7 +69,7 @@ fun TokenSetupScreen(
     authUrl: String? = null,
     navController: NavController,
 ) {
-    val tokenSetupViewModel: TokenSetupViewModel = hiltViewModel()
+    val tokenSetupViewModel: TokenSetupViewModel = koinViewModel()
 
     val localFocus = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current

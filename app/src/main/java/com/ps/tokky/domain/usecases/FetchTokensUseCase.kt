@@ -2,9 +2,8 @@ package com.ps.tokky.domain.usecases
 
 import com.ps.tokky.data.models.TokenEntry
 import com.ps.tokky.data.repositories.TokensRepository
-import javax.inject.Inject
 
-class FetchTokensUseCase @Inject constructor(
+class FetchTokensUseCase(
     private val tokensRepository: TokensRepository
 ) {
     suspend operator fun invoke(): Result<List<TokenEntry>> {
