@@ -1,7 +1,6 @@
 package com.ps.tokky.data.models.otp
 
-import com.ps.tokky.utils.Base32.decode
-import com.ps.tokky.utils.Base32.encode
+import com.ps.tokky.utils.Base32
 import com.ps.tokky.utils.EncodingException
 import com.ps.tokky.utils.OtpInfoException
 import org.json.JSONException
@@ -20,18 +19,16 @@ abstract class OtpInfo @JvmOverloads constructor(
     abstract fun getTypeId(): String
 
     open fun toJson(): JSONObject {
-        val obj = JSONObject()
-
-        try {
-            obj.put("type", getTypeId())
-            obj.put("secret", encode(secretKey))
-            obj.put("algo", algorithm)
-            obj.put("digits", digits)
+        return try {
+            JSONObject().apply {
+                put("type", getTypeId())
+                put("secret", Base32.encode(secretKey))
+                put("algo", algorithm)
+                put("digits", digits)
+            }
         } catch (e: JSONException) {
             throw RuntimeException(e)
         }
-
-        return obj
     }
 
     override fun equals(other: Any?): Boolean {
@@ -60,13 +57,11 @@ abstract class OtpInfo @JvmOverloads constructor(
 
         @Throws(OtpInfoException::class)
         fun fromJson(obj: JSONObject): OtpInfo {
-            val info: OtpInfo
-
-            try {
+            return try {
                 val type = obj.getString("type")
-                val secret = decode(obj.getString("secret"))
+                val secret = Base32.decode(obj.getString("secret"))
 
-                info = when (type) {
+                when (type) {
                     TotpInfo.ID -> {
                         val algo = obj.getString("algo")
                         val digits = obj.getInt("digits")
@@ -87,8 +82,6 @@ abstract class OtpInfo @JvmOverloads constructor(
             } catch (e: JSONException) {
                 throw OtpInfoException(e)
             }
-
-            return info
         }
     }
 }

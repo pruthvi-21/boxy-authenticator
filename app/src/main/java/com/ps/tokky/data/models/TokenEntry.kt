@@ -38,6 +38,18 @@ data class TokenEntry(
     val addedFrom: AccountEntryMethod,
 ) {
 
+    fun toJson(): JSONObject {
+        val json = JSONObject().apply {
+            put("issuer", issuer)
+            put("label", label)
+            put("thumbnail_color", thumbnailColor)
+            put("thumbnail_icon", thumbnailIcon)
+            put("type", type.name)
+            put("otp_info", otpInfo.toJson())
+        }
+        return json
+    }
+
     val name: String
         get() {
             if (label.isEmpty()) return issuer
@@ -46,17 +58,6 @@ data class TokenEntry(
 
     companion object {
         const val TAG = "TokenEntry"
-
-        private const val ISSUER = "issuer"
-        private const val LABEL = "label"
-        private const val SECRET = "secret"
-        private const val THUMBNAIL_COLOR = "thumbnail_color"
-        private const val THUMBNAIL_ICON = "thumbnail_icon"
-        private const val TYPE = "type"
-        private const val ALGORITHM = "algorithm"
-        private const val DIGITS = "digits"
-        private const val PERIOD = "period"
-        private const val COUNTER = "counter"
 
         fun buildNewToken(
             issuer: String,
@@ -99,24 +100,24 @@ data class TokenEntry(
 
             val type = uri.host?.let { OTPType.valueOf(it.uppercase()) } ?: OTPType.TOTP
 
-            val issuer = params?.get(ISSUER) ?: ""
+            val issuer = params?.get("issuer") ?: ""
             var label = uri.path?.substring(1) ?: ""
 
             if (label.startsWith("$issuer:")) label = label.substringAfter("$issuer:")
 
-            val secret = params?.get(SECRET)?.cleanSecretKey() ?: ""
+            val secret = params?.get("secret")?.cleanSecretKey() ?: ""
             val secretDecoded = Base32.decode(secret)
-            val algorithm = params?.get(ALGORITHM) ?: DEFAULT_ALGORITHM
-            val digits = params?.get(DIGITS)?.toInt() ?: DEFAULT_DIGITS
+            val algorithm = params?.get("algorithm") ?: DEFAULT_ALGORITHM
+            val digits = params?.get("digits")?.toInt() ?: DEFAULT_DIGITS
 
             val otpInfo = when (type) {
                 OTPType.TOTP -> {
-                    val period = params?.get(PERIOD)?.toInt() ?: DEFAULT_PERIOD
+                    val period = params?.get("period")?.toInt() ?: DEFAULT_PERIOD
                     TotpInfo(secretDecoded, algorithm, digits, period)
                 }
 
                 OTPType.HOTP -> {
-                    val counter = params?.get(COUNTER)?.toLong() ?: DEFAULT_COUNTER
+                    val counter = params?.get("counter")?.toLong() ?: DEFAULT_COUNTER
                     HotpInfo(secretDecoded, algorithm, digits, counter)
                 }
 
@@ -135,26 +136,17 @@ data class TokenEntry(
         }
 
         fun buildFromExportJson(json: JSONObject): TokenEntry {
-            val issuer = json.getString(ISSUER)
-            val label = json.getString(LABEL)
-            val secretKey = json.getString(SECRET)
+            val issuer = json.getString("issuer")
+            val label = json.getString("label")
 
-            val type = if (json.has(TYPE)) OTPType.valueOf(json.getString(TYPE))
+            val thumbnailColor = json.getInt("thumbnail_color")
+            val thumbnailIcon = if (json.has("thumbnail_icon")) json.getString("thumbnail_icon")
+            else null
+
+            val type = if (json.has("type")) OTPType.valueOf(json.getString("type"))
             else DEFAULT_OTP_TYPE
 
-            val period = if (json.has(PERIOD)) json.getInt(PERIOD)
-            else DEFAULT_PERIOD
-
-            val digits = if (json.has(DIGITS)) json.getInt(DIGITS)
-            else DEFAULT_DIGITS
-
-            val algorithm = if (json.has(ALGORITHM)) {
-                json.getString(ALGORITHM)
-            } else DEFAULT_ALGORITHM
-
-            val thumbnailIcon = if (json.has(THUMBNAIL_ICON)) json.getString(THUMBNAIL_ICON)
-            else null
-            val thumbnailColor = json.getInt(THUMBNAIL_COLOR)
+            val otpInfo = OtpInfo.fromJson(JSONObject(json.getString("otp_info")))
 
             return buildNewToken(
                 issuer = issuer,
@@ -162,7 +154,7 @@ data class TokenEntry(
                 thumbnailColor = thumbnailColor,
                 thumbnailIcon = thumbnailIcon,
                 type = type,
-                otpInfo = TotpInfo(Base32.decode(secretKey), algorithm, digits, period),
+                otpInfo = otpInfo,
                 addedFrom = AccountEntryMethod.RESTORED
             )
         }

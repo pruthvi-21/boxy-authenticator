@@ -59,7 +59,9 @@ class ExportTokensViewModel(
             fetchTokensUseCase()
                 .fold(
                     onSuccess = { tokens ->
-                        val exportData = JSONArray(tokens.map { /*TODO*/ }).toString()
+                        val exportData = JSONArray(tokens.map {
+                            it.toJson()
+                        }).toString()
 
                         FileHelper.writeToFile(
                             context = context,

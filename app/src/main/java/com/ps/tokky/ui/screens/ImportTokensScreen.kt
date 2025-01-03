@@ -101,7 +101,10 @@ fun ImportTokensScreen(
                 }
             )
 
-            ShowDuplicatesWarningDialog(importTokensViewModel)
+            ShowDuplicatesWarningDialog(importTokensViewModel) {
+                importTokensViewModel.showDuplicateWarningDialog.value = false
+                navController.popBackStackIfInRoute(Routes.ImportTokens)
+            }
 
             LazyColumn(
                 modifier = Modifier.weight(1f)
@@ -118,7 +121,10 @@ fun ImportTokensScreen(
                     if (importTokensViewModel.tokensToImport.value.any { it.isDuplicate }) {
                         importTokensViewModel.showDuplicateWarningDialog.value = true
                     } else {
-                        importTokensViewModel.importAccounts()
+                        importTokensViewModel.importAccounts {
+                            importTokensViewModel.showDuplicateWarningDialog.value = false
+                            navController.popBackStackIfInRoute(Routes.ImportTokens)
+                        }
                     }
                 },
                 enabled = importTokensViewModel.tokensToImport.value.any { it.checked },
@@ -136,6 +142,7 @@ fun ImportTokensScreen(
 @Composable
 fun ShowDuplicatesWarningDialog(
     importTokensViewModel: ImportTokensViewModel,
+    onSuccess: () -> Unit,
 ) {
     if (importTokensViewModel.showDuplicateWarningDialog.value) {
         val tokens = importTokensViewModel.tokensToImport.value
@@ -155,7 +162,9 @@ fun ShowDuplicatesWarningDialog(
                 importTokensViewModel.showDuplicateWarningDialog.value = false
             },
             onConfirmation = {
-                importTokensViewModel.importAccounts()
+                importTokensViewModel.importAccounts {
+                    onSuccess()
+                }
             }
         )
     }

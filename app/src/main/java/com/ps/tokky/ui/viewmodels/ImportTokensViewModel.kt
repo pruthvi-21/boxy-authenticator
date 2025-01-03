@@ -40,10 +40,11 @@ class ImportTokensViewModel(
     private var _importError = mutableStateOf<String?>(null)
     val importError: State<String?> = _importError
 
-    fun importAccounts() {
+    fun importAccounts(onComplete: () -> Unit) {
         viewModelScope.launch {
             val tokens = _tokensToImport.value.filter { !it.isDuplicate }.map { it.token }
             insertTokensUseCase(tokens)
+            onComplete()
         }
     }
 
