@@ -39,7 +39,7 @@ fun TokkyDialog(
 ) {
     Dialog(
         properties = DialogProperties(
-            usePlatformDefaultWidth = true,
+            usePlatformDefaultWidth = false,
             decorFitsSystemWindows = true,
             dismissOnClickOutside = true,
             dismissOnBackPress = true
@@ -50,7 +50,8 @@ fun TokkyDialog(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.9f)
+                .widthIn(max = 500.dp)
                 .clip(MaterialTheme.shapes.large)
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh),
         ) {
