@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.boxy.authenticator.R
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
-import com.boxy.authenticator.utils.AppTheme
+import com.boxy.design.constants.AppTheme
 import com.boxy.preferences.DropDownPreference
 import com.boxy.preferences.PreferenceCategory
 

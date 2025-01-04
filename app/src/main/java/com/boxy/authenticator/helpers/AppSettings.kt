@@ -1,7 +1,7 @@
 package com.boxy.authenticator.helpers
 
 import com.boxy.authenticator.data.preferences.PreferenceStore
-import com.boxy.authenticator.utils.AppTheme
+import com.boxy.design.constants.AppTheme
 
 class AppSettings(
     private val store: PreferenceStore

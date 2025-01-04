@@ -15,7 +15,7 @@ import com.boxy.authenticator.navigation.addHomeRoute
 import com.boxy.authenticator.navigation.addImportTokensRoute
 import com.boxy.authenticator.navigation.addSettingsRoute
 import com.boxy.authenticator.navigation.addTokenSetupRoute
-import com.boxy.authenticator.ui.theme.TokkyTheme
+import com.boxy.design.theme.BoxyTheme
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
@@ -29,7 +29,7 @@ fun App() {
     val isAppLockEnabled by remember { mutableStateOf(settingsViewModel.isAppLockEnabled.value) }
 
     KoinContext {
-        TokkyTheme(theme = settingsViewModel.appTheme.value) {
+        BoxyTheme(theme = settingsViewModel.appTheme.value) {
             val navController = rememberNavController()
 
             NavHost(

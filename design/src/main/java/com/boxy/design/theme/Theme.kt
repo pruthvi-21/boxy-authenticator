@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.theme
+package com.boxy.design.theme
 
 import android.app.Activity
 import android.content.Context
@@ -18,10 +18,10 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.boxy.authenticator.utils.AppTheme
+import com.boxy.design.constants.AppTheme
 
 @Composable
-fun TokkyTheme(
+fun BoxyTheme(
     theme: AppTheme = AppTheme.SYSTEM,
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,

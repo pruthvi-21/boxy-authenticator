@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import com.boxy.authenticator.helpers.AppSettings
 import com.boxy.authenticator.helpers.BiometricsHelper
 import com.boxy.authenticator.ui.MainActivity
-import com.boxy.authenticator.utils.AppTheme
 import com.boxy.authenticator.utils.HashUtils
+import com.boxy.design.constants.AppTheme
 
 private const val TAG = "SettingsViewModel"
 

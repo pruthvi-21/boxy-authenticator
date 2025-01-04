@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.theme
+package com.boxy.design.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
