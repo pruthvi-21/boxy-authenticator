@@ -297,8 +297,7 @@ private fun ShowPasswordDialog(
                     },
                     placeholder = stringResource(R.string.enter_password_to_restore),
                     isPasswordField = true,
-                    modifier = Modifier
-                        .padding(top = if (fileName != null) 20.dp else 0.dp)
+                    containerModifier = Modifier
                         .focusRequester(focusRequester)
                         .onGloballyPositioned {
                             focusRequester.requestFocus()
