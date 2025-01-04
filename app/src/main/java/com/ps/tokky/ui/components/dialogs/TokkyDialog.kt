@@ -52,7 +52,7 @@ fun TokkyDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
-                .background(MaterialTheme.colorScheme.surfaceContainer),
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
         ) {
             Spacer(Modifier.height(18.dp))
             if (dialogTitle != null || icon != null) {
