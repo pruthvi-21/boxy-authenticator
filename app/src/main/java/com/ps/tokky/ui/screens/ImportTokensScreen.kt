@@ -46,8 +46,10 @@ import com.ps.tokky.ui.components.Toolbar
 import com.ps.tokky.ui.components.dialogs.TokkyDialog
 import com.ps.tokky.ui.viewmodels.ImportTokensViewModel
 import com.ps.tokky.utils.popBackStackIfInRoute
+import com.ps.tokky.utils.queryName
 import com.ps.tokky.utils.toast
 import org.koin.androidx.compose.koinViewModel
+
 
 private const val TAG = "ImportTokensScreen"
 
@@ -267,11 +269,13 @@ private fun ShowPasswordDialog(
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit,
 ) {
+    val context = LocalContext.current
+
     var password by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
     if (show && fileUri != null) {
-        val fileName = fileUri.path?.split(":")?.get(1)
+        val fileName = fileUri.queryName(context.contentResolver)
         TokkyDialog(
             dialogTitle = stringResource(R.string.decrypt_your_file),
             confirmText = stringResource(R.string.decrypt),

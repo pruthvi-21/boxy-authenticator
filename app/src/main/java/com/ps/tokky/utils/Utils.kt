@@ -3,10 +3,15 @@ package com.ps.tokky.utils
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.ContentResolver
 import android.content.Context
 import android.content.res.AssetManager
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.OpenableColumns
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
@@ -83,5 +88,21 @@ fun NavController.isInRoute(route: Routes): Boolean {
 fun NavController.popBackStackIfInRoute(route: Routes) {
     if (isInRoute(route)) {
         popBackStack()
+    }
+}
+
+fun Uri.queryName(resolver: ContentResolver): String? {
+    return try {
+        val returnCursor: Cursor = checkNotNull(
+            resolver.query(this, null, null, null, null)
+        )
+        val nameIndex: Int = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        returnCursor.moveToFirst()
+        val name: String = returnCursor.getString(nameIndex)
+        returnCursor.close()
+        name
+    } catch (e: Exception) {
+        Log.i("Utils", "queryName: unable to get filename")
+        null
     }
 }
