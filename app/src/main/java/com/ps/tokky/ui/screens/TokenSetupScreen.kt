@@ -247,6 +247,7 @@ fun TokenSetupScreen(
                         },
                         label = stringResource(R.string.label_secret_key),
                         placeholder = stringResource(R.string.hint_secret_key),
+                        isPasswordField = true,
                         errorMessage = state.validationErrors["secretKey"],
                     )
 
