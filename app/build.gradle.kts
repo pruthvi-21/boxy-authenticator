@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ps.tokky"
+    namespace = "com.boxy.authenticator"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.ps.tokky"
+        applicationId = "com.boxy.authenticator"
         minSdk = 29
         targetSdk = 35
         versionCode = 7

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.jw.design"
+    namespace = "com.boxy.design"
     compileSdk = 34
 
     defaultConfig {

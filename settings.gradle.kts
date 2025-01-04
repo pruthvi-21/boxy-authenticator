@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "tokky"
+rootProject.name = "boxy-authenticator"
 include(":app")
 include(":camerax-library")
 include(":design")

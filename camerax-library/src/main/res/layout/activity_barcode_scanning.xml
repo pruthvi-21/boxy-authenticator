@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.ps.camerax.ViewFinderOverlay
+    <com.boxy.camerax.ViewFinderOverlay
         android:id="@+id/view_finder_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

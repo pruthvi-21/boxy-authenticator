@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ps.camerax"
+    namespace = "com.boxy.camerax"
     compileSdk = 34
 
     defaultConfig {

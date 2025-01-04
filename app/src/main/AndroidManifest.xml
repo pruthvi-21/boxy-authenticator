@@ -10,14 +10,14 @@
         android:required="false" />
 
     <application
-        android:name=".Tokky"
+        android:name=".Boxy"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Tokky"
+        android:theme="@style/Theme.Boxy"
         tools:targetApi="31">
 
         <activity
@@ -31,7 +31,7 @@
         </activity>
 
         <activity
-            android:name="com.ps.camerax.BarcodeScanningActivity"
+            android:name="com.boxy.camerax.BarcodeScanningActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />

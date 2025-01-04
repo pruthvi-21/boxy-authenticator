@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="Theme.Tokky" parent="Base.Theme.Tokky" />
+    <style name="Theme.Boxy" parent="Base.Theme.Boxy" />
 
-    <style name="Base.Theme.Tokky" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="Base.Theme.Boxy" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
 </resources>
