@@ -1,6 +1,0 @@
-<resources>
-
-    <style name="Theme.Boxy" parent="Base.Theme.Boxy" />
-
-    <style name="Base.Theme.Boxy" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
-</resources>

@@ -1,0 +1,104 @@
+<resources>
+    <string name="app_name">Boxy Authenticator</string>
+    <string name="empty_layout_text">No tokens available\nAdd a token by clicking <b>'+'</b> at the bottom</string>
+    <string name="cd_fab_add_new">add</string>
+    <string name="expandable_fab_qr_title">Scan a QR Code</string>
+    <string name="expandable_fab_manual_title">Enter Manually</string>
+    <string name="error_bad_formed_otp_url">Badly formed URL. Please try to enter manually</string>
+    <string name="ok">OK</string>
+    <string name="warning">Warning</string>
+    <string name="replace">Replace</string>
+    <string name="rename">Rename</string>
+    <string name="remove">Remove</string>
+    <string name="go_back">Go back</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove_account">Remove account</string>
+    <string name="default_value">Default</string>
+
+    <string name="toast_copied_to_clipboard">Copied to clipboard</string>
+    <string name="label_clipboard_content">OTP Token</string>
+    <string name="title_settings">Settings</string>
+
+    <string name="dialog_message_delete_token">Before removing the token \'%1$s\', please ensure that you turn off 2FA for this account.\n\nAlso, please ensure that you have an alternative mechanism for generating codes.</string>
+
+    <string name="incorrect_password">Incorrect Password</string>
+
+    <!-- AuthenticationScreen -->
+    <string name="unlock_vault">Unlock Vault</string>
+    <string name="unlock_vault_message">Use your password to access the vault</string>
+    <string name="use_biometrics">Use biometrics</string>
+
+    <!-- TokenSetupScreen -->
+    <string name="title_enter_account_details">Enter account details</string>
+    <string name="title_update_account_details">Update account details</string>
+    <string name="label_issuer">Issuer</string>
+    <string name="label_label">Label</string>
+    <string name="label_secret_key">Secret Key</string>
+    <string name="label_digits">Digits</string>
+    <string name="label_counter">Counter</string>
+    <string name="label_period">Period</string>
+    <string name="label_algorithm">Algorithm</string>
+    <string name="hint_issuer">Name of issuer</string>
+    <string name="hint_label">Email or username</string>
+    <string name="hint_secret_key">Secret key</string>
+    <string name="hint_counter">Counter</string>
+    <string name="error_issuer_empty">Issuer cannot be empty</string>
+    <string name="error_secret_key_empty">Secret Key cannot be empty</string>
+    <string name="error_secret_key_invalid">Invalid Secret Key format</string>
+    <string name="error_period_empty">Period cannot be empty</string>
+    <string name="error_period_invalid">Period must be a positive number >0</string>
+    <string name="error_counter_invalid">Counter must be ≥ 0</string>
+    <string name="label_advanced_options">Advanced options</string>
+    <string name="label_add_account">Add account</string>
+    <string name="label_update_account">Update account</string>
+    <string name="message_unsaved_changes">Going back will clear all the fields. Are you sure to go back?</string>
+    <string name="account_exists_dialog_title">Account already exists</string>
+    <string name="account_exists_dialog_message">You already have an account with name \'%1$s\'</string>
+    <string name="biometric_prompt_title">Verify your identity</string>
+
+    <!-- ExportTokensScreen -->
+    <string name="password">Password</string>
+    <string name="enter_password_for_backup">Enter password for backup</string>
+    <string name="password_empty">Password can\'t be empty</string>
+    <string name="password_mismatch">Password didn\'t matched</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="reenter_above_password">Re-enter above password</string>
+    <string name="show_password">Show password</string>
+    <string name="export">Export</string>
+    <string name="export_success">Accounts exported</string>
+    <string name="export_error">Some error occurred while exporting</string>
+
+    <!-- ImportTokensScreen -->
+    <string name="import_label">Import</string>
+    <string name="enter_password_to_restore">Enter password to restore</string>
+    <string name="decrypt">Decrypt</string>
+    <string name="decrypt_your_file">Decrypt your file</string>
+    <string name="proceed">Proceed</string>
+    <string name="duplicate_warning_message">Only %1$d entries will be imported. %2$d duplicate entries will be ignored.</string>
+    <string name="set_password">Set password</string>
+    <string name="password_min_length_error">Password should have at least 6 characters</string>
+    <string name="remove_password">Remove password</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="unlock">Unlock</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="follow_system">Follow system</string>
+
+    <!-- SettingsScreen -->
+    <string name="preference_title_app_theme">App theme</string>
+    <string name="preference_title_app_lock">Enable app lock</string>
+    <string name="preference_title_biometrics">Use biometrics</string>
+    <string name="preference_title_screenshots">Allow screenshots</string>
+    <string name="import_accounts">Import Accounts</string>
+    <string name="import_accounts_summary">Restore your accounts from a backup file.</string>
+    <string name="export_accounts">Export Accounts</string>
+    <string name="export_accounts_summary">Save your accounts securely in a backup file.</string>
+
+    <string name="preference_category_title_security">Security</string>
+    <string name="preference_category_title_appearance">Appearance</string>
+    <string name="preference_category_transfer_accounts">Transfer accounts</string>
+
+    <string name="preference_summary_app_lock">Lock this app with a PIN. To change your PIN please disable app lock and enable it again</string>
+    <string name="preference_summary_biometrics">You can unlock with your biometrics instead of typing PIN</string>
+    <string name="preference_summary_screenshots">This will allow you to take screenshots in this app</string>
+</resources>
