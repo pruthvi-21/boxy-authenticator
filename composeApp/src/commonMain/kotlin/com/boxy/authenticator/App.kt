@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.boxy.authenticator.navigation.RootComponent
+import com.boxy.authenticator.navigation.RootComponent.Child
 import com.boxy.authenticator.navigation.backAnimation
 import com.boxy.authenticator.ui.screens.HomeScreen
 import com.boxy.authenticator.ui.screens.SettingsScreen
@@ -39,12 +40,9 @@ fun App(rootComponent: RootComponent) {
                 ),
             ) { child ->
                 when (val instance = child.instance) {
-                    is RootComponent.Child.HomeScreen -> HomeScreen(instance.component)
-                    is RootComponent.Child.TokenSetupScreen -> TokenSetupScreen(instance.component)
-                    is RootComponent.Child.SettingsScreen -> SettingsScreen(
-                        instance.component,
-                        settingsViewModel
-                    )
+                    is Child.HomeScreen -> HomeScreen(instance.component)
+                    is Child.TokenSetupScreen -> TokenSetupScreen(instance.component)
+                    is Child.SettingsScreen -> SettingsScreen(instance.component, settingsViewModel)
                 }
             }
         }

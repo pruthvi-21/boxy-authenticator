@@ -25,6 +25,9 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+
+            export(libs.decompose)
+            export(libs.essenty)
         }
     }
 
@@ -59,8 +62,9 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0-RC")
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
             implementation("io.ktor:ktor-client-core:2.3.12")
-            implementation(libs.decompose)
-            implementation(libs.decompose.extensions)
+            api(libs.decompose)
+            api(libs.decompose.extensions)
+            api(libs.essenty)
             implementation(libs.multiplatform.settings)
             implementation(libs.moko.biometry)
             implementation(libs.moko.biometry.compose)

@@ -1,16 +1,18 @@
 package com.boxy.authenticator.navigation
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.backhandler.BackHandler
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
+import com.boxy.authenticator.navigation.RootComponent.Child
+import com.boxy.authenticator.navigation.RootComponent.Configuration
 import kotlinx.serialization.Serializable
 
-class RootComponent(
-    componentContext: ComponentContext,
-    initialConfiguration: Configuration,
-) : BackHandlerOwner, ComponentContext by componentContext {
+interface RootComponent : BackHandlerOwner {
 
     @Serializable
     sealed class Configuration {
@@ -31,11 +33,22 @@ class RootComponent(
         data class SettingsScreen(val component: SettingsScreenComponent) : Child()
     }
 
+    val childStack: Value<ChildStack<Configuration, Child>>
+
+    fun onBackClicked()
+}
+
+class DefaultRootComponent(
+    componentContext: ComponentContext,
+    override val backHandler: BackHandler = componentContext.backHandler,
+) : RootComponent, ComponentContext by componentContext {
+
     private val navigation = StackNavigation<Configuration>()
-    val childStack = childStack(
+
+    override val childStack = childStack(
         source = navigation,
         serializer = Configuration.serializer(),
-        initialConfiguration = initialConfiguration,
+        initialConfiguration = Configuration.HomeScreen,
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -59,7 +72,7 @@ class RootComponent(
         }
     }
 
-    fun onBackClicked() {
+    override fun onBackClicked() {
         navigation.pop()
     }
 }

@@ -7,7 +7,8 @@ androidx-activityCompose = "1.9.3"
 androidx-lifecycle = "2.8.4"
 androidx-material3 = "1.12.0"
 compose-multiplatform = "1.7.0"
-decompose = "3.2.2"
+decompose = "3.3.0-alpha02"
+essenty = "2.5.0-alpha01"
 guava = "33.4.0-android"
 koin = "3.6.0-Beta4"
 koin-compose = "1.2.0-Beta4"
@@ -25,6 +26,7 @@ moko-biometry = { module = "dev.icerock.moko:biometry", version.ref = "mokoBiome
 moko-biometry-compose = { module = "dev.icerock.moko:biometry-compose", version.ref = "mokoBiometry" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-extensions = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+essenty = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" } #for decompose
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }

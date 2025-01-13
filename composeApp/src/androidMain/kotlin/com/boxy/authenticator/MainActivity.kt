@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.arkivanov.decompose.retainedComponent
-import com.boxy.authenticator.navigation.RootComponent
+import com.boxy.authenticator.navigation.DefaultRootComponent
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,9 +17,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         val rootComponent = retainedComponent {
-            RootComponent(
+            DefaultRootComponent(
                 componentContext = it,
-                initialConfiguration = RootComponent.Configuration.HomeScreen
             )
         }
 

@@ -19,14 +19,9 @@ import com.arkivanov.essenty.backhandler.BackHandler
 actual fun <C : Any, T : Any> backAnimation(
     backHandler: BackHandler,
     onBack: () -> Unit,
-): StackAnimation<C, T> =
-    predictiveBackAnimation(
-        backHandler = backHandler,
-        fallbackAnimation = stackAnimation(androidFallbackAnimation()),
-        onBack = onBack,
-    )
+): StackAnimation<C, T> = stackAnimation(androidBackAnimation())
 
-private fun androidFallbackAnimation(animationSpec: FiniteAnimationSpec<Float> = tween(300)): StackAnimator =
+private fun androidBackAnimation(animationSpec: FiniteAnimationSpec<Float> = tween(300)): StackAnimator =
     stackAnimator(animationSpec = animationSpec) { factor, direction, content ->
         content(
             Modifier
