@@ -23,9 +23,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.cd_navigate_back
 import com.boxy.authenticator.platform
 import com.boxy.authenticator.utils.copy
 import com.boxy.authenticator.utils.top
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +89,7 @@ private fun DefaultNavigationIcon(onNavigationIconClick: () -> Unit) {
     IconButton(onClick = onNavigationIconClick) {
         Image(
             imageVector = Icons.Rounded.ArrowBackIosNew,
-            contentDescription = "",
+            contentDescription = stringResource(Res.string.cd_navigate_back),
             contentScale = ContentScale.Crop,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
             modifier = Modifier

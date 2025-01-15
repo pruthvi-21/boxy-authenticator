@@ -24,6 +24,7 @@ import com.boxy.authenticator.utils.TokenSetupMode
 import com.boxy.authenticator.utils.cleanSecretKey
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import org.jetbrains.compose.resources.getString
 
 class TokenSetupViewModel(
     private val insertTokenUseCase: InsertTokenUseCase,
@@ -175,64 +176,71 @@ class TokenSetupViewModel(
         _uiState.value = _uiState.value.newState()
     }
 
+    private suspend fun handleValidationResult(result: TokenFormValidator.Result): String? {
+        return when (result) {
+            is TokenFormValidator.Result.Success -> null
+            is TokenFormValidator.Result.Failure -> getString(result.errorMessage)
+        }
+    }
+
     private fun validateInputs(event: TokenFormEvent.Submit) {
-        val issuerResult = formValidator.validateIssuer(_uiState.value.issuer)
-        val secretKeyResult = formValidator.validateSecretKey(_uiState.value.secretKey)
-        val periodResult = formValidator.validatePeriod(_uiState.value.period)
-        val counterResult = formValidator.validateCounter(_uiState.value.counter)
+        viewModelScope.launch {
+            val issuerResult = formValidator.validateIssuer(_uiState.value.issuer)
+            val secretKeyResult = formValidator.validateSecretKey(_uiState.value.secretKey)
+            val periodResult = formValidator.validatePeriod(_uiState.value.period)
+            val counterResult = formValidator.validateCounter(_uiState.value.counter)
 
-        _uiState.value = _uiState.value.copy(
-            validationErrors = mapOf(
-                "issuer" to issuerResult.errorMessage.takeIf { !issuerResult.isValid },
-                "secretKey" to secretKeyResult.errorMessage.takeIf { !secretKeyResult.isValid },
-                "period" to periodResult.errorMessage.takeIf { !periodResult.isValid },
-                "counter" to counterResult.errorMessage.takeIf { !counterResult.isValid }
+            _uiState.value = _uiState.value.copy(
+                validationErrors = mapOf(
+                    "issuer" to handleValidationResult(issuerResult),
+                    "secretKey" to handleValidationResult(secretKeyResult),
+                    "period" to handleValidationResult(periodResult),
+                    "counter" to handleValidationResult(counterResult)
+                )
             )
-        )
 
-        val state = _uiState.value
+            val state = _uiState.value
 
-        fun buildOtpInfo(): OtpInfo {
-            return when (state.type) {
-                OTPType.TOTP -> {
-                    val totpResults =
-                        listOf(issuerResult, secretKeyResult, periodResult)
-                    val hasError = totpResults.any { !it.isValid }
-                    if (hasError) throw Exception()
+            fun buildOtpInfo(): OtpInfo {
+                return when (state.type) {
+                    OTPType.TOTP -> {
+                        val totpResults =
+                            listOf(issuerResult, secretKeyResult, periodResult)
+                        val hasError = totpResults.any { it is TokenFormValidator.Result.Failure }
+                        if (hasError) throw Exception()
 
-                    TotpInfo(
-                        Base32.decode(uiState.value.secretKey),
-                        state.algorithm,
-                        state.digits.toInt(),
-                        state.period.toInt(),
-                    )
-                }
+                        TotpInfo(
+                            Base32.decode(uiState.value.secretKey),
+                            state.algorithm,
+                            state.digits.toInt(),
+                            state.period.toInt(),
+                        )
+                    }
 
-                OTPType.HOTP -> {
-                    val hotpResults =
-                        listOf(issuerResult, secretKeyResult, counterResult)
-                    val hasError = hotpResults.any { !it.isValid }
-                    if (hasError) throw Exception()
+                    OTPType.HOTP -> {
+                        val hotpResults =
+                            listOf(issuerResult, secretKeyResult, counterResult)
+                        val hasError = hotpResults.any { it is TokenFormValidator.Result.Failure }
+                        if (hasError) throw Exception()
 
-                    HotpInfo(
-                        Base32.decode(uiState.value.secretKey),
-                        state.algorithm,
-                        state.digits.toInt(),
-                        state.counter.toLong(),
-                    )
-                }
+                        HotpInfo(
+                            Base32.decode(uiState.value.secretKey),
+                            state.algorithm,
+                            state.digits.toInt(),
+                            state.counter.toLong(),
+                        )
+                    }
 
-                OTPType.STEAM -> {
-                    val steamResults = listOf(issuerResult, secretKeyResult)
-                    val hasError = steamResults.any { !it.isValid }
-                    if (hasError) throw Exception()
+                    OTPType.STEAM -> {
+                        val steamResults = listOf(issuerResult, secretKeyResult)
+                        val hasError = steamResults.any { it is TokenFormValidator.Result.Failure }
+                        if (hasError) throw Exception()
 
-                    SteamInfo(Base32.decode(uiState.value.secretKey))
+                        SteamInfo(Base32.decode(uiState.value.secretKey))
+                    }
                 }
             }
-        }
 
-        viewModelScope.launch {
             try {
                 val otpInfo = buildOtpInfo()
 

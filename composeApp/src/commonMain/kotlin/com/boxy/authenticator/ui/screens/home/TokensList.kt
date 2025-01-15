@@ -64,18 +64,20 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.refresh
 import com.boxy.authenticator.data.models.TokenEntry
 import com.boxy.authenticator.data.models.otp.HotpInfo
 import com.boxy.authenticator.data.models.otp.SteamInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo
 import com.boxy.authenticator.ui.components.BoxProgressBar
 import com.boxy.authenticator.utils.OTPType
-import com.boxy.authenticator.utils.Utils
 import com.boxy.authenticator.utils.Utils.toColor
 import com.boxy.authenticator.utils.formatOTP
 import com.boxy.authenticator.utils.getInitials
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -248,7 +250,7 @@ private fun HOTPFieldView(otpInfo: HotpInfo) {
             counter = otpInfo.counter
             otp = otpInfo.getOtp()
         }) {
-            Icon(Icons.Rounded.Refresh, contentDescription = null)
+            Icon(Icons.Rounded.Refresh, contentDescription = stringResource(Res.string.refresh))
         }
     }
 }

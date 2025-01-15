@@ -4,6 +4,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.dark
+import boxy_authenticator.composeapp.generated.resources.follow_system
+import boxy_authenticator.composeapp.generated.resources.light
 import boxy_authenticator.composeapp.generated.resources.preference_category_title_appearance
 import boxy_authenticator.composeapp.generated.resources.preference_title_app_theme
 import com.boxy.authenticator.ui.preferences.DropDownPreference
@@ -15,9 +18,9 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun AppearanceSettings(settingsViewModel: SettingsViewModel) {
     val appThemeLabels = listOf(
-        "Light",
-        "Dark",
-        "Follow system",
+        stringResource(Res.string.light),
+        stringResource(Res.string.dark),
+        stringResource(Res.string.follow_system),
     )
 
     val appTheme = settingsViewModel.appTheme.value

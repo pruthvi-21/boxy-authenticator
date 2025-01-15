@@ -22,15 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.cancel
+import boxy_authenticator.composeapp.generated.resources.ok
 import com.boxy.authenticator.ui.components.TokkyTextButton
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TokkyDialog(
     dialogTitle: String? = null,
     dialogBody: String? = null,
     icon: (@Composable () -> Unit)? = null,
-    confirmText: String = "Ok",
-    dismissText: String = "Cancel",
+    confirmText: String = stringResource(Res.string.ok),
+    dismissText: String = stringResource(Res.string.cancel),
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     content: (@Composable () -> Unit)? = null,

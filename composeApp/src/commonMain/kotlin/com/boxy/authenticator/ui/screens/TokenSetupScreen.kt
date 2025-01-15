@@ -42,6 +42,32 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.account_exists_dialog_message
+import boxy_authenticator.composeapp.generated.resources.account_exists_dialog_title
+import boxy_authenticator.composeapp.generated.resources.go_back
+import boxy_authenticator.composeapp.generated.resources.hint_counter
+import boxy_authenticator.composeapp.generated.resources.hint_issuer
+import boxy_authenticator.composeapp.generated.resources.hint_label
+import boxy_authenticator.composeapp.generated.resources.hint_period
+import boxy_authenticator.composeapp.generated.resources.hint_secret_key
+import boxy_authenticator.composeapp.generated.resources.label_add_account
+import boxy_authenticator.composeapp.generated.resources.label_advanced_options
+import boxy_authenticator.composeapp.generated.resources.label_algorithm
+import boxy_authenticator.composeapp.generated.resources.label_counter
+import boxy_authenticator.composeapp.generated.resources.label_digits
+import boxy_authenticator.composeapp.generated.resources.label_issuer
+import boxy_authenticator.composeapp.generated.resources.label_label
+import boxy_authenticator.composeapp.generated.resources.label_period
+import boxy_authenticator.composeapp.generated.resources.label_secret_key
+import boxy_authenticator.composeapp.generated.resources.label_update_account
+import boxy_authenticator.composeapp.generated.resources.message_unsaved_changes
+import boxy_authenticator.composeapp.generated.resources.remove
+import boxy_authenticator.composeapp.generated.resources.rename
+import boxy_authenticator.composeapp.generated.resources.replace
+import boxy_authenticator.composeapp.generated.resources.title_enter_account_details
+import boxy_authenticator.composeapp.generated.resources.title_update_account_details
+import boxy_authenticator.composeapp.generated.resources.type
 import com.boxy.authenticator.data.models.otp.OtpInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.boxy.authenticator.domain.models.TokenFormEvent
@@ -57,6 +83,7 @@ import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import com.boxy.authenticator.utils.OTPType
 import com.boxy.authenticator.utils.TokenSetupMode
 import com.boxy.authenticator.utils.getInitials
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TokenSetupScreen(component: TokenSetupScreenComponent) {
@@ -90,8 +117,8 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
     Scaffold(
         topBar = {
             val title =
-                if (tokenSetupMode == TokenSetupMode.UPDATE) "Update account details"
-                else "Enter account details"
+                if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(Res.string.title_update_account_details)
+                else stringResource(Res.string.title_enter_account_details)
 
             Toolbar(
                 title = title,
@@ -104,7 +131,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                         }) {
                             Icon(
                                 imageVector = Icons.Outlined.Delete,
-                                contentDescription = null,
+                                contentDescription = stringResource(Res.string.remove),
                                 tint = MaterialTheme.colorScheme.error,
                             )
                         }
@@ -129,8 +156,8 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
 
             if (tokenSetupViewModel.showBackPressDialog.value) {
                 TokkyDialog(
-                    dialogBody = "Going back will clear all the fields. Are you sure to go back?",
-                    confirmText = "Go back",
+                    dialogBody = stringResource(Res.string.message_unsaved_changes),
+                    confirmText = stringResource(Res.string.go_back),
                     onDismissRequest = { tokenSetupViewModel.showBackPressDialog.value = false },
                     onConfirmation = {
                         component.navigateUp()
@@ -161,10 +188,13 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
             if (tokenSetupViewModel.showDuplicateTokenDialog.value.show) {
                 val args = tokenSetupViewModel.showDuplicateTokenDialog.value
                 TokkyDialog(
-                    dialogTitle = "Account already exists",
-                    dialogBody = "You already have an account with name ${args.token!!.name}",
-                    confirmText = "Replace",
-                    dismissText = "Rename",
+                    dialogTitle = stringResource(Res.string.account_exists_dialog_title),
+                    dialogBody = stringResource(
+                        Res.string.account_exists_dialog_message,
+                        args.token!!.name
+                    ),
+                    confirmText = stringResource(Res.string.replace),
+                    dismissText = stringResource(Res.string.rename),
                     onDismissRequest = {
                         tokenSetupViewModel.showDuplicateTokenDialog.value =
                             TokenSetupViewModel.DuplicateTokenDialogArgs(false)
@@ -203,8 +233,8 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                 StyledTextField(
                     value = state.issuer,
                     onValueChange = { tokenSetupViewModel.onEvent(TokenFormEvent.IssuerChanged(it)) },
-                    label = "Issuer",
-                    placeholder = "Name of issuer",
+                    label = stringResource(Res.string.label_issuer),
+                    placeholder = stringResource(Res.string.hint_issuer),
                     errorMessage = state.validationErrors["issuer"],
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
@@ -218,8 +248,8 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                 StyledTextField(
                     value = state.label,
                     onValueChange = { tokenSetupViewModel.onEvent(TokenFormEvent.LabelChanged(it)) },
-                    label = "Label",
-                    placeholder = "Email or username",
+                    label = stringResource(Res.string.label_label),
+                    placeholder = stringResource(Res.string.hint_label),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
                         onNext = { localFocus.moveFocus(FocusDirection.Down) }
@@ -235,8 +265,8 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                         onValueChange = {
                             tokenSetupViewModel.onEvent(TokenFormEvent.SecretKeyChanged(it))
                         },
-                        label = "Secret Key",
-                        placeholder = "Secret Key",
+                        label = stringResource(Res.string.label_secret_key),
+                        placeholder = stringResource(Res.string.hint_secret_key),
                         isPasswordField = true,
                         errorMessage = state.validationErrors["secretKey"],
                     )
@@ -256,8 +286,8 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
             }
 
             val buttonText =
-                if (tokenSetupMode == TokenSetupMode.UPDATE) "Update account"
-                else "Add account"
+                if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(Res.string.label_update_account)
+                else stringResource(Res.string.label_add_account)
 
             TokkyButton(
                 onClick = {
@@ -314,7 +344,7 @@ fun FormAdvancedOptions(
                         .padding(10.dp),
                 ) {
                     Text(
-                        text = "Advanced options",
+                        text = stringResource(Res.string.label_advanced_options),
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     Icon(
@@ -338,7 +368,7 @@ fun FormAdvancedOptions(
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                     DropdownTextField(
-                        label = "Type",
+                        label = stringResource(Res.string.type),
                         value = state.type.name,
                         values = OTPType.entries.map { it.name },
                         defaultValue = OTPType.TOTP.name,
@@ -356,7 +386,7 @@ fun FormAdvancedOptions(
 
                     if (state.isAlgorithmFieldVisible) {
                         DropdownTextField(
-                            label = "Algorithm",
+                            label = stringResource(Res.string.label_algorithm),
                             value = state.algorithm,
                             values = listOf("SHA1", "SHA256", "SHA512"),
                             defaultValue = OtpInfo.DEFAULT_ALGORITHM,
@@ -371,7 +401,7 @@ fun FormAdvancedOptions(
                 Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                     if (state.isDigitsFieldVisible) {
                         DropdownTextField(
-                            label = "Digits",
+                            label = stringResource(Res.string.label_digits),
                             value = state.digits,
                             values = listOf("4", "5", "6", "7", "8", "9", "10"),
                             defaultValue = "${OtpInfo.DEFAULT_DIGITS}",
@@ -388,8 +418,8 @@ fun FormAdvancedOptions(
                             onValueChange = {
                                 tokenSetupViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
                             },
-                            label = "Period",
-                            placeholder = "$DEFAULT_PERIOD (Default)",
+                            label = stringResource(Res.string.label_period),
+                            placeholder = stringResource(Res.string.hint_period, "$DEFAULT_PERIOD"),
                             errorMessage = state.validationErrors["period"],
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -404,8 +434,8 @@ fun FormAdvancedOptions(
                             onValueChange = {
                                 tokenSetupViewModel.onEvent(TokenFormEvent.CounterChanged(it))
                             },
-                            label = "Counter",
-                            placeholder = "Counter",
+                            label = stringResource(Res.string.label_counter),
+                            placeholder = stringResource(Res.string.hint_counter),
                             errorMessage = state.validationErrors["counter"],
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,

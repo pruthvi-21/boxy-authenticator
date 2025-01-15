@@ -27,6 +27,7 @@ import boxy_authenticator.composeapp.generated.resources.app_name
 import boxy_authenticator.composeapp.generated.resources.empty_layout_text
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_manual_title
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_qr_title
+import boxy_authenticator.composeapp.generated.resources.title_settings
 import com.boxy.authenticator.navigation.HomeScreenComponent
 import com.boxy.authenticator.ui.components.ExpandableFab
 import com.boxy.authenticator.ui.components.ExpandableFabItem
@@ -62,7 +63,7 @@ fun HomeScreen(component: HomeScreenComponent) {
                         }) {
                             Icon(
                                 imageVector = Icons.TwoTone.Settings,
-                                contentDescription = "",
+                                contentDescription = stringResource(Res.string.title_settings),
                             )
                         }
                     },

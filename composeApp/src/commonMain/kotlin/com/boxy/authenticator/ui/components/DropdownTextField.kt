@@ -13,6 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.placeholder_default_text
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +59,7 @@ fun DropdownTextField(
             values.forEach { selectionOption ->
                 var text = selectionOption
                 if (defaultValue.isNotEmpty() && selectionOption == defaultValue)
-                    text += " (Default)"
+                    text = stringResource(Res.string.placeholder_default_text, text)
                 DropdownMenuItem(
                     text = {
                         Text(

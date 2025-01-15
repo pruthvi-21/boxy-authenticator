@@ -3,6 +3,7 @@ package com.boxy.authenticator.ui.components.dialogs
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.enter_correct_password
 import boxy_authenticator.composeapp.generated.resources.password
 import boxy_authenticator.composeapp.generated.resources.remove_password
 import com.boxy.authenticator.ui.components.StyledTextField
@@ -35,7 +36,7 @@ fun RemovePasswordDialog(
                 value = viewModel.password,
                 onValueChange = { viewModel.updatePassword(it) },
                 label = stringResource(Res.string.password),
-                placeholder = "Enter current password",
+                placeholder = stringResource(Res.string.enter_correct_password),
                 isPasswordField = true,
             )
         }

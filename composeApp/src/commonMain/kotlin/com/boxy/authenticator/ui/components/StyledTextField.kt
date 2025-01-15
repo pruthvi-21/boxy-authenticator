@@ -24,6 +24,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.cd_hide_password
+import boxy_authenticator.composeapp.generated.resources.cd_show_password
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun StyledTextField(
@@ -80,8 +84,8 @@ fun StyledTextField(
                     val image = if (showPassword.value) Icons.Filled.VisibilityOff
                     else Icons.Filled.Visibility
 
-                    val description = if (showPassword.value) "Hide password"
-                    else "Show password"
+                    val description = if (showPassword.value) stringResource(Res.string.cd_hide_password)
+                    else stringResource(Res.string.cd_show_password)
 
                     IconButton(onClick = { showPassword.value = !showPassword.value }) {
                         Icon(

@@ -4,12 +4,18 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.biometric_prompt_title
+import boxy_authenticator.composeapp.generated.resources.cancel
+import boxy_authenticator.composeapp.generated.resources.to_disable_biometrics
+import boxy_authenticator.composeapp.generated.resources.to_enable_biometrics
 import com.boxy.authenticator.helpers.AppSettings
 import com.boxy.authenticator.utils.AppTheme
 import com.boxy.authenticator.utils.HashUtils
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 
 class SettingsViewModel(
     private val settings: AppSettings,
@@ -53,9 +59,10 @@ class SettingsViewModel(
         viewModelScope.launch {
             try {
                 promptForBiometrics(
-                    title = "Verify your identity",
-                    reason = if (enabled) "To enable biometrics" else "To disable biometrics",
-                    failureButtonText = "Cancel",
+                    title = getString(Res.string.biometric_prompt_title),
+                    reason = if (enabled) getString(Res.string.to_enable_biometrics)
+                        else getString(Res.string.to_disable_biometrics),
+                    failureButtonText = getString(Res.string.cancel),
                     onComplete = {
                         if (it) {
                             settings.setBiometricUnlockEnabled(enabled)

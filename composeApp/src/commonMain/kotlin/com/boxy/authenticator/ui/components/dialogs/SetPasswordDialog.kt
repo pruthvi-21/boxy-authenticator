@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.confirm_password
+import boxy_authenticator.composeapp.generated.resources.enter_a_password
 import boxy_authenticator.composeapp.generated.resources.password
 import boxy_authenticator.composeapp.generated.resources.set_password
 import boxy_authenticator.composeapp.generated.resources.show_password
@@ -62,7 +63,7 @@ fun SetPasswordDialog(
                 onValueChange = {
                     viewModel.updatePassword(it)
                 },
-                placeholder = "Enter a password",
+                placeholder = stringResource(Res.string.enter_a_password),
                 label = stringResource(Res.string.password),
                 isPasswordField = !viewModel.showPassword,
                 hidePasswordVisibilityEye = true,
@@ -81,7 +82,7 @@ fun SetPasswordDialog(
                 onValueChange = {
                     viewModel.updateConfirmPassword(it)
                 },
-                placeholder = "Confirm your password",
+                placeholder = stringResource(Res.string.confirm_password),
                 label = stringResource(Res.string.confirm_password),
                 isPasswordField = !viewModel.showPassword,
                 hidePasswordVisibilityEye = true,
