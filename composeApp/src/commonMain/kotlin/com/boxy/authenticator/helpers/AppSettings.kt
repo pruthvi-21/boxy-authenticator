@@ -50,13 +50,13 @@ class AppSettings(
         }
     }
 
-    fun setScreenshotModeEnabled(allow: Boolean) {
-        store.putBoolean(Keys.SCREENSHOT_MODE, allow)
+    fun setBlockScreenshotsEnabled(block: Boolean) {
+        store.putBoolean(Keys.BLOCK_SCREENSHOTS, block)
     }
 
-    fun isScreenshotModeEnabled(default: Boolean = Defaults.SCREENSHOT_MODE): Boolean {
+    fun isBlockScreenshotsEnabled(default: Boolean = Defaults.BLOCK_SCREENSHOTS): Boolean {
         return try {
-            store.getBoolean(Keys.SCREENSHOT_MODE, default)
+            store.getBoolean(Keys.BLOCK_SCREENSHOTS, default)
         } catch (e: Exception) {
             default
         }
@@ -72,13 +72,13 @@ class AppSettings(
             const val APP_LOCK = "key_app_lock"
             const val APP_LOCK_HASH = "key_app_lock_hash"
             const val BIOMETRIC_UNLOCK = "key_biometric_unlock"
-            const val SCREENSHOT_MODE = "key_screenshots_mode"
+            const val BLOCK_SCREENSHOTS = "key_block_screenshots"
         }
 
         object Defaults {
             const val APP_LOCK = false
             const val BIOMETRIC_UNLOCK = false
-            const val SCREENSHOT_MODE = false
+            const val BLOCK_SCREENSHOTS = true
         }
     }
 }

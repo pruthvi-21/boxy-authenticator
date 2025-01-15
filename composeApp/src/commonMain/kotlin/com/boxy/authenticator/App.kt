@@ -11,6 +11,7 @@ import com.boxy.authenticator.ui.screens.HomeScreen
 import com.boxy.authenticator.ui.screens.SettingsScreen
 import com.boxy.authenticator.ui.screens.TokenSetupScreen
 import com.boxy.authenticator.ui.theme.BoxyTheme
+import com.boxy.authenticator.ui.util.BindScreenshotBlockerEffect
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
@@ -25,6 +26,7 @@ fun App(rootComponent: RootComponent) {
         ParametersHolder(mutableListOf(biometryFactory.createBiometryAuthenticator()))
     }
     BindBiometryAuthenticatorEffect(settingsViewModel.biometryAuthenticator)
+    BindScreenshotBlockerEffect(settingsViewModel.isBlockScreenshotsEnabled.value)
 
     KoinContext {
         BoxyTheme(

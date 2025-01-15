@@ -31,8 +31,8 @@ class SettingsViewModel(
     private val _isBiometricUnlockEnabled = mutableStateOf(false)
     val isBiometricUnlockEnabled: State<Boolean> = _isBiometricUnlockEnabled
 
-    private val _isScreenshotsModeEnabled = mutableStateOf(false)
-    val isScreenshotsModeEnabled: State<Boolean> = _isScreenshotsModeEnabled
+    private val _isBlockScreenshotsEnabled = mutableStateOf(false)
+    val isBlockScreenshotsEnabled: State<Boolean> = _isBlockScreenshotsEnabled
 
     val showEnableAppLockDialog = mutableStateOf(false)
     val showDisableAppLockDialog = mutableStateOf(false)
@@ -52,7 +52,7 @@ class SettingsViewModel(
         _appTheme.value = settings.getAppTheme()
         _isAppLockEnabled.value = settings.isAppLockEnabled()
         _isBiometricUnlockEnabled.value = settings.isBiometricUnlockEnabled()
-        _isScreenshotsModeEnabled.value = settings.isScreenshotModeEnabled()
+        _isBlockScreenshotsEnabled.value = settings.isBlockScreenshotsEnabled()
     }
 
     fun setBiometricUnlockEnabled(enabled: Boolean) {
@@ -100,14 +100,10 @@ class SettingsViewModel(
         return biometryAuthenticator.isBiometricAvailable() && isAppLockEnabled.value
     }
 
-//    fun setScreenshotModeEnabled(context: Context, enabled: Boolean) {
-//        settings.setScreenshotModeEnabled(enabled)
-//        _isScreenshotsModeEnabled.value = enabled
-//
-//        if (context is MainActivity) {
-//            context.setScreenshotMode(enabled)
-//        }
-//    }
+    fun setBlockScreenshotsEnabled(enabled: Boolean) {
+        settings.setBlockScreenshotsEnabled(enabled)
+        _isBlockScreenshotsEnabled.value = enabled
+    }
 
     fun enableAppLock(password: String) {
         viewModelScope.launch {

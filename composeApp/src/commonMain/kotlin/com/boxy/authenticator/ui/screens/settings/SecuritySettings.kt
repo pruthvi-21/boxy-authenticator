@@ -6,10 +6,11 @@ import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.preference_category_title_security
 import boxy_authenticator.composeapp.generated.resources.preference_summary_app_lock
 import boxy_authenticator.composeapp.generated.resources.preference_summary_biometrics
-import boxy_authenticator.composeapp.generated.resources.preference_summary_screenshots
+import boxy_authenticator.composeapp.generated.resources.preference_summary_block_screenshots
 import boxy_authenticator.composeapp.generated.resources.preference_title_app_lock
 import boxy_authenticator.composeapp.generated.resources.preference_title_biometrics
-import boxy_authenticator.composeapp.generated.resources.preference_title_screenshots
+import boxy_authenticator.composeapp.generated.resources.preference_title_block_screenshots
+import com.boxy.authenticator.platform
 import com.boxy.authenticator.ui.components.dialogs.RemovePasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.boxy.authenticator.ui.preferences.PreferenceCategory
@@ -22,7 +23,7 @@ fun SecuritySettings(settingsViewModel: SettingsViewModel) {
 
     val isAppLockEnabled = settingsViewModel.isAppLockEnabled.value
     val isBiometricUnlockEnabled = settingsViewModel.isBiometricUnlockEnabled.value
-    val isScreenshotsModeEnabled = settingsViewModel.isScreenshotsModeEnabled.value
+    val isBlockScreenshotsEnabled = settingsViewModel.isBlockScreenshotsEnabled.value
 
     PreferenceCategory(
         title = { Text(stringResource(Res.string.preference_category_title_security)) },
@@ -49,17 +50,19 @@ fun SecuritySettings(settingsViewModel: SettingsViewModel) {
             onValueChange = {
                 settingsViewModel.setBiometricUnlockEnabled(it)
             },
-            showDivider = false,
+            showDivider = platform.isAndroid,
         )
-//        SwitchPreference(
-//            title = { Text(stringResource(Res.string.preference_title_screenshots)) },
-//            summary = { Text(stringResource(Res.string.preference_summary_screenshots)) },
-//            value = isScreenshotsModeEnabled,
-//            onValueChange = {
-//                settingsViewModel.setScreenshotModeEnabled(context, it)
-//            },
-//            showDivider = false,
-//        )
+        if (platform.isAndroid) {
+            SwitchPreference(
+                title = { Text(stringResource(Res.string.preference_title_block_screenshots)) },
+                summary = { Text(stringResource(Res.string.preference_summary_block_screenshots)) },
+                value = isBlockScreenshotsEnabled,
+                onValueChange = {
+                    settingsViewModel.setBlockScreenshotsEnabled(it)
+                },
+                showDivider = false,
+            )
+        }
     }
 
     if (settingsViewModel.showEnableAppLockDialog.value) {
