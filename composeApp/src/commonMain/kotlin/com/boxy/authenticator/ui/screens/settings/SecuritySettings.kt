@@ -10,7 +10,7 @@ import boxy_authenticator.composeapp.generated.resources.preference_summary_bloc
 import boxy_authenticator.composeapp.generated.resources.preference_title_app_lock
 import boxy_authenticator.composeapp.generated.resources.preference_title_biometrics
 import boxy_authenticator.composeapp.generated.resources.preference_title_block_screenshots
-import com.boxy.authenticator.platform
+import com.boxy.authenticator.Platform
 import com.boxy.authenticator.ui.components.dialogs.RemovePasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
@@ -50,9 +50,9 @@ fun SecuritySettings(settingsViewModel: SettingsViewModel) {
             onValueChange = {
                 settingsViewModel.setBiometricUnlockEnabled(it)
             },
-            showDivider = platform.isAndroid,
+            showDivider = Platform.isAndroid,
         )
-        if (platform.isAndroid) {
+        if (Platform.isAndroid) {
             SwitchPreference(
                 title = { Text(stringResource(Res.string.preference_title_block_screenshots)) },
                 summary = { Text(stringResource(Res.string.preference_summary_block_screenshots)) },

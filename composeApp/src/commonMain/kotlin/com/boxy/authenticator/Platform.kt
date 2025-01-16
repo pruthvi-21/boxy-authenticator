@@ -1,8 +1,6 @@
 package com.boxy.authenticator
 
-interface Platform {
+expect object Platform {
     val isAndroid: Boolean
     val isIos: Boolean
 }
-
-expect val platform: Platform
