@@ -8,8 +8,8 @@ import boxy_authenticator.composeapp.generated.resources.export_accounts_summary
 import boxy_authenticator.composeapp.generated.resources.import_accounts
 import boxy_authenticator.composeapp.generated.resources.import_accounts_summary
 import boxy_authenticator.composeapp.generated.resources.preference_category_transfer_accounts
-import com.boxy.authenticator.ui.preferences.Preference
-import com.boxy.authenticator.ui.preferences.PreferenceCategory
+import com.jw.preferences.Preference
+import com.jw.preferences.PreferenceCategory
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

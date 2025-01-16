@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.preferences
+package com.jw.preferences
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn

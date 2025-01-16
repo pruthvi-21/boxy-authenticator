@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.preferences.utils
+package com.jw.preferences.utils
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -10,7 +10,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.boxy.authenticator.ui.preferences.LocalPreferenceTheme
+import com.jw.preferences.LocalPreferenceTheme
 
 internal object PreferenceDefaults {
     @Composable
@@ -18,10 +18,9 @@ internal object PreferenceDefaults {
         if (icon != null) {
             val theme = LocalPreferenceTheme.current
             Box(
-                modifier =
-                Modifier
+                modifier = Modifier
                     .widthIn(min = theme.iconContainerMinWidth)
-                    .padding(theme.padding.copy(end = 0.dp)),
+                    .padding(theme.preferencePadding.copy(end = 0.dp)),
                 contentAlignment = Alignment.CenterStart,
             ) {
                 CompositionLocalProvider(

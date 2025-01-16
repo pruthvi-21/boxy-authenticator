@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.preferences
+package com.jw.preferences
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -13,21 +14,22 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 data class PreferenceTheme(
-    val categoryPadding: PaddingValues,
-    val categoryColor: Color,
-    val categoryTextStyle: TextStyle,
-    val categoryShape: Shape,
     val preferenceColor: Color,
-    val padding: PaddingValues,
-    val horizontalSpacing: Dp,
-    val verticalSpacing: Dp,
-    val disabledOpacity: Float,
-    val iconContainerMinWidth: Dp,
-    val iconColor: Color,
+    val preferencePadding: PaddingValues,
     val titleColor: Color,
     val titleTextStyle: TextStyle,
     val summaryColor: Color,
     val summaryTextStyle: TextStyle,
+    val showPreferenceDivider: Boolean,
+    val categoryPadding: PaddingValues,
+    val categoryTitleColor: Color,
+    val categoryTitleStyle: TextStyle,
+    val categoryContentShape: Shape,
+    val showCategoryDivider: Boolean,
+    val disabledOpacity: Float,
+    val iconContainerMinWidth: Dp,
+    val iconColor: Color,
+    val customSwitch: @Composable ((checked: Boolean, enabled: Boolean) -> Unit)?,
     val dropdownShape: Shape,
     val dividerThickness: Dp,
     val dividerColor: Color,
@@ -37,21 +39,22 @@ data class PreferenceTheme(
         val Default: PreferenceTheme
             @Composable
             get() = PreferenceTheme(
-                categoryPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
-                categoryColor = MaterialTheme.colorScheme.primary,
-                categoryTextStyle = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                categoryShape = RoundedCornerShape(28.dp),
-                preferenceColor = MaterialTheme.colorScheme.surfaceVariant,
-                padding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
-                horizontalSpacing = 16.dp,
-                verticalSpacing = 16.dp,
-                disabledOpacity = 0.38f,
-                iconContainerMinWidth = 56.dp,
-                iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                preferenceColor = MaterialTheme.colorScheme.surface,
+                preferencePadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
                 titleColor = MaterialTheme.colorScheme.onSurface,
                 titleTextStyle = MaterialTheme.typography.bodyLarge,
                 summaryColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
                 summaryTextStyle = MaterialTheme.typography.bodyMedium,
+                showPreferenceDivider = false,
+                categoryPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
+                categoryTitleColor = MaterialTheme.colorScheme.primary,
+                categoryTitleStyle = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                categoryContentShape = RectangleShape,
+                showCategoryDivider = true,
+                disabledOpacity = 0.38f,
+                iconContainerMinWidth = 56.dp,
+                iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                customSwitch = null,
                 dropdownShape = RoundedCornerShape(2.dp),
                 dividerThickness = 1.dp,
                 dividerColor = MaterialTheme.colorScheme.outlineVariant,

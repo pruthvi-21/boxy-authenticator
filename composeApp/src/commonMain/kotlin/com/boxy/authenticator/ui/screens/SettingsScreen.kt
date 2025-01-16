@@ -9,13 +9,14 @@ import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.title_settings
 import com.boxy.authenticator.navigation.SettingsScreenComponent
+import com.boxy.authenticator.ui.components.BoxSwitch
 import com.boxy.authenticator.ui.components.Toolbar
-import com.boxy.authenticator.ui.preferences.PreferenceScreen
-import com.boxy.authenticator.ui.preferences.PreferenceTheme
 import com.boxy.authenticator.ui.screens.settings.AppearanceSettings
 import com.boxy.authenticator.ui.screens.settings.SecuritySettings
 //import com.boxy.authenticator.ui.screens.settings.TransferAccounts
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
+import com.jw.preferences.PreferenceScreen
+import com.jw.preferences.PreferenceTheme
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -34,7 +35,13 @@ fun SettingsScreen(
     ) { contentPadding ->
         PreferenceScreen(
             theme = PreferenceTheme.Default.copy(
-                categoryShape = MaterialTheme.shapes.medium,
+                preferenceColor = MaterialTheme.colorScheme.surfaceVariant,
+                showPreferenceDivider = true,
+                categoryContentShape = MaterialTheme.shapes.medium,
+                showCategoryDivider = false,
+                customSwitch = { checked, enabled ->
+                    BoxSwitch(checked = checked, onCheckedChange = null, enabled = enabled)
+                }
             ),
             modifier = Modifier
                 .padding(contentPadding)

@@ -13,9 +13,9 @@ import boxy_authenticator.composeapp.generated.resources.preference_title_block_
 import com.boxy.authenticator.platform
 import com.boxy.authenticator.ui.components.dialogs.RemovePasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
-import com.boxy.authenticator.ui.preferences.PreferenceCategory
-import com.boxy.authenticator.ui.preferences.SwitchPreference
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
+import com.jw.preferences.PreferenceCategory
+import com.jw.preferences.SwitchPreference
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

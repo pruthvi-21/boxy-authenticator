@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.preferences.utils
+package com.jw.preferences.utils
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable

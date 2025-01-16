@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.preferences
+package com.jw.preferences
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.boxy.authenticator.ui.preferences.utils.copy
+import com.jw.preferences.utils.copy
 
 @Composable
 internal fun BasicPreference(
@@ -47,7 +47,7 @@ internal fun BasicPreference(
                     HorizontalDivider(
                         color = theme.dividerColor,
                         thickness = theme.dividerThickness,
-                        modifier = Modifier.padding(theme.padding.copy(top = 0.dp, bottom = 0.dp))
+                        modifier = Modifier.padding(theme.preferencePadding.copy(top = 0.dp, bottom = 0.dp))
                     )
                 }
             }

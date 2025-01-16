@@ -1,12 +1,12 @@
-package com.boxy.authenticator.ui.preferences
+package com.jw.preferences
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
-import com.boxy.authenticator.ui.components.BoxSwitch
-import com.boxy.authenticator.ui.preferences.utils.copy
 
 @Composable
 fun SwitchPreference(
@@ -17,7 +17,8 @@ fun SwitchPreference(
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
     summary: @Composable (() -> Unit)? = null,
-    showDivider: Boolean = true,
+    customSwitch: @Composable ((checked: Boolean, enabled: Boolean) -> Unit)? = null,
+    showDivider: Boolean? = null,
 ) {
     Preference(
         title = title,
@@ -27,12 +28,19 @@ fun SwitchPreference(
         summary = summary,
         widgetContainer = {
             val theme = LocalPreferenceTheme.current
-            BoxSwitch(
-                checked = value,
-                onCheckedChange = null,
-                modifier = Modifier.padding(theme.padding.copy(start = theme.horizontalSpacing)),
-                enabled = enabled,
-            )
+            Box(
+                modifier = Modifier.padding(theme.preferencePadding),
+            ) {
+                when {
+                    customSwitch != null -> customSwitch(value, enabled)
+                    theme.customSwitch != null -> theme.customSwitch.invoke(value, enabled)
+                    else -> Switch(
+                        checked = value,
+                        onCheckedChange = null,
+                        enabled = enabled,
+                    )
+                }
+            }
         },
         showDivider = showDivider,
     )
