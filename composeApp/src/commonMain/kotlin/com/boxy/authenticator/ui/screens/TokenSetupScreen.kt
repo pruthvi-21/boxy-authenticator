@@ -45,7 +45,8 @@ import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.account_exists_dialog_message
 import boxy_authenticator.composeapp.generated.resources.account_exists_dialog_title
-import boxy_authenticator.composeapp.generated.resources.go_back
+import boxy_authenticator.composeapp.generated.resources.cancel
+import boxy_authenticator.composeapp.generated.resources.dialog_message_delete_token
 import boxy_authenticator.composeapp.generated.resources.hint_counter
 import boxy_authenticator.composeapp.generated.resources.hint_issuer
 import boxy_authenticator.composeapp.generated.resources.hint_label
@@ -62,12 +63,15 @@ import boxy_authenticator.composeapp.generated.resources.label_period
 import boxy_authenticator.composeapp.generated.resources.label_secret_key
 import boxy_authenticator.composeapp.generated.resources.label_update_account
 import boxy_authenticator.composeapp.generated.resources.message_unsaved_changes
+import boxy_authenticator.composeapp.generated.resources.no
 import boxy_authenticator.composeapp.generated.resources.remove
+import boxy_authenticator.composeapp.generated.resources.remove_account
 import boxy_authenticator.composeapp.generated.resources.rename
 import boxy_authenticator.composeapp.generated.resources.replace
 import boxy_authenticator.composeapp.generated.resources.title_enter_account_details
 import boxy_authenticator.composeapp.generated.resources.title_update_account_details
 import boxy_authenticator.composeapp.generated.resources.type
+import boxy_authenticator.composeapp.generated.resources.yes
 import com.boxy.authenticator.data.models.otp.OtpInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.boxy.authenticator.domain.models.TokenFormEvent
@@ -77,8 +81,8 @@ import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.ThumbnailController
 import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.Toolbar
-import com.boxy.authenticator.ui.components.dialogs.TokenDeleteDialog
-import com.boxy.authenticator.ui.components.dialogs.TokkyDialog
+import com.boxy.authenticator.ui.components.dialogs.PlatformAlertDialog
+import com.boxy.authenticator.ui.util.SystemBackHandler
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import com.boxy.authenticator.utils.OTPType
 import com.boxy.authenticator.utils.TokenSetupMode
@@ -93,7 +97,6 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
 
     val localFocus = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-//    val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     var state = tokenSetupViewModel.uiState.value
     val tokenSetupMode = tokenSetupViewModel.tokenSetupMode
@@ -110,9 +113,9 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
         }
     }
 
-//    BackHandler(enabled = tokenSetupViewModel.isFormUpdated()) {
-//        tokenSetupViewModel.showBackPressDialog.value = true
-//    }
+    SystemBackHandler {
+        component.navigateUp(true)
+    }
 
     Scaffold(
         topBar = {
@@ -123,7 +126,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
             Toolbar(
                 title = title,
                 showDefaultNavigationIcon = true,
-                onNavigationIconClick = { component.navigateUp() },
+                onNavigationIconClick = { component.navigateUp(userClickEvent = true) },
                 actions = {
                     if (tokenSetupMode == TokenSetupMode.UPDATE) {
                         IconButton(onClick = {
@@ -155,9 +158,10 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
         ) {
 
             if (tokenSetupViewModel.showBackPressDialog.value) {
-                TokkyDialog(
-                    dialogBody = stringResource(Res.string.message_unsaved_changes),
-                    confirmText = stringResource(Res.string.go_back),
+                PlatformAlertDialog(
+                    message = stringResource(Res.string.message_unsaved_changes),
+                    dismissText = stringResource(Res.string.no),
+                    confirmText = stringResource(Res.string.yes),
                     onDismissRequest = { tokenSetupViewModel.showBackPressDialog.value = false },
                     onConfirmation = {
                         component.navigateUp()
@@ -167,13 +171,20 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
             }
 
             if (tokenSetupViewModel.showDeleteTokenDialog.value) {
-                TokenDeleteDialog(
-                    issuer = state.issuer,
-                    label = state.label,
-                    onDismiss = {
+                PlatformAlertDialog(
+                    title = stringResource(Res.string.remove_account),
+                    message = stringResource(
+                        Res.string.dialog_message_delete_token,
+                        state.issuer,
+                        state.label
+                    ),
+                    dismissText = stringResource(Res.string.cancel),
+                    confirmText = stringResource(Res.string.remove),
+                    isDestructive = true,
+                    onDismissRequest = {
                         tokenSetupViewModel.showDeleteTokenDialog.value = false
                     },
-                    onConfirm = {
+                    onConfirmation = {
                         tokenSetupViewModel.deleteToken(
                             tokenId = tokenId!!,
                             onComplete = {
@@ -187,14 +198,14 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
 
             if (tokenSetupViewModel.showDuplicateTokenDialog.value.show) {
                 val args = tokenSetupViewModel.showDuplicateTokenDialog.value
-                TokkyDialog(
-                    dialogTitle = stringResource(Res.string.account_exists_dialog_title),
-                    dialogBody = stringResource(
+                PlatformAlertDialog(
+                    title = stringResource(Res.string.account_exists_dialog_title),
+                    message = stringResource(
                         Res.string.account_exists_dialog_message,
                         args.token!!.name
                     ),
-                    confirmText = stringResource(Res.string.replace),
                     dismissText = stringResource(Res.string.rename),
+                    confirmText = stringResource(Res.string.replace),
                     onDismissRequest = {
                         tokenSetupViewModel.showDuplicateTokenDialog.value =
                             TokenSetupViewModel.DuplicateTokenDialogArgs(false)
@@ -207,7 +218,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                         component.navigateUp()
                         tokenSetupViewModel.showDuplicateTokenDialog.value =
                             TokenSetupViewModel.DuplicateTokenDialogArgs(false)
-                    },
+                    }
                 )
             }
 

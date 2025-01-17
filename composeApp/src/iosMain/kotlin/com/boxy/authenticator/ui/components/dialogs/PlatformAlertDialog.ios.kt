@@ -2,31 +2,24 @@ package com.boxy.authenticator.ui.components.dialogs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.interop.LocalUIViewController
-import boxy_authenticator.composeapp.generated.resources.Res
-import boxy_authenticator.composeapp.generated.resources.cancel
-import boxy_authenticator.composeapp.generated.resources.dialog_message_delete_token
-import boxy_authenticator.composeapp.generated.resources.remove
-import boxy_authenticator.composeapp.generated.resources.remove_account
-import org.jetbrains.compose.resources.stringResource
 import platform.UIKit.UIAlertAction
 import platform.UIKit.UIAlertActionStyleCancel
+import platform.UIKit.UIAlertActionStyleDefault
 import platform.UIKit.UIAlertActionStyleDestructive
 import platform.UIKit.UIAlertController
 import platform.UIKit.UIAlertControllerStyleAlert
 import platform.UIKit.UIViewController
 
 @Composable
-actual fun TokenDeleteDialog(
-    issuer: String,
-    label: String,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
+actual fun PlatformAlertDialog(
+    title: String?,
+    message: String?,
+    confirmText: String,
+    dismissText: String,
+    isDestructive: Boolean,
+    onConfirmation: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
-    val title = stringResource(Res.string.remove_account)
-    val message = stringResource(Res.string.dialog_message_delete_token, issuer, label)
-    val destructiveActionTitle = stringResource(Res.string.remove)
-    val cancelActionTitle = stringResource(Res.string.cancel)
-
     val currentViewController: UIViewController = LocalUIViewController.current
 
     val alert = UIAlertController.alertControllerWithTitle(
@@ -36,20 +29,22 @@ actual fun TokenDeleteDialog(
     )
 
     val confirmAction = UIAlertAction.actionWithTitle(
-        title = destructiveActionTitle,
-        style = UIAlertActionStyleDestructive,
+        title = confirmText,
+        style = if(isDestructive) UIAlertActionStyleDestructive else UIAlertActionStyleDefault,
         handler = {
             alert.dismissViewControllerAnimated(true, completion = null)
-            onConfirm()
-        })
+            onConfirmation()
+        }
+    )
 
     val cancelAction = UIAlertAction.actionWithTitle(
-        title = cancelActionTitle,
+        title = dismissText,
         style = UIAlertActionStyleCancel,
         handler = {
             alert.dismissViewControllerAnimated(true, completion = null)
-            onDismiss()
-        })
+            onDismissRequest()
+        }
+    )
 
     alert.addAction(confirmAction)
     alert.addAction(cancelAction)

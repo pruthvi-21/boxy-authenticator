@@ -16,7 +16,13 @@ class TokenSetupScreenComponent(
 
     val viewModel: TokenSetupViewModel by lazy { get<TokenSetupViewModel>() }
 
-    fun navigateUp() {
+    fun navigateUp(userClickEvent: Boolean = false) {
+        if (userClickEvent) {
+            if (viewModel.isFormUpdated()) {
+                viewModel.showBackPressDialog.value = true
+                return
+            }
+        }
         navigation.pop()
     }
 
