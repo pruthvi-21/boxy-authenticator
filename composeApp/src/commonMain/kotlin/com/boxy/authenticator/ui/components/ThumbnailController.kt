@@ -14,7 +14,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -90,7 +90,7 @@ private fun PreviewLayout(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         // Dummy
-        Box(Modifier.size(24.dp))
+        Box(Modifier.size(44.dp))
 
         TokenThumbnail(
             thumbnail = thumbnail,
@@ -101,9 +101,9 @@ private fun PreviewLayout(
 
         IconButton(
             onClick = { showIconPickerSheet = true },
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(44.dp)
         ) {
-            Icon(Icons.Outlined.Image, contentDescription = "")
+            Icon(Icons.Outlined.Edit, contentDescription = "", modifier = Modifier.padding(10.dp))
         }
     }
 
