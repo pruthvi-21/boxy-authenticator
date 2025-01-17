@@ -14,7 +14,7 @@ const val dbName = "tokens.db"
 
 @Database(entities = [TokenEntry::class], version = 1)
 @ConstructedBy(TokensDatabaseConstructor::class)
-@TypeConverters(Converters::class)
+@TypeConverters(Converters::class, ThumbnailConverter::class)
 abstract class TokensDatabase : RoomDatabase() {
     abstract fun getTokensDao(): TokensDao
 

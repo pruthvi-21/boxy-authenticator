@@ -1,5 +1,6 @@
 package com.boxy.authenticator.domain.models
 
+import com.boxy.authenticator.data.models.Thumbnail
 import com.boxy.authenticator.data.models.otp.HotpInfo.Companion.DEFAULT_COUNTER
 import com.boxy.authenticator.data.models.otp.OtpInfo.Companion.DEFAULT_ALGORITHM
 import com.boxy.authenticator.data.models.otp.OtpInfo.Companion.DEFAULT_DIGITS
@@ -12,7 +13,7 @@ data class TokenFormState(
     val label: String = "",
     val secretKey: String = "",
     val type: OTPType = OTPType.TOTP,
-    val thumbnailColor: String = THUMBNAIL_COlORS.random(),
+    val thumbnail: Thumbnail = Thumbnail.Color(THUMBNAIL_COlORS.random()),
     val algorithm: String = DEFAULT_ALGORITHM,
     val period: String = "$DEFAULT_PERIOD",
     val digits: String = "$DEFAULT_DIGITS",

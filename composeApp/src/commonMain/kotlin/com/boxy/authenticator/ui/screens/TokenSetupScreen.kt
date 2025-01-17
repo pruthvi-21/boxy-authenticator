@@ -220,10 +220,10 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
             ) {
                 ThumbnailController(
                     text = state.issuer.getInitials(),
-                    colorHex = state.thumbnailColor,
-                    onColorChanged = { color ->
+                    thumbnail = state.thumbnail,
+                    onThumbnailChanged = {
                         keyboardController?.hide()
-                        tokenSetupViewModel.onEvent(TokenFormEvent.ThumbnailColorChanged(color))
+                        tokenSetupViewModel.onEvent(TokenFormEvent.ThumbnailChanged(it))
                     }
                 )
 

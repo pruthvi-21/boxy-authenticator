@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "57f93658ea3730f015254ff691d9cd03",
+    "identityHash": "fa7c7e707e6ccfbe136c8e3bfa933ae9",
     "entities": [
       {
         "tableName": "token_entry",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `issuer` TEXT NOT NULL, `label` TEXT NOT NULL, `thumbnailColor` TEXT NOT NULL, `thumbnailIcon` TEXT, `type` TEXT NOT NULL, `otpInfo` TEXT NOT NULL, `createdOn` INTEGER NOT NULL, `updatedOn` INTEGER NOT NULL, `addedFrom` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `issuer` TEXT NOT NULL, `label` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `type` TEXT NOT NULL, `otpInfo` TEXT NOT NULL, `createdOn` INTEGER NOT NULL, `updatedOn` INTEGER NOT NULL, `addedFrom` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -27,15 +27,10 @@
             "notNull": true
           },
           {
-            "fieldPath": "thumbnailColor",
-            "columnName": "thumbnailColor",
+            "fieldPath": "thumbnail",
+            "columnName": "thumbnail",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "thumbnailIcon",
-            "columnName": "thumbnailIcon",
-            "affinity": "TEXT"
           },
           {
             "fieldPath": "type",
@@ -78,7 +73,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '57f93658ea3730f015254ff691d9cd03')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fa7c7e707e6ccfbe136c8e3bfa933ae9')"
     ]
   }
 }

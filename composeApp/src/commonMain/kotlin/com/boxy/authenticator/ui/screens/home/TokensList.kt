@@ -30,7 +30,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.HorizontalDivider
@@ -60,7 +59,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -71,8 +69,8 @@ import com.boxy.authenticator.data.models.otp.HotpInfo
 import com.boxy.authenticator.data.models.otp.SteamInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo
 import com.boxy.authenticator.ui.components.BoxProgressBar
+import com.boxy.authenticator.ui.components.TokenThumbnail
 import com.boxy.authenticator.utils.OTPType
-import com.boxy.authenticator.utils.Utils.toColor
 import com.boxy.authenticator.utils.formatOTP
 import com.boxy.authenticator.utils.getInitials
 import kotlinx.coroutines.delay
@@ -187,9 +185,9 @@ fun TokenCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             TokenThumbnail(
-                thumbnailIcon = token.thumbnailIcon,
-                thumbnailColor = token.thumbnailColor.toColor(),
+                thumbnail = token.thumbnail,
                 text = token.issuer.getInitials(),
+                width = 55.dp,
             )
 
             Spacer(modifier = Modifier.width(4.dp))
@@ -405,49 +403,6 @@ private fun Arrow(
                 .fillMaxHeight()
                 .graphicsLayer(rotationZ = -90f + animationProgress * 180f)
         )
-    }
-}
-
-@Composable
-private fun TokenThumbnail(
-    thumbnailIcon: String? = null,
-    thumbnailColor: Color,
-    text: String = "",
-) {
-//    val context = LocalContext.current
-//    val fileName = thumbnailIcon ?: ""
-
-//    val logoBitmap = remember(fileName) {
-//        Utils.getThumbnailFromAssets(context.assets, fileName)
-//    }
-
-    Box(
-        modifier = Modifier
-            .size(
-                width = 55.dp,
-                height = 37.5.dp,
-            )
-            .clip(MaterialTheme.shapes.extraSmall)
-            .background(thumbnailColor)
-    ) {
-//        if (logoBitmap != null) {
-//            Image(
-//                bitmap = logoBitmap.asImageBitmap(),
-//                contentDescription = null,
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier.fillMaxSize()
-//            )
-//        } else {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge.copy(
-                color = Color.White,
-                letterSpacing = 0.07.em,
-                fontSize = 17.sp
-            ),
-            modifier = Modifier.align(Alignment.Center)
-        )
-//        }
     }
 }
 

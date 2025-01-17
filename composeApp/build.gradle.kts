@@ -72,6 +72,7 @@ kotlin {
             implementation(libs.moko.biometry.compose)
             implementation("com.diglol.crypto:random:0.2.0")
             implementation("com.diglol.crypto:kdf:0.2.0")
+            implementation(libs.coil.compose)
         }
     }
 }

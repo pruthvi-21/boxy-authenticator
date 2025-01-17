@@ -2,6 +2,7 @@ package com.boxy.authenticator.data.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.boxy.authenticator.data.database.ThumbnailConverter
 import com.boxy.authenticator.data.models.otp.HotpInfo
 import com.boxy.authenticator.data.models.otp.HotpInfo.Companion.DEFAULT_COUNTER
 import com.boxy.authenticator.data.models.otp.OtpInfo
@@ -37,8 +38,7 @@ data class TokenEntry(
     @PrimaryKey val id: String,
     var issuer: String,
     var label: String,
-    var thumbnailColor: String,
-    var thumbnailIcon: String? = null,
+    var thumbnail: Thumbnail,
     val type: OTPType,
     val otpInfo: OtpInfo,
     val createdOn: Long,
@@ -50,8 +50,7 @@ data class TokenEntry(
         val json = buildJsonObject {
             put("issuer", issuer)
             put("label", label)
-            put("thumbnail_color", thumbnailColor)
-            put("thumbnail_icon", thumbnailIcon)
+            put("thumbnail", ThumbnailConverter.fromThumbnail(thumbnail))
             put("type", type.name)
             put("otp_info", otpInfo.toJson())
         }
@@ -71,8 +70,7 @@ data class TokenEntry(
         fun buildNewToken(
             issuer: String,
             label: String,
-            thumbnailColor: String = Constants.THUMBNAIL_COlORS.random(),
-            thumbnailIcon: String? = null,
+            thumbnail: Thumbnail = Thumbnail.Color(Constants.THUMBNAIL_COlORS.random()),
             type: OTPType = DEFAULT_OTP_TYPE,
             otpInfo: OtpInfo,
             addedFrom: AccountEntryMethod,
@@ -81,8 +79,7 @@ data class TokenEntry(
                 id = Uuid.random().toString(),
                 issuer = issuer,
                 label = label,
-                thumbnailColor = thumbnailColor,
-                thumbnailIcon = thumbnailIcon,
+                thumbnail = thumbnail,
                 type = type,
                 otpInfo = otpInfo,
                 createdOn = Clock.System.now().toEpochMilliseconds(),
@@ -145,8 +142,8 @@ data class TokenEntry(
             val issuer = json["issuer"]?.jsonPrimitive?.content
             val label = json["label"]?.jsonPrimitive?.content
 
-            val thumbnailColor = json["thumbnail_color"]?.jsonPrimitive?.content
-            val thumbnailIcon = json["thumbnail_icon"]?.jsonPrimitive?.content
+//            val thumbnail =
+//                ThumbnailConverter.toThumbnail(json["thumbnail"]?.jsonPrimitive?.content)
 
             val type =
                 OTPType.valueOf(json["type"]?.jsonPrimitive?.content ?: DEFAULT_OTP_TYPE.name)
@@ -160,8 +157,7 @@ data class TokenEntry(
             return buildNewToken(
                 issuer = issuer!!,
                 label = label!!,
-                thumbnailColor = thumbnailColor!!,
-                thumbnailIcon = thumbnailIcon,
+//                thumbnail = thumbnail,
                 type = type,
                 otpInfo = otpInfo,
                 addedFrom = AccountEntryMethod.RESTORED

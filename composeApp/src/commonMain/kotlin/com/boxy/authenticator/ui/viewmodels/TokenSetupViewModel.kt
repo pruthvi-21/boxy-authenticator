@@ -78,7 +78,7 @@ class TokenSetupViewModel(
         var tokenState = TokenFormState(
             issuer = token.issuer,
             label = token.label,
-            thumbnailColor = token.thumbnailColor,
+            thumbnail = token.thumbnail,
             type = token.type,
             secretKey = Base32.encode(token.otpInfo.secretKey),
             algorithm = token.otpInfo.algorithm,
@@ -127,8 +127,8 @@ class TokenSetupViewModel(
                 _uiState.value = updateFieldVisibilityState(_uiState.value)
             }
 
-            is TokenFormEvent.ThumbnailColorChanged -> {
-                updateState { copy(thumbnailColor = event.thumbnailColor) }
+            is TokenFormEvent.ThumbnailChanged -> {
+                updateState { copy(thumbnail = event.thumbnail) }
             }
 
             is TokenFormEvent.AlgorithmChanged -> {
@@ -252,7 +252,7 @@ class TokenSetupViewModel(
                             issuer = state.issuer,
                             label = state.label,
                             type = state.type,
-                            thumbnailColor = state.thumbnailColor,
+                            thumbnail = state.thumbnail,
                             otpInfo = otpInfo,
                             addedFrom = AccountEntryMethod.FORM,
                         )
@@ -268,7 +268,7 @@ class TokenSetupViewModel(
                         tokenToUpdate?.copy(
                             issuer = state.issuer,
                             label = state.label,
-                            thumbnailColor = state.thumbnailColor,
+                            thumbnail = state.thumbnail,
                             updatedOn = Clock.System.now().toEpochMilliseconds()
                         ) ?: throw IllegalStateException("No token ID available for update")
                     }

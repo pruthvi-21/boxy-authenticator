@@ -6,6 +6,7 @@ android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
 androidx-lifecycle = "2.8.4"
 androidx-material3 = "1.12.0"
+coilCompose = "3.0.4"
 compose-multiplatform = "1.7.0"
 decompose = "3.3.0-alpha02"
 essenty = "2.5.0-alpha01"
@@ -22,6 +23,7 @@ roomCommon = "2.7.0-alpha11"
 sqlite = "2.5.0-SNAPSHOT"
 
 [libraries]
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 moko-biometry = { module = "dev.icerock.moko:biometry", version.ref = "mokoBiometry" }
 moko-biometry-compose = { module = "dev.icerock.moko:biometry-compose", version.ref = "mokoBiometry" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
