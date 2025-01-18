@@ -8,6 +8,7 @@ import com.boxy.authenticator.navigation.RootComponent
 import com.boxy.authenticator.navigation.RootComponent.Child
 import com.boxy.authenticator.navigation.backAnimation
 import com.boxy.authenticator.ui.screens.HomeScreen
+import com.boxy.authenticator.ui.screens.QrScannerScreen
 import com.boxy.authenticator.ui.screens.SettingsScreen
 import com.boxy.authenticator.ui.screens.TokenSetupScreen
 import com.boxy.authenticator.ui.theme.BoxyTheme
@@ -43,6 +44,7 @@ fun App(rootComponent: RootComponent) {
             ) { child ->
                 when (val instance = child.instance) {
                     is Child.HomeScreen -> HomeScreen(instance.component)
+                    is Child.QrScannerScreen -> QrScannerScreen(instance.component)
                     is Child.TokenSetupScreen -> TokenSetupScreen(instance.component)
                     is Child.SettingsScreen -> SettingsScreen(instance.component, settingsViewModel)
                 }

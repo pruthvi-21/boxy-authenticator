@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -36,7 +37,12 @@ fun Toolbar(
     title: String,
     subtitle: String = "",
     showDefaultNavigationIcon: Boolean = false,
+    navigationIcon: (@Composable () -> Unit)? = null,
     onNavigationIconClick: () -> Unit = {},
+    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(
+        navigationIconContentColor = MaterialTheme.colorScheme.primary,
+        actionIconContentColor = MaterialTheme.colorScheme.primary,
+    ),
     actions: @Composable RowScope.() -> Unit = {},
     windowInsets: WindowInsets? = null,
 ) {
@@ -49,13 +55,14 @@ fun Toolbar(
     TopAppBar(
         title = { Title(title, subtitle) },
         navigationIcon = {
-            if (showDefaultNavigationIcon)
-                DefaultNavigationIcon(onNavigationIconClick)
+            if (navigationIcon == null) {
+                if (showDefaultNavigationIcon)
+                    DefaultNavigationIcon(onNavigationIconClick)
+            } else {
+                navigationIcon.invoke()
+            }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            navigationIconContentColor = MaterialTheme.colorScheme.primary,
-            actionIconContentColor = MaterialTheme.colorScheme.primary,
-        ),
+        colors = colors,
         actions = actions,
         windowInsets = updatedInsets
     )

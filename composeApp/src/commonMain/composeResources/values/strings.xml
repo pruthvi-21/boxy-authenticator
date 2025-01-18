@@ -13,6 +13,8 @@
     <string name="refresh">Refresh</string>
     <string name="go_back">Go back</string>
     <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="retry">Retry</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="remove_account">Remove account</string>
@@ -68,6 +70,7 @@
     <string name="biometric_prompt_title">Verify your identity</string>
     <string name="to_enable_biometrics">To enable biometrics</string>
     <string name="to_disable_biometrics">To disable biometrics</string>
+    <string name="invalid_qr_code">Invalid QR Code</string>
 
     <!-- ExportTokensScreen -->
     <string name="password">Password</string>

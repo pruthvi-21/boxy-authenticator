@@ -20,6 +20,9 @@ interface RootComponent : BackHandlerOwner {
         data object HomeScreen : Configuration()
 
         @Serializable
+        data object QrScannerScreen : Configuration()
+
+        @Serializable
         data class TokenSetupScreen(val tokenId: String? = null, val authUrl: String? = null) :
             Configuration()
 
@@ -29,6 +32,7 @@ interface RootComponent : BackHandlerOwner {
 
     sealed class Child {
         data class HomeScreen(val component: HomeScreenComponent) : Child()
+        data class QrScannerScreen(val component: QrScannerScreenComponent) : Child()
         data class TokenSetupScreen(val component: TokenSetupScreenComponent) : Child()
         data class SettingsScreen(val component: SettingsScreenComponent) : Child()
     }
@@ -60,6 +64,10 @@ class DefaultRootComponent(
         return when (config) {
             is Configuration.HomeScreen -> Child.HomeScreen(
                 HomeScreenComponent(context, navigation)
+            )
+
+            is Configuration.QrScannerScreen -> Child.QrScannerScreen(
+                QrScannerScreenComponent(context, navigation)
             )
 
             is Configuration.TokenSetupScreen -> Child.TokenSetupScreen(
