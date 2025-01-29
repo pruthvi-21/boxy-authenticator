@@ -2,6 +2,11 @@ package com.boxy.authenticator.ui.components.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.enter_correct_password
 import boxy_authenticator.composeapp.generated.resources.password
@@ -20,6 +25,8 @@ fun RemovePasswordDialog(
 ) {
     val viewModel: RemovePasswordDialogViewModel = koinViewModel()
 
+    val focusRequester = remember { FocusRequester() }
+
     TokkyDialog(
         dialogTitle = stringResource(Res.string.remove_password),
         onDismissRequest = {
@@ -32,12 +39,16 @@ fun RemovePasswordDialog(
         }
     ) {
         Column {
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
             StyledTextField(
                 value = viewModel.password,
                 onValueChange = { viewModel.updatePassword(it) },
                 label = stringResource(Res.string.password),
                 placeholder = stringResource(Res.string.enter_correct_password),
                 isPasswordField = true,
+                modifier = Modifier.focusRequester(focusRequester),
             )
         }
     }

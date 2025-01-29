@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +59,9 @@ fun SetPasswordDialog(
     ) {
         Column {
             val focusManager = LocalFocusManager.current
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
             StyledTextField(
                 value = viewModel.password,
                 onValueChange = {

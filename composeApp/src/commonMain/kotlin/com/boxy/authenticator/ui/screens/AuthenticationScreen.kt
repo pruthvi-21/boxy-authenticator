@@ -47,7 +47,6 @@ import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.TokkyTextButton
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.utils.BuildUtils
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -64,9 +63,6 @@ fun AuthenticationScreen(component: AuthenticationScreenComponent) {
             authViewModel.promptForBiometrics {
                 if (it) component.navigateToHome()
             }
-        } else {
-            delay(10)
-            focusRequester.requestFocus()
         }
     }
 
@@ -125,6 +121,11 @@ fun AuthenticationScreen(component: AuthenticationScreenComponent) {
 
                 Spacer(Modifier.height(30.dp))
 
+                LaunchedEffect(Unit) {
+                    if (!isBiometricUnlockEnabled) {
+                        focusRequester.requestFocus()
+                    }
+                }
                 StyledTextField(
                     value = authViewModel.password.value,
                     onValueChange = { authViewModel.updatePassword(it) },
