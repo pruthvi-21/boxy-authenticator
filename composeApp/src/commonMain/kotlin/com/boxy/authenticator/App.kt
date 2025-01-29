@@ -7,6 +7,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.boxy.authenticator.navigation.components.RootComponent
 import com.boxy.authenticator.navigation.components.RootComponent.Child
 import com.boxy.authenticator.navigation.backAnimation
+import com.boxy.authenticator.ui.screens.AuthenticationScreen
 import com.boxy.authenticator.ui.screens.HomeScreen
 import com.boxy.authenticator.ui.screens.QrScannerScreen
 import com.boxy.authenticator.ui.screens.SettingsScreen
@@ -43,6 +44,10 @@ fun App(rootComponent: RootComponent) {
                 ),
             ) { child ->
                 when (val instance = child.instance) {
+                    is Child.AuthenticationScreen -> {
+                        instance.component.init(settingsViewModel.biometryAuthenticator)
+                        AuthenticationScreen(instance.component)
+                    }
                     is Child.HomeScreen -> HomeScreen(instance.component)
                     is Child.QrScannerScreen -> QrScannerScreen(instance.component)
                     is Child.TokenSetupScreen -> TokenSetupScreen(instance.component)

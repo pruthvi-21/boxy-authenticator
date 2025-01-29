@@ -38,6 +38,7 @@
     <string name="unlock_vault">Unlock Vault</string>
     <string name="unlock_vault_message">Use your password to access the vault</string>
     <string name="use_biometrics">Use biometrics</string>
+    <string name="to_unlock">To unlock</string>
 
     <!-- TokenSetupScreen -->
     <string name="title_enter_account_details">Enter account details</string>

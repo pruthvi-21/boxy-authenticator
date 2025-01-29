@@ -12,6 +12,7 @@ import com.boxy.authenticator.domain.usecases.InsertTokensUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
 import com.boxy.authenticator.helpers.AppSettings
 import com.boxy.authenticator.helpers.TokenFormValidator
+import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import com.boxy.authenticator.ui.viewmodels.SetPasswordDialogViewModel
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
@@ -25,6 +26,9 @@ import org.koin.dsl.module
 expect val platformModule: Module
 
 val sharedModule = module {
+    viewModel { (biometryAuthenticator: BiometryAuthenticator) ->
+        AuthenticationViewModel(get(), biometryAuthenticator)
+    }
     viewModel { HomeViewModel(get()) }
     viewModel { TokenSetupViewModel(get(), get(), get(), get(), get()) }
     viewModel { (biometryAuthenticator: BiometryAuthenticator) ->

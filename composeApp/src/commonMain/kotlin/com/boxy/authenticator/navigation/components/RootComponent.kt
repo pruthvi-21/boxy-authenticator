@@ -17,6 +17,9 @@ interface RootComponent : BackHandlerOwner {
     @Serializable
     sealed class Configuration {
         @Serializable
+        data object AuthenticationScreen : Configuration()
+
+        @Serializable
         data object HomeScreen : Configuration()
 
         @Serializable
@@ -31,6 +34,7 @@ interface RootComponent : BackHandlerOwner {
     }
 
     sealed class Child {
+        data class AuthenticationScreen(val component: AuthenticationScreenComponent) : Child()
         data class HomeScreen(val component: HomeScreenComponent) : Child()
         data class QrScannerScreen(val component: QrScannerScreenComponent) : Child()
         data class TokenSetupScreen(val component: TokenSetupScreenComponent) : Child()
@@ -44,6 +48,7 @@ interface RootComponent : BackHandlerOwner {
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
+    initialConfiguration: Configuration,
     override val backHandler: BackHandler = componentContext.backHandler,
 ) : RootComponent, ComponentContext by componentContext {
 
@@ -52,7 +57,7 @@ class DefaultRootComponent(
     override val childStack = childStack(
         source = navigation,
         serializer = Configuration.serializer(),
-        initialConfiguration = Configuration.HomeScreen,
+        initialConfiguration = initialConfiguration,
         handleBackButton = true,
         childFactory = ::createChild
     )
@@ -62,6 +67,10 @@ class DefaultRootComponent(
         context: ComponentContext,
     ): Child {
         return when (config) {
+            is Configuration.AuthenticationScreen -> Child.AuthenticationScreen(
+                AuthenticationScreenComponent(context, navigation)
+            )
+
             is Configuration.HomeScreen -> Child.HomeScreen(
                 HomeScreenComponent(context, navigation)
             )
