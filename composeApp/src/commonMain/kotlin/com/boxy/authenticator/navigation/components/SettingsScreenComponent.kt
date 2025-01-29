@@ -1,4 +1,4 @@
-package com.boxy.authenticator.navigation
+package com.boxy.authenticator.navigation.components
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation

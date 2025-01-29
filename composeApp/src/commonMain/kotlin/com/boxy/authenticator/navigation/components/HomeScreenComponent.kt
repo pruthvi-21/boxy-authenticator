@@ -1,9 +1,9 @@
-package com.boxy.authenticator.navigation
+package com.boxy.authenticator.navigation.components
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pushNew
-import com.boxy.authenticator.navigation.RootComponent.Configuration
+import com.boxy.authenticator.navigation.components.RootComponent.Configuration
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get

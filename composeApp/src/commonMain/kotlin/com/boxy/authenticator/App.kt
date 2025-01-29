@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.boxy.authenticator.navigation.RootComponent
-import com.boxy.authenticator.navigation.RootComponent.Child
+import com.boxy.authenticator.navigation.components.RootComponent
+import com.boxy.authenticator.navigation.components.RootComponent.Child
 import com.boxy.authenticator.navigation.backAnimation
 import com.boxy.authenticator.ui.screens.HomeScreen
 import com.boxy.authenticator.ui.screens.QrScannerScreen

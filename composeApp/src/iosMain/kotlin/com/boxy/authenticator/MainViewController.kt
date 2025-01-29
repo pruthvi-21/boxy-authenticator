@@ -11,7 +11,7 @@ import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.boxy.authenticator.di.platformModule
 import com.boxy.authenticator.di.sharedModule
-import com.boxy.authenticator.navigation.DefaultRootComponent
+import com.boxy.authenticator.navigation.components.DefaultRootComponent
 import org.koin.core.context.startKoin
 
 @OptIn(ExperimentalDecomposeApi::class)

@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.title_settings
-import com.boxy.authenticator.navigation.SettingsScreenComponent
+import com.boxy.authenticator.navigation.components.SettingsScreenComponent
 import com.boxy.authenticator.ui.components.BoxSwitch
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.screens.settings.AppearanceSettings

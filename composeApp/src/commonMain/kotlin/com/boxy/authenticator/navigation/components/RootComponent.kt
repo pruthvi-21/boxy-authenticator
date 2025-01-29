@@ -1,4 +1,4 @@
-package com.boxy.authenticator.navigation
+package com.boxy.authenticator.navigation.components
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
@@ -8,8 +8,8 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
-import com.boxy.authenticator.navigation.RootComponent.Child
-import com.boxy.authenticator.navigation.RootComponent.Configuration
+import com.boxy.authenticator.navigation.components.RootComponent.Child
+import com.boxy.authenticator.navigation.components.RootComponent.Configuration
 import kotlinx.serialization.Serializable
 
 interface RootComponent : BackHandlerOwner {

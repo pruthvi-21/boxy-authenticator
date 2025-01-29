@@ -34,7 +34,7 @@ import boxy_authenticator.composeapp.generated.resources.invalid_qr_code
 import boxy_authenticator.composeapp.generated.resources.retry
 import com.arkivanov.decompose.router.stack.pop
 import com.boxy.authenticator.data.models.TokenEntry
-import com.boxy.authenticator.navigation.QrScannerScreenComponent
+import com.boxy.authenticator.navigation.components.QrScannerScreenComponent
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.PlatformAlertDialog
 import kotlinx.coroutines.launch

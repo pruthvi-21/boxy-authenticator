@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.arkivanov.decompose.retainedComponent
-import com.boxy.authenticator.navigation.DefaultRootComponent
+import com.boxy.authenticator.navigation.components.DefaultRootComponent
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

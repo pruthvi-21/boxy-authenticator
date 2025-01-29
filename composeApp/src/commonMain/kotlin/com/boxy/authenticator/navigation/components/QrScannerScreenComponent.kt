@@ -1,10 +1,10 @@
-package com.boxy.authenticator.navigation
+package com.boxy.authenticator.navigation.components
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.replaceCurrent
-import com.boxy.authenticator.navigation.RootComponent.Configuration
+import com.boxy.authenticator.navigation.components.RootComponent.Configuration
 import org.koin.core.component.KoinComponent
 
 class QrScannerScreenComponent(

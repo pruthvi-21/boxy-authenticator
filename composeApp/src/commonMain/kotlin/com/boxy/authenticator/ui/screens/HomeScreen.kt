@@ -29,7 +29,7 @@ import boxy_authenticator.composeapp.generated.resources.empty_layout_text
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_manual_title
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_qr_title
 import boxy_authenticator.composeapp.generated.resources.title_settings
-import com.boxy.authenticator.navigation.HomeScreenComponent
+import com.boxy.authenticator.navigation.components.HomeScreenComponent
 import com.boxy.authenticator.ui.components.ExpandableFab
 import com.boxy.authenticator.ui.components.ExpandableFabItem
 import com.boxy.authenticator.ui.components.Toolbar

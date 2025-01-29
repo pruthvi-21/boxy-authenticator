@@ -76,7 +76,7 @@ import boxy_authenticator.composeapp.generated.resources.yes
 import com.boxy.authenticator.data.models.otp.OtpInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.boxy.authenticator.domain.models.TokenFormEvent
-import com.boxy.authenticator.navigation.TokenSetupScreenComponent
+import com.boxy.authenticator.navigation.components.TokenSetupScreenComponent
 import com.boxy.authenticator.ui.components.DropdownTextField
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.ThumbnailController
@@ -88,8 +88,6 @@ import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import com.boxy.authenticator.utils.OTPType
 import com.boxy.authenticator.utils.TokenSetupMode
 import com.boxy.authenticator.utils.getInitials
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
