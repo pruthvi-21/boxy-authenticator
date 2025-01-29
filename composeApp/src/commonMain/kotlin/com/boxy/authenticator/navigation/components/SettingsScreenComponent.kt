@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.stack.pop
 
 class SettingsScreenComponent(
     componentContext: ComponentContext,
+    val hideSensitiveSettings: Boolean,
     val navigation: StackNavigation<RootComponent.Configuration>,
 ) : ComponentContext by componentContext {
 

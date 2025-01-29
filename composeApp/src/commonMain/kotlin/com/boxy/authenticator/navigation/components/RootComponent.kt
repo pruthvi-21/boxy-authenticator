@@ -30,7 +30,7 @@ interface RootComponent : BackHandlerOwner {
             Configuration()
 
         @Serializable
-        data object SettingsScreen : Configuration()
+        data class SettingsScreen(val hideSensitiveSettings: Boolean = false) : Configuration()
     }
 
     sealed class Child {
@@ -84,7 +84,7 @@ class DefaultRootComponent(
             )
 
             is Configuration.SettingsScreen -> Child.SettingsScreen(
-                SettingsScreenComponent(context, navigation)
+                SettingsScreenComponent(context, config.hideSensitiveSettings, navigation)
             )
         }
     }

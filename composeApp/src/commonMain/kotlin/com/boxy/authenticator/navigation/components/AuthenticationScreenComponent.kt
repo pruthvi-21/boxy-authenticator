@@ -2,6 +2,7 @@ package com.boxy.authenticator.navigation.components
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.boxy.authenticator.navigation.components.RootComponent.Configuration
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
@@ -25,5 +26,9 @@ class AuthenticationScreenComponent(
 
     fun navigateToHome() {
         navigation.replaceCurrent(Configuration.HomeScreen)
+    }
+
+    fun navigateToSettings() {
+        navigation.pushNew(Configuration.SettingsScreen(true))
     }
 }

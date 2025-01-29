@@ -20,7 +20,7 @@ class HomeScreenComponent(
     }
 
     fun navigateToSettings() {
-        navigation.pushNew(Configuration.SettingsScreen)
+        navigation.pushNew(Configuration.SettingsScreen())
     }
 
     fun navigateToQrScannerScreen() {

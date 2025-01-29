@@ -50,6 +50,18 @@ class AppSettings(
         }
     }
 
+    fun setLockscreenPinPadEnabled(isEnabled: Boolean) {
+        store.putBoolean(Keys.LOCKSCREEN_PIN_PAD, isEnabled)
+    }
+
+    fun isLockscreenPinPadEnabled(default: Boolean = Defaults.LOCKSCREEN_PIN_PAD): Boolean {
+        return try {
+            store.getBoolean(Keys.LOCKSCREEN_PIN_PAD, default)
+        } catch (e: Exception) {
+            default
+        }
+    }
+
     fun setBlockScreenshotsEnabled(block: Boolean) {
         store.putBoolean(Keys.BLOCK_SCREENSHOTS, block)
     }
@@ -72,12 +84,14 @@ class AppSettings(
             const val APP_LOCK = "key_app_lock"
             const val APP_LOCK_HASH = "key_app_lock_hash"
             const val BIOMETRIC_UNLOCK = "key_biometric_unlock"
+            const val LOCKSCREEN_PIN_PAD = "key_lockscreen_pin_pad"
             const val BLOCK_SCREENSHOTS = "key_block_screenshots"
         }
 
         object Defaults {
             const val APP_LOCK = false
             const val BIOMETRIC_UNLOCK = false
+            const val LOCKSCREEN_PIN_PAD = false
             const val BLOCK_SCREENSHOTS = true
         }
     }

@@ -13,6 +13,7 @@ import com.boxy.authenticator.navigation.components.SettingsScreenComponent
 import com.boxy.authenticator.ui.components.BoxSwitch
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.screens.settings.AppearanceSettings
+import com.boxy.authenticator.ui.screens.settings.GeneralSettings
 import com.boxy.authenticator.ui.screens.settings.SecuritySettings
 //import com.boxy.authenticator.ui.screens.settings.TransferAccounts
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
@@ -26,6 +27,8 @@ fun SettingsScreen(
     component: SettingsScreenComponent,
     settingsViewModel: SettingsViewModel,
 ) {
+    settingsViewModel.hideSensitiveSettings.value = component.hideSensitiveSettings
+
     Scaffold(
         topBar = {
             Toolbar(
@@ -50,7 +53,10 @@ fun SettingsScreen(
                 .padding(horizontal = 10.dp),
         ) {
             item { AppearanceSettings(settingsViewModel) }
-            item { SecuritySettings(settingsViewModel) }
+            item { GeneralSettings(settingsViewModel) }
+            if (!settingsViewModel.hideSensitiveSettings.value) {
+                item { SecuritySettings(settingsViewModel) }
+            }
 //            item {
 //                TransferAccounts(
 //                    onNavigateToExport = {

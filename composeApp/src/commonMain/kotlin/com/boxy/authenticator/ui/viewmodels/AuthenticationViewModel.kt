@@ -27,6 +27,8 @@ class AuthenticationViewModel(
     private val _passwordError = mutableStateOf<String?>(null)
     val passwordError: State<String?> get() = _passwordError
 
+    val showPinPad = mutableStateOf(settings.isLockscreenPinPadEnabled())
+
     fun verifyPassword(onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
             val status = HashUtils.verifyHash(password.value, settings.getPasscodeHash() ?: "")

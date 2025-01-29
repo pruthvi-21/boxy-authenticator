@@ -113,7 +113,11 @@
 
     <string name="preference_category_title_security">Security</string>
     <string name="preference_category_title_appearance">Appearance</string>
+    <string name="preference_category_title_general">General</string>
     <string name="preference_category_transfer_accounts">Transfer accounts</string>
+
+    <string name="preference_title_use_pin">Use PIN pad</string>
+    <string name="preference_summary_use_pin">Enable to use a PIN pad instead of a full keyboard on the lock screen.</string>
 
     <string name="preference_summary_app_lock">Lock this app with a PIN. To change your PIN please disable app lock and enable it again</string>
     <string name="preference_summary_biometrics">You can unlock with your biometrics instead of typing PIN</string>

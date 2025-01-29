@@ -22,6 +22,8 @@ class SettingsViewModel(
     val biometryAuthenticator: BiometryAuthenticator,
 ) : ViewModel() {
 
+    val hideSensitiveSettings = mutableStateOf(false)
+
     private val _appTheme = mutableStateOf(AppTheme.SYSTEM)
     val appTheme: State<AppTheme> = _appTheme
 
@@ -31,13 +33,14 @@ class SettingsViewModel(
     private val _isBiometricUnlockEnabled = mutableStateOf(false)
     val isBiometricUnlockEnabled: State<Boolean> = _isBiometricUnlockEnabled
 
+    private val _isLockscreenPinPadEnabled = mutableStateOf(false)
+    val isLockscreenPinPadEnabled: State<Boolean> = _isLockscreenPinPadEnabled
+
     private val _isBlockScreenshotsEnabled = mutableStateOf(false)
     val isBlockScreenshotsEnabled: State<Boolean> = _isBlockScreenshotsEnabled
 
     val showEnableAppLockDialog = mutableStateOf(false)
     val showDisableAppLockDialog = mutableStateOf(false)
-
-    var authPassword = mutableStateOf("")
 
     init {
         loadSettings()
@@ -51,6 +54,7 @@ class SettingsViewModel(
     private fun loadSettings() {
         _appTheme.value = settings.getAppTheme()
         _isAppLockEnabled.value = settings.isAppLockEnabled()
+        _isLockscreenPinPadEnabled.value = settings.isLockscreenPinPadEnabled()
         _isBiometricUnlockEnabled.value = settings.isBiometricUnlockEnabled()
         _isBlockScreenshotsEnabled.value = settings.isBlockScreenshotsEnabled()
     }
@@ -103,6 +107,11 @@ class SettingsViewModel(
     fun setBlockScreenshotsEnabled(enabled: Boolean) {
         settings.setBlockScreenshotsEnabled(enabled)
         _isBlockScreenshotsEnabled.value = enabled
+    }
+
+    fun setLockscreenPinPadEnabled(enabled: Boolean) {
+        settings.setLockscreenPinPadEnabled(enabled)
+        _isLockscreenPinPadEnabled.value = enabled
     }
 
     fun enableAppLock(password: String) {
