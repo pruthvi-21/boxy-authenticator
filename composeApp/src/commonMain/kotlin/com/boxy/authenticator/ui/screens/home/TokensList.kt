@@ -13,6 +13,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,6 +55,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,9 +74,11 @@ import com.boxy.authenticator.data.models.TokenEntry
 import com.boxy.authenticator.data.models.otp.HotpInfo
 import com.boxy.authenticator.data.models.otp.SteamInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo
+import com.boxy.authenticator.helpers.AppSettings
 import com.boxy.authenticator.ui.components.BoxProgressBar
 import com.boxy.authenticator.ui.components.TokenThumbnail
 import com.boxy.authenticator.utils.OTPType
+import com.boxy.authenticator.utils.TokenTapResponse
 import com.boxy.authenticator.utils.formatOTP
 import com.boxy.authenticator.utils.getInitials
 import kotlinx.coroutines.delay
@@ -88,6 +96,7 @@ fun TokensList(
     accounts: List<TokenEntry>,
     onEdit: (token: TokenEntry) -> Unit,
     singleExpansion: Boolean = true,
+    tokenTapResponse: TokenTapResponse = AppSettings.Companion.Defaults.TOKEN_TAP_RESPONSE,
 ) {
     val expandedStates = remember { mutableStateMapOf<TokenEntry, Boolean>() }
 
@@ -348,6 +357,16 @@ private fun OTPValueDisplay(
     formatOTP: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
+    val tokenTapResponse = TokenTapResponse.LONG_PRESS
+
+    val clipboardManager = LocalClipboardManager.current
+    val hapticFeedback = LocalHapticFeedback.current
+
+    fun copyToClipboard() {
+        clipboardManager.setText(AnnotatedString(value))
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
+
     Text(
         text = if (formatOTP) value.formatOTP() else value,
         style = MaterialTheme.typography.titleLarge.copy(
@@ -355,7 +374,27 @@ private fun OTPValueDisplay(
             fontSize = 34.sp
         ),
         color = MaterialTheme.colorScheme.onSurface,
-        modifier = modifier.padding(horizontal = 15.dp)
+        modifier = modifier
+            .padding(horizontal = 15.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        if (tokenTapResponse == TokenTapResponse.SINGLE_TAP) {
+                            copyToClipboard()
+                        }
+                    },
+                    onDoubleTap = {
+                        if (tokenTapResponse == TokenTapResponse.DOUBLE_TAP) {
+                            copyToClipboard()
+                        }
+                    },
+                    onLongPress = {
+                        if (tokenTapResponse == TokenTapResponse.LONG_PRESS) {
+                            copyToClipboard()
+                        }
+                    }
+                )
+            },
     )
 }
 

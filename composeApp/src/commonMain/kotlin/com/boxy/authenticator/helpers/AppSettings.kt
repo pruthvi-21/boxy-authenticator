@@ -2,6 +2,7 @@ package com.boxy.authenticator.helpers
 
 import com.boxy.authenticator.data.preferences.PreferenceStore
 import com.boxy.authenticator.utils.AppTheme
+import com.boxy.authenticator.utils.TokenTapResponse
 
 class AppSettings(
     private val store: PreferenceStore,
@@ -14,9 +15,34 @@ class AppSettings(
     fun getAppTheme(): AppTheme {
         val themeName = store.getString(Keys.APP_THEME)
         return try {
-            AppTheme.valueOf(themeName ?: AppTheme.SYSTEM.name)
+            AppTheme.valueOf(themeName ?: Defaults.APP_THEME.name)
         } catch (e: IllegalArgumentException) {
-            AppTheme.SYSTEM
+            Defaults.APP_THEME
+        }
+    }
+
+    fun setLockscreenPinPadEnabled(isEnabled: Boolean) {
+        store.putBoolean(Keys.LOCKSCREEN_PIN_PAD, isEnabled)
+    }
+
+    fun isLockscreenPinPadEnabled(default: Boolean = Defaults.LOCKSCREEN_PIN_PAD): Boolean {
+        return try {
+            store.getBoolean(Keys.LOCKSCREEN_PIN_PAD, default)
+        } catch (e: Exception) {
+            default
+        }
+    }
+
+    fun setTokenTapResponse(response: TokenTapResponse) {
+        store.putString(Keys.TOKEN_TAP_RESPONSE, response.name)
+    }
+
+    fun getTokenTapResponse(): TokenTapResponse {
+        val themeName = store.getString(Keys.TOKEN_TAP_RESPONSE)
+        return try {
+            TokenTapResponse.valueOf(themeName ?: Defaults.TOKEN_TAP_RESPONSE.name)
+        } catch (e: IllegalArgumentException) {
+            Defaults.TOKEN_TAP_RESPONSE
         }
     }
 
@@ -50,18 +76,6 @@ class AppSettings(
         }
     }
 
-    fun setLockscreenPinPadEnabled(isEnabled: Boolean) {
-        store.putBoolean(Keys.LOCKSCREEN_PIN_PAD, isEnabled)
-    }
-
-    fun isLockscreenPinPadEnabled(default: Boolean = Defaults.LOCKSCREEN_PIN_PAD): Boolean {
-        return try {
-            store.getBoolean(Keys.LOCKSCREEN_PIN_PAD, default)
-        } catch (e: Exception) {
-            default
-        }
-    }
-
     fun setBlockScreenshotsEnabled(block: Boolean) {
         store.putBoolean(Keys.BLOCK_SCREENSHOTS, block)
     }
@@ -80,18 +94,31 @@ class AppSettings(
 
     companion object {
         object Keys {
+            // Appearance
             const val APP_THEME = "key_app_theme"
+
+            // General
+            const val TOKEN_TAP_RESPONSE = "key_token_tap_response"
+            const val LOCKSCREEN_PIN_PAD = "key_lockscreen_pin_pad"
+
+            // Security
             const val APP_LOCK = "key_app_lock"
             const val APP_LOCK_HASH = "key_app_lock_hash"
             const val BIOMETRIC_UNLOCK = "key_biometric_unlock"
-            const val LOCKSCREEN_PIN_PAD = "key_lockscreen_pin_pad"
             const val BLOCK_SCREENSHOTS = "key_block_screenshots"
         }
 
         object Defaults {
+            // Appearance
+            val APP_THEME = AppTheme.SYSTEM
+
+            // General
+            val TOKEN_TAP_RESPONSE = TokenTapResponse.NEVER
+            const val LOCKSCREEN_PIN_PAD = false
+
+            // Security
             const val APP_LOCK = false
             const val BIOMETRIC_UNLOCK = false
-            const val LOCKSCREEN_PIN_PAD = false
             const val BLOCK_SCREENSHOTS = true
         }
     }

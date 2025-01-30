@@ -6,6 +6,10 @@ enum class AppTheme {
     LIGHT, DARK, SYSTEM
 }
 
+enum class TokenTapResponse {
+    NEVER, SINGLE_TAP, DOUBLE_TAP, LONG_PRESS
+}
+
 enum class AccountEntryMethod {
     FORM, QR_CODE, RESTORED,
 }

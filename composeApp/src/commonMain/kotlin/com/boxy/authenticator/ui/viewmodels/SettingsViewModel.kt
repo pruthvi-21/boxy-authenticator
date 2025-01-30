@@ -12,6 +12,7 @@ import boxy_authenticator.composeapp.generated.resources.to_enable_biometrics
 import com.boxy.authenticator.helpers.AppSettings
 import com.boxy.authenticator.utils.AppTheme
 import com.boxy.authenticator.utils.HashUtils
+import com.boxy.authenticator.utils.TokenTapResponse
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
@@ -27,14 +28,17 @@ class SettingsViewModel(
     private val _appTheme = mutableStateOf(AppTheme.SYSTEM)
     val appTheme: State<AppTheme> = _appTheme
 
+    private val _tokenTapResponse = mutableStateOf(TokenTapResponse.NEVER)
+    val tokenTapResponse: State<TokenTapResponse> = _tokenTapResponse
+
+    private val _isLockscreenPinPadEnabled = mutableStateOf(false)
+    val isLockscreenPinPadEnabled: State<Boolean> = _isLockscreenPinPadEnabled
+
     private val _isAppLockEnabled = mutableStateOf(false)
     val isAppLockEnabled: State<Boolean> = _isAppLockEnabled
 
     private val _isBiometricUnlockEnabled = mutableStateOf(false)
     val isBiometricUnlockEnabled: State<Boolean> = _isBiometricUnlockEnabled
-
-    private val _isLockscreenPinPadEnabled = mutableStateOf(false)
-    val isLockscreenPinPadEnabled: State<Boolean> = _isLockscreenPinPadEnabled
 
     private val _isBlockScreenshotsEnabled = mutableStateOf(false)
     val isBlockScreenshotsEnabled: State<Boolean> = _isBlockScreenshotsEnabled
@@ -52,9 +56,15 @@ class SettingsViewModel(
     }
 
     private fun loadSettings() {
+        //Appearance
         _appTheme.value = settings.getAppTheme()
-        _isAppLockEnabled.value = settings.isAppLockEnabled()
+
+        //General
+        _tokenTapResponse.value = settings.getTokenTapResponse()
         _isLockscreenPinPadEnabled.value = settings.isLockscreenPinPadEnabled()
+
+        //Security
+        _isAppLockEnabled.value = settings.isAppLockEnabled()
         _isBiometricUnlockEnabled.value = settings.isBiometricUnlockEnabled()
         _isBlockScreenshotsEnabled.value = settings.isBlockScreenshotsEnabled()
     }
@@ -149,5 +159,10 @@ class SettingsViewModel(
             )
             onComplete(status)
         }
+    }
+
+    fun setTokenTapResponse(response: TokenTapResponse) {
+        settings.setTokenTapResponse(response)
+        _tokenTapResponse.value = response
     }
 }
