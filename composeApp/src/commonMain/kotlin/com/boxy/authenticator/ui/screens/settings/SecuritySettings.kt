@@ -10,16 +10,17 @@ import boxy_authenticator.composeapp.generated.resources.preference_summary_bloc
 import boxy_authenticator.composeapp.generated.resources.preference_title_app_lock
 import boxy_authenticator.composeapp.generated.resources.preference_title_biometrics
 import boxy_authenticator.composeapp.generated.resources.preference_title_block_screenshots
+import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.Platform
 import com.boxy.authenticator.ui.components.dialogs.RemovePasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
-import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import com.jw.preferences.PreferenceCategory
 import com.jw.preferences.SwitchPreference
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun SecuritySettings(settingsViewModel: SettingsViewModel) {
+fun SecuritySettings() {
+    val settingsViewModel = LocalSettingsViewModel.current
 
     val isAppLockEnabled = settingsViewModel.isAppLockEnabled.value
     val isBiometricUnlockEnabled = settingsViewModel.isBiometricUnlockEnabled.value

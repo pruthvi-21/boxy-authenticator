@@ -70,11 +70,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.refresh
+import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.data.models.TokenEntry
 import com.boxy.authenticator.data.models.otp.HotpInfo
 import com.boxy.authenticator.data.models.otp.SteamInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo
-import com.boxy.authenticator.helpers.AppSettings
 import com.boxy.authenticator.ui.components.BoxProgressBar
 import com.boxy.authenticator.ui.components.TokenThumbnail
 import com.boxy.authenticator.utils.OTPType
@@ -96,7 +96,6 @@ fun TokensList(
     accounts: List<TokenEntry>,
     onEdit: (token: TokenEntry) -> Unit,
     singleExpansion: Boolean = true,
-    tokenTapResponse: TokenTapResponse = AppSettings.Companion.Defaults.TOKEN_TAP_RESPONSE,
 ) {
     val expandedStates = remember { mutableStateMapOf<TokenEntry, Boolean>() }
 
@@ -357,7 +356,8 @@ private fun OTPValueDisplay(
     formatOTP: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
-    val tokenTapResponse = TokenTapResponse.LONG_PRESS
+    val settingsViewModel = LocalSettingsViewModel.current
+    val tokenTapResponse = settingsViewModel.tokenTapResponse.value
 
     val clipboardManager = LocalClipboardManager.current
     val hapticFeedback = LocalHapticFeedback.current

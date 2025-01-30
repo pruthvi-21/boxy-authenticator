@@ -2,6 +2,7 @@ package com.boxy.authenticator.ui.viewmodels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import boxy_authenticator.composeapp.generated.resources.Res
@@ -165,4 +166,8 @@ class SettingsViewModel(
         settings.setTokenTapResponse(response)
         _tokenTapResponse.value = response
     }
+}
+
+val LocalSettingsViewModel = staticCompositionLocalOf<SettingsViewModel> {
+    error("SettingsViewModel not provided")
 }

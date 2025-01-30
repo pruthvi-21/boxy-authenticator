@@ -9,14 +9,16 @@ import boxy_authenticator.composeapp.generated.resources.follow_system
 import boxy_authenticator.composeapp.generated.resources.light
 import boxy_authenticator.composeapp.generated.resources.preference_category_title_appearance
 import boxy_authenticator.composeapp.generated.resources.preference_title_app_theme
-import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
+import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.AppTheme
 import com.jw.preferences.DropDownPreference
 import com.jw.preferences.PreferenceCategory
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun AppearanceSettings(settingsViewModel: SettingsViewModel) {
+fun AppearanceSettings() {
+    val settingsViewModel = LocalSettingsViewModel.current
+
     val appThemeLabels = listOf(
         stringResource(Res.string.light),
         stringResource(Res.string.dark),

@@ -7,7 +7,7 @@ import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.preference_category_title_general
 import boxy_authenticator.composeapp.generated.resources.preference_summary_use_pin
 import boxy_authenticator.composeapp.generated.resources.preference_title_use_pin
-import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
+import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.TokenTapResponse
 import com.jw.preferences.DropDownPreference
 import com.jw.preferences.PreferenceCategory
@@ -15,7 +15,9 @@ import com.jw.preferences.SwitchPreference
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun GeneralSettings(settingsViewModel: SettingsViewModel) {
+fun GeneralSettings() {
+    val settingsViewModel = LocalSettingsViewModel.current
+
     val isLockscreenPinPadEnabled = settingsViewModel.isLockscreenPinPadEnabled.value
 
     val tokenTapResponse = settingsViewModel.tokenTapResponse.value
