@@ -9,7 +9,7 @@ import boxy_authenticator.composeapp.generated.resources.long_press
 import boxy_authenticator.composeapp.generated.resources.never
 import boxy_authenticator.composeapp.generated.resources.preference_category_title_general
 import boxy_authenticator.composeapp.generated.resources.preference_summary_use_pin
-import boxy_authenticator.composeapp.generated.resources.preference_title_clipboard_tap_action
+import boxy_authenticator.composeapp.generated.resources.preference_title_token_tap_response
 import boxy_authenticator.composeapp.generated.resources.preference_title_use_pin
 import boxy_authenticator.composeapp.generated.resources.single_tap
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
@@ -37,7 +37,7 @@ fun GeneralSettings() {
         title = { Text(stringResource(Res.string.preference_category_title_general)) },
     ) {
         DropDownPreference(
-            title = { Text(stringResource(Res.string.preference_title_clipboard_tap_action)) },
+            title = { Text(stringResource(Res.string.preference_title_token_tap_response)) },
             value = tokenTapResponseLabels[tokenTapResponse.ordinal],
             entries = tokenTapResponseLabels,
             summary = {
