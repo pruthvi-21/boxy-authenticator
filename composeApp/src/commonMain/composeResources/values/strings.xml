@@ -100,6 +100,10 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="follow_system">Follow system</string>
+    <string name="never">Never</string>
+    <string name="single_tap">Single tap</string>
+    <string name="double_tap">Double tap</string>
+    <string name="long_press">Long press</string>
 
     <!-- SettingsScreen -->
     <string name="preference_title_app_theme">App theme</string>
@@ -116,6 +120,7 @@
     <string name="preference_category_title_general">General</string>
     <string name="preference_category_transfer_accounts">Transfer accounts</string>
 
+    <string name="preference_title_token_tap_response">Copy tokens to the clipboard</string>
     <string name="preference_title_use_pin">Use PIN pad</string>
     <string name="preference_summary_use_pin">Enable to use a PIN pad instead of a full keyboard on the lock screen.</string>
 

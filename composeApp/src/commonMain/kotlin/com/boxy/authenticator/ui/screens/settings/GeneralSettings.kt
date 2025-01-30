@@ -4,9 +4,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.double_tap
+import boxy_authenticator.composeapp.generated.resources.long_press
+import boxy_authenticator.composeapp.generated.resources.never
 import boxy_authenticator.composeapp.generated.resources.preference_category_title_general
 import boxy_authenticator.composeapp.generated.resources.preference_summary_use_pin
+import boxy_authenticator.composeapp.generated.resources.preference_title_clipboard_tap_action
 import boxy_authenticator.composeapp.generated.resources.preference_title_use_pin
+import boxy_authenticator.composeapp.generated.resources.single_tap
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.TokenTapResponse
 import com.jw.preferences.DropDownPreference
@@ -22,17 +27,17 @@ fun GeneralSettings() {
 
     val tokenTapResponse = settingsViewModel.tokenTapResponse.value
     val tokenTapResponseLabels = listOf(
-        "Never",
-        "Single tap",
-        "Double tap",
-        "Long press",
+        stringResource(Res.string.never),
+        stringResource(Res.string.single_tap),
+        stringResource(Res.string.double_tap),
+        stringResource(Res.string.long_press),
     )
 
     PreferenceCategory(
         title = { Text(stringResource(Res.string.preference_category_title_general)) },
     ) {
         DropDownPreference(
-            title = { Text("Copy tokens to the clipboard") },
+            title = { Text(stringResource(Res.string.preference_title_clipboard_tap_action)) },
             value = tokenTapResponseLabels[tokenTapResponse.ordinal],
             entries = tokenTapResponseLabels,
             summary = {
