@@ -54,7 +54,6 @@ fun GeneralSettings() {
         SwitchPreference(
             title = { Text(stringResource(Res.string.preference_title_use_pin)) },
             summary = { Text(stringResource(Res.string.preference_summary_use_pin)) },
-            enabled = settingsViewModel.isAppLockEnabled.value,
             value = isLockscreenPinPadEnabled,
             onValueChange = {
                 settingsViewModel.setLockscreenPinPadEnabled(it)
