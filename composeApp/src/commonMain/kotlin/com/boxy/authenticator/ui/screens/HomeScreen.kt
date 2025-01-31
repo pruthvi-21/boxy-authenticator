@@ -79,7 +79,8 @@ fun HomeScreen(component: HomeScreenComponent) {
                         if (tokens.isNotEmpty()) {
                             TokensList(
                                 tokens,
-                                onEdit = { component.navigateToTokenSetupScreen(tokenId = it.id) })
+                                onEdit = { component.navigateToTokenSetupScreen(it) }
+                            )
                         } else {
                             Box(
                                 modifier = Modifier.fillMaxSize(),

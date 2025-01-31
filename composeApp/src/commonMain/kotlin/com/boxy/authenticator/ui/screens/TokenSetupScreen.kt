@@ -94,7 +94,7 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TokenSetupScreen(component: TokenSetupScreenComponent) {
-    val tokenId = component.tokenId
+    val token = component.token
     val authUrl = component.authUrl
     val tokenSetupViewModel: TokenSetupViewModel = component.viewModel
 
@@ -104,9 +104,9 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
     var state = tokenSetupViewModel.uiState.value
     val tokenSetupMode = tokenSetupViewModel.tokenSetupMode
 
-    LaunchedEffect(tokenId, authUrl, tokenSetupMode) {
-        tokenId?.let {
-            tokenSetupViewModel.setInitialStateFromTokenWithId(tokenId)
+    LaunchedEffect(token, authUrl, tokenSetupMode) {
+        token?.let {
+            tokenSetupViewModel.setInitialStateFromToken(token)
             state = tokenSetupViewModel.uiState.value
         }
 
@@ -189,7 +189,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                     },
                     onConfirmation = {
                         tokenSetupViewModel.deleteToken(
-                            tokenId = tokenId!!,
+                            tokenId = token!!.id,
                             onComplete = {
                                 tokenSetupViewModel.showDeleteTokenDialog.value = false
                                 component.navigateUp()

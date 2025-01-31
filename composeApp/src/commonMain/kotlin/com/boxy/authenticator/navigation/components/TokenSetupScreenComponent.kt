@@ -3,6 +3,7 @@ package com.boxy.authenticator.navigation.components
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
+import com.boxy.authenticator.data.models.TokenEntry
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -10,7 +11,7 @@ import org.koin.core.component.get
 class TokenSetupScreenComponent(
     componentContext: ComponentContext,
     val navigation: StackNavigation<RootComponent.Configuration>,
-    val tokenId: String? = null,
+    val token: TokenEntry? = null,
     val authUrl: String? = null,
 ) : ComponentContext by componentContext, KoinComponent {
 

@@ -12,7 +12,6 @@ import com.boxy.authenticator.data.models.otp.TotpInfo
 import com.boxy.authenticator.domain.models.TokenFormEvent
 import com.boxy.authenticator.domain.models.TokenFormState
 import com.boxy.authenticator.domain.usecases.DeleteTokenUseCase
-import com.boxy.authenticator.domain.usecases.FetchTokenByIdUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
 import com.boxy.authenticator.helpers.TokenEntryBuilder
@@ -29,7 +28,6 @@ import org.jetbrains.compose.resources.getString
 
 class TokenSetupViewModel(
     private val insertTokenUseCase: InsertTokenUseCase,
-    private val fetchTokenByIdUseCase: FetchTokenByIdUseCase,
     private val deleteTokenUseCase: DeleteTokenUseCase,
     private val replaceExistingTokenUseCase: ReplaceExistingTokenUseCase,
     private val formValidator: TokenFormValidator,
@@ -52,30 +50,18 @@ class TokenSetupViewModel(
         val existingToken: TokenEntry? = null,
     )
 
-    fun setInitialStateFromTokenWithId(tokenId: String) {
-        viewModelScope.launch {
-            fetchTokenByIdUseCase(tokenId)
-                .fold(
-                    onSuccess = { token ->
-                        if (token != null) {
-                            tokenToUpdate = token
-                            tokenSetupMode = TokenSetupMode.UPDATE
-                            setInitialStateFromToken(token)
-                        }
-                    },
-                    onFailure = {
-
-                    }
-                )
-        }
+    fun setInitialStateFromToken(token: TokenEntry) {
+        tokenToUpdate = token
+        tokenSetupMode = TokenSetupMode.UPDATE
+        setStateFromToken(token)
     }
 
     fun setInitialStateFromUrl(authUrl: String) {
         tokenSetupMode = TokenSetupMode.URL
-        setInitialStateFromToken(TokenEntryBuilder.buildFromUrl(authUrl))
+        setStateFromToken(TokenEntryBuilder.buildFromUrl(authUrl))
     }
 
-    private fun setInitialStateFromToken(token: TokenEntry) {
+    private fun setStateFromToken(token: TokenEntry) {
         var tokenState = TokenFormState(
             issuer = token.issuer,
             label = token.label,

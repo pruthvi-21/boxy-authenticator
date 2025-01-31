@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
+import com.boxy.authenticator.data.models.TokenEntry
 import com.boxy.authenticator.navigation.components.RootComponent.Child
 import com.boxy.authenticator.navigation.components.RootComponent.Configuration
 import kotlinx.serialization.Serializable
@@ -26,7 +27,7 @@ interface RootComponent : BackHandlerOwner {
         data object QrScannerScreen : Configuration()
 
         @Serializable
-        data class TokenSetupScreen(val tokenId: String? = null, val authUrl: String? = null) :
+        data class TokenSetupScreen(val token: TokenEntry? = null, val authUrl: String? = null) :
             Configuration()
 
         @Serializable
@@ -80,7 +81,7 @@ class DefaultRootComponent(
             )
 
             is Configuration.TokenSetupScreen -> Child.TokenSetupScreen(
-                TokenSetupScreenComponent(context, navigation, config.tokenId, config.authUrl)
+                TokenSetupScreenComponent(context, navigation, config.token, config.authUrl)
             )
 
             is Configuration.SettingsScreen -> Child.SettingsScreen(

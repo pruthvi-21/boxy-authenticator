@@ -12,8 +12,8 @@ class QrScannerScreenComponent(
     val navigation: StackNavigation<Configuration>,
 ) : ComponentContext by componentContext, KoinComponent {
 
-    fun navigateToTokenSetupScreen(tokenId: String? = null, authUrl: String? = null) {
-        navigation.replaceCurrent(Configuration.TokenSetupScreen(tokenId, authUrl))
+    fun navigateToTokenSetupScreen(authUrl: String? = null) {
+        navigation.replaceCurrent(Configuration.TokenSetupScreen(authUrl = authUrl))
     }
 
     fun navigateUp() {

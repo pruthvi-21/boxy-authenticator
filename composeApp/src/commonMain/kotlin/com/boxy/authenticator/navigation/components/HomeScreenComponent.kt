@@ -3,6 +3,7 @@ package com.boxy.authenticator.navigation.components
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pushNew
+import com.boxy.authenticator.data.models.TokenEntry
 import com.boxy.authenticator.navigation.components.RootComponent.Configuration
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import org.koin.core.component.KoinComponent
@@ -15,8 +16,8 @@ class HomeScreenComponent(
 
     val homeViewModel: HomeViewModel by lazy { get<HomeViewModel>() }
 
-    fun navigateToTokenSetupScreen(tokenId: String? = null, authUrl: String? = null) {
-        navigation.pushNew(Configuration.TokenSetupScreen(tokenId, authUrl))
+    fun navigateToTokenSetupScreen(token: TokenEntry? = null, authUrl: String? = null) {
+        navigation.pushNew(Configuration.TokenSetupScreen(token, authUrl))
     }
 
     fun navigateToSettings() {
