@@ -15,6 +15,7 @@ import com.boxy.authenticator.domain.usecases.DeleteTokenUseCase
 import com.boxy.authenticator.domain.usecases.FetchTokenByIdUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
+import com.boxy.authenticator.helpers.TokenEntryBuilder
 import com.boxy.authenticator.helpers.TokenFormValidator
 import com.boxy.authenticator.utils.AccountEntryMethod
 import com.boxy.authenticator.utils.Base32
@@ -71,7 +72,7 @@ class TokenSetupViewModel(
 
     fun setInitialStateFromUrl(authUrl: String) {
         tokenSetupMode = TokenSetupMode.URL
-        setInitialStateFromToken(TokenEntry.buildFromUrl(authUrl))
+        setInitialStateFromToken(TokenEntryBuilder.buildFromUrl(authUrl))
     }
 
     private fun setInitialStateFromToken(token: TokenEntry) {
@@ -248,7 +249,7 @@ class TokenSetupViewModel(
                     TokenSetupMode.NEW,
                     TokenSetupMode.URL,
                         -> {
-                        var newToken = TokenEntry.buildNewToken(
+                        var newToken = TokenEntryBuilder.buildNewToken(
                             issuer = state.issuer,
                             label = state.label,
                             type = state.type,

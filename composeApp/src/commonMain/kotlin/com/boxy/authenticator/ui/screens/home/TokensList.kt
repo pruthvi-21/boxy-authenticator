@@ -72,6 +72,7 @@ import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.refresh
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.data.models.TokenEntry
+import com.boxy.authenticator.data.models.name
 import com.boxy.authenticator.data.models.otp.HotpInfo
 import com.boxy.authenticator.data.models.otp.SteamInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo

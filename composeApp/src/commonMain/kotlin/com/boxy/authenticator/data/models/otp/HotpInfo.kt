@@ -1,17 +1,17 @@
 package com.boxy.authenticator.data.models.otp
 
 import com.boxy.authenticator.helpers.otp.HOTP
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlin.jvm.JvmOverloads
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-class HotpInfo @JvmOverloads constructor(
-    secretKey: ByteArray,
-    algorithm: String = DEFAULT_ALGORITHM,
-    digits: Int = DEFAULT_DIGITS,
+@Serializable
+@SerialName("hotp")
+class HotpInfo(
+    override var secretKey: ByteArray,
+    override var algorithm: String = DEFAULT_ALGORITHM,
+    override var digits: Int = DEFAULT_DIGITS,
     var counter: Long = DEFAULT_COUNTER,
-) : OtpInfo(secretKey, algorithm, digits) {
+) : OtpInfo() {
 
     fun incrementCounter() {
         counter++
@@ -22,28 +22,11 @@ class HotpInfo @JvmOverloads constructor(
         return otp.toString()
     }
 
-    override fun getTypeId() = ID
-
-    override fun toJson(): JsonObject {
-        val obj = super.toJson()
-        return try {
-            buildJsonObject {
-                obj.forEach { put(it.key, it.value) }
-                put("counter", counter)
-            }
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
-
-    }
-
-
     override fun equals(other: Any?): Boolean {
-        if (other !is HotpInfo) {
-            return false
-        }
+        if (other !is HotpInfo) return false
 
-        return super.equals(other) && counter == other.counter
+        return super.equals(other)
+                && counter == other.counter
     }
 
     override fun hashCode(): Int {
@@ -53,7 +36,6 @@ class HotpInfo @JvmOverloads constructor(
     }
 
     companion object {
-        const val ID: String = "hotp"
         const val DEFAULT_COUNTER: Long = 0L
         const val COUNTER_MIN_VALUE = 0
     }
