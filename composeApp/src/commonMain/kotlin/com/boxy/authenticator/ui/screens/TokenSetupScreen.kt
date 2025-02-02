@@ -73,7 +73,6 @@ import boxy_authenticator.composeapp.generated.resources.title_enter_account_det
 import boxy_authenticator.composeapp.generated.resources.title_update_account_details
 import boxy_authenticator.composeapp.generated.resources.type
 import boxy_authenticator.composeapp.generated.resources.yes
-import com.boxy.authenticator.data.models.name
 import com.boxy.authenticator.data.models.otp.OtpInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.boxy.authenticator.domain.models.TokenFormEvent
@@ -89,6 +88,7 @@ import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import com.boxy.authenticator.utils.OTPType
 import com.boxy.authenticator.utils.TokenSetupMode
 import com.boxy.authenticator.utils.getInitials
+import com.boxy.authenticator.utils.name
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)

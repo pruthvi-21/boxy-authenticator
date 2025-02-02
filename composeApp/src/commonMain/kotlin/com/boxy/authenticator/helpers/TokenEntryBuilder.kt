@@ -14,7 +14,6 @@ import com.boxy.authenticator.utils.AccountEntryMethod
 import com.boxy.authenticator.utils.BadlyFormedURLException
 import com.boxy.authenticator.utils.Base32
 import com.boxy.authenticator.utils.Constants
-import com.boxy.authenticator.utils.Constants.DEFAULT_OTP_TYPE
 import com.boxy.authenticator.utils.EmptyURLContentException
 import com.boxy.authenticator.utils.OTPType
 import com.boxy.authenticator.utils.Utils
@@ -34,7 +33,6 @@ object TokenEntryBuilder {
         issuer: String,
         label: String,
         thumbnail: Thumbnail = Thumbnail.Color(Constants.THUMBNAIL_COlORS.random()),
-        type: OTPType = DEFAULT_OTP_TYPE,
         otpInfo: OtpInfo,
         addedFrom: AccountEntryMethod,
     ): TokenEntry {
@@ -43,7 +41,6 @@ object TokenEntryBuilder {
             issuer = issuer,
             label = label,
             thumbnail = thumbnail,
-            type = type,
             otpInfo = otpInfo,
             createdOn = Clock.System.now().toEpochMilliseconds(),
             updatedOn = Clock.System.now().toEpochMilliseconds(),
@@ -95,7 +92,6 @@ object TokenEntryBuilder {
         return buildNewToken(
             issuer = issuer,
             label = label,
-            type = type,
             otpInfo = otpInfo,
             addedFrom = AccountEntryMethod.QR_CODE
         )

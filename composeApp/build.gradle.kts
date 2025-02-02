@@ -72,6 +72,7 @@ kotlin {
             implementation(libs.diglol.crypto.random)
             implementation(libs.coil.compose)
             implementation(libs.qr.kit)
+            implementation(libs.filekit)
         }
     }
 }

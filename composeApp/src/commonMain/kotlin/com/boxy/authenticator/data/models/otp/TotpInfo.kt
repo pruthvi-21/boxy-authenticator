@@ -1,16 +1,24 @@
 package com.boxy.authenticator.data.models.otp
 
 import com.boxy.authenticator.helpers.otp.TOTP
+import com.boxy.authenticator.helpers.serializers.ByteArraySerializer
 import kotlinx.datetime.Clock
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("totp")
+@OptIn(ExperimentalSerializationApi::class)
 open class TotpInfo(
+    @Serializable(with = ByteArraySerializer::class)
     override var secretKey: ByteArray,
+    @EncodeDefault
     override var algorithm: String = DEFAULT_ALGORITHM,
+    @EncodeDefault
     override var digits: Int = DEFAULT_DIGITS,
+    @EncodeDefault
     var period: Int = DEFAULT_PERIOD,
 ) : OtpInfo() {
 

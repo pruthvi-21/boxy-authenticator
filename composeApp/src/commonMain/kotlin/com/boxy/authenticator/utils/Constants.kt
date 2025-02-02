@@ -23,8 +23,6 @@ enum class TokenSetupMode {
 }
 
 object Constants {
-    val DEFAULT_OTP_TYPE = OTPType.TOTP
-
     val THUMBNAIL_COlORS = listOf(
         "#A0522D",
         "#376B97",
@@ -72,5 +70,6 @@ object Constants {
     )
 
     const val THUMBNAIL_ICON_PATH = "drawable/icons"
-    private const val EXPORT_FILE_NAME_PREFIX = "tokky_accounts_"
+    const val EXPORT_FILE_NAME_PREFIX = "boxy_accounts_"
+    const val EXPORT_FILE_EXTENSION = "json"
 }

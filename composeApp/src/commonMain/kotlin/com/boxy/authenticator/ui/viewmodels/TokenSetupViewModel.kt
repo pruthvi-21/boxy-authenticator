@@ -66,18 +66,15 @@ class TokenSetupViewModel(
             issuer = token.issuer,
             label = token.label,
             thumbnail = token.thumbnail,
-            type = token.type,
             secretKey = Base32.encode(token.otpInfo.secretKey),
             algorithm = token.otpInfo.algorithm,
             digits = token.otpInfo.digits.toString()
         )
 
-        tokenState = when (token.type) {
-            OTPType.TOTP -> tokenState.copy(period = (token.otpInfo as TotpInfo).period.toString())
-
-            OTPType.HOTP -> tokenState.copy(counter = (token.otpInfo as HotpInfo).counter.toString())
-
-            OTPType.STEAM -> tokenState
+        tokenState = when (token.otpInfo) {
+            is HotpInfo -> tokenState.copy(counter = token.otpInfo.counter.toString())
+            is SteamInfo -> tokenState
+            is TotpInfo -> tokenState.copy(period = token.otpInfo.period.toString())
         }
         tokenState = updateFieldVisibilityState(tokenState)
 
@@ -238,7 +235,6 @@ class TokenSetupViewModel(
                         var newToken = TokenEntryBuilder.buildNewToken(
                             issuer = state.issuer,
                             label = state.label,
-                            type = state.type,
                             thumbnail = state.thumbnail,
                             otpInfo = otpInfo,
                             addedFrom = AccountEntryMethod.FORM,

@@ -70,18 +70,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.refresh
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.data.models.TokenEntry
-import com.boxy.authenticator.data.models.name
 import com.boxy.authenticator.data.models.otp.HotpInfo
 import com.boxy.authenticator.data.models.otp.SteamInfo
 import com.boxy.authenticator.data.models.otp.TotpInfo
 import com.boxy.authenticator.ui.components.BoxProgressBar
 import com.boxy.authenticator.ui.components.TokenThumbnail
-import com.boxy.authenticator.utils.OTPType
+import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.TokenTapResponse
 import com.boxy.authenticator.utils.formatOTP
 import com.boxy.authenticator.utils.getInitials
+import com.boxy.authenticator.utils.name
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -221,9 +220,9 @@ fun TokenCard(
                 animationSpec = tween(SLIDE_DURATION)
             )
         ) {
-            when (token.type) {
-                OTPType.TOTP, OTPType.STEAM -> TOTPFieldView(token.otpInfo as TotpInfo)
-                OTPType.HOTP -> HOTPFieldView(token.otpInfo as HotpInfo)
+            when (token.otpInfo) {
+                is HotpInfo -> HOTPFieldView(token.otpInfo)
+                is TotpInfo -> TOTPFieldView(token.otpInfo)
             }
         }
     }

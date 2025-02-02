@@ -3,6 +3,8 @@ package com.boxy.authenticator.navigation.components
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.pushNew
+import com.boxy.authenticator.data.models.TokenEntry
 
 class SettingsScreenComponent(
     componentContext: ComponentContext,
@@ -10,10 +12,8 @@ class SettingsScreenComponent(
     val navigation: StackNavigation<RootComponent.Configuration>,
 ) : ComponentContext by componentContext {
 
-    fun navigateToExport() {
-    }
-
-    fun navigateToImport() {
+    fun navigateToImport(tokens: List<TokenEntry>) {
+        navigation.pushNew(RootComponent.Configuration.ImportTokensScreen(tokens))
     }
 
     fun navigateUp() {

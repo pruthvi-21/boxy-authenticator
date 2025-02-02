@@ -11,6 +11,7 @@ compose-multiplatform = "1.7.0"
 decompose = "3.3.0-alpha02"
 diglol-crypto = "0.2.0"
 essenty = "2.5.0-alpha01"
+filekit = "0.8.8"
 guava = "33.4.0-android"
 koin = "3.6.0-Beta4"
 koin-compose = "1.2.0-Beta4"
@@ -37,6 +38,7 @@ decompose-extensions = { module = "com.arkivanov.decompose:extensions-compose", 
 diglol-crypto-kdf = { module = "com.diglol.crypto:kdf", version.ref = "diglol-crypto" }
 diglol-crypto-random = { module = "com.diglol.crypto:random", version.ref = "diglol-crypto" }
 essenty = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" } #for decompose
+filekit = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }

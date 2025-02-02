@@ -1,6 +1,7 @@
 package com.boxy.authenticator.utils
 
 import androidx.compose.ui.graphics.Color
+import com.boxy.authenticator.data.models.TokenEntry
 
 object Utils {
     fun isValidTOTPAuthURL(url: String?): Boolean {
@@ -53,3 +54,9 @@ fun String.getInitials(): String {
 fun String.cleanSecretKey(): String {
     return this.replace("\\s", "").uppercase()
 }
+
+val TokenEntry.name: String
+    get() {
+        if (label.isEmpty()) return issuer
+        return "$issuer ($label)"
+    }

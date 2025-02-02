@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fa7c7e707e6ccfbe136c8e3bfa933ae9",
+    "identityHash": "d88d943c88d709f8f2f72eaedd571117",
     "entities": [
       {
         "tableName": "token_entry",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `issuer` TEXT NOT NULL, `label` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `type` TEXT NOT NULL, `otpInfo` TEXT NOT NULL, `createdOn` INTEGER NOT NULL, `updatedOn` INTEGER NOT NULL, `addedFrom` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `issuer` TEXT NOT NULL, `label` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `otpInfo` TEXT NOT NULL, `createdOn` INTEGER NOT NULL, `updatedOn` INTEGER NOT NULL, `addedFrom` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -29,12 +29,6 @@
           {
             "fieldPath": "thumbnail",
             "columnName": "thumbnail",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "type",
-            "columnName": "type",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -73,7 +67,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fa7c7e707e6ccfbe136c8e3bfa933ae9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd88d943c88d709f8f2f72eaedd571117')"
     ]
   }
 }

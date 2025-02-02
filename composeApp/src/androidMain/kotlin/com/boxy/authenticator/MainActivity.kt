@@ -9,6 +9,7 @@ import com.arkivanov.decompose.retainedComponent
 import com.boxy.authenticator.helpers.AppSettings
 import com.boxy.authenticator.navigation.components.DefaultRootComponent
 import com.boxy.authenticator.navigation.components.RootComponent
+import io.github.vinceglb.filekit.core.FileKit
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
@@ -34,5 +35,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             App(rootComponent)
         }
+
+        FileKit.init(this)
     }
 }

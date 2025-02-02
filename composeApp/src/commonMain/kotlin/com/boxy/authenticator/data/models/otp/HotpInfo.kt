@@ -1,15 +1,23 @@
 package com.boxy.authenticator.data.models.otp
 
 import com.boxy.authenticator.helpers.otp.HOTP
+import com.boxy.authenticator.helpers.serializers.ByteArraySerializer
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("hotp")
+@OptIn(ExperimentalSerializationApi::class)
 class HotpInfo(
+    @Serializable(with = ByteArraySerializer::class)
     override var secretKey: ByteArray,
+    @EncodeDefault
     override var algorithm: String = DEFAULT_ALGORITHM,
+    @EncodeDefault
     override var digits: Int = DEFAULT_DIGITS,
+    @EncodeDefault
     var counter: Long = DEFAULT_COUNTER,
 ) : OtpInfo() {
 

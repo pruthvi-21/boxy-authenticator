@@ -5,18 +5,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.title_settings
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.navigation.components.SettingsScreenComponent
 import com.boxy.authenticator.ui.components.BoxSwitch
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.screens.settings.AppearanceSettings
 import com.boxy.authenticator.ui.screens.settings.GeneralSettings
 import com.boxy.authenticator.ui.screens.settings.SecuritySettings
+import com.boxy.authenticator.ui.screens.settings.TransferAccounts
+import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.jw.preferences.PreferenceScreen
 import com.jw.preferences.PreferenceTheme
 import org.jetbrains.compose.resources.stringResource
@@ -26,6 +30,8 @@ import org.jetbrains.compose.resources.stringResource
 fun SettingsScreen(
     component: SettingsScreenComponent,
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
     val settingsViewModel = LocalSettingsViewModel.current
     settingsViewModel.hideSensitiveSettings.value = component.hideSensitiveSettings
 
@@ -36,7 +42,8 @@ fun SettingsScreen(
                 showDefaultNavigationIcon = true,
                 onNavigationIconClick = { component.navigateUp() }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { contentPadding ->
         PreferenceScreen(
             theme = PreferenceTheme.Default.copy(
@@ -57,16 +64,16 @@ fun SettingsScreen(
             if (!settingsViewModel.hideSensitiveSettings.value) {
                 item { SecuritySettings() }
             }
-//            item {
-//                TransferAccounts(
-//                    onNavigateToExport = {
-//                        component.navigateToExport()
-//                    },
-//                    onNavigateToImport = {
-//                        component.navigateToImport()
-//                    }
-//                )
-//            }
+            if (!settingsViewModel.hideSensitiveSettings.value) {
+                item {
+                    TransferAccounts(
+                        snackbarHostState = snackbarHostState,
+                        onNavigateToImport = {
+                            component.navigateToImport(it)
+                        }
+                    )
+                }
+            }
         }
     }
 }

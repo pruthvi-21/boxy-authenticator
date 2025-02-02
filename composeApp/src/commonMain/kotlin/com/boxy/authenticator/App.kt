@@ -10,6 +10,7 @@ import com.boxy.authenticator.navigation.components.RootComponent
 import com.boxy.authenticator.navigation.components.RootComponent.Child
 import com.boxy.authenticator.ui.screens.AuthenticationScreen
 import com.boxy.authenticator.ui.screens.HomeScreen
+import com.boxy.authenticator.ui.screens.ImportTokensScreen
 import com.boxy.authenticator.ui.screens.QrScannerScreen
 import com.boxy.authenticator.ui.screens.SettingsScreen
 import com.boxy.authenticator.ui.screens.TokenSetupScreen
@@ -54,6 +55,7 @@ fun App(rootComponent: RootComponent) {
                         is Child.QrScannerScreen -> QrScannerScreen(instance.component)
                         is Child.TokenSetupScreen -> TokenSetupScreen(instance.component)
                         is Child.SettingsScreen -> SettingsScreen(instance.component)
+                        is Child.ImportTokensScreen -> ImportTokensScreen(instance.component)
                     }
                 }
             }

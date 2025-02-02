@@ -32,6 +32,9 @@ interface RootComponent : BackHandlerOwner {
 
         @Serializable
         data class SettingsScreen(val hideSensitiveSettings: Boolean = false) : Configuration()
+
+        @Serializable
+        data class ImportTokensScreen(val tokens: List<TokenEntry>) : Configuration()
     }
 
     sealed class Child {
@@ -40,6 +43,7 @@ interface RootComponent : BackHandlerOwner {
         data class QrScannerScreen(val component: QrScannerScreenComponent) : Child()
         data class TokenSetupScreen(val component: TokenSetupScreenComponent) : Child()
         data class SettingsScreen(val component: SettingsScreenComponent) : Child()
+        data class ImportTokensScreen(val component: ImportTokensScreenComponent) : Child()
     }
 
     val childStack: Value<ChildStack<Configuration, Child>>
@@ -86,6 +90,10 @@ class DefaultRootComponent(
 
             is Configuration.SettingsScreen -> Child.SettingsScreen(
                 SettingsScreenComponent(context, config.hideSensitiveSettings, navigation)
+            )
+
+            is Configuration.ImportTokensScreen -> Child.ImportTokensScreen(
+                ImportTokensScreenComponent(context, config.tokens, navigation)
             )
         }
     }

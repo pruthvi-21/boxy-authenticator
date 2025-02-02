@@ -13,7 +13,9 @@ import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
 import com.boxy.authenticator.helpers.AppSettings
 import com.boxy.authenticator.helpers.TokenFormValidator
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
+import com.boxy.authenticator.ui.viewmodels.TransferAccountsViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
+import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
 import com.boxy.authenticator.ui.viewmodels.SetPasswordDialogViewModel
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
@@ -34,6 +36,8 @@ val sharedModule = module {
     viewModel { (biometryAuthenticator: BiometryAuthenticator) ->
         SettingsViewModel(get(), biometryAuthenticator)
     }
+    viewModel { TransferAccountsViewModel(get()) }
+    viewModel { ImportTokensViewModel(get(), get(), get()) }
     viewModel { RemovePasswordDialogViewModel() }
     viewModel { SetPasswordDialogViewModel() }
 
