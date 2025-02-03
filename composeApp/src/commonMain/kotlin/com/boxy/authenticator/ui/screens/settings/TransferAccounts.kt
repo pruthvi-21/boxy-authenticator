@@ -11,12 +11,15 @@ import boxy_authenticator.composeapp.generated.resources.import_accounts
 import boxy_authenticator.composeapp.generated.resources.import_accounts_summary
 import boxy_authenticator.composeapp.generated.resources.preference_category_transfer_accounts
 import com.boxy.authenticator.data.models.TokenEntry
+import com.boxy.authenticator.helpers.Logger
 import com.boxy.authenticator.ui.viewmodels.TransferAccountsViewModel
 import com.jw.preferences.Preference
 import com.jw.preferences.PreferenceCategory
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+
+private const val TAG = "TransferAccounts"
 
 @Composable
 fun TransferAccounts(
@@ -50,12 +53,11 @@ fun TransferAccounts(
             onClick = {
                 transferAccountsViewModel.importTokensFromFile(
                     onSuccess = {
-                        println(it)
                         onNavigateToImport(it)
                     },
                     onFailure = {
                         scope.launch {
-                            println(it)
+                            Logger.e(TAG, it)
                             snackbarHostState.showSnackbar("Failed to import.")
                         }
                     }

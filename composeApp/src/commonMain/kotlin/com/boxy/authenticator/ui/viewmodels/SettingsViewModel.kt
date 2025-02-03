@@ -11,6 +11,7 @@ import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.to_disable_biometrics
 import boxy_authenticator.composeapp.generated.resources.to_enable_biometrics
 import com.boxy.authenticator.helpers.AppSettings
+import com.boxy.authenticator.helpers.Logger
 import com.boxy.authenticator.utils.AppTheme
 import com.boxy.authenticator.utils.HashUtils
 import com.boxy.authenticator.utils.TokenTapResponse
@@ -86,7 +87,7 @@ class SettingsViewModel(
                     }
                 )
             } catch (throwable: Throwable) {
-                println(throwable)
+                Logger.e(TAG, throwable.message, throwable)
             }
         }
     }
@@ -106,7 +107,7 @@ class SettingsViewModel(
             )
             onComplete(isSuccess)
         } catch (throwable: Throwable) {
-            println(throwable)
+            Logger.e(TAG, throwable.message, throwable)
             onComplete(false)
         }
     }
@@ -131,7 +132,7 @@ class SettingsViewModel(
                 settings.setAppLockEnabled(true, HashUtils.hash(password))
                 _isAppLockEnabled.value = true
             } catch (e: IllegalArgumentException) {
-                println(e)
+                Logger.e(TAG, e.message, e)
             }
         }
     }
@@ -165,6 +166,10 @@ class SettingsViewModel(
     fun setTokenTapResponse(response: TokenTapResponse) {
         settings.setTokenTapResponse(response)
         _tokenTapResponse.value = response
+    }
+
+    companion object {
+        private const val TAG = "SettingsViewModel"
     }
 }
 

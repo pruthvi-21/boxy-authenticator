@@ -33,6 +33,7 @@ import boxy_authenticator.composeapp.generated.resources.close
 import boxy_authenticator.composeapp.generated.resources.invalid_qr_code
 import boxy_authenticator.composeapp.generated.resources.retry
 import com.arkivanov.decompose.router.stack.pop
+import com.boxy.authenticator.helpers.Logger
 import com.boxy.authenticator.helpers.TokenEntryBuilder
 import com.boxy.authenticator.navigation.components.QrScannerScreenComponent
 import com.boxy.authenticator.ui.components.Toolbar
@@ -42,6 +43,8 @@ import org.jetbrains.compose.resources.stringResource
 import qrscanner.CameraLens
 import qrscanner.OverlayShape
 import qrscanner.QrScanner
+
+private const val TAG = "QrScannerScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +68,7 @@ fun QrScannerScreen(component: QrScannerScreenComponent) {
                                 TokenEntryBuilder.buildFromUrl(result)
                                 component.navigateToTokenSetupScreen(authUrl = result)
                             } catch (e: Exception) {
-                                println(e)
+                                Logger.e(TAG, e.message, e)
                                 showPlatformAlertDialog = true
                             }
                         }

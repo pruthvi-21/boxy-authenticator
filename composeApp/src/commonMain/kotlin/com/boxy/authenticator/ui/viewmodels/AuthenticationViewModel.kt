@@ -10,6 +10,7 @@ import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.incorrect_password
 import boxy_authenticator.composeapp.generated.resources.to_unlock
 import com.boxy.authenticator.helpers.AppSettings
+import com.boxy.authenticator.helpers.Logger
 import com.boxy.authenticator.utils.HashUtils
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
@@ -56,7 +57,7 @@ class AuthenticationViewModel(
             )
             onComplete(isSuccess)
         } catch (throwable: Throwable) {
-            println(throwable)
+            Logger.e(TAG, throwable.message, throwable)
             onComplete(false)
         }
     }
