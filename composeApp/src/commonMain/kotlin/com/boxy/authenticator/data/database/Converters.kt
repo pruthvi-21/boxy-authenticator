@@ -3,6 +3,7 @@ package com.boxy.authenticator.data.database
 import androidx.room.TypeConverter
 import com.boxy.authenticator.data.models.Thumbnail
 import com.boxy.authenticator.data.models.otp.OtpInfo
+import com.boxy.authenticator.helpers.Logger
 import com.boxy.authenticator.helpers.serializers.BoxyJson
 import com.boxy.authenticator.utils.AccountEntryMethod
 import com.boxy.authenticator.utils.OTPType
@@ -42,13 +43,13 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromThumbnail(thumbnail: Thumbnail): JsonObject {
-        return thumbnail.toJson()
+    fun fromThumbnail(thumbnail: Thumbnail): String {
+        return thumbnail.toString()
     }
 
     @TypeConverter
-    fun toThumbnail(thumbnailJson: JsonObject): Thumbnail {
-        return Thumbnail.fromJson(thumbnailJson)
+    fun toThumbnail(thumbnailString: String): Thumbnail {
+        return Thumbnail.fromString(thumbnailString)
     }
 
     @TypeConverter

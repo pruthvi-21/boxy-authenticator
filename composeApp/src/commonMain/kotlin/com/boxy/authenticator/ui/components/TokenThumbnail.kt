@@ -63,7 +63,7 @@ fun TokenThumbnail(
             )
 
             is Thumbnail.Icon -> AsyncImage(
-                Res.getUri("$THUMBNAIL_ICON_PATH/${thumbnail.path}"),
+                Res.getUri("$THUMBNAIL_ICON_PATH/${thumbnail.icon.path}"),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

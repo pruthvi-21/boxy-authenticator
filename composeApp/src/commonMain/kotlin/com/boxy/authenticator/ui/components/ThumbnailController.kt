@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.boxy.authenticator.data.models.Thumbnail
 import com.boxy.authenticator.utils.Constants.THUMBNAIL_COlORS
-import com.boxy.authenticator.utils.Constants.THUMBNAIL_ICONS
+import com.boxy.authenticator.utils.ThumbnailIcon
 import com.boxy.authenticator.utils.Utils.toColor
 
 @Composable
@@ -115,16 +115,16 @@ private fun PreviewLayout(
                 columns = GridCells.Adaptive(100.dp),
                 modifier = Modifier.padding(horizontal = 10.dp),
             ) {
-                items(THUMBNAIL_ICONS.sortedBy { it.label }) {
+                items(ThumbnailIcon.entries.sortedBy { it.label }) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable {
-                            onThumbnailChanged(it)
+                            onThumbnailChanged(Thumbnail.Icon(it))
                             showIconPickerSheet = false
                         }
                     ) {
                         TokenThumbnail(
-                            thumbnail = it,
+                            thumbnail = Thumbnail.Icon(it),
                             width = 70.dp,
                             modifier = Modifier.padding(vertical = 10.dp),
                         )

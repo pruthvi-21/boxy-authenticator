@@ -1,30 +1,19 @@
 package com.boxy.authenticator.data.models
 
 import com.boxy.authenticator.helpers.serializers.BoxyJson
-import kotlinx.serialization.SerialName
+import com.boxy.authenticator.helpers.serializers.ThumbnailSerializer
+import com.boxy.authenticator.utils.ThumbnailIcon
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonObject
 
-@Serializable
+@Serializable(with = ThumbnailSerializer::class)
 sealed class Thumbnail {
-    @Serializable
-    @SerialName("color")
     data class Color(val color: String) : Thumbnail()
 
-    @Serializable
-    @SerialName("icon")
-    data class Icon(val id: String, val label: String, val path: String) : Thumbnail()
+    data class Icon(val icon: ThumbnailIcon) : Thumbnail()
 
-    fun toJson(): JsonObject {
-        return BoxyJson.encodeToJsonElement(this).jsonObject
-    }
+    override fun toString(): String = BoxyJson.encodeToString(this)
 
     companion object {
-        fun fromJson(jsonObject: JsonObject): Thumbnail {
-            return BoxyJson.decodeFromJsonElement(jsonObject)
-        }
+        fun fromString(str: String): Thumbnail = BoxyJson.decodeFromString(str)
     }
 }
