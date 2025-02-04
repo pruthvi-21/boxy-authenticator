@@ -1,17 +1,12 @@
 package com.boxy.authenticator.domain.usecases
 
 import com.boxy.authenticator.data.models.TokenEntry
-import com.boxy.authenticator.data.repositories.TokensRepository
+import com.boxy.authenticator.domain.repository.TokenRepository
 
 class InsertTokensUseCase(
-    private val tokensRepository: TokensRepository,
+    private val tokenRepository: TokenRepository,
 ) {
-    suspend operator fun invoke(tokens: List<TokenEntry>): Result<Unit> {
-        return try {
-            tokensRepository.insertTokens(tokens)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    operator fun invoke(tokens: List<TokenEntry>) = runCatching {
+        tokenRepository.insertTokens(tokens)
     }
 }

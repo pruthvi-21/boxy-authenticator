@@ -1,0 +1,37 @@
+CREATE TABLE token_entry (
+    id TEXT NOT NULL PRIMARY KEY,
+    issuer TEXT NOT NULL,
+    label TEXT NOT NULL,
+    thumbnail TEXT NOT NULL,
+    otpInfo TEXT NOT NULL,
+    createdOn INTEGER NOT NULL,
+    updatedOn INTEGER NOT NULL,
+    addedFrom TEXT NOT NULL
+);
+
+getAllTokens:
+SELECT * FROM token_entry;
+
+insertToken:
+INSERT INTO token_entry (id, issuer, label, thumbnail, otpInfo, createdOn, updatedOn, addedFrom)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+deleteToken:
+DELETE FROM token_entry WHERE id = ?;
+
+findTokenWithId:
+SELECT * FROM token_entry WHERE id = ?;
+
+findTokenWithName:
+SELECT * FROM token_entry
+WHERE issuer = :issuer COLLATE NOCASE
+AND label = :label COLLATE NOCASE
+LIMIT 1;
+
+updateToken:
+UPDATE token_entry
+SET issuer = ?,
+    label = ?,
+    thumbnail = ?,
+    updatedOn = ?
+WHERE id = ?;

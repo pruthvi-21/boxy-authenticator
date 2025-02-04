@@ -16,6 +16,7 @@ guava = "33.4.0-android"
 koin = "3.6.0-Beta4"
 koin-compose = "1.2.0-Beta4"
 kotlin = "2.1.0"
+kotlinxCoroutinesCore = "1.10.1"
 kotlinxDatetime = "0.6.1"
 kotlinxSerializationJson = "1.8.0-RC"
 ksp = "2.1.0-1.0.29"
@@ -23,10 +24,10 @@ ktorClientCore = "2.3.12"
 mokoBiometry = "0.4.0"
 preferenceKtx = "1.2.1"
 qrKit = "3.0.6"
-roomCommon = "2.7.0-alpha11"
-sqlite = "2.5.0-SNAPSHOT"
+sqlDelight = "2.0.2"
 
 [libraries]
+android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
 androidx-material3 = { group = "com.google.android.material", name = "material", version.ref = "androidx-material3" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
@@ -45,16 +46,15 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin-compose" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
 moko-biometry = { module = "dev.icerock.moko:biometry", version.ref = "mokoBiometry" }
 moko-biometry-compose = { module = "dev.icerock.moko:biometry-compose", version.ref = "mokoBiometry" }
+native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
+runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
 qr-kit = { module = "network.chaintech:qr-kit", version.ref = "qrKit" }
-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomCommon" }
-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomCommon" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCommon" }
-sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "sqlite" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -64,4 +64,4 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-room = { id = "androidx.room", version.ref = "roomCommon" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqlDelight" }

@@ -1,16 +1,11 @@
 package com.boxy.authenticator.domain.usecases
 
-import com.boxy.authenticator.data.repositories.TokensRepository
+import com.boxy.authenticator.domain.repository.TokenRepository
 
 class DeleteTokenUseCase(
-    private val tokensRepository: TokensRepository,
+    private val tokenRepository: TokenRepository,
 ) {
-    suspend operator fun invoke(tokenId: String): Result<Unit> {
-        return try {
-            tokensRepository.deleteToken(tokenId)
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    operator fun invoke(tokenId: String) = runCatching {
+        tokenRepository.deleteToken(tokenId)
     }
 }

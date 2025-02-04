@@ -1,8 +1,11 @@
 package com.boxy.authenticator.di
 
-import com.boxy.authenticator.data.database.TokensDao
-import com.boxy.authenticator.data.database.TokensDatabase
-import com.boxy.authenticator.data.repositories.TokensRepository
+import com.boxy.authenticator.data.database.DatabaseDriverFactory
+import com.boxy.authenticator.data.database.LocalTokenDao
+import com.boxy.authenticator.data.repositories.LocalTokenRepository
+import com.boxy.authenticator.db.TokenDatabase
+import com.boxy.authenticator.domain.dao.TokenDao
+import com.boxy.authenticator.domain.repository.TokenRepository
 import com.boxy.authenticator.domain.usecases.DeleteTokenUseCase
 import com.boxy.authenticator.domain.usecases.FetchTokenByIdUseCase
 import com.boxy.authenticator.domain.usecases.FetchTokenByNameUseCase
@@ -10,15 +13,16 @@ import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokensUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
+import com.boxy.authenticator.domain.usecases.UpdateTokenInfoUseCase
 import com.boxy.authenticator.helpers.AppSettings
 import com.boxy.authenticator.helpers.TokenFormValidator
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
-import com.boxy.authenticator.ui.viewmodels.TransferAccountsViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
 import com.boxy.authenticator.ui.viewmodels.SetPasswordDialogViewModel
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
+import com.boxy.authenticator.ui.viewmodels.TransferAccountsViewModel
 import com.ps.tokky.ui.viewmodels.RemovePasswordDialogViewModel
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import org.koin.compose.viewmodel.dsl.viewModel
@@ -32,7 +36,7 @@ val sharedModule = module {
         AuthenticationViewModel(get(), biometryAuthenticator)
     }
     viewModel { HomeViewModel(get()) }
-    viewModel { TokenSetupViewModel(get(), get(), get(), get()) }
+    viewModel { TokenSetupViewModel(get(), get(), get(), get(), get()) }
     viewModel { (biometryAuthenticator: BiometryAuthenticator) ->
         SettingsViewModel(get(), biometryAuthenticator)
     }
@@ -49,10 +53,18 @@ val sharedModule = module {
     factory { InsertTokenUseCase(get()) }
     factory { InsertTokensUseCase(get()) }
     factory { ReplaceExistingTokenUseCase(get()) }
+    factory { UpdateTokenInfoUseCase(get()) }
 
-    single<TokensDatabase> { TokensDatabase.build(get()) }
-    single<TokensDao> { get<TokensDatabase>().getTokensDao() }
-    single { TokensRepository(get()) }
+    //Database
+    single<TokenDatabase> {
+        TokenDatabase(get<DatabaseDriverFactory>().create())
+    }
+    single<TokenDao> {
+        LocalTokenDao(get<TokenDatabase>())
+    }
+    single<TokenRepository> {
+        LocalTokenRepository(get<TokenDao>())
+    }
 
     factory { TokenFormValidator() }
 

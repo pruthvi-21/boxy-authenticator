@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.room)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -39,7 +39,7 @@ kotlin {
             implementation(libs.androidx.preference.ktx)
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
-            implementation(libs.room.runtime.android)
+            implementation(libs.android.driver)
             implementation(libs.guava)
         }
         commonMain.dependencies {
@@ -57,9 +57,9 @@ kotlin {
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-            implementation(libs.room.runtime)
-            implementation(libs.sqlite.bundled)
+            implementation(libs.runtime)
 
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktor.client.core)
@@ -73,6 +73,9 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.qr.kit)
             implementation(libs.filekit)
+        }
+        iosMain.dependencies {
+            implementation(libs.native.driver)
         }
     }
 }
@@ -144,16 +147,15 @@ android {
     }
 }
 
-room {
-    schemaDirectory("$projectDir/schemas")
+sqldelight {
+    databases {
+        create("TokenDatabase") {
+            packageName.set("com.boxy.authenticator.db")
+        }
+    }
 }
 
 dependencies {
     debugImplementation(compose.uiTooling)
-
-    add("kspAndroid", libs.room.compiler)
-    add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosX64", libs.room.compiler)
-    add("kspIosArm64", libs.room.compiler)
 }
 

@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.boxy.authenticator.data.models.Thumbnail
 import com.boxy.authenticator.data.models.TokenEntry
 import com.boxy.authenticator.data.models.otp.HotpInfo
 import com.boxy.authenticator.data.models.otp.OtpInfo
@@ -14,6 +15,8 @@ import com.boxy.authenticator.domain.models.TokenFormState
 import com.boxy.authenticator.domain.usecases.DeleteTokenUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
+import com.boxy.authenticator.domain.usecases.UpdateTokenInfoUseCase
+import com.boxy.authenticator.helpers.Logger
 import com.boxy.authenticator.helpers.TokenEntryBuilder
 import com.boxy.authenticator.helpers.TokenFormValidator
 import com.boxy.authenticator.utils.AccountEntryMethod
@@ -23,11 +26,11 @@ import com.boxy.authenticator.utils.TokenNameExistsException
 import com.boxy.authenticator.utils.TokenSetupMode
 import com.boxy.authenticator.utils.cleanSecretKey
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.getString
 
 class TokenSetupViewModel(
     private val insertTokenUseCase: InsertTokenUseCase,
+    private val updateTokenInfoUseCase: UpdateTokenInfoUseCase,
     private val deleteTokenUseCase: DeleteTokenUseCase,
     private val replaceExistingTokenUseCase: ReplaceExistingTokenUseCase,
     private val formValidator: TokenFormValidator,
@@ -228,7 +231,7 @@ class TokenSetupViewModel(
             try {
                 val otpInfo = buildOtpInfo()
 
-                val token = when (tokenSetupMode) {
+                when (tokenSetupMode) {
                     TokenSetupMode.NEW,
                     TokenSetupMode.URL,
                         -> {
@@ -244,45 +247,58 @@ class TokenSetupViewModel(
                             newToken = newToken.copy(addedFrom = AccountEntryMethod.QR_CODE)
                         }
 
-                        newToken
+                        insertToken(newToken, event)
                     }
 
                     TokenSetupMode.UPDATE -> {
-                        tokenToUpdate?.copy(
-                            issuer = state.issuer,
-                            label = state.label,
-                            thumbnail = state.thumbnail,
-                            updatedOn = Clock.System.now().toEpochMilliseconds()
-                        ) ?: throw IllegalStateException("No token ID available for update")
+                        val token = tokenToUpdate
+                            ?: throw IllegalStateException("No token ID available for update")
+
+                        updateToken(token.id, state.issuer, state.label, state.thumbnail, event)
                     }
                 }
-                onValidationSuccess(token, event)
             } catch (e: Exception) {
-                print(e)
+                Logger.e(TAG, "validateInputs: Exception while validating", e)
             }
         }
     }
 
-    private fun onValidationSuccess(
+    private fun insertToken(
         token: TokenEntry,
         event: TokenFormEvent.Submit,
     ) {
-        viewModelScope.launch {
-            insertTokenUseCase(token, true)
-                .fold(
-                    onSuccess = {
-                        event.onComplete()
-                    },
-                    onFailure = { exception ->
-                        if (exception is TokenNameExistsException) {
-                            exception.token?.let { event.onDuplicate(token, it) }
-                        } else {
-                            print(exception)
-                            // TODO: display a error
-                        }
-                    }
-                )
-        }
+        println("inserting new token")
+        insertTokenUseCase(token)
+            .onSuccess { event.onComplete() }
+            .onFailure { exception ->
+                Logger.e(TAG, "insertToken: Failed to insert token", exception)
+
+                if (exception is TokenNameExistsException) {
+                    exception.token?.let { event.onDuplicate(token, it) }
+                } else {
+                    // TODO: display a error
+                }
+            }
+    }
+
+    private fun updateToken(
+        tokenId: String,
+        issuer: String,
+        label: String,
+        thumbnail: Thumbnail,
+        event: TokenFormEvent.Submit,
+    ) {
+        println("updating token")
+        updateTokenInfoUseCase(tokenId, issuer, label, thumbnail)
+            .fold(
+                onSuccess = {
+                    event.onComplete()
+                },
+                onFailure = { exception ->
+                    print(exception)
+                    // TODO: display a error
+                }
+            )
     }
 
     private fun updateFieldVisibilityState(state: TokenFormState): TokenFormState {
@@ -338,5 +354,9 @@ class TokenSetupViewModel(
         viewModelScope.launch {
             replaceExistingTokenUseCase(existingToken, token)
         }
+    }
+
+    companion object {
+        private const val TAG = "TokenSetupViewModel"
     }
 }

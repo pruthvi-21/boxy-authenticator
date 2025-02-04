@@ -1,17 +1,12 @@
 package com.boxy.authenticator.domain.usecases
 
 import com.boxy.authenticator.data.models.TokenEntry
-import com.boxy.authenticator.data.repositories.TokensRepository
+import com.boxy.authenticator.domain.repository.TokenRepository
 
 class FetchTokensUseCase(
-    private val tokensRepository: TokensRepository
+    private val tokenRepository: TokenRepository
 ) {
-    suspend operator fun invoke(): Result<List<TokenEntry>> {
-        return try {
-            val tokens = tokensRepository.getAllTokens()
-            Result.success(tokens)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    operator fun invoke(): Result<List<TokenEntry>> = runCatching {
+        tokenRepository.getAllTokens()
     }
 }
