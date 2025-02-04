@@ -5,6 +5,8 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import com.boxy.authenticator.db.TokenDatabase
 
 actual class DatabaseDriverFactory {
-    actual fun create(): SqlDriver =
-        NativeSqliteDriver(TokenDatabase.Schema, "TokenDatabase")
+    actual fun create(): SqlDriver {
+        // Todo: encrypt database
+        return NativeSqliteDriver(TokenDatabase.Schema, "TokenDatabase")
+    }
 }

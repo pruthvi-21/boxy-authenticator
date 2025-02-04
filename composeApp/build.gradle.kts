@@ -39,8 +39,9 @@ kotlin {
             implementation(libs.androidx.preference.ktx)
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
-            implementation(libs.android.driver)
+            implementation(libs.sqldelight.android.driver)
             implementation(libs.guava)
+            implementation(libs.android.database.sqlcipher)
         }
         commonMain.dependencies {
             implementation(projects.preferences)
@@ -57,7 +58,7 @@ kotlin {
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-            implementation(libs.runtime)
+            implementation(libs.sqldelight.runtime)
 
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
@@ -75,7 +76,7 @@ kotlin {
             implementation(libs.filekit)
         }
         iosMain.dependencies {
-            implementation(libs.native.driver)
+            implementation(libs.sqldelight.native.driver)
         }
     }
 }

@@ -3,6 +3,7 @@ agp = "8.5.2"
 android-compileSdk = "34"
 android-minSdk = "26"
 android-targetSdk = "34"
+androidDatabaseSqlcipher = "4.5.4"
 androidx-activityCompose = "1.9.3"
 androidx-lifecycle = "2.8.4"
 androidx-material3 = "1.12.0"
@@ -27,7 +28,7 @@ qrKit = "3.0.6"
 sqlDelight = "2.0.2"
 
 [libraries]
-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
+android-database-sqlcipher = { module = "net.zetetic:android-database-sqlcipher", version.ref = "androidDatabaseSqlcipher" }
 androidx-material3 = { group = "com.google.android.material", name = "material", version.ref = "androidx-material3" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
@@ -52,8 +53,9 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
 moko-biometry = { module = "dev.icerock.moko:biometry", version.ref = "mokoBiometry" }
 moko-biometry-compose = { module = "dev.icerock.moko:biometry-compose", version.ref = "mokoBiometry" }
-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
+sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
+sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
 qr-kit = { module = "network.chaintech:qr-kit", version.ref = "qrKit" }
 
 [plugins]
