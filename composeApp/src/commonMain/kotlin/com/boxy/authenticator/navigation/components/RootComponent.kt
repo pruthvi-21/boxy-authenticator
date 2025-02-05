@@ -8,7 +8,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
-import com.boxy.authenticator.data.models.TokenEntry
+import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.navigation.components.RootComponent.Child
 import com.boxy.authenticator.navigation.components.RootComponent.Configuration
 import kotlinx.serialization.Serializable

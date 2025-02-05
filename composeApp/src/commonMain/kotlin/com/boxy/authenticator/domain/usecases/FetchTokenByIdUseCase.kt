@@ -1,7 +1,7 @@
 package com.boxy.authenticator.domain.usecases
 
-import com.boxy.authenticator.data.models.TokenEntry
-import com.boxy.authenticator.domain.repository.TokenRepository
+import com.boxy.authenticator.domain.models.TokenEntry
+import com.boxy.authenticator.domain.database.repository.TokenRepository
 
 class FetchTokenByIdUseCase(
     private val tokenRepository: TokenRepository,

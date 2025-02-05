@@ -1,6 +1,6 @@
 package com.boxy.authenticator.utils
 
-import com.boxy.authenticator.data.models.TokenEntry
+import com.boxy.authenticator.domain.models.TokenEntry
 
 class InvalidSecretKeyException(msg: String? = "") : Exception(msg)
 

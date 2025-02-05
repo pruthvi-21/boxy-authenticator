@@ -9,8 +9,8 @@ import boxy_authenticator.composeapp.generated.resources.biometric_prompt_title
 import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.incorrect_password
 import boxy_authenticator.composeapp.generated.resources.to_unlock
-import com.boxy.authenticator.helpers.AppSettings
-import com.boxy.authenticator.helpers.Logger
+import com.boxy.authenticator.core.AppSettings
+import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.utils.HashUtils
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc

@@ -10,8 +10,8 @@ import boxy_authenticator.composeapp.generated.resources.export_accounts_summary
 import boxy_authenticator.composeapp.generated.resources.import_accounts
 import boxy_authenticator.composeapp.generated.resources.import_accounts_summary
 import boxy_authenticator.composeapp.generated.resources.preference_category_transfer_accounts
-import com.boxy.authenticator.data.models.TokenEntry
-import com.boxy.authenticator.helpers.Logger
+import com.boxy.authenticator.domain.models.TokenEntry
+import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.ui.viewmodels.TransferAccountsViewModel
 import com.jw.preferences.Preference
 import com.jw.preferences.PreferenceCategory

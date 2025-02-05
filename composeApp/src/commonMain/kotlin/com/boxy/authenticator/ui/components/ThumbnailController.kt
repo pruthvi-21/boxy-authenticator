@@ -31,9 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.boxy.authenticator.data.models.Thumbnail
+import com.boxy.authenticator.domain.models.Thumbnail
+import com.boxy.authenticator.domain.models.enums.ThumbnailIcon
 import com.boxy.authenticator.utils.Constants.THUMBNAIL_COlORS
-import com.boxy.authenticator.utils.ThumbnailIcon
 import com.boxy.authenticator.utils.Utils.toColor
 
 @Composable

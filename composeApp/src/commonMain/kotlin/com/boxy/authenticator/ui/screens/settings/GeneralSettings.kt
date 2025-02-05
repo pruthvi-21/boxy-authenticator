@@ -12,8 +12,8 @@ import boxy_authenticator.composeapp.generated.resources.preference_summary_use_
 import boxy_authenticator.composeapp.generated.resources.preference_title_token_tap_response
 import boxy_authenticator.composeapp.generated.resources.preference_title_use_pin
 import boxy_authenticator.composeapp.generated.resources.single_tap
+import com.boxy.authenticator.domain.models.enums.TokenTapResponse
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
-import com.boxy.authenticator.utils.TokenTapResponse
 import com.jw.preferences.DropDownPreference
 import com.jw.preferences.PreferenceCategory
 import com.jw.preferences.SwitchPreference

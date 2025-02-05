@@ -4,26 +4,26 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.boxy.authenticator.data.models.Thumbnail
-import com.boxy.authenticator.data.models.TokenEntry
-import com.boxy.authenticator.data.models.otp.HotpInfo
-import com.boxy.authenticator.data.models.otp.OtpInfo
-import com.boxy.authenticator.data.models.otp.SteamInfo
-import com.boxy.authenticator.data.models.otp.TotpInfo
-import com.boxy.authenticator.domain.models.TokenFormEvent
-import com.boxy.authenticator.domain.models.TokenFormState
+import com.boxy.authenticator.core.Logger
+import com.boxy.authenticator.core.TokenEntryParser
+import com.boxy.authenticator.core.TokenFormValidator
+import com.boxy.authenticator.core.encoding.Base32
+import com.boxy.authenticator.domain.models.Thumbnail
+import com.boxy.authenticator.domain.models.TokenEntry
+import com.boxy.authenticator.domain.models.enums.AccountEntryMethod
+import com.boxy.authenticator.domain.models.enums.OTPType
+import com.boxy.authenticator.domain.models.enums.TokenSetupMode
+import com.boxy.authenticator.domain.models.form.TokenFormEvent
+import com.boxy.authenticator.domain.models.form.TokenFormState
+import com.boxy.authenticator.domain.models.otp.HotpInfo
+import com.boxy.authenticator.domain.models.otp.OtpInfo
+import com.boxy.authenticator.domain.models.otp.SteamInfo
+import com.boxy.authenticator.domain.models.otp.TotpInfo
 import com.boxy.authenticator.domain.usecases.DeleteTokenUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
 import com.boxy.authenticator.domain.usecases.UpdateTokenInfoUseCase
-import com.boxy.authenticator.helpers.Logger
-import com.boxy.authenticator.helpers.TokenEntryBuilder
-import com.boxy.authenticator.helpers.TokenFormValidator
-import com.boxy.authenticator.utils.AccountEntryMethod
-import com.boxy.authenticator.utils.Base32
-import com.boxy.authenticator.utils.OTPType
 import com.boxy.authenticator.utils.TokenNameExistsException
-import com.boxy.authenticator.utils.TokenSetupMode
 import com.boxy.authenticator.utils.cleanSecretKey
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -61,7 +61,7 @@ class TokenSetupViewModel(
 
     fun setInitialStateFromUrl(authUrl: String) {
         tokenSetupMode = TokenSetupMode.URL
-        setStateFromToken(TokenEntryBuilder.buildFromUrl(authUrl))
+        setStateFromToken(TokenEntryParser.buildFromUrl(authUrl))
     }
 
     private fun setStateFromToken(token: TokenEntry) {
@@ -200,7 +200,7 @@ class TokenSetupViewModel(
                             Base32.decode(uiState.value.secretKey),
                             state.algorithm,
                             state.digits.toInt(),
-                            state.period.toInt(),
+                            state.period.toLong(),
                         )
                     }
 
@@ -235,7 +235,7 @@ class TokenSetupViewModel(
                     TokenSetupMode.NEW,
                     TokenSetupMode.URL,
                         -> {
-                        var newToken = TokenEntryBuilder.buildNewToken(
+                        var newToken = TokenEntry.create(
                             issuer = state.issuer,
                             label = state.label,
                             thumbnail = state.thumbnail,

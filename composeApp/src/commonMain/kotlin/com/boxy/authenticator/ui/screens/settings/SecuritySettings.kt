@@ -11,7 +11,7 @@ import boxy_authenticator.composeapp.generated.resources.preference_title_app_lo
 import boxy_authenticator.composeapp.generated.resources.preference_title_biometrics
 import boxy_authenticator.composeapp.generated.resources.preference_title_block_screenshots
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
-import com.boxy.authenticator.Platform
+import com.boxy.authenticator.core.Platform
 import com.boxy.authenticator.ui.components.dialogs.RemovePasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.jw.preferences.PreferenceCategory

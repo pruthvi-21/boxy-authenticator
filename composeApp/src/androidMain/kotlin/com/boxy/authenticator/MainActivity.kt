@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.arkivanov.decompose.retainedComponent
-import com.boxy.authenticator.helpers.AppSettings
+import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.navigation.components.DefaultRootComponent
 import com.boxy.authenticator.navigation.components.RootComponent
 import io.github.vinceglb.filekit.core.FileKit

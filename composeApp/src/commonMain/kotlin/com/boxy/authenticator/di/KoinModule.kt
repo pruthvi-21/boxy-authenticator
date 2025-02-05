@@ -1,11 +1,11 @@
 package com.boxy.authenticator.di
 
 import com.boxy.authenticator.data.database.DatabaseDriverFactory
-import com.boxy.authenticator.data.database.LocalTokenDao
-import com.boxy.authenticator.data.repositories.LocalTokenRepository
+import com.boxy.authenticator.data.database.dao.LocalTokenDao
+import com.boxy.authenticator.data.database.repository.LocalTokenRepository
 import com.boxy.authenticator.db.TokenDatabase
-import com.boxy.authenticator.domain.dao.TokenDao
-import com.boxy.authenticator.domain.repository.TokenRepository
+import com.boxy.authenticator.domain.database.dao.TokenDao
+import com.boxy.authenticator.domain.database.repository.TokenRepository
 import com.boxy.authenticator.domain.usecases.DeleteTokenUseCase
 import com.boxy.authenticator.domain.usecases.FetchTokenByIdUseCase
 import com.boxy.authenticator.domain.usecases.FetchTokenByNameUseCase
@@ -14,8 +14,8 @@ import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokensUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
 import com.boxy.authenticator.domain.usecases.UpdateTokenInfoUseCase
-import com.boxy.authenticator.helpers.AppSettings
-import com.boxy.authenticator.helpers.TokenFormValidator
+import com.boxy.authenticator.core.AppSettings
+import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
@@ -23,7 +23,7 @@ import com.boxy.authenticator.ui.viewmodels.SetPasswordDialogViewModel
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import com.boxy.authenticator.ui.viewmodels.TransferAccountsViewModel
-import com.ps.tokky.ui.viewmodels.RemovePasswordDialogViewModel
+import com.boxy.authenticator.ui.viewmodels.RemovePasswordDialogViewModel
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import org.koin.compose.viewmodel.dsl.viewModel
 import org.koin.core.module.Module

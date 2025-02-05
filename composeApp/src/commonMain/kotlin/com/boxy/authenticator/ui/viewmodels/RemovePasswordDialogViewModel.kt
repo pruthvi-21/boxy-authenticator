@@ -1,4 +1,4 @@
-package com.ps.tokky.ui.viewmodels
+package com.boxy.authenticator.ui.viewmodels
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

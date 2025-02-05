@@ -8,7 +8,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import com.boxy.authenticator.utils.AppTheme
+import com.boxy.authenticator.domain.models.enums.AppTheme
 
 val LightColorScheme = lightColorScheme()
 val DarkColorScheme = darkColorScheme()

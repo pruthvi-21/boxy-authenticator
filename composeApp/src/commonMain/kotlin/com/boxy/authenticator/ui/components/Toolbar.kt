@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.cd_navigate_back
-import com.boxy.authenticator.Platform
+import com.boxy.authenticator.core.Platform
 import com.boxy.authenticator.utils.copy
 import com.boxy.authenticator.utils.top
 import org.jetbrains.compose.resources.stringResource

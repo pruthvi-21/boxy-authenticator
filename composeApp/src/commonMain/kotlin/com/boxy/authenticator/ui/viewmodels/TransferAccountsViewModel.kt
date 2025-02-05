@@ -2,13 +2,12 @@ package com.boxy.authenticator.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.boxy.authenticator.data.models.Thumbnail
-import com.boxy.authenticator.data.models.TokenEntry
-import com.boxy.authenticator.data.models.otp.OtpInfo
+import com.boxy.authenticator.core.serialization.BoxyJson
+import com.boxy.authenticator.domain.models.Thumbnail
+import com.boxy.authenticator.domain.models.TokenEntry
+import com.boxy.authenticator.domain.models.enums.AccountEntryMethod
+import com.boxy.authenticator.domain.models.otp.OtpInfo
 import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
-import com.boxy.authenticator.helpers.TokenEntryBuilder.buildNewToken
-import com.boxy.authenticator.helpers.serializers.BoxyJson
-import com.boxy.authenticator.utils.AccountEntryMethod
 import com.boxy.authenticator.utils.Constants
 import io.github.vinceglb.filekit.core.FileKit
 import io.github.vinceglb.filekit.core.pickFile
@@ -29,7 +28,7 @@ data class ExportableTokenEntry(
     val otpInfo: OtpInfo,
 ) {
     fun toTokenEntry(): TokenEntry {
-        return buildNewToken(
+        return TokenEntry.create(
             issuer = issuer,
             label = label,
             thumbnail = thumbnail,

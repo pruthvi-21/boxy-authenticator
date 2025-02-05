@@ -10,11 +10,11 @@ import boxy_authenticator.composeapp.generated.resources.biometric_prompt_title
 import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.to_disable_biometrics
 import boxy_authenticator.composeapp.generated.resources.to_enable_biometrics
-import com.boxy.authenticator.helpers.AppSettings
-import com.boxy.authenticator.helpers.Logger
-import com.boxy.authenticator.utils.AppTheme
+import com.boxy.authenticator.core.AppSettings
+import com.boxy.authenticator.core.Logger
+import com.boxy.authenticator.domain.models.enums.AppTheme
+import com.boxy.authenticator.domain.models.enums.TokenTapResponse
 import com.boxy.authenticator.utils.HashUtils
-import com.boxy.authenticator.utils.TokenTapResponse
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch

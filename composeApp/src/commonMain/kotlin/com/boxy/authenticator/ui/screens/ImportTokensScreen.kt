@@ -42,8 +42,8 @@ import boxy_authenticator.composeapp.generated.resources.import_label
 import boxy_authenticator.composeapp.generated.resources.proceed
 import boxy_authenticator.composeapp.generated.resources.rename
 import boxy_authenticator.composeapp.generated.resources.warning
-import com.boxy.authenticator.data.models.TokenEntry
-import com.boxy.authenticator.helpers.TokenFormValidator
+import com.boxy.authenticator.domain.models.TokenEntry
+import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.navigation.components.ImportTokensScreenComponent
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.TokkyButton

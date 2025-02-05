@@ -3,7 +3,7 @@ package com.boxy.authenticator.navigation.components
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
-import com.boxy.authenticator.data.models.TokenEntry
+import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.navigation.components.RootComponent.Configuration
 import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
 import org.koin.core.component.KoinComponent

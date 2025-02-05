@@ -12,7 +12,7 @@ import boxy_authenticator.composeapp.generated.resources.enter_correct_password
 import boxy_authenticator.composeapp.generated.resources.password
 import boxy_authenticator.composeapp.generated.resources.remove_password
 import com.boxy.authenticator.ui.components.StyledTextField
-import com.ps.tokky.ui.viewmodels.RemovePasswordDialogViewModel
+import com.boxy.authenticator.ui.viewmodels.RemovePasswordDialogViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI

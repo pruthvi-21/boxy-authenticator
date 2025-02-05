@@ -4,7 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
-import com.boxy.authenticator.data.models.TokenEntry
+import com.boxy.authenticator.domain.models.TokenEntry
 
 class SettingsScreenComponent(
     componentContext: ComponentContext,

@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import boxy_authenticator.composeapp.generated.resources.Res
 import coil3.compose.AsyncImage
-import com.boxy.authenticator.data.models.Thumbnail
+import com.boxy.authenticator.domain.models.Thumbnail
 import com.boxy.authenticator.utils.Constants.THUMBNAIL_ICON_PATH
 import com.boxy.authenticator.utils.Utils.toColor
 import org.jetbrains.compose.resources.ExperimentalResourceApi

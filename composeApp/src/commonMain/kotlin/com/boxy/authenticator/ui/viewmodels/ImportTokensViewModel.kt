@@ -3,7 +3,7 @@ package com.boxy.authenticator.ui.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.boxy.authenticator.data.models.TokenEntry
+import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.usecases.FetchTokenByNameUseCase
 import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokensUseCase

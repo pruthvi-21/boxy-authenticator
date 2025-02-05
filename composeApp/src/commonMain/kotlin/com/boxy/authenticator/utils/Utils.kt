@@ -1,7 +1,7 @@
 package com.boxy.authenticator.utils
 
 import androidx.compose.ui.graphics.Color
-import com.boxy.authenticator.data.models.TokenEntry
+import com.boxy.authenticator.domain.models.TokenEntry
 
 object Utils {
     fun isValidTOTPAuthURL(url: String?): Boolean {
