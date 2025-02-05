@@ -38,11 +38,12 @@ object TokenEntryParser {
         val type = uri.host.let { OTPType.valueOf(it.uppercase()) }
 
         val issuer = params["issuer"] ?: ""
-        var label = uri.encodedPath.substring(1)
+        var label = uri.encodedPath.substring(1).decodeURLPart()
 
         if (label.startsWith("$issuer:")) label = label.substringAfter("$issuer:")
 
-        val secret = params["secret"]?.cleanSecretKey() ?: ""
+        val secret = params["secret"]?.cleanSecretKey()
+            ?: throw BadlyFormedURLException("missing secret")
         val secretDecoded = Base32.decode(secret)
         val algorithm = params["algorithm"] ?: DEFAULT_ALGORITHM
         val digits = params["digits"]?.toInt() ?: DEFAULT_DIGITS

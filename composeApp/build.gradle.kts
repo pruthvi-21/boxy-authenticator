@@ -78,6 +78,11 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
         }
+
+        // Tests
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }
 

@@ -6,9 +6,8 @@ import com.boxy.authenticator.domain.models.TokenEntry
 object Utils {
     fun isValidTOTPAuthURL(url: String?): Boolean {
         url ?: return false
-        //TODO: need to find the regex
-        val regex = Regex("")
-        return true
+        //TODO: need to add more validations
+        return url.startsWith("otpauth://")
     }
 
     fun String.toColor(): Color {
