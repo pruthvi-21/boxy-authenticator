@@ -13,8 +13,8 @@ object OtpGenerator {
      * @param period The time step in seconds.
      * @return Generated OTP.
      */
-    fun generateTotp(secret: ByteArray, algo: String, period: Long): Int {
-        val currentTime = Clock.System.now().toEpochMilliseconds() / 1000
+    fun generateTotp(secret: ByteArray, algo: String, period: Long, time: Long): Int {
+        val currentTime = time / 1000
         val counter = floor(currentTime.toDouble() / period).toLong()
         return generateHotp(secret, algo, counter)
     }

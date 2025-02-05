@@ -23,7 +23,8 @@ open class TotpInfo(
 ) : OtpInfo() {
 
     override fun getOtp(): String {
-        val otp = OtpGenerator.generateTotp(secretKey, algorithm, period)
+        val time = Clock.System.now().toEpochMilliseconds()
+        val otp = OtpGenerator.generateTotp(secretKey, algorithm, period, time)
         return "$otp".takeLast(digits).padStart(digits, '0')
     }
 
