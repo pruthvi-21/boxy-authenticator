@@ -18,6 +18,7 @@ data class TokenFormState(
     val period: String = "$DEFAULT_PERIOD",
     val digits: String = "$DEFAULT_DIGITS",
     val counter: String = "$DEFAULT_COUNTER",
+    val isInEditMode: Boolean = false,
     val enableAdvancedOptions: Boolean = false,
     val isAlgorithmFieldVisible: Boolean = true,
     val isDigitsFieldVisible: Boolean = true,

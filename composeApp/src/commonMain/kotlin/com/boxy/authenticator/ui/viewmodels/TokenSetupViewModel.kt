@@ -71,13 +71,21 @@ class TokenSetupViewModel(
             thumbnail = token.thumbnail,
             secretKey = Base32.encode(token.otpInfo.secretKey),
             algorithm = token.otpInfo.algorithm,
-            digits = token.otpInfo.digits.toString()
+            digits = token.otpInfo.digits.toString(),
+            isInEditMode = true,
         )
 
         tokenState = when (token.otpInfo) {
-            is HotpInfo -> tokenState.copy(counter = token.otpInfo.counter.toString())
-            is SteamInfo -> tokenState
-            is TotpInfo -> tokenState.copy(period = token.otpInfo.period.toString())
+            is HotpInfo -> tokenState.copy(
+                type = OTPType.HOTP,
+                counter = token.otpInfo.counter.toString()
+            )
+
+            is SteamInfo -> tokenState.copy(type = OTPType.STEAM)
+            is TotpInfo -> tokenState.copy(
+                type = OTPType.TOTP,
+                period = token.otpInfo.period.toString()
+            )
         }
         tokenState = updateFieldVisibilityState(tokenState)
 

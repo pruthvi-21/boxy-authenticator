@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -43,6 +44,7 @@ fun StyledTextField(
     readOnly: Boolean = false,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
+    enabled: Boolean = true,
     containerModifier: Modifier = Modifier,
     modifier: Modifier = Modifier,
 ) {
@@ -58,6 +60,7 @@ fun StyledTextField(
                 fontSize = 14.sp,
                 modifier = Modifier
                     .padding(vertical = 2.dp, horizontal = 15.dp)
+                    .alpha(if (enabled) 1f else 0.38f)
             )
         }
         OutlinedTextField(
@@ -75,6 +78,7 @@ fun StyledTextField(
                 errorContainerColor = MaterialTheme.colorScheme.errorContainer,
                 errorIndicatorColor = Color.Transparent,
                 errorTextColor = MaterialTheme.colorScheme.onErrorContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(0.6f),
                 disabledIndicatorColor = Color.Transparent,
             ),
             readOnly = readOnly,
@@ -87,7 +91,10 @@ fun StyledTextField(
                     val description = if (showPassword.value) stringResource(Res.string.cd_hide_password)
                     else stringResource(Res.string.cd_show_password)
 
-                    IconButton(onClick = { showPassword.value = !showPassword.value }) {
+                    IconButton(
+                        onClick = { showPassword.value = !showPassword.value },
+                        enabled = enabled,
+                    ) {
                         Icon(
                             imageVector = image,
                             contentDescription = description
@@ -106,6 +113,7 @@ fun StyledTextField(
             supportingText = if (hasError) {
                 { Text(errorMessage!!) }
             } else null,
+            enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .then(modifier)

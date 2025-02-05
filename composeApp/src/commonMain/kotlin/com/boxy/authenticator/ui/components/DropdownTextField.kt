@@ -25,6 +25,7 @@ fun DropdownTextField(
     values: List<String>,
     defaultValue: String = "",
     onItemSelected: (String) -> Unit,
+    enabled: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -33,7 +34,7 @@ fun DropdownTextField(
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = {
-            expanded = !expanded
+            if (enabled) expanded = !expanded
         },
         modifier = modifier
     ) {
@@ -47,6 +48,7 @@ fun DropdownTextField(
                     expanded = expanded
                 )
             },
+            enabled = enabled,
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
         )
         ExposedDropdownMenu(

@@ -75,9 +75,9 @@ import boxy_authenticator.composeapp.generated.resources.type
 import boxy_authenticator.composeapp.generated.resources.yes
 import com.boxy.authenticator.domain.models.enums.OTPType
 import com.boxy.authenticator.domain.models.enums.TokenSetupMode
+import com.boxy.authenticator.domain.models.form.TokenFormEvent
 import com.boxy.authenticator.domain.models.otp.OtpInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
-import com.boxy.authenticator.domain.models.form.TokenFormEvent
 import com.boxy.authenticator.navigation.components.TokenSetupScreenComponent
 import com.boxy.authenticator.ui.components.DropdownTextField
 import com.boxy.authenticator.ui.components.StyledTextField
@@ -272,31 +272,30 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                if (tokenSetupMode == TokenSetupMode.NEW) {
-                    // Secret Key Field
-                    StyledTextField(
-                        value = state.secretKey,
-                        onValueChange = {
-                            tokenSetupViewModel.onEvent(TokenFormEvent.SecretKeyChanged(it))
-                        },
-                        label = stringResource(Res.string.label_secret_key),
-                        placeholder = stringResource(Res.string.hint_secret_key),
-                        isPasswordField = true,
-                        errorMessage = state.validationErrors["secretKey"],
-                    )
+                // Secret Key Field
+                StyledTextField(
+                    value = state.secretKey,
+                    onValueChange = {
+                        tokenSetupViewModel.onEvent(TokenFormEvent.SecretKeyChanged(it))
+                    },
+                    label = stringResource(Res.string.label_secret_key),
+                    placeholder = stringResource(Res.string.hint_secret_key),
+                    isPasswordField = true,
+                    errorMessage = state.validationErrors["secretKey"],
+                    enabled = !state.isInEditMode,
+                )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    FormAdvancedOptions(
-                        onShowAdvancedOptions = {
-                            keyboardController?.hide()
-                            tokenSetupViewModel.onEvent(
-                                TokenFormEvent.EnableAdvancedOptionsChanged(it)
-                            )
-                        },
-                        tokenSetupViewModel = tokenSetupViewModel,
-                    )
-                }
+                FormAdvancedOptions(
+                    onShowAdvancedOptions = {
+                        keyboardController?.hide()
+                        tokenSetupViewModel.onEvent(
+                            TokenFormEvent.EnableAdvancedOptionsChanged(it)
+                        )
+                    },
+                    tokenSetupViewModel = tokenSetupViewModel,
+                )
             }
 
             val buttonText =
@@ -391,6 +390,7 @@ fun FormAdvancedOptions(
                                 TokenFormEvent.TypeChanged(OTPType.valueOf(it))
                             )
                         },
+                        enabled = !state.isInEditMode,
                         modifier = Modifier.weight(1f),
                     )
 
@@ -403,6 +403,7 @@ fun FormAdvancedOptions(
                             onItemSelected = {
                                 tokenSetupViewModel.onEvent(TokenFormEvent.AlgorithmChanged(it))
                             },
+                            enabled = !state.isInEditMode,
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -418,6 +419,7 @@ fun FormAdvancedOptions(
                             onItemSelected = {
                                 tokenSetupViewModel.onEvent(TokenFormEvent.DigitsChanged(it))
                             },
+                            enabled = !state.isInEditMode,
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -435,6 +437,7 @@ fun FormAdvancedOptions(
                                 keyboardType = KeyboardType.Number,
                             ),
                             containerModifier = Modifier.weight(1f),
+                            enabled = !state.isInEditMode,
                         )
                     }
 
