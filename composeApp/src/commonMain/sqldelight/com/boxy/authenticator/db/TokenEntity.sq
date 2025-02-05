@@ -35,3 +35,8 @@ SET issuer = ?,
     thumbnail = ?,
     updatedOn = ?
 WHERE id = ?;
+
+updateHotpInfo:
+UPDATE token_entry
+SET otpInfo = ?
+WHERE id = ?;

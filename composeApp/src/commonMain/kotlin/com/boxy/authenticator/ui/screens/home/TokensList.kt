@@ -75,6 +75,7 @@ import com.boxy.authenticator.domain.models.enums.TokenTapResponse
 import com.boxy.authenticator.domain.models.otp.HotpInfo
 import com.boxy.authenticator.domain.models.otp.SteamInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo
+import com.boxy.authenticator.domain.usecases.UpdateHotpCounterUseCase
 import com.boxy.authenticator.ui.components.BoxProgressBar
 import com.boxy.authenticator.ui.components.TokenThumbnail
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
@@ -84,6 +85,7 @@ import com.boxy.authenticator.utils.name
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -221,7 +223,7 @@ fun TokenCard(
             )
         ) {
             when (token.otpInfo) {
-                is HotpInfo -> HOTPFieldView(token.otpInfo)
+                is HotpInfo -> HOTPFieldView(token.id, token.otpInfo)
                 is TotpInfo -> TOTPFieldView(token.otpInfo)
             }
         }
@@ -229,9 +231,12 @@ fun TokenCard(
 }
 
 @Composable
-private fun HOTPFieldView(otpInfo: HotpInfo) {
+private fun HOTPFieldView(tokenId: String, otpInfo: HotpInfo) {
     var counter by remember { mutableLongStateOf(otpInfo.counter) }
     var otp by remember { mutableStateOf(otpInfo.getOtp()) }
+    val scope = rememberCoroutineScope()
+
+    val updateHotpCounterUseCase: UpdateHotpCounterUseCase = koinInject()
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -251,11 +256,29 @@ private fun HOTPFieldView(otpInfo: HotpInfo) {
 
         Spacer(Modifier.weight(1f))
 
-        IconButton(onClick = {
-            otpInfo.incrementCounter()
-            counter = otpInfo.counter
-            otp = otpInfo.getOtp()
-        }) {
+        var isUpdating by remember { mutableStateOf(false) }
+        IconButton(
+            onClick = {
+                if (isUpdating) return@IconButton
+
+                scope.launch {
+                    isUpdating = true
+                    otpInfo.incrementCounter()
+                    updateHotpCounterUseCase(tokenId, otpInfo.counter)
+                        .onSuccess {
+                            counter = otpInfo.counter
+                            otp = otpInfo.getOtp()
+                            delay(1000)
+                            isUpdating = false
+                        }
+                        .onFailure {
+                            delay(500)
+                            isUpdating = false
+                        }
+                }
+            },
+            enabled = !isUpdating
+        ) {
             Icon(Icons.Rounded.Refresh, contentDescription = stringResource(Res.string.refresh))
         }
     }

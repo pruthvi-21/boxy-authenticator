@@ -20,4 +20,6 @@ interface TokenRepository {
     fun updateToken(tokenId: String, issuer: String, label: String, thumbnail: Thumbnail)
 
     fun replaceTokenWith(id: String, token: TokenEntry)
+
+    fun updateHotpCounter(tokenId: String, counter: Long)
 }

@@ -26,4 +26,6 @@ interface TokenDao {
     )
 
     fun replaceTokenWith(id: String, token: TokenEntry)
+
+    fun updateHotpCounter(tokenId: String, counter: Long)
 }

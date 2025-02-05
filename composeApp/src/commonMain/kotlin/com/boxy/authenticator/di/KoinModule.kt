@@ -16,6 +16,7 @@ import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
 import com.boxy.authenticator.domain.usecases.UpdateTokenInfoUseCase
 import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.TokenFormValidator
+import com.boxy.authenticator.domain.usecases.UpdateHotpCounterUseCase
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
@@ -54,6 +55,7 @@ val sharedModule = module {
     factory { InsertTokensUseCase(get()) }
     factory { ReplaceExistingTokenUseCase(get()) }
     factory { UpdateTokenInfoUseCase(get()) }
+    factory { UpdateHotpCounterUseCase(get()) }
 
     //Database
     single<TokenDatabase> {

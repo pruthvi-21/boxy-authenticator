@@ -44,4 +44,8 @@ class LocalTokenRepository(private val tokenDao: TokenDao) : TokenRepository {
     override fun replaceTokenWith(id: String, token: TokenEntry) {
         tokenDao.replaceTokenWith(id, token)
     }
+
+    override fun updateHotpCounter(tokenId: String, counter: Long) {
+        tokenDao.updateHotpCounter(tokenId, counter)
+    }
 }
