@@ -102,7 +102,7 @@ fun TokensList(
     val expandedStates = remember { mutableStateMapOf<TokenEntry, Boolean>() }
 
     val groupedAccounts = accounts
-        .sortedBy { it.name }
+        .sortedBy { it.name.lowercase() }
         .groupBy { it.name.first().uppercaseChar() }
 
     val cardShape = MaterialTheme.shapes.medium
