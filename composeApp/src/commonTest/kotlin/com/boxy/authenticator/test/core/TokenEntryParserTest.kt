@@ -1,4 +1,4 @@
-package com.boxy.authenticator.test
+package com.boxy.authenticator.test.core
 
 import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.core.encoding.Base32
