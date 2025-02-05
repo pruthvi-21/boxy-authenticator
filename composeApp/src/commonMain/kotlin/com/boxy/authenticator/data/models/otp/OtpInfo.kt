@@ -5,10 +5,6 @@ import com.boxy.authenticator.helpers.serializers.ByteArraySerializer
 import com.boxy.authenticator.utils.OtpInfoException
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.jsonObject
 
 @Serializable
 sealed class OtpInfo {
@@ -20,9 +16,9 @@ sealed class OtpInfo {
     @Throws(OtpInfoException::class)
     abstract fun getOtp(): String
 
-    open fun toJson(): JsonObject {
+    open fun serialize(): String {
         return try {
-            BoxyJson.encodeToJsonElement(this).jsonObject
+            BoxyJson.encodeToString(this)
         } catch (e: SerializationException) {
             throw SerializationException("Failed to serialize OtpInfo", e)
         }
@@ -48,9 +44,9 @@ sealed class OtpInfo {
         const val DEFAULT_DIGITS: Int = 6
         const val DEFAULT_ALGORITHM: String = "SHA1"
 
-        fun fromJson(jsonObject: JsonObject): OtpInfo {
+        fun deserialize(jsonString: String): OtpInfo {
             return try {
-                BoxyJson.decodeFromJsonElement(jsonObject)
+                BoxyJson.decodeFromString(jsonString)
             } catch (e: SerializationException) {
                 throw SerializationException("Failed to deserialize OtpInfo", e)
             }

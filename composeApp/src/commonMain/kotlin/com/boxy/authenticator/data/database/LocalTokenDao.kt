@@ -2,10 +2,12 @@ package com.boxy.authenticator.data.database
 
 import com.boxy.authenticator.data.models.Thumbnail
 import com.boxy.authenticator.data.models.TokenEntry
+import com.boxy.authenticator.data.models.otp.OtpInfo
 import com.boxy.authenticator.db.TokenDatabase
 import com.boxy.authenticator.db.TokenEntityQueries
 import com.boxy.authenticator.db.Token_entry
 import com.boxy.authenticator.domain.dao.TokenDao
+import com.boxy.authenticator.utils.AccountEntryMethod
 
 class LocalTokenDao(database: TokenDatabase) : TokenDao {
     private val queries: TokenEntityQueries = database.tokenEntityQueries
@@ -55,7 +57,7 @@ class LocalTokenDao(database: TokenDatabase) : TokenDao {
             queries.updateToken(
                 issuer = issuer,
                 label = label,
-                thumbnail = Converters.fromThumbnail(thumbnail),
+                thumbnail = thumbnail.serialize(),
                 updatedOn = updatedOn,
                 id = tokenId
             )
@@ -74,11 +76,11 @@ private fun Token_entry.toTokenEntry() = TokenEntry(
     id = id,
     issuer = issuer,
     label = label,
-    thumbnail = Converters.toThumbnail(thumbnail),
-    otpInfo = Converters.toOtpInfo(Converters.toJsonObject(otpInfo)),
+    thumbnail = Thumbnail.deserialize(thumbnail),
+    otpInfo = OtpInfo.deserialize(otpInfo),
     createdOn = createdOn,
     updatedOn = updatedOn,
-    addedFrom = Converters.toAccountEntryMethod(addedFrom)
+    addedFrom = AccountEntryMethod.valueOf(addedFrom),
 )
 
 private fun TokenEntityQueries.insertTokenEntry(token: TokenEntry) {
@@ -86,10 +88,10 @@ private fun TokenEntityQueries.insertTokenEntry(token: TokenEntry) {
         id = token.id,
         issuer = token.issuer,
         label = token.label,
-        thumbnail = Converters.fromThumbnail(token.thumbnail),
-        otpInfo = Converters.fromJsonObject(Converters.fromOtpInfo(token.otpInfo)),
+        thumbnail = token.thumbnail.serialize(),
+        otpInfo = token.otpInfo.serialize(),
         createdOn = token.createdOn,
         updatedOn = token.updatedOn,
-        addedFrom = Converters.fromAccountEntryMethod(token.addedFrom)
+        addedFrom = token.addedFrom.name,
     )
 }

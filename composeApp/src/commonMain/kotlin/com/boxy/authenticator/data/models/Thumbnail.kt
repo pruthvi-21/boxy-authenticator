@@ -11,9 +11,9 @@ sealed class Thumbnail {
 
     data class Icon(val icon: ThumbnailIcon) : Thumbnail()
 
-    override fun toString(): String = BoxyJson.encodeToString(this)
+    fun serialize(): String = BoxyJson.encodeToString(this)
 
     companion object {
-        fun fromString(str: String): Thumbnail = BoxyJson.decodeFromString(str)
+        fun deserialize(str: String): Thumbnail = BoxyJson.decodeFromString(str)
     }
 }
