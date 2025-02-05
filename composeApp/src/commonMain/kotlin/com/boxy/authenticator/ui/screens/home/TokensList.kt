@@ -81,6 +81,7 @@ import com.boxy.authenticator.ui.components.TokenThumbnail
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.formatOTP
 import com.boxy.authenticator.utils.getInitials
+import com.boxy.authenticator.utils.moveRight
 import com.boxy.authenticator.utils.name
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -250,11 +251,12 @@ private fun HOTPFieldView(tokenId: String, otpInfo: HotpInfo) {
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.5f),
             textAlign = TextAlign.Center,
-            modifier = Modifier.width(37.5.dp)
+            modifier = Modifier.width(55.dp)
         )
-        OTPValueDisplay(value = otp)
-
-        Spacer(Modifier.weight(1f))
+        OTPValueDisplay(
+            value = otp,
+            modifier = Modifier.weight(1f),
+        )
 
         var isUpdating by remember { mutableStateOf(false) }
         IconButton(
@@ -277,7 +279,8 @@ private fun HOTPFieldView(tokenId: String, otpInfo: HotpInfo) {
                         }
                 }
             },
-            enabled = !isUpdating
+            enabled = !isUpdating,
+            modifier = Modifier.moveRight(15.dp)
         ) {
             Icon(Icons.Rounded.Refresh, contentDescription = stringResource(Res.string.refresh))
         }

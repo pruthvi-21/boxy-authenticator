@@ -1,6 +1,10 @@
 package com.boxy.authenticator.utils
 
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.boxy.authenticator.domain.models.TokenEntry
 
 object Utils {
@@ -52,6 +56,14 @@ fun String.getInitials(): String {
 
 fun String.cleanSecretKey(): String {
     return this.replace("\\s", "").uppercase()
+}
+
+fun Modifier.moveRight(dp: Dp = 0.dp) = this.layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    layout(
+        placeable.width - dp.toPx().toInt(),
+        placeable.height
+    ) { placeable.placeRelative(0, 0) }
 }
 
 val TokenEntry.name: String
