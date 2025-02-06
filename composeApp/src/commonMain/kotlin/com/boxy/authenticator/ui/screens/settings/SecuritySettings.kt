@@ -7,13 +7,15 @@ import boxy_authenticator.composeapp.generated.resources.preference_category_tit
 import boxy_authenticator.composeapp.generated.resources.preference_summary_app_lock
 import boxy_authenticator.composeapp.generated.resources.preference_summary_biometrics
 import boxy_authenticator.composeapp.generated.resources.preference_summary_block_screenshots
+import boxy_authenticator.composeapp.generated.resources.preference_summary_lock_sensitive_fields
 import boxy_authenticator.composeapp.generated.resources.preference_title_app_lock
 import boxy_authenticator.composeapp.generated.resources.preference_title_biometrics
 import boxy_authenticator.composeapp.generated.resources.preference_title_block_screenshots
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
+import boxy_authenticator.composeapp.generated.resources.preference_title_lock_sensitive_fields
 import com.boxy.authenticator.core.Platform
 import com.boxy.authenticator.ui.components.dialogs.RemovePasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
+import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.jw.preferences.PreferenceCategory
 import com.jw.preferences.SwitchPreference
 import org.jetbrains.compose.resources.stringResource
@@ -25,6 +27,7 @@ fun SecuritySettings() {
     val isAppLockEnabled = settingsViewModel.isAppLockEnabled.value
     val isBiometricUnlockEnabled = settingsViewModel.isBiometricUnlockEnabled.value
     val isBlockScreenshotsEnabled = settingsViewModel.isBlockScreenshotsEnabled.value
+    val isLockSensitiveFieldsEnabled = settingsViewModel.isLockSensitiveFieldsEnabled.value
 
     PreferenceCategory(
         title = { Text(stringResource(Res.string.preference_category_title_security)) },
@@ -51,7 +54,6 @@ fun SecuritySettings() {
             onValueChange = {
                 settingsViewModel.setBiometricUnlockEnabled(it)
             },
-            showDivider = Platform.isAndroid,
         )
         if (Platform.isAndroid) {
             SwitchPreference(
@@ -61,9 +63,17 @@ fun SecuritySettings() {
                 onValueChange = {
                     settingsViewModel.setBlockScreenshotsEnabled(it)
                 },
-                showDivider = false,
             )
         }
+        SwitchPreference(
+            title = { Text(stringResource(Res.string.preference_title_lock_sensitive_fields)) },
+            summary = { Text(stringResource(Res.string.preference_summary_lock_sensitive_fields)) },
+            value = isLockSensitiveFieldsEnabled,
+            onValueChange = {
+                settingsViewModel.setLockSensitiveFieldsEnabled(it)
+            },
+            showDivider = false,
+        )
     }
 
     if (settingsViewModel.showEnableAppLockDialog.value) {

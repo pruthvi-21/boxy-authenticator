@@ -9,7 +9,9 @@ import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.biometric_prompt_title
 import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.to_disable_biometrics
+import boxy_authenticator.composeapp.generated.resources.to_disable_this_setting
 import boxy_authenticator.composeapp.generated.resources.to_enable_biometrics
+import boxy_authenticator.composeapp.generated.resources.verify_your_identity
 import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.domain.models.enums.AppTheme
@@ -45,6 +47,9 @@ class SettingsViewModel(
     private val _isBlockScreenshotsEnabled = mutableStateOf(false)
     val isBlockScreenshotsEnabled: State<Boolean> = _isBlockScreenshotsEnabled
 
+    private val _isLockSensitiveFieldsEnabled = mutableStateOf(true)
+    val isLockSensitiveFieldsEnabled: State<Boolean> = _isLockSensitiveFieldsEnabled
+
     val showEnableAppLockDialog = mutableStateOf(false)
     val showDisableAppLockDialog = mutableStateOf(false)
 
@@ -69,6 +74,7 @@ class SettingsViewModel(
         _isAppLockEnabled.value = settings.isAppLockEnabled()
         _isBiometricUnlockEnabled.value = settings.isBiometricUnlockEnabled()
         _isBlockScreenshotsEnabled.value = settings.isBlockScreenshotsEnabled()
+        _isLockSensitiveFieldsEnabled.value = settings.isLockSensitiveFieldsEnabled()
     }
 
     fun setBiometricUnlockEnabled(enabled: Boolean) {
@@ -119,6 +125,32 @@ class SettingsViewModel(
     fun setBlockScreenshotsEnabled(enabled: Boolean) {
         settings.setBlockScreenshotsEnabled(enabled)
         _isBlockScreenshotsEnabled.value = enabled
+    }
+
+    fun setLockSensitiveFieldsEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            if (!enabled) {
+                if (biometryAuthenticator.isBiometricAvailable()) {
+                    promptForBiometrics(
+                        title = getString(Res.string.verify_your_identity),
+                        reason = getString(Res.string.to_disable_this_setting),
+                        failureButtonText = getString(Res.string.cancel),
+                        onComplete = {
+                            if (it) applyLockSensitiveSetting(false)
+                        }
+                    )
+                } else {
+                    applyLockSensitiveSetting(false)
+                }
+            } else {
+                applyLockSensitiveSetting(true)
+            }
+        }
+    }
+
+    private fun applyLockSensitiveSetting(enabled: Boolean) {
+        settings.setLockSensitiveFieldsEnabled(enabled)
+        _isLockSensitiveFieldsEnabled.value = enabled
     }
 
     fun setLockscreenPinPadEnabled(enabled: Boolean) {

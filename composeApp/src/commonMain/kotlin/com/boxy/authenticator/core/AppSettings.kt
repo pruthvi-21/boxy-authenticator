@@ -88,6 +88,18 @@ class AppSettings(
         }
     }
 
+    fun setLockSensitiveFieldsEnabled(enabled: Boolean) {
+        store.putBoolean(Keys.LOCK_SENSITIVE_FIELDS, enabled)
+    }
+
+    fun isLockSensitiveFieldsEnabled(default: Boolean = Defaults.LOCK_SENSITIVE_FIELDS): Boolean {
+        return try {
+            store.getBoolean(Keys.LOCK_SENSITIVE_FIELDS, default)
+        } catch (e: Exception) {
+            default
+        }
+    }
+
     fun getPasscodeHash(): String? {
         return store.getString(Keys.APP_LOCK_HASH, null)
     }
@@ -106,6 +118,7 @@ class AppSettings(
             const val APP_LOCK_HASH = "key_app_lock_hash"
             const val BIOMETRIC_UNLOCK = "key_biometric_unlock"
             const val BLOCK_SCREENSHOTS = "key_block_screenshots"
+            const val LOCK_SENSITIVE_FIELDS = "key_lock_sensitive_fields"
         }
 
         object Defaults {
@@ -120,6 +133,7 @@ class AppSettings(
             const val APP_LOCK = false
             const val BIOMETRIC_UNLOCK = false
             const val BLOCK_SCREENSHOTS = true
+            const val LOCK_SENSITIVE_FIELDS = true
         }
     }
 }

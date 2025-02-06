@@ -282,7 +282,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                     placeholder = stringResource(Res.string.hint_secret_key),
                     isPasswordField = true,
                     errorMessage = state.validationErrors["secretKey"],
-                    enabled = !state.isInEditMode,
+                    enabled = !tokenSetupViewModel.lockSensitiveFields,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -390,7 +390,7 @@ fun FormAdvancedOptions(
                                 TokenFormEvent.TypeChanged(OTPType.valueOf(it))
                             )
                         },
-                        enabled = !state.isInEditMode,
+                        enabled = !tokenSetupViewModel.lockSensitiveFields,
                         modifier = Modifier.weight(1f),
                     )
 
@@ -403,7 +403,7 @@ fun FormAdvancedOptions(
                             onItemSelected = {
                                 tokenSetupViewModel.onEvent(TokenFormEvent.AlgorithmChanged(it))
                             },
-                            enabled = !state.isInEditMode,
+                            enabled = !tokenSetupViewModel.lockSensitiveFields,
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -419,7 +419,7 @@ fun FormAdvancedOptions(
                             onItemSelected = {
                                 tokenSetupViewModel.onEvent(TokenFormEvent.DigitsChanged(it))
                             },
-                            enabled = !state.isInEditMode,
+                            enabled = !tokenSetupViewModel.lockSensitiveFields,
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -437,7 +437,7 @@ fun FormAdvancedOptions(
                                 keyboardType = KeyboardType.Number,
                             ),
                             containerModifier = Modifier.weight(1f),
-                            enabled = !state.isInEditMode,
+                            enabled = !tokenSetupViewModel.lockSensitiveFields,
                         )
                     }
 
@@ -454,6 +454,7 @@ fun FormAdvancedOptions(
                                 keyboardType = KeyboardType.Number,
                             ),
                             containerModifier = Modifier.weight(1f),
+                            enabled = !tokenSetupViewModel.lockSensitiveFields,
                         )
                     }
                 }

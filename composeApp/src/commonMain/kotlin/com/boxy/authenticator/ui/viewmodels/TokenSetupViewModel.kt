@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.core.TokenFormValidator
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 
 class TokenSetupViewModel(
+    private val settings: AppSettings,
     private val insertTokenUseCase: InsertTokenUseCase,
     private val updateTokenUseCase: UpdateTokenUseCase,
     private val deleteTokenUseCase: DeleteTokenUseCase,
@@ -41,6 +43,10 @@ class TokenSetupViewModel(
 
     var tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW
     private var tokenToUpdate: TokenEntry? = null
+
+    val lockSensitiveFields: Boolean
+        get() = mutableStateOf(settings.isLockSensitiveFieldsEnabled()).value
+                && uiState.value.isInEditMode
 
     val showBackPressDialog = mutableStateOf(false)
     val showDeleteTokenDialog = mutableStateOf(false)
@@ -258,17 +264,13 @@ class TokenSetupViewModel(
                     }
 
                     TokenSetupMode.UPDATE -> {
-                        var token = tokenToUpdate?.copy(
+                        val token = tokenToUpdate?.copy(
                             issuer = state.issuer,
                             label = state.label,
                             thumbnail = state.thumbnail,
+                            otpInfo = otpInfo,
                         )
                             ?: throw IllegalStateException("No token ID available for update")
-
-                        if (state.type == OTPType.HOTP) {
-                            // We only need to update otpinfo for HOTP as user may edit the counter
-                            token = token.copy(otpInfo = otpInfo)
-                        }
 
                         updateToken(token, event)
                     }
