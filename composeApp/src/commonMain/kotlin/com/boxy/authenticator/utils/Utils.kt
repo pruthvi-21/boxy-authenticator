@@ -34,14 +34,6 @@ object Utils {
     }
 }
 
-fun String.formatOTP(): String {
-    return this
-        .reversed()
-        .replace(".".repeat(3).toRegex(), "$0 ")
-        .trim()
-        .reversed()
-}
-
 fun String.getInitials(): String {
     if (isEmpty()) return "?"
     val words = trim().split("\\s+".toRegex())
