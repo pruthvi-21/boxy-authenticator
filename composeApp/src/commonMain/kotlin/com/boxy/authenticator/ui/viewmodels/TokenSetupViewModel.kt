@@ -8,7 +8,6 @@ import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.core.encoding.Base32
-import com.boxy.authenticator.domain.models.Thumbnail
 import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.models.enums.AccountEntryMethod
 import com.boxy.authenticator.domain.models.enums.OTPType
@@ -22,7 +21,7 @@ import com.boxy.authenticator.domain.models.otp.TotpInfo
 import com.boxy.authenticator.domain.usecases.DeleteTokenUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
-import com.boxy.authenticator.domain.usecases.UpdateTokenInfoUseCase
+import com.boxy.authenticator.domain.usecases.UpdateTokenUseCase
 import com.boxy.authenticator.utils.TokenNameExistsException
 import com.boxy.authenticator.utils.cleanSecretKey
 import kotlinx.coroutines.launch
@@ -30,7 +29,7 @@ import org.jetbrains.compose.resources.getString
 
 class TokenSetupViewModel(
     private val insertTokenUseCase: InsertTokenUseCase,
-    private val updateTokenInfoUseCase: UpdateTokenInfoUseCase,
+    private val updateTokenUseCase: UpdateTokenUseCase,
     private val deleteTokenUseCase: DeleteTokenUseCase,
     private val replaceExistingTokenUseCase: ReplaceExistingTokenUseCase,
     private val formValidator: TokenFormValidator,
@@ -259,10 +258,19 @@ class TokenSetupViewModel(
                     }
 
                     TokenSetupMode.UPDATE -> {
-                        val token = tokenToUpdate
+                        var token = tokenToUpdate?.copy(
+                            issuer = state.issuer,
+                            label = state.label,
+                            thumbnail = state.thumbnail,
+                        )
                             ?: throw IllegalStateException("No token ID available for update")
 
-                        updateToken(token.id, state.issuer, state.label, state.thumbnail, event)
+                        if (state.type == OTPType.HOTP) {
+                            // We only need to update otpinfo for HOTP as user may edit the counter
+                            token = token.copy(otpInfo = otpInfo)
+                        }
+
+                        updateToken(token, event)
                     }
                 }
             } catch (e: Exception) {
@@ -275,7 +283,6 @@ class TokenSetupViewModel(
         token: TokenEntry,
         event: TokenFormEvent.Submit,
     ) {
-        println("inserting new token")
         insertTokenUseCase(token)
             .onSuccess { event.onComplete() }
             .onFailure { exception ->
@@ -290,23 +297,15 @@ class TokenSetupViewModel(
     }
 
     private fun updateToken(
-        tokenId: String,
-        issuer: String,
-        label: String,
-        thumbnail: Thumbnail,
+        token: TokenEntry,
         event: TokenFormEvent.Submit,
     ) {
-        println("updating token")
-        updateTokenInfoUseCase(tokenId, issuer, label, thumbnail)
-            .fold(
-                onSuccess = {
-                    event.onComplete()
-                },
-                onFailure = { exception ->
-                    print(exception)
-                    // TODO: display a error
-                }
-            )
+        updateTokenUseCase(token)
+            .onSuccess { event.onComplete() }
+            .onFailure {
+                Logger.e(TAG, "updateToken: Failed to update token", it)
+                // TODO: display a error
+            }
     }
 
     private fun updateFieldVisibilityState(state: TokenFormState): TokenFormState {

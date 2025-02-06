@@ -47,20 +47,15 @@ class LocalTokenDao(database: TokenDatabase) : TokenDao {
         }
     }
 
-    override fun updateToken(
-        tokenId: String,
-        issuer: String,
-        label: String,
-        thumbnail: Thumbnail,
-        updatedOn: Long,
-    ) {
+    override fun updateToken(token: TokenEntry) {
         queries.transaction {
             queries.updateToken(
-                issuer = issuer,
-                label = label,
-                thumbnail = thumbnail.serialize(),
-                updatedOn = updatedOn,
-                id = tokenId
+                issuer = token.issuer,
+                label = token.label,
+                thumbnail = token.thumbnail.serialize(),
+                otpInfo = token.otpInfo.serialize(),
+                updatedOn = token.updatedOn,
+                id = token.id
             )
         }
     }

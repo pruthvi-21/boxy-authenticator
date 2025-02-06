@@ -13,7 +13,7 @@ import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokensUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
-import com.boxy.authenticator.domain.usecases.UpdateTokenInfoUseCase
+import com.boxy.authenticator.domain.usecases.UpdateTokenUseCase
 import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.domain.usecases.UpdateHotpCounterUseCase
@@ -54,7 +54,7 @@ val sharedModule = module {
     factory { InsertTokenUseCase(get()) }
     factory { InsertTokensUseCase(get()) }
     factory { ReplaceExistingTokenUseCase(get()) }
-    factory { UpdateTokenInfoUseCase(get()) }
+    factory { UpdateTokenUseCase(get()) }
     factory { UpdateHotpCounterUseCase(get()) }
 
     //Database

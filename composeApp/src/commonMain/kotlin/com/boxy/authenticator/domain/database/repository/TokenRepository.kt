@@ -1,6 +1,5 @@
 package com.boxy.authenticator.domain.database.repository
 
-import com.boxy.authenticator.domain.models.Thumbnail
 import com.boxy.authenticator.domain.models.TokenEntry
 
 interface TokenRepository {
@@ -17,7 +16,7 @@ interface TokenRepository {
 
     fun deleteToken(tokenId: String)
 
-    fun updateToken(tokenId: String, issuer: String, label: String, thumbnail: Thumbnail)
+    fun updateToken(token: TokenEntry)
 
     fun replaceTokenWith(id: String, token: TokenEntry)
 

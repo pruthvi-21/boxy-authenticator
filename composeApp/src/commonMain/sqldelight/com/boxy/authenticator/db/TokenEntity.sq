@@ -33,6 +33,7 @@ UPDATE token_entry
 SET issuer = ?,
     label = ?,
     thumbnail = ?,
+    otpInfo = ?,
     updatedOn = ?
 WHERE id = ?;
 

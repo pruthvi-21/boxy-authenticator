@@ -1,9 +1,8 @@
 package com.boxy.authenticator.data.database.repository
 
-import com.boxy.authenticator.domain.models.Thumbnail
-import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.database.dao.TokenDao
 import com.boxy.authenticator.domain.database.repository.TokenRepository
+import com.boxy.authenticator.domain.models.TokenEntry
 import kotlinx.datetime.Clock
 
 class LocalTokenRepository(private val tokenDao: TokenDao) : TokenRepository {
@@ -31,14 +30,8 @@ class LocalTokenRepository(private val tokenDao: TokenDao) : TokenRepository {
         tokenDao.deleteToken(tokenId)
     }
 
-    override fun updateToken(tokenId: String, issuer: String, label: String, thumbnail: Thumbnail) {
-        tokenDao.updateToken(
-            tokenId = tokenId,
-            issuer = issuer,
-            label = label,
-            thumbnail = thumbnail,
-            updatedOn = Clock.System.now().toEpochMilliseconds()
-        )
+    override fun updateToken(token: TokenEntry) {
+        tokenDao.updateToken(token.copy(updatedOn = Clock.System.now().toEpochMilliseconds()))
     }
 
     override fun replaceTokenWith(id: String, token: TokenEntry) {

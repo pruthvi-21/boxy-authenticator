@@ -1,6 +1,5 @@
 package com.boxy.authenticator.domain.database.dao
 
-import com.boxy.authenticator.domain.models.Thumbnail
 import com.boxy.authenticator.domain.models.TokenEntry
 
 interface TokenDao {
@@ -17,13 +16,7 @@ interface TokenDao {
 
     fun insertTokens(tokens: List<TokenEntry>)
 
-    fun updateToken(
-        tokenId: String,
-        issuer: String,
-        label: String,
-        thumbnail: Thumbnail,
-        updatedOn: Long,
-    )
+    fun updateToken(token: TokenEntry)
 
     fun replaceTokenWith(id: String, token: TokenEntry)
 
