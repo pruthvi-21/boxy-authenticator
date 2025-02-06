@@ -1,3 +1,4 @@
 TEAM_ID=
-BUNDLE_ID=com.boxy.authenticator.boxy-authenticator
+BUNDLE_ID=com.boxy.authenticator
+BUNDLE_ID_DEBUG=com.boxy.authenticator.debug
 APP_NAME=boxy-authenticator
