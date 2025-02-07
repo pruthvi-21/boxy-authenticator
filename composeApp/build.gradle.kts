@@ -95,8 +95,8 @@ android {
         applicationId = "com.boxy.authenticator"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 20
+        versionName = "4.0"
     }
 
     packaging {
