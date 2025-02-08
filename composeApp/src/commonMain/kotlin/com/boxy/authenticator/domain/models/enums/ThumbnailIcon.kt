@@ -2,6 +2,7 @@ package com.boxy.authenticator.domain.models.enums
 
 enum class ThumbnailIcon(val label: String, val path: String) {
     AMAZON("Amazon", "amazon.png"),
+    APPLE("Apple", "apple.png"),
     ATLASSIAN("Atlassian", "atlassian.png"),
     BITBUCKET("Bitbucket", "bitbucket.png"),
     BITWARDEN("Bitwarden", "bitwarden.png"),
@@ -10,6 +11,7 @@ enum class ThumbnailIcon(val label: String, val path: String) {
     DASHLANE("Dashlane", "dashlane.png"),
     DISCORD("Discord", "discord.png"),
     DOCKER("Docker", "docker.png"),
+    DROPBOX("Dropbox", "dropbox.png"),
     EVERNOTE("Evernote", "evernote.png"),
     EXPO_GO("Expo Go", "expo_go.png"),
     FACEBOOK("Facebook", "facebook.png"),
@@ -32,6 +34,7 @@ enum class ThumbnailIcon(val label: String, val path: String) {
     PROTON("Proton", "proton.png"),
     REDDIT("Reddit", "reddit.png"),
     ROCKSTAR_GAMES("Rockstar Games", "rockstar_games.png"),
+    SAMSUNG("Samsung", "samsung.png"),
     SNAPCHAT("Snapchat", "snapchat.png"),
     TRADING_VIEW("TradingView", "trading_view.png"),
     UPSTOX("Upstox", "upstox.png"),
