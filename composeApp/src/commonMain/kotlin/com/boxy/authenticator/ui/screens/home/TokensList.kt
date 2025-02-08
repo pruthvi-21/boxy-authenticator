@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -63,6 +64,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.refresh
+import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.models.otp.HotpInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo
@@ -91,6 +93,7 @@ fun TokensList(
     singleExpansion: Boolean = true,
 ) {
     val expandedStates = remember { mutableStateMapOf<TokenEntry, Boolean>() }
+    val settings: AppSettings = koinInject()
 
     val groupedAccounts = accounts
         .sortedBy { it.name.lowercase() }
@@ -127,7 +130,9 @@ fun TokensList(
                     token = token,
                     onEdit = onEdit,
                     isExpanded = expandedStates[token] ?: false,
+                    isNewItem = !settings.getViewedItems().contains(token.id),
                     onToggleExpand = { isExpanded ->
+                        settings.markItemAsViewed(token.id)
                         if (singleExpansion) {
                             expandedStates.keys.forEach { expandedStates[it] = false }
                         }
@@ -169,6 +174,7 @@ fun TokenCard(
     token: TokenEntry,
     onEdit: (TokenEntry) -> Unit,
     isExpanded: Boolean,
+    isNewItem: Boolean,
     onToggleExpand: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -197,6 +203,7 @@ fun TokenCard(
             LabelsView(
                 issuer = token.issuer,
                 label = token.label,
+                isNewItem = isNewItem,
                 modifier = Modifier.weight(1f)
             )
             Arrow(
@@ -419,18 +426,32 @@ private fun Arrow(
 private fun LabelsView(
     issuer: String,
     label: String,
+    isNewItem: Boolean = false,
     modifier: Modifier,
 ) {
     Column(
         modifier = modifier
             .padding(horizontal = 12.dp)
     ) {
-        Text(
-            text = issuer,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = issuer,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            if (isNewItem) {
+                Text(
+                    text = "•",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 20.sp,
+                    lineHeight = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.offset(y = (-7.5).dp)
+                )
+            }
+        }
 
         if (label.isNotEmpty()) {
             Text(

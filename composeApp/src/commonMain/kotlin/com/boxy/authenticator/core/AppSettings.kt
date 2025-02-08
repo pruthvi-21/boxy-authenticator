@@ -104,6 +104,24 @@ class AppSettings(
         return store.getString(Keys.APP_LOCK_HASH, null)
     }
 
+    fun markItemAsViewed(itemId: String) {
+        val viewedItems = getViewedItems()
+        if (itemId !in viewedItems) {
+            saveViewedItems(viewedItems + itemId)
+        }
+    }
+
+    private fun saveViewedItems(items: List<String>) {
+        store.putString(Keys.VIEWED_ITEMS_LIST, items.joinToString(","))
+    }
+
+    fun getViewedItems(): List<String> {
+        return store.getString(Keys.VIEWED_ITEMS_LIST)
+            ?.split(",")
+            ?.filter { it.isNotEmpty() }
+            ?: Defaults.VIEWED_ITEMS_LIST
+    }
+
     companion object {
         object Keys {
             // Appearance
@@ -119,6 +137,9 @@ class AppSettings(
             const val BIOMETRIC_UNLOCK = "key_biometric_unlock"
             const val BLOCK_SCREENSHOTS = "key_block_screenshots"
             const val LOCK_SENSITIVE_FIELDS = "key_lock_sensitive_fields"
+
+            // Other
+            const val VIEWED_ITEMS_LIST = "viewed_items_list"
         }
 
         object Defaults {
@@ -134,6 +155,8 @@ class AppSettings(
             const val BIOMETRIC_UNLOCK = false
             const val BLOCK_SCREENSHOTS = true
             const val LOCK_SENSITIVE_FIELDS = true
+
+            val VIEWED_ITEMS_LIST = emptyList<String>()
         }
     }
 }
