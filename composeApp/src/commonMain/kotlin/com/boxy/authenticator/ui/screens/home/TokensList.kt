@@ -159,6 +159,7 @@ fun TokensList(
                     .fillMaxWidth()
                     .padding(vertical = 15.dp)
             )
+            Spacer(Modifier.height(60.dp))
         }
     }
 }
