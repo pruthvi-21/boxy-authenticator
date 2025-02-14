@@ -12,4 +12,5 @@ object Constants {
     const val THUMBNAIL_ICON_PATH = "drawable/icons"
     const val EXPORT_FILE_NAME_PREFIX = "boxy_accounts_"
     const val EXPORT_FILE_EXTENSION = "json"
+    const val EXPORT_ENCRYPTED_FILE_EXTENSION = "boxy"
 }

@@ -6,6 +6,8 @@ interface TokenRepository {
 
     fun getAllTokens(): List<TokenEntry>
 
+    fun getTokensCount(): Long
+
     fun findTokenWithId(tokenId: String): TokenEntry
 
     fun findTokenWithName(issuer: String, label: String): TokenEntry?

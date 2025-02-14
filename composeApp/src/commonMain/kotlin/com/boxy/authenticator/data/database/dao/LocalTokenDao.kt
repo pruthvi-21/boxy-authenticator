@@ -19,6 +19,10 @@ class LocalTokenDao(database: TokenDatabase) : TokenDao {
             .map { it.toTokenEntry() }
     }
 
+    override fun getTokensCount(): Long {
+        return queries.getTokensCount().executeAsOne()
+    }
+
     override fun insertToken(token: TokenEntry) {
         queries.transaction {
             queries.insertTokenEntry(token)

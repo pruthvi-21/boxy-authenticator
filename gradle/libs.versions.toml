@@ -37,6 +37,7 @@ androidx-preference-ktx = { module = "androidx.preference:preference-ktx", versi
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-extensions = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+diglol-crypto-cipher = { module = "com.diglol.crypto:cipher", version.ref = "diglol-crypto" }
 diglol-crypto-kdf = { module = "com.diglol.crypto:kdf", version.ref = "diglol-crypto" }
 diglol-crypto-random = { module = "com.diglol.crypto:random", version.ref = "diglol-crypto" }
 essenty = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" } #for decompose

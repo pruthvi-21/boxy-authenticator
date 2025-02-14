@@ -1,112 +1,88 @@
 package com.boxy.authenticator.ui.viewmodels
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.boxy.authenticator.core.Logger
+import com.boxy.authenticator.core.crypto.Crypto
 import com.boxy.authenticator.core.serialization.BoxyJson
-import com.boxy.authenticator.domain.models.Thumbnail
+import com.boxy.authenticator.domain.models.ExportableTokenEntry
 import com.boxy.authenticator.domain.models.TokenEntry
-import com.boxy.authenticator.domain.models.enums.AccountEntryMethod
-import com.boxy.authenticator.domain.models.otp.OtpInfo
-import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
-import com.boxy.authenticator.utils.Constants
+import com.boxy.authenticator.domain.usecases.FetchTokenCountUseCase
 import io.github.vinceglb.filekit.core.FileKit
+import io.github.vinceglb.filekit.core.PlatformFile
 import io.github.vinceglb.filekit.core.pickFile
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.encodeToJsonElement
-
-@Serializable
-data class ExportableTokenEntry(
-    var issuer: String,
-    var label: String = "",
-    var thumbnail: Thumbnail,
-    val otpInfo: OtpInfo,
-) {
-    fun toTokenEntry(): TokenEntry {
-        return TokenEntry.create(
-            issuer = issuer,
-            label = label,
-            thumbnail = thumbnail,
-            otpInfo = otpInfo,
-            addedFrom = AccountEntryMethod.RESTORED,
-        )
-    }
-
-    companion object {
-        fun fromTokenEntry(token: TokenEntry): ExportableTokenEntry {
-            return ExportableTokenEntry(
-                issuer = token.issuer,
-                label = token.label,
-                thumbnail = token.thumbnail,
-                otpInfo = token.otpInfo,
-            )
-        }
-    }
-}
 
 class TransferAccountsViewModel(
-    private val fetchTokensUseCase: FetchTokensUseCase,
+    private val fetchTokenCountUseCase: FetchTokenCountUseCase,
 ) : ViewModel() {
 
-    fun exportTokensToFile(onFinished: (Boolean) -> Unit) {
-        viewModelScope.launch {
-            fetchTokensUseCase()
-                .fold(
-                    onSuccess = { tokens ->
-                        val exportData = JsonArray(tokens.map { token ->
-                            BoxyJson.encodeToJsonElement(ExportableTokenEntry.fromTokenEntry(token))
-                        })
+    private val file = mutableStateOf<PlatformFile?>(null)
 
-                        val prettyJsonData = BoxyJson.encodeToString(exportData)
+    private val _requestForPassword = mutableStateOf(false)
+    val requestForPassword by _requestForPassword
 
-                        val file = FileKit.saveFile(
-                            baseName = buildFileName(),
-                            extension = Constants.EXPORT_FILE_EXTENSION,
-                            bytes = prettyJsonData.encodeToByteArray()
-                        )
-                        onFinished(file != null)
-                    },
-                    onFailure = {
-                        onFinished(false)
-                    }
-                )
+    fun setRequestForPassword(value: Boolean) {
+        _requestForPassword.value = value
+    }
+
+    fun importTokensFromFile(
+        onSuccess: suspend (List<TokenEntry>) -> Unit,
+        onFailure: suspend () -> Unit,
+    ) = viewModelScope.launch {
+        file.value = FileKit.pickFile() ?: return@launch
+        val fileContent = file.value!!.readBytes()
+
+        if (fileContent.isEmpty()) {
+            onFailure()
+            return@launch
+        }
+
+        val tokens = decode(fileContent.decodeToString())
+        if (tokens != null) {
+            onSuccess(tokens)
+            return@launch
+        }
+
+        _requestForPassword.value = true
+    }
+
+    private fun decode(fileContent: String): List<TokenEntry>? {
+        return try {
+            BoxyJson.decodeFromString<List<ExportableTokenEntry>>(fileContent)
+                .map { it.toTokenEntry() }
+        } catch (e: Exception) {
+            Logger.e(TAG, e.message, e)
+            null
         }
     }
 
-    private fun buildFileName(): String {
-        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        return Constants.EXPORT_FILE_NAME_PREFIX +
-                now.year +
-                now.monthNumber.toString().padStart(2, '0') +
-                now.dayOfMonth.toString().padStart(2, '0') +
-                "_" +
-                now.hour.toString().padStart(2, '0') +
-                now.minute.toString().padStart(2, '0') +
-                now.second.toString().padStart(2, '0')
-    }
-
-    fun importTokensFromFile(onSuccess: (List<TokenEntry>) -> Unit, onFailure: (String?) -> Unit) {
+    fun tryDecrypt(
+        password: String,
+        onSuccess: (List<TokenEntry>) -> Unit,
+        onFailed: suspend () -> Unit,
+    ) {
         viewModelScope.launch {
-            try {
-                val file = FileKit.pickFile() ?: return@launch
-                val fileContent = file.readBytes().decodeToString(throwOnInvalidSequence = true)
+            file.value ?: return@launch
+            val fileContent = file.value!!.readBytes()
+            file.value = null
 
-                val tokensJson = BoxyJson.decodeFromString<List<ExportableTokenEntry>>(fileContent)
+            val decryptedData = Crypto.decrypt(password, fileContent)
+            val decodedData = decode(decryptedData)
 
-                onSuccess(tokensJson.map { it.toTokenEntry() })
-            } catch (e: CharacterCodingException) {
-                onFailure(e.message)
-            } catch (e: SerializationException) {
-                onFailure(e.message)
-            } catch (e: IllegalArgumentException) {
-                onFailure(e.message)
+            if (decodedData == null) {
+                _requestForPassword.value = false
+                onFailed()
+            } else {
+                onSuccess(decodedData)
             }
         }
+    }
+
+    fun areTokensAvailable(): Long {
+        return fetchTokenCountUseCase.invoke().fold(onSuccess = { it }, onFailure = { 0 })
     }
 
     companion object {

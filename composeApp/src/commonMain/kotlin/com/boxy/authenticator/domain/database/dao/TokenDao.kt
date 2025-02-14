@@ -6,6 +6,8 @@ interface TokenDao {
 
     fun getAllTokens(): List<TokenEntry>
 
+    fun getTokensCount(): Long
+
     fun insertToken(token: TokenEntry)
 
     fun deleteToken(tokenId: String)

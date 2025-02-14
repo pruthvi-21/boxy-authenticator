@@ -12,6 +12,10 @@ class SettingsScreenComponent(
     val navigation: StackNavigation<RootComponent.Configuration>,
 ) : ComponentContext by componentContext {
 
+    fun navigateToExport() {
+        navigation.pushNew(RootComponent.Configuration.ExportTokensScreen)
+    }
+
     fun navigateToImport(tokens: List<TokenEntry>) {
         navigation.pushNew(RootComponent.Configuration.ImportTokensScreen(tokens))
     }

@@ -74,6 +74,11 @@
     <string name="invalid_qr_code">Invalid QR Code</string>
 
     <!-- ExportTokensScreen -->
+    <string name="enter_password_to_decrypt">Enter password to decrypt</string>
+    <string name="encrypt_backup">Encrypt backup</string>
+    <string name="i_understand_the_risk">I understand the risk.</string>
+    <string name="warning_no_backup_encryption">Warning: Your backup will not be encrypted. Anyone with access to the backup file can view its contents.</string>
+    <string name="warning_backup_encryption">Warning: The encryption key you set is required to restore your backup. If you lose it, your data cannot be recovered. Store it in a safe place. \uD83D\uDD12</string>
     <string name="password">Password</string>
     <string name="enter_password_for_backup">Enter password for backup</string>
     <string name="password_empty">Password can't be empty</string>
@@ -87,9 +92,7 @@
 
     <!-- ImportTokensScreen -->
     <string name="import_label">Import</string>
-    <string name="enter_password_to_restore">Enter password to restore</string>
-    <string name="decrypt">Decrypt</string>
-    <string name="decrypt_your_file">Decrypt your file</string>
+    <string name="no_tokens_to_import">No accounts were found in the selected file</string>
     <string name="proceed">Proceed</string>
     <string name="duplicate_warning_message">Only %1$d entries will be imported. %2$d duplicate entries will be ignored.</string>
     <string name="set_password">Set password</string>

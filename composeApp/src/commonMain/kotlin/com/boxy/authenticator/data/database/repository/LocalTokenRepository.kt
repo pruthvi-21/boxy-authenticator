@@ -10,6 +10,10 @@ class LocalTokenRepository(private val tokenDao: TokenDao) : TokenRepository {
         return tokenDao.getAllTokens()
     }
 
+    override fun getTokensCount(): Long {
+        return tokenDao.getTokensCount()
+    }
+
     override fun findTokenWithId(tokenId: String): TokenEntry {
         return tokenDao.findTokenWithId(tokenId)
     }

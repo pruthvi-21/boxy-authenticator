@@ -1,6 +1,5 @@
 package com.boxy.authenticator.ui.screens
 
-//import com.boxy.authenticator.ui.screens.settings.TransferAccounts
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -68,6 +67,9 @@ fun SettingsScreen(
                 item {
                     TransferAccounts(
                         snackbarHostState = snackbarHostState,
+                        onNavigateToExport = {
+                            component.navigateToExport()
+                        },
                         onNavigateToImport = {
                             component.navigateToImport(it)
                         }

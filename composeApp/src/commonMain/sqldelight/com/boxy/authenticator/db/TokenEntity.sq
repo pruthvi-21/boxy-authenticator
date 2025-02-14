@@ -12,6 +12,9 @@ CREATE TABLE token_entry (
 getAllTokens:
 SELECT * FROM token_entry;
 
+getTokensCount:
+SELECT COUNT(*) FROM token_entry;
+
 insertToken:
 INSERT INTO token_entry (id, issuer, label, thumbnail, otpInfo, createdOn, updatedOn, addedFrom)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);

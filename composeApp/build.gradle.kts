@@ -69,6 +69,7 @@ kotlin {
             api(libs.essenty)
             implementation(libs.moko.biometry)
             implementation(libs.moko.biometry.compose)
+            implementation(libs.diglol.crypto.cipher)
             implementation(libs.diglol.crypto.kdf)
             implementation(libs.diglol.crypto.random)
             implementation(libs.coil.compose)
