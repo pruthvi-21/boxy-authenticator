@@ -2,8 +2,8 @@ package com.boxy.authenticator.core.crypto
 
 import diglol.crypto.Argon2
 
-object KeyGenerator {
-    suspend fun deriveKey(
+object HashKeyGenerator {
+    suspend fun generateHashKey(
         password: ByteArray,
         salt: ByteArray = ByteArray(32),
     ): ByteArray {
@@ -16,5 +16,9 @@ object KeyGenerator {
             hashSize = 32 // (256-bit)
         )
         return kdf.deriveKey(password, salt)
+    }
+
+    suspend fun generateHashKey(password: String): String {
+        return generateHashKey(password.encodeToByteArray()).decodeToString()
     }
 }

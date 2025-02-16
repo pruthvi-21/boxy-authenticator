@@ -11,7 +11,7 @@ import boxy_authenticator.composeapp.generated.resources.incorrect_password
 import boxy_authenticator.composeapp.generated.resources.to_unlock
 import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.Logger
-import com.boxy.authenticator.utils.HashUtils
+import com.boxy.authenticator.core.crypto.HashKeyGenerator
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
@@ -32,7 +32,9 @@ class AuthenticationViewModel(
 
     fun verifyPassword(onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val status = HashUtils.verifyHash(password.value, settings.getPasscodeHash() ?: "")
+            val storedHash = settings.getPasscodeHash()
+            val currentHash = HashKeyGenerator.generateHashKey(password.value)
+            val status = currentHash.contentEquals(storedHash)
             if (!status) {
                 _password.value = ""
                 _passwordError.value = getString(Res.string.incorrect_password)

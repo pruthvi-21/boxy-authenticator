@@ -14,9 +14,9 @@ import boxy_authenticator.composeapp.generated.resources.to_enable_biometrics
 import boxy_authenticator.composeapp.generated.resources.verify_your_identity
 import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.Logger
+import com.boxy.authenticator.core.crypto.HashKeyGenerator
 import com.boxy.authenticator.domain.models.enums.AppTheme
 import com.boxy.authenticator.domain.models.enums.TokenTapResponse
-import com.boxy.authenticator.utils.HashUtils
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
 import kotlinx.coroutines.launch
@@ -161,7 +161,10 @@ class SettingsViewModel(
     fun enableAppLock(password: String) {
         viewModelScope.launch {
             try {
-                settings.setAppLockEnabled(true, HashUtils.hash(password))
+                settings.setAppLockEnabled(
+                    true,
+                    HashKeyGenerator.generateHashKey(password)
+                )
                 _isAppLockEnabled.value = true
             } catch (e: IllegalArgumentException) {
                 Logger.e(TAG, e.message, e)
@@ -185,12 +188,11 @@ class SettingsViewModel(
         }
     }
 
-    fun verifyPassword(password: String, onComplete: (Boolean) -> Unit) {
+    private fun verifyPassword(password: String, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val status = HashUtils.verifyHash(
-                password,
-                settings.getPasscodeHash() ?: ""
-            )
+            val storedHash = settings.getPasscodeHash()
+            val currentHash = HashKeyGenerator.generateHashKey(password)
+            val status = currentHash.contentEquals(storedHash)
             onComplete(status)
         }
     }

@@ -14,7 +14,7 @@ object Crypto {
      * @return Encrypted data with the nonce prepended.
      */
     suspend fun encrypt(password: String, data: String): ByteArray {
-        val key = KeyGenerator.deriveKey(password.encodeToByteArray())
+        val key = HashKeyGenerator.generateHashKey(password.encodeToByteArray())
         require(key.size == 32) { "Key must be 32 bytes long." }
 
         val nonce = nextBytes(24) // Generate a 24-byte nonce
@@ -34,7 +34,7 @@ object Crypto {
      * @return The decrypted string.
      */
     suspend fun decrypt(password: String, data: ByteArray): String {
-        val key = KeyGenerator.deriveKey(password.encodeToByteArray())
+        val key = HashKeyGenerator.generateHashKey(password.encodeToByteArray())
         require(key.size == 32) { "Key must be 32 bytes long." }
         require(data.size > 24) { "Invalid encrypted data: too short to contain a nonce." }
 
