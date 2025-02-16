@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
@@ -32,7 +33,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.app_name
 import boxy_authenticator.composeapp.generated.resources.enter_your_password
@@ -52,10 +52,8 @@ import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.BuildUtils
-import dev.icerock.moko.biometry.BiometryAuthenticator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.parameter.ParametersHolder
@@ -150,6 +148,13 @@ fun AuthenticationScreen() {
                         keyboardType = if (authViewModel.showPinPad.value) KeyboardType.Number
                         else KeyboardType.Text,
                     ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            authViewModel.verifyPassword {
+                                if (it) navController.navigateToHome(true)
+                            }
+                        }
+                    ),
                     modifier = Modifier.focusRequester(focusRequester)
                 )
 
@@ -175,8 +180,7 @@ fun AuthenticationScreen() {
                     TokkyButton(
                         onClick = {
                             authViewModel.verifyPassword {
-                                if (!it) return@verifyPassword
-                                navController.navigateToHome(true)
+                                if (it) navController.navigateToHome(true)
                             }
                         },
                         enabled = authViewModel.password.value.isNotEmpty(),
