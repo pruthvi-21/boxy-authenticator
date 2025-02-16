@@ -76,6 +76,7 @@ import boxy_authenticator.composeapp.generated.resources.replace
 import boxy_authenticator.composeapp.generated.resources.title_enter_account_details
 import boxy_authenticator.composeapp.generated.resources.title_update_account_details
 import boxy_authenticator.composeapp.generated.resources.type
+import boxy_authenticator.composeapp.generated.resources.warning
 import boxy_authenticator.composeapp.generated.resources.yes
 import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.domain.models.TokenEntry
@@ -214,6 +215,7 @@ fun TokenSetupScreen(
 
             if (tokenSetupViewModel.showBackPressDialog.value) {
                 PlatformAlertDialog(
+                    title = stringResource(Res.string.warning),
                     message = stringResource(Res.string.message_unsaved_changes),
                     dismissText = stringResource(Res.string.no),
                     confirmText = stringResource(Res.string.yes),
