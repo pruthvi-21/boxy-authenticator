@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.Logger
-import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.core.encoding.Base32
 import com.boxy.authenticator.domain.models.TokenEntry
@@ -60,20 +59,7 @@ class TokenSetupViewModel(
         val existingToken: TokenEntry? = null,
     )
 
-    fun setInitialStateFromTokenId(tokenId: String) {
-        tokenToUpdate = getTokenFromId(tokenId)
-        tokenToUpdate?.let {
-            tokenSetupMode = TokenSetupMode.UPDATE
-            setStateFromToken(it)
-        }
-    }
-
-    fun setInitialStateFromUrl(authUrl: String) {
-        tokenSetupMode = TokenSetupMode.URL
-        setStateFromToken(TokenEntryParser.buildFromUrl(authUrl))
-    }
-
-    private fun setStateFromToken(token: TokenEntry) {
+    fun setStateFromToken(token: TokenEntry, tokenSetupMode: TokenSetupMode) {
         var tokenState = TokenFormState(
             issuer = token.issuer,
             label = token.label,
@@ -100,6 +86,7 @@ class TokenSetupViewModel(
 
         initialState = tokenState
         _uiState.value = tokenState
+        this.tokenSetupMode = tokenSetupMode
     }
 
     fun onEvent(event: TokenFormEvent) {
@@ -369,8 +356,7 @@ class TokenSetupViewModel(
         }
     }
 
-    private fun getTokenFromId(tokenId: String?): TokenEntry? {
-        tokenId ?: return null
+    fun getTokenFromId(tokenId: String): TokenEntry? {
         return fetchTokenByIdUseCase.invoke(tokenId).fold(onSuccess = { it }, onFailure = { null })
     }
 

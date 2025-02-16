@@ -7,11 +7,13 @@ import androidx.navigation.navArgument
 import com.boxy.authenticator.core.serialization.BoxyJson
 import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.ui.screens.AuthenticationScreen
+import com.boxy.authenticator.ui.screens.EditTokenScreen
 import com.boxy.authenticator.ui.screens.ExportTokensScreen
 import com.boxy.authenticator.ui.screens.HomeScreen
 import com.boxy.authenticator.ui.screens.ImportTokensScreen
 import com.boxy.authenticator.ui.screens.QrScannerScreen
 import com.boxy.authenticator.ui.screens.SettingsScreen
+import com.boxy.authenticator.ui.screens.TokenSetupFromUrlScreen
 import com.boxy.authenticator.ui.screens.TokenSetupScreen
 import io.ktor.http.decodeURLQueryComponent
 
@@ -41,10 +43,11 @@ fun NavGraphBuilder.addTokenSetupRoute() {
         val tokenId = arguments?.getString("token_id")
         val authUrl = arguments?.getString("auth_url")
 
-        TokenSetupScreen(
-            tokenId = tokenId,
-            authUrl = authUrl?.decodeURLQueryComponent(),
-        )
+        when {
+            authUrl != null -> TokenSetupFromUrlScreen(authUrl.decodeURLQueryComponent())
+            tokenId != null -> EditTokenScreen(tokenId)
+            else -> TokenSetupScreen()
+        }
     }
 }
 

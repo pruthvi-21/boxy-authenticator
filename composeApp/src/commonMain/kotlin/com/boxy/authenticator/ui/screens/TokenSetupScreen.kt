@@ -32,6 +32,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,6 +77,8 @@ import boxy_authenticator.composeapp.generated.resources.title_enter_account_det
 import boxy_authenticator.composeapp.generated.resources.title_update_account_details
 import boxy_authenticator.composeapp.generated.resources.type
 import boxy_authenticator.composeapp.generated.resources.yes
+import com.boxy.authenticator.core.TokenEntryParser
+import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.models.enums.OTPType
 import com.boxy.authenticator.domain.models.enums.TokenSetupMode
 import com.boxy.authenticator.domain.models.form.TokenFormEvent
@@ -93,29 +99,61 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
+@OptIn(KoinExperimentalAPI::class)
+@Composable
+fun TokenSetupFromUrlScreen(authUrl: String) {
+    val tokenSetupViewModel: TokenSetupViewModel = koinViewModel()
+    var token by remember { mutableStateOf<TokenEntry?>(null) }
+
+    LaunchedEffect(authUrl) {
+        token = try {
+            TokenEntryParser.buildFromUrl(authUrl)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    if (token != null) {
+        TokenSetupScreen(
+            token = token!!,
+            tokenSetupMode = TokenSetupMode.URL,
+            tokenSetupViewModel = tokenSetupViewModel,
+        )
+    }
+}
+
+@OptIn(KoinExperimentalAPI::class)
+@Composable
+fun EditTokenScreen(tokenId: String) {
+    val tokenSetupViewModel: TokenSetupViewModel = koinViewModel()
+    val token = remember { tokenSetupViewModel.getTokenFromId(tokenId) }
+
+    if (token != null) {
+        TokenSetupScreen(
+            token = token,
+            tokenSetupMode = TokenSetupMode.UPDATE,
+            tokenSetupViewModel = tokenSetupViewModel,
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
 fun TokenSetupScreen(
-    tokenId: String? = null,
-    authUrl: String? = null,
+    token: TokenEntry? = null,
+    tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW,
+    tokenSetupViewModel: TokenSetupViewModel = koinViewModel(),
 ) {
-    val tokenSetupViewModel: TokenSetupViewModel = koinViewModel()
 
     val navController = LocalNavController.current
     val localFocus = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     var state = tokenSetupViewModel.uiState.value
-    val tokenSetupMode = tokenSetupViewModel.tokenSetupMode
 
-    LaunchedEffect(tokenId, authUrl, tokenSetupMode) {
-        tokenId?.let {
-            tokenSetupViewModel.setInitialStateFromTokenId(tokenId)
-            state = tokenSetupViewModel.uiState.value
-        }
-
-        authUrl?.let {
-            tokenSetupViewModel.setInitialStateFromUrl(authUrl)
+    LaunchedEffect(token, tokenSetupMode) {
+        token?.let {
+            tokenSetupViewModel.setStateFromToken(it, tokenSetupMode)
             state = tokenSetupViewModel.uiState.value
         }
     }
@@ -193,7 +231,7 @@ fun TokenSetupScreen(
                     },
                     onConfirmation = {
                         tokenSetupViewModel.deleteToken(
-                            tokenId = tokenId!!,
+                            tokenId = token!!.id,
                             onComplete = {
                                 tokenSetupViewModel.showDeleteTokenDialog.value = false
                                 navController.navigateUp()
