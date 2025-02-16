@@ -11,6 +11,7 @@ import com.boxy.authenticator.domain.models.ExportableTokenEntry
 import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.usecases.FetchTokenCountUseCase
 import io.github.vinceglb.filekit.core.FileKit
+import io.github.vinceglb.filekit.core.PickerType
 import io.github.vinceglb.filekit.core.PlatformFile
 import io.github.vinceglb.filekit.core.pickFile
 import kotlinx.coroutines.launch
@@ -32,7 +33,11 @@ class TransferAccountsViewModel(
         onSuccess: suspend (List<TokenEntry>) -> Unit,
         onFailure: suspend () -> Unit,
     ) = viewModelScope.launch {
-        file.value = FileKit.pickFile() ?: return@launch
+        file.value = FileKit.pickFile(
+            type = PickerType.File(
+                extensions = listOf("json", "boxy")
+            )
+        ) ?: return@launch
         val fileContent = file.value!!.readBytes()
 
         if (fileContent.isEmpty()) {
