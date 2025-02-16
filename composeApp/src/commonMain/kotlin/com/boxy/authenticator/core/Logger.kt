@@ -1,8 +1,9 @@
 package com.boxy.authenticator.core
 
-expect object Logger {
-    fun e(tag: String, message: String?, throwable: Throwable? = null)
-    fun e(tag: String, message: String)
-    fun d(tag: String, message: String)
-    fun i(tag: String, message: String)
+expect class Logger(tag: String) {
+    fun e(message: String?, throwable: Throwable? = null)
+    fun e(throwable: Throwable? = null)
+    fun e(message: String)
+    fun d(message: String)
+    fun i(message: String)
 }

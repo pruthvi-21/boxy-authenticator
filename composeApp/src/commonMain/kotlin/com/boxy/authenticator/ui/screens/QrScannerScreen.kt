@@ -45,11 +45,10 @@ import qrscanner.CameraLens
 import qrscanner.OverlayShape
 import qrscanner.QrScanner
 
-private const val TAG = "QrScannerScreen"
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QrScannerScreen() {
+    val logger = Logger("QrScannerScreen")
 
     val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
@@ -79,7 +78,7 @@ fun QrScannerScreen() {
                                     )
                                 }
                             } catch (e: Exception) {
-                                Logger.e(TAG, e.message, e)
+                                logger.e(e.message, e)
                                 showPlatformAlertDialog = true
                             }
                         }

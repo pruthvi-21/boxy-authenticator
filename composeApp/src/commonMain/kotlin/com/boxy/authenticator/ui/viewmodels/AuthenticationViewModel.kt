@@ -21,6 +21,7 @@ class AuthenticationViewModel(
     private val settings: AppSettings,
     private val biometryAuthenticator: BiometryAuthenticator,
 ) : ViewModel() {
+    private val logger = Logger("AuthenticationViewModel")
 
     private val _password = mutableStateOf("")
     val password by _password
@@ -64,7 +65,7 @@ class AuthenticationViewModel(
             )
             onComplete(isSuccess)
         } catch (throwable: Throwable) {
-            Logger.e(TAG, throwable.message, throwable)
+            logger.e(throwable.message, throwable)
             onComplete(false)
         }
     }
@@ -72,9 +73,5 @@ class AuthenticationViewModel(
     fun updatePassword(password: String) {
         _passwordError.value = null
         _password.value = password
-    }
-
-    companion object {
-        private const val TAG = "AuthenticationViewModel"
     }
 }

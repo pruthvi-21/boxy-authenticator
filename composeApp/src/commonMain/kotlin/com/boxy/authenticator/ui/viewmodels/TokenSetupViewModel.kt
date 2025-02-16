@@ -37,6 +37,8 @@ class TokenSetupViewModel(
     private val replaceExistingTokenUseCase: ReplaceExistingTokenUseCase,
     private val formValidator: TokenFormValidator,
 ) : ViewModel() {
+    private val logger = Logger("TokenSetupViewModel")
+
     private var initialState = TokenFormState()
 
     private var _uiState = mutableStateOf(initialState)
@@ -267,7 +269,7 @@ class TokenSetupViewModel(
                     }
                 }
             } catch (e: Exception) {
-                Logger.e(TAG, "validateInputs: Exception while validating", e)
+                logger.e("validateInputs: Exception while validating", e)
             }
         }
     }
@@ -279,7 +281,7 @@ class TokenSetupViewModel(
         insertTokenUseCase(token)
             .onSuccess { event.onComplete() }
             .onFailure { exception ->
-                Logger.e(TAG, "insertToken: Failed to insert token", exception)
+                logger.e("insertToken: Failed to insert token", exception)
 
                 if (exception is TokenNameExistsException) {
                     exception.token?.let { event.onDuplicate(token, it) }
@@ -296,7 +298,7 @@ class TokenSetupViewModel(
         updateTokenUseCase(token)
             .onSuccess { event.onComplete() }
             .onFailure {
-                Logger.e(TAG, "updateToken: Failed to update token", it)
+                logger.e("updateToken: Failed to update token", it)
                 // TODO: display a error
             }
     }
@@ -358,9 +360,5 @@ class TokenSetupViewModel(
 
     fun getTokenFromId(tokenId: String): TokenEntry? {
         return fetchTokenByIdUseCase.invoke(tokenId).fold(onSuccess = { it }, onFailure = { null })
-    }
-
-    companion object {
-        private const val TAG = "TokenSetupViewModel"
     }
 }

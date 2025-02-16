@@ -26,6 +26,7 @@ class SettingsViewModel(
     private val settings: AppSettings,
     val biometryAuthenticator: BiometryAuthenticator,
 ) : ViewModel() {
+    private val logger = Logger("SettingsViewModel")
 
     val hideSensitiveSettings = mutableStateOf(false)
 
@@ -93,7 +94,7 @@ class SettingsViewModel(
                     }
                 )
             } catch (throwable: Throwable) {
-                Logger.e(TAG, throwable.message, throwable)
+                logger.e(throwable.message, throwable)
             }
         }
     }
@@ -113,7 +114,7 @@ class SettingsViewModel(
             )
             onComplete(isSuccess)
         } catch (throwable: Throwable) {
-            Logger.e(TAG, throwable.message, throwable)
+            logger.e(throwable.message, throwable)
             onComplete(false)
         }
     }
@@ -167,7 +168,7 @@ class SettingsViewModel(
                 )
                 _isAppLockEnabled.value = true
             } catch (e: IllegalArgumentException) {
-                Logger.e(TAG, e.message, e)
+                logger.e(e.message, e)
             }
         }
     }
@@ -200,10 +201,6 @@ class SettingsViewModel(
     fun setTokenTapResponse(response: TokenTapResponse) {
         settings.setTokenTapResponse(response)
         _tokenTapResponse.value = response
-    }
-
-    companion object {
-        private const val TAG = "SettingsViewModel"
     }
 }
 

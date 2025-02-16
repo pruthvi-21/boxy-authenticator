@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 class TransferAccountsViewModel(
     private val fetchTokenCountUseCase: FetchTokenCountUseCase,
 ) : ViewModel() {
+    private val logger = Logger("TransferAccountsViewModel")
 
     private val file = mutableStateOf<PlatformFile?>(null)
 
@@ -59,7 +60,7 @@ class TransferAccountsViewModel(
             BoxyJson.decodeFromString<List<ExportableTokenEntry>>(fileContent)
                 .map { it.toTokenEntry() }
         } catch (e: Exception) {
-            Logger.e(TAG, e.message, e)
+            logger.e(e.message, e)
             null
         }
     }
@@ -88,9 +89,5 @@ class TransferAccountsViewModel(
 
     fun areTokensAvailable(): Long {
         return fetchTokenCountUseCase.invoke().fold(onSuccess = { it }, onFailure = { 0 })
-    }
-
-    companion object {
-        private const val TAG = "TransferAccountsViewModel"
     }
 }
