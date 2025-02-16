@@ -51,6 +51,7 @@ private fun NavController.getNavOptions(popCurrent: Boolean): NavOptionsBuilder.
             }
         }
     }
+    launchSingleTop = true
 }
 
 private fun encodeQueryParam(key: String, value: String): String {
