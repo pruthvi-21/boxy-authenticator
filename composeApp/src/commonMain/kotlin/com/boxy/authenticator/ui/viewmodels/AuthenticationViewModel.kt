@@ -1,6 +1,6 @@
 package com.boxy.authenticator.ui.viewmodels
 
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,23 +23,28 @@ class AuthenticationViewModel(
 ) : ViewModel() {
 
     private val _password = mutableStateOf("")
-    val password: State<String> get() = _password
+    val password by _password
 
     private val _passwordError = mutableStateOf<String?>(null)
-    val passwordError: State<String?> get() = _passwordError
+    val passwordError by _passwordError
 
-    val showPinPad = mutableStateOf(settings.isLockscreenPinPadEnabled())
+    private val _isVerifyingPassword = mutableStateOf(false)
+    val isVerifyingPassword by _isVerifyingPassword
+
+    val showPinPad by mutableStateOf(settings.isLockscreenPinPadEnabled())
 
     fun verifyPassword(onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
+            _isVerifyingPassword.value = true
             val storedHash = settings.getPasscodeHash()
-            val currentHash = HashKeyGenerator.generateHashKey(password.value)
+            val currentHash = HashKeyGenerator.generateHashKey(password)
             val status = currentHash.contentEquals(storedHash)
             if (!status) {
                 _password.value = ""
                 _passwordError.value = getString(Res.string.incorrect_password)
             }
             onComplete(status)
+            _isVerifyingPassword.value = false
         }
     }
 

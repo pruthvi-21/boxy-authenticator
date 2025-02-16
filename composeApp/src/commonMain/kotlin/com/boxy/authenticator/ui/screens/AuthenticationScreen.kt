@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -139,13 +141,13 @@ fun AuthenticationScreen() {
                     }
                 }
                 StyledTextField(
-                    value = authViewModel.password.value,
+                    value = authViewModel.password,
                     onValueChange = { authViewModel.updatePassword(it) },
                     placeholder = stringResource(Res.string.enter_your_password),
                     isPasswordField = true,
-                    errorMessage = authViewModel.passwordError.value,
+                    errorMessage = authViewModel.passwordError,
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = if (authViewModel.showPinPad.value) KeyboardType.Number
+                        keyboardType = if (authViewModel.showPinPad) KeyboardType.Number
                         else KeyboardType.Text,
                     ),
                     keyboardActions = KeyboardActions(
@@ -183,9 +185,15 @@ fun AuthenticationScreen() {
                                 if (it) navController.navigateToHome(true)
                             }
                         },
-                        enabled = authViewModel.password.value.isNotEmpty(),
+                        enabled = authViewModel.password.isNotEmpty() && !authViewModel.isVerifyingPassword,
                     ) {
-                        Text(stringResource(Res.string.unlock))
+                        if (authViewModel.isVerifyingPassword) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(28.dp)
+                            )
+                        } else {
+                            Text(stringResource(Res.string.unlock))
+                        }
                     }
                 }
 
