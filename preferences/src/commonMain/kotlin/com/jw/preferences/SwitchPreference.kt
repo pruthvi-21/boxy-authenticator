@@ -28,9 +28,7 @@ fun SwitchPreference(
         summary = summary,
         widgetContainer = {
             val theme = LocalPreferenceTheme.current
-            Box(
-                modifier = Modifier.padding(theme.preferencePadding),
-            ) {
+            Box {
                 when {
                     customSwitch != null -> customSwitch(value, enabled)
                     theme.customSwitch != null -> theme.customSwitch.invoke(value, enabled)
