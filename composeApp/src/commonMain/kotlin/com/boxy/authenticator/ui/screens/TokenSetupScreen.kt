@@ -159,7 +159,11 @@ fun TokenSetupScreen(
     }
 
     SystemBackHandler {
-        navController.navigateUp()
+        if (tokenSetupViewModel.isFormUpdated()) {
+            tokenSetupViewModel.showBackPressDialog.value = true
+        } else {
+            navController.navigateUp()
+        }
     }
 
     Scaffold(
@@ -171,7 +175,13 @@ fun TokenSetupScreen(
             Toolbar(
                 title = title,
                 showDefaultNavigationIcon = true,
-                onNavigationIconClick = { navController.navigateUp() },
+                onNavigationIconClick = {
+                    if (tokenSetupViewModel.isFormUpdated()) {
+                        tokenSetupViewModel.showBackPressDialog.value = true
+                    } else {
+                        navController.navigateUp()
+                    }
+                },
                 actions = {
                     if (tokenSetupMode == TokenSetupMode.UPDATE) {
                         IconButton(onClick = {
