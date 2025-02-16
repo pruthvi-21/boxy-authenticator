@@ -38,6 +38,7 @@ import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToNewTokenSetupWithUrl
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.PlatformAlertDialog
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import qrscanner.CameraLens
@@ -55,10 +56,11 @@ fun QrScannerScreen() {
 
     var isFlashOn by remember { mutableStateOf(false) }
     var showPlatformAlertDialog by remember { mutableStateOf(false) }
+    var isScanComplete by remember { mutableStateOf(false) }
 
     Scaffold { contentPadding ->
         Box {
-            if (!showPlatformAlertDialog) {
+            if (!showPlatformAlertDialog || !isScanComplete) {
                 QrScanner(
                     modifier = Modifier,
                     flashlightOn = isFlashOn,
@@ -68,10 +70,14 @@ fun QrScannerScreen() {
                         scope.launch {
                             try {
                                 TokenEntryParser.buildFromUrl(result)
-                                navController.navigateToNewTokenSetupWithUrl(
-                                    authUrl = result,
-                                    popCurrent = true,
-                                )
+                                if(!isScanComplete) {
+                                    isScanComplete = true
+                                    delay(300)
+                                    navController.navigateToNewTokenSetupWithUrl(
+                                        authUrl = result,
+                                        popCurrent = true,
+                                    )
+                                }
                             } catch (e: Exception) {
                                 Logger.e(TAG, e.message, e)
                                 showPlatformAlertDialog = true
