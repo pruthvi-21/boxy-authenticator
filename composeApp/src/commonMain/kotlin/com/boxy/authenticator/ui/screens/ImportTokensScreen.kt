@@ -42,9 +42,9 @@ import boxy_authenticator.composeapp.generated.resources.import_label
 import boxy_authenticator.composeapp.generated.resources.proceed
 import boxy_authenticator.composeapp.generated.resources.rename
 import boxy_authenticator.composeapp.generated.resources.warning
-import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.core.TokenFormValidator
-import com.boxy.authenticator.navigation.components.ImportTokensScreenComponent
+import com.boxy.authenticator.domain.models.TokenEntry
+import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.Toolbar
@@ -56,19 +56,22 @@ import com.boxy.authenticator.utils.name
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 private const val TAG = "ImportTokensScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImportTokensScreen(
-    component: ImportTokensScreenComponent,
+    tokens: List<TokenEntry>,
 ) {
-    val importTokensViewModel = component.importTokensViewModel
+
+    val navController = LocalNavController.current
+    val importTokensViewModel: ImportTokensViewModel = koinInject()
     val tokensToImport = importTokensViewModel.tokensToImport
 
     LaunchedEffect(Unit) {
-        importTokensViewModel.setTokens(component.tokens)
+        importTokensViewModel.setTokens(tokens)
     }
 
     Scaffold(
@@ -76,7 +79,7 @@ fun ImportTokensScreen(
             Toolbar(
                 title = stringResource(Res.string.import_accounts),
                 showDefaultNavigationIcon = true,
-                onNavigationIconClick = { component.navigateUp() }
+                onNavigationIconClick = { navController.navigateUp() }
             )
         }
     ) { contentPadding ->
@@ -95,7 +98,7 @@ fun ImportTokensScreen(
                 onConfirmRequest = {
                     importTokensViewModel.importAccounts(tokensToImport) {
                         importTokensViewModel.showDuplicateWarningDialog.value = false
-                        component.navigateUp()
+                        navController.navigateUp()
                     }
                 }
             )
@@ -117,7 +120,7 @@ fun ImportTokensScreen(
                     } else {
                         importTokensViewModel.importAccounts(tokensToImport) {
                             importTokensViewModel.showDuplicateWarningDialog.value = false
-                            component.navigateUp()
+                            navController.navigateUp()
                         }
                     }
                 },

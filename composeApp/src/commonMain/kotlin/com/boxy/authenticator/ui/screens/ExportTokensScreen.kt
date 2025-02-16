@@ -40,28 +40,30 @@ import boxy_authenticator.composeapp.generated.resources.reenter_above_password
 import boxy_authenticator.composeapp.generated.resources.show_password
 import boxy_authenticator.composeapp.generated.resources.warning_backup_encryption
 import boxy_authenticator.composeapp.generated.resources.warning_no_backup_encryption
-import com.boxy.authenticator.navigation.components.ExportTokensScreenComponent
+import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.ui.components.BoxSwitch
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.Toolbar
+import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 private const val TAG = "ExportTokensScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExportTokensScreen(
-    component: ExportTokensScreenComponent,
-) {
-    val exportViewModel = component.exportTokensViewModel
+fun ExportTokensScreen() {
+
+    val navController = LocalNavController.current
+    val exportViewModel: ExportTokensViewModel = koinInject()
 
     Scaffold(
         topBar = {
             Toolbar(
                 title = stringResource(Res.string.export_accounts),
                 showDefaultNavigationIcon = true,
-                onNavigationIconClick = { component.navigateUp() }
+                onNavigationIconClick = { navController.navigateUp() }
             )
         }
     ) { contentPadding ->
@@ -163,7 +165,7 @@ fun ExportTokensScreen(
             TokkyButton(
                 onClick = {
                     exportViewModel.exportTokensToFile {
-                        component.navigateUp()
+                        navController.navigateUp()
                     }
                 },
                 enabled = exportViewModel.isExportEnabled,

@@ -25,9 +25,6 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
-
-            export(libs.decompose)
-            export(libs.essenty)
         }
     }
 
@@ -64,9 +61,6 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.ktor.client.core)
-            api(libs.decompose)
-            api(libs.decompose.extensions)
-            api(libs.essenty)
             implementation(libs.moko.biometry)
             implementation(libs.moko.biometry.compose)
             implementation(libs.diglol.crypto.cipher)

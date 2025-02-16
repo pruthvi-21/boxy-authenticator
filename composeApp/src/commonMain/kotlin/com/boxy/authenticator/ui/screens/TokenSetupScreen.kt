@@ -78,7 +78,7 @@ import com.boxy.authenticator.domain.models.enums.TokenSetupMode
 import com.boxy.authenticator.domain.models.form.TokenFormEvent
 import com.boxy.authenticator.domain.models.otp.OtpInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
-import com.boxy.authenticator.navigation.components.TokenSetupScreenComponent
+import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.ui.components.DropdownTextField
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.ThumbnailController
@@ -90,23 +90,27 @@ import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import com.boxy.authenticator.utils.getInitials
 import com.boxy.authenticator.utils.name
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
-fun TokenSetupScreen(component: TokenSetupScreenComponent) {
-    val token = component.token
-    val authUrl = component.authUrl
-    val tokenSetupViewModel: TokenSetupViewModel = component.viewModel
+fun TokenSetupScreen(
+    tokenId: String? = null,
+    authUrl: String? = null,
+) {
+    val tokenSetupViewModel: TokenSetupViewModel = koinViewModel()
 
+    val navController = LocalNavController.current
     val localFocus = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     var state = tokenSetupViewModel.uiState.value
     val tokenSetupMode = tokenSetupViewModel.tokenSetupMode
 
-    LaunchedEffect(token, authUrl, tokenSetupMode) {
-        token?.let {
-            tokenSetupViewModel.setInitialStateFromToken(token)
+    LaunchedEffect(tokenId, authUrl, tokenSetupMode) {
+        tokenId?.let {
+            tokenSetupViewModel.setInitialStateFromTokenId(tokenId)
             state = tokenSetupViewModel.uiState.value
         }
 
@@ -117,7 +121,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
     }
 
     SystemBackHandler {
-        component.navigateUp(true)
+        navController.navigateUp()
     }
 
     Scaffold(
@@ -129,7 +133,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
             Toolbar(
                 title = title,
                 showDefaultNavigationIcon = true,
-                onNavigationIconClick = { component.navigateUp(userClickEvent = true) },
+                onNavigationIconClick = { navController.navigateUp() },
                 actions = {
                     if (tokenSetupMode == TokenSetupMode.UPDATE) {
                         IconButton(onClick = {
@@ -167,7 +171,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                     confirmText = stringResource(Res.string.yes),
                     onDismissRequest = { tokenSetupViewModel.showBackPressDialog.value = false },
                     onConfirmation = {
-                        component.navigateUp()
+                        navController.navigateUp()
                         tokenSetupViewModel.showBackPressDialog.value = false
                     }
                 )
@@ -189,10 +193,10 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                     },
                     onConfirmation = {
                         tokenSetupViewModel.deleteToken(
-                            tokenId = token!!.id,
+                            tokenId = tokenId!!,
                             onComplete = {
                                 tokenSetupViewModel.showDeleteTokenDialog.value = false
-                                component.navigateUp()
+                                navController.navigateUp()
                             }
                         )
                     }
@@ -218,7 +222,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                             existingToken = args.existingToken!!,
                             token = args.token
                         )
-                        component.navigateUp()
+                        navController.navigateUp()
                         tokenSetupViewModel.showDuplicateTokenDialog.value =
                             TokenSetupViewModel.DuplicateTokenDialogArgs(false)
                     }
@@ -309,7 +313,7 @@ fun TokenSetupScreen(component: TokenSetupScreenComponent) {
                     tokenSetupViewModel.onEvent(
                         TokenFormEvent.Submit(
                             onComplete = {
-                                component.navigateUp()
+                                navController.navigateUp()
                             },
                             onDuplicate = { token, existingToken ->
                                 tokenSetupViewModel.showDuplicateTokenDialog.value =

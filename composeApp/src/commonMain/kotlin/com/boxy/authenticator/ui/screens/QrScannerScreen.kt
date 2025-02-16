@@ -32,10 +32,10 @@ import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.close
 import boxy_authenticator.composeapp.generated.resources.invalid_qr_code
 import boxy_authenticator.composeapp.generated.resources.retry
-import com.arkivanov.decompose.router.stack.pop
 import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.TokenEntryParser
-import com.boxy.authenticator.navigation.components.QrScannerScreenComponent
+import com.boxy.authenticator.navigation.LocalNavController
+import com.boxy.authenticator.navigation.navigateToNewTokenSetupWithUrl
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.PlatformAlertDialog
 import kotlinx.coroutines.launch
@@ -48,7 +48,9 @@ private const val TAG = "QrScannerScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QrScannerScreen(component: QrScannerScreenComponent) {
+fun QrScannerScreen() {
+
+    val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
 
     var isFlashOn by remember { mutableStateOf(false) }
@@ -66,7 +68,10 @@ fun QrScannerScreen(component: QrScannerScreenComponent) {
                         scope.launch {
                             try {
                                 TokenEntryParser.buildFromUrl(result)
-                                component.navigateToTokenSetupScreen(authUrl = result)
+                                navController.navigateToNewTokenSetupWithUrl(
+                                    authUrl = result,
+                                    popCurrent = true,
+                                )
                             } catch (e: Exception) {
                                 Logger.e(TAG, e.message, e)
                                 showPlatformAlertDialog = true
@@ -83,7 +88,7 @@ fun QrScannerScreen(component: QrScannerScreenComponent) {
             Toolbar(
                 title = "",
                 navigationIcon = {
-                    IconButton(onClick = { component.navigation.pop() }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.Close, stringResource(Res.string.close))
                     }
                 },
@@ -99,7 +104,7 @@ fun QrScannerScreen(component: QrScannerScreenComponent) {
                     dismissText = stringResource(Res.string.close),
                     onDismissRequest = {
                         showPlatformAlertDialog = false
-                        component.navigateUp()
+                        navController.navigateUp()
                     },
                     onConfirmation = {
                         showPlatformAlertDialog = false

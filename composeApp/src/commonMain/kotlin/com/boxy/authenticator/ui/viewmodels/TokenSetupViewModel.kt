@@ -20,6 +20,7 @@ import com.boxy.authenticator.domain.models.otp.OtpInfo
 import com.boxy.authenticator.domain.models.otp.SteamInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo
 import com.boxy.authenticator.domain.usecases.DeleteTokenUseCase
+import com.boxy.authenticator.domain.usecases.FetchTokenByIdUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
 import com.boxy.authenticator.domain.usecases.UpdateTokenUseCase
@@ -30,6 +31,7 @@ import org.jetbrains.compose.resources.getString
 
 class TokenSetupViewModel(
     private val settings: AppSettings,
+    private val fetchTokenByIdUseCase: FetchTokenByIdUseCase,
     private val insertTokenUseCase: InsertTokenUseCase,
     private val updateTokenUseCase: UpdateTokenUseCase,
     private val deleteTokenUseCase: DeleteTokenUseCase,
@@ -58,10 +60,12 @@ class TokenSetupViewModel(
         val existingToken: TokenEntry? = null,
     )
 
-    fun setInitialStateFromToken(token: TokenEntry) {
-        tokenToUpdate = token
-        tokenSetupMode = TokenSetupMode.UPDATE
-        setStateFromToken(token)
+    fun setInitialStateFromTokenId(tokenId: String) {
+        tokenToUpdate = getTokenFromId(tokenId)
+        tokenToUpdate?.let {
+            tokenSetupMode = TokenSetupMode.UPDATE
+            setStateFromToken(it)
+        }
     }
 
     fun setInitialStateFromUrl(authUrl: String) {
@@ -363,6 +367,11 @@ class TokenSetupViewModel(
         viewModelScope.launch {
             replaceExistingTokenUseCase(existingToken, token)
         }
+    }
+
+    private fun getTokenFromId(tokenId: String?): TokenEntry? {
+        tokenId ?: return null
+        return fetchTokenByIdUseCase.invoke(tokenId).fold(onSuccess = { it }, onFailure = { null })
     }
 
     companion object {

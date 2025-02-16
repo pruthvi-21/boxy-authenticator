@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.app_name
 import boxy_authenticator.composeapp.generated.resources.enter_your_password
@@ -41,19 +42,32 @@ import boxy_authenticator.composeapp.generated.resources.unlock
 import boxy_authenticator.composeapp.generated.resources.unlock_vault
 import boxy_authenticator.composeapp.generated.resources.unlock_vault_message
 import boxy_authenticator.composeapp.generated.resources.use_biometrics
-import com.boxy.authenticator.navigation.components.AuthenticationScreenComponent
+import com.boxy.authenticator.navigation.LocalNavController
+import com.boxy.authenticator.navigation.navigateToHome
+import com.boxy.authenticator.navigation.navigateToSettings
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.TokkyTextButton
 import com.boxy.authenticator.ui.components.Toolbar
+import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
+import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.BuildUtils
+import dev.icerock.moko.biometry.BiometryAuthenticator
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.parameter.ParametersHolder
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
-fun AuthenticationScreen(component: AuthenticationScreenComponent) {
-    val authViewModel = component.authenticationViewModel
+fun AuthenticationScreen() {
+    val navController = LocalNavController.current
+    val settingsViewModel = LocalSettingsViewModel.current
+    val authViewModel: AuthenticationViewModel = koinViewModel {
+        ParametersHolder(mutableListOf(settingsViewModel.biometryAuthenticator))
+    }
     val focusRequester = remember { FocusRequester() }
 
     val isBiometricUnlockEnabled = authViewModel.isBiometricUnlockEnabled()
@@ -61,7 +75,7 @@ fun AuthenticationScreen(component: AuthenticationScreenComponent) {
     LaunchedEffect(Unit) {
         if (isBiometricUnlockEnabled) {
             authViewModel.promptForBiometrics {
-                if (it) component.navigateToHome()
+                if (it) navController.navigateToHome(true)
             }
         }
     }
@@ -71,7 +85,7 @@ fun AuthenticationScreen(component: AuthenticationScreenComponent) {
             Toolbar(
                 title = "",
                 actions = {
-                    IconButton(onClick = { component.navigateToSettings() }) {
+                    IconButton(onClick = { navController.navigateToSettings(hideSensitiveSettings = true) }) {
                         Icon(
                             Icons.Outlined.Settings,
                             contentDescription = stringResource(Res.string.title_settings)
@@ -148,7 +162,7 @@ fun AuthenticationScreen(component: AuthenticationScreenComponent) {
                         TokkyTextButton(
                             onClick = {
                                 authViewModel.promptForBiometrics {
-                                    if (it) component.navigateToHome()
+                                    if (it) navController.navigateToHome(true)
                                 }
                             },
                         ) {
@@ -162,7 +176,7 @@ fun AuthenticationScreen(component: AuthenticationScreenComponent) {
                         onClick = {
                             authViewModel.verifyPassword {
                                 if (!it) return@verifyPassword
-                                component.navigateToHome()
+                                navController.navigateToHome(true)
                             }
                         },
                         enabled = authViewModel.password.value.isNotEmpty(),

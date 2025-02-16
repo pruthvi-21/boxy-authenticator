@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.title_settings
-import com.boxy.authenticator.navigation.components.SettingsScreenComponent
+import com.boxy.authenticator.navigation.LocalNavController
+import com.boxy.authenticator.navigation.navigateToExportTokens
+import com.boxy.authenticator.navigation.navigateToImportTokens
 import com.boxy.authenticator.ui.components.BoxSwitch
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.screens.settings.AppearanceSettings
@@ -27,19 +29,20 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    component: SettingsScreenComponent,
+    hideSensitiveSettings: Boolean = false,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val navController = LocalNavController.current
     val settingsViewModel = LocalSettingsViewModel.current
-    settingsViewModel.hideSensitiveSettings.value = component.hideSensitiveSettings
+    settingsViewModel.hideSensitiveSettings.value = hideSensitiveSettings
 
     Scaffold(
         topBar = {
             Toolbar(
                 title = stringResource(Res.string.title_settings),
                 showDefaultNavigationIcon = true,
-                onNavigationIconClick = { component.navigateUp() }
+                onNavigationIconClick = { navController.popBackStack() }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -68,10 +71,10 @@ fun SettingsScreen(
                     TransferAccounts(
                         snackbarHostState = snackbarHostState,
                         onNavigateToExport = {
-                            component.navigateToExport()
+                            navController.navigateToExportTokens()
                         },
                         onNavigateToImport = {
-                            component.navigateToImport(it)
+                            navController.navigateToImportTokens()
                         }
                     )
                 }

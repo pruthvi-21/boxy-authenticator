@@ -29,7 +29,11 @@ import boxy_authenticator.composeapp.generated.resources.empty_layout_text
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_manual_title
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_qr_title
 import boxy_authenticator.composeapp.generated.resources.title_settings
-import com.boxy.authenticator.navigation.components.HomeScreenComponent
+import com.boxy.authenticator.navigation.LocalNavController
+import com.boxy.authenticator.navigation.navigateToEditTokenScreen
+import com.boxy.authenticator.navigation.navigateToNewTokenSetupScreen
+import com.boxy.authenticator.navigation.navigateToQrScannerScreen
+import com.boxy.authenticator.navigation.navigateToSettings
 import com.boxy.authenticator.ui.components.ExpandableFab
 import com.boxy.authenticator.ui.components.ExpandableFabItem
 import com.boxy.authenticator.ui.components.Toolbar
@@ -37,11 +41,15 @@ import com.boxy.authenticator.ui.screens.home.TokensList
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import com.boxy.authenticator.utils.copy
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
-fun HomeScreen(component: HomeScreenComponent) {
-    val homeViewModel = component.homeViewModel
+fun HomeScreen() {
+
+    val navController = LocalNavController.current
+    val homeViewModel: HomeViewModel = koinViewModel()
 
     val tokensState by homeViewModel.tokensState.collectAsStateWithLifecycle()
 
@@ -60,9 +68,7 @@ fun HomeScreen(component: HomeScreenComponent) {
                     title = stringResource(Res.string.app_name),
                     showDefaultNavigationIcon = false,
                     actions = {
-                        IconButton(onClick = {
-                            component.navigateToSettings()
-                        }) {
+                        IconButton(onClick = { navController.navigateToSettings() }) {
                             Icon(
                                 imageVector = Icons.TwoTone.Settings,
                                 contentDescription = stringResource(Res.string.title_settings),
@@ -79,7 +85,9 @@ fun HomeScreen(component: HomeScreenComponent) {
                         if (tokens.isNotEmpty()) {
                             TokensList(
                                 tokens,
-                                onEdit = { component.navigateToTokenSetupScreen(it) }
+                                onEdit = {
+                                    navController.navigateToEditTokenScreen(tokenId = it.id)
+                                }
                             )
                         } else {
                             Box(
@@ -121,8 +129,8 @@ fun HomeScreen(component: HomeScreenComponent) {
                 onItemClick = { index ->
                     homeViewModel.toggleFabState(false)
                     when (index) {
-                        0 -> component.navigateToQrScannerScreen()
-                        1 -> component.navigateToTokenSetupScreen()
+                        0 -> navController.navigateToQrScannerScreen()
+                        1 -> navController.navigateToNewTokenSetupScreen()
                     }
                 },
                 modifier = Modifier.padding(safePadding),

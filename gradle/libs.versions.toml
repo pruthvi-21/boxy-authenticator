@@ -9,9 +9,7 @@ androidx-lifecycle = "2.8.4"
 androidx-material3 = "1.12.0"
 coilCompose = "3.0.4"
 compose-multiplatform = "1.7.0"
-decompose = "3.3.0-alpha02"
 diglol-crypto = "0.2.0"
-essenty = "2.5.0-alpha01"
 filekit = "0.8.8"
 guava = "33.4.0-android"
 koin = "3.6.0-Beta4"
@@ -35,12 +33,9 @@ androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
-decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
-decompose-extensions = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 diglol-crypto-cipher = { module = "com.diglol.crypto:cipher", version.ref = "diglol-crypto" }
 diglol-crypto-kdf = { module = "com.diglol.crypto:kdf", version.ref = "diglol-crypto" }
 diglol-crypto-random = { module = "com.diglol.crypto:random", version.ref = "diglol-crypto" }
-essenty = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" } #for decompose
 filekit = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
