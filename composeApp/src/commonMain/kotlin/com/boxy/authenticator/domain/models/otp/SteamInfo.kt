@@ -9,7 +9,7 @@ class SteamInfo(
 ) : TotpInfo(secretKey, digits = DIGITS) {
 
     override fun getOtp(): String {
-        return super.getOtp().toSteamString()
+        return "${calculateToken()}".toSteamString()
     }
 
     private fun String.toSteamString(): String {

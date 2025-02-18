@@ -23,9 +23,14 @@ open class TotpInfo(
 ) : OtpInfo() {
 
     override fun getOtp(): String {
+        val otp = calculateToken()
+        return "$otp".takeLast(digits).padStart(digits, '0')
+    }
+
+    protected fun calculateToken(): Int {
         val time = Clock.System.now().toEpochMilliseconds()
         val otp = OtpGenerator.generateTotp(secretKey, algorithm, period, time)
-        return "$otp".takeLast(digits).padStart(digits, '0')
+        return otp
     }
 
     fun getMillisTillNextRotation(): Long {
