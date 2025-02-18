@@ -35,6 +35,7 @@ fun TokkyDialog(
     icon: (@Composable () -> Unit)? = null,
     confirmText: String = stringResource(Res.string.ok),
     dismissText: String = stringResource(Res.string.cancel),
+    confirmEnabled: Boolean = true,
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     content: (@Composable () -> Unit)? = null,
@@ -112,6 +113,7 @@ fun TokkyDialog(
                 Spacer(Modifier.width(5.dp))
                 TokkyTextButton(
                     onClick = { onConfirmation() },
+                    enabled = confirmEnabled,
                     shape = MaterialTheme.shapes.extraSmall,
                     modifier = Modifier.widthIn(min = 70.dp)
                 ) {
