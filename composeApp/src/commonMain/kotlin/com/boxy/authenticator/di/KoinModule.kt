@@ -25,7 +25,6 @@ import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
 import com.boxy.authenticator.ui.viewmodels.SetPasswordDialogViewModel
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
-import com.boxy.authenticator.ui.viewmodels.TransferAccountsViewModel
 import com.boxy.authenticator.ui.viewmodels.RemovePasswordDialogViewModel
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import org.koin.compose.viewmodel.dsl.viewModel
@@ -43,7 +42,6 @@ val sharedModule = module {
     viewModel { (biometryAuthenticator: BiometryAuthenticator) ->
         SettingsViewModel(get(), biometryAuthenticator)
     }
-    viewModel { TransferAccountsViewModel(get()) }
     viewModel { ExportTokensViewModel(get()) }
     viewModel { ImportTokensViewModel(get(), get(), get()) }
     viewModel { RemovePasswordDialogViewModel() }

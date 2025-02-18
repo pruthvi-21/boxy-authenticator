@@ -92,13 +92,22 @@
 
     <!-- ImportTokensScreen -->
     <string name="import_label">Import</string>
-    <string name="no_tokens_to_import">No accounts were found in the selected file</string>
+    <string name="import_from_boxy_json">Import from Boxy (.json)</string>
+    <string name="import_from_boxy_boxy">Import from Boxy (.boxy)</string>
+    <string name="empty_content">No content found in the file.</string>
+    <string name="no_tokens_to_import">No accounts were found in the selected file.</string>
+    <string name="failed_to_decrypt">Failed to decrypt the file.</string>
+    <string name="import_screen_msg">Select a file to import your saved accounts.</string>
+    <string name="failed_to_parse_file">Failed to parse the file</string>
     <string name="proceed">Proceed</string>
+    <string name="load_file">Load file</string>
+    <string name="load_encrypted_file">Load encrypted file</string>
     <string name="duplicate_warning_message">Only %1$d entries will be imported. %2$d duplicate entries will be ignored.</string>
     <string name="set_password">Set password</string>
     <string name="password_min_length_error">Password should have at least 6 characters</string>
     <string name="remove_password">Remove password</string>
     <string name="enter_your_password">Enter your password</string>
+
     <string name="unlock">Unlock</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
@@ -107,7 +116,6 @@
     <string name="single_tap">Single tap</string>
     <string name="double_tap">Double tap</string>
     <string name="long_press">Long press</string>
-    <string name="failed_to_parse_file">Failed to parse the file</string>
 
     <!-- SettingsScreen -->
     <string name="preference_title_app_theme">App theme</string>

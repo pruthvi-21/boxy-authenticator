@@ -78,19 +78,7 @@ fun NavGraphBuilder.addExportTokensRoute() {
 }
 
 fun NavGraphBuilder.addImportTokensRoute() {
-    composable(
-        route = "${Routes.ImportTokens.base}?tokens={tokens}",
-        arguments = listOf(
-            navArgument("tokens") {
-                type = NavType.StringType
-                nullable = true
-                defaultValue = null
-            }
-        )
-    ) { navBackStackEntry ->
-        val content = navBackStackEntry.arguments?.getString("tokens") ?: ""
-
-        val data = BoxyJson.decodeFromString<List<TokenEntry>>(content)
-        ImportTokensScreen(data)
+    composable(Routes.ImportTokens.base) {
+        ImportTokensScreen()
     }
 }
