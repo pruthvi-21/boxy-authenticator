@@ -8,12 +8,6 @@ import androidx.compose.ui.unit.dp
 import com.boxy.authenticator.domain.models.TokenEntry
 
 object Utils {
-    fun isValidTOTPAuthURL(url: String?): Boolean {
-        url ?: return false
-        //TODO: need to add more validations
-        return url.startsWith("otpauth://")
-    }
-
     fun String.toColor(): Color {
         val hexString = this.removePrefix("#")
         return when (hexString.length) {

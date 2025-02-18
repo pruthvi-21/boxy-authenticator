@@ -28,7 +28,7 @@ object TokenEntryParser {
 
         val uri = Url(url)
 
-        if (!Utils.isValidTOTPAuthURL(uri.toString())) {
+        if (!uri.toString().startsWith("otpauth://")) {
             throw BadlyFormedURLException("Invalid URL format")
         }
 
