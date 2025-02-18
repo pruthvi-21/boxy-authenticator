@@ -52,7 +52,11 @@ fun SettingsScreen(
             item { AppearanceSettings() }
             item { GeneralSettings() }
             if (!settingsViewModel.hideSensitiveSettings.value) {
-                item { SecuritySettings() }
+                item {
+                    SecuritySettings(
+                        snackbarHostState = snackbarHostState,
+                    )
+                }
             }
             if (!settingsViewModel.hideSensitiveSettings.value) {
                 item {
