@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.confirm_password
 import boxy_authenticator.composeapp.generated.resources.enter_a_password
+import boxy_authenticator.composeapp.generated.resources.ok
 import boxy_authenticator.composeapp.generated.resources.password
 import boxy_authenticator.composeapp.generated.resources.set_password
 import boxy_authenticator.composeapp.generated.resources.show_password
@@ -36,6 +37,8 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SetPasswordDialog(
+    dialogBody: String? = null,
+    confirmText: String = stringResource(Res.string.ok),
     onDismissRequest: () -> Unit,
     onConfirmation: (String) -> Unit,
 ) {
@@ -46,6 +49,8 @@ fun SetPasswordDialog(
 
     TokkyDialog(
         dialogTitle = stringResource(Res.string.set_password),
+        dialogBody = dialogBody,
+        confirmText = confirmText,
         onDismissRequest = {
             onDismissRequest()
             viewModel.reset()

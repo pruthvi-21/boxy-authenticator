@@ -36,13 +36,13 @@ class SetPasswordDialogViewModel : ViewModel() {
 
     fun validatePasswords(): Boolean {
         _passwordError.value = when {
+            password.isEmpty() -> "Password can't be empty"
             password.length < 6 -> "Password should have at least 6 characters"
-            password.isEmpty() -> "Password can\\'t be empty"
             else -> null
         }
 
         _confirmPasswordError.value = when {
-            confirmPassword != password -> "Password didn\\'t matched"
+            confirmPassword != password -> "Password didn't matched"
             else -> null
         }
 
