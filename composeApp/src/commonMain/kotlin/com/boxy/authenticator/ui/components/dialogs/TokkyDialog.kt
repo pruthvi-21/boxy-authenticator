@@ -54,7 +54,7 @@ fun TokkyDialog(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
+                .fillMaxWidth(0.85f)
                 .widthIn(max = 500.dp)
                 .clip(MaterialTheme.shapes.large)
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh),
