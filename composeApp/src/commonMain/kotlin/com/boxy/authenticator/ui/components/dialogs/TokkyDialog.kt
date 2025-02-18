@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -79,45 +81,49 @@ fun TokkyDialog(
             }
 
             Column(
-                modifier = Modifier.padding(horizontal = 24.dp)
+                modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
-                if (!dialogBody.isNullOrEmpty()) {
-                    Text(
-                        text = dialogBody,
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(vertical = 15.dp)
-                    )
-                }
+                Column(
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                ) {
+                    if (!dialogBody.isNullOrEmpty()) {
+                        Text(
+                            text = dialogBody,
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(vertical = 15.dp)
+                        )
+                    }
 
-                if (content != null) {
-                    Box(Modifier.padding(vertical = 5.dp)) {
-                        content.invoke()
+                    if (content != null) {
+                        Box(Modifier.padding(vertical = 5.dp)) {
+                            content.invoke()
+                        }
                     }
                 }
-            }
 
-            Row(
-                Modifier
-                    .padding(vertical = 4.dp, horizontal = 12.dp)
-                    .heightIn(min = 54.dp)
-            ) {
-                Spacer(Modifier.weight(1f))
-                TokkyTextButton(
-                    onClick = { onDismissRequest() },
-                    shape = MaterialTheme.shapes.extraSmall,
-                    modifier = Modifier.widthIn(min = 70.dp)
+                Row(
+                    Modifier
+                        .padding(vertical = 4.dp, horizontal = 12.dp)
+                        .heightIn(min = 54.dp)
                 ) {
-                    Text(text = dismissText)
-                }
-                Spacer(Modifier.width(5.dp))
-                TokkyTextButton(
-                    onClick = { onConfirmation() },
-                    enabled = confirmEnabled,
-                    shape = MaterialTheme.shapes.extraSmall,
-                    modifier = Modifier.widthIn(min = 70.dp)
-                ) {
-                    Text(text = confirmText)
+                    Spacer(Modifier.weight(1f))
+                    TokkyTextButton(
+                        onClick = { onDismissRequest() },
+                        shape = MaterialTheme.shapes.extraSmall,
+                        modifier = Modifier.widthIn(min = 70.dp)
+                    ) {
+                        Text(text = dismissText)
+                    }
+                    Spacer(Modifier.width(5.dp))
+                    TokkyTextButton(
+                        onClick = { onConfirmation() },
+                        enabled = confirmEnabled,
+                        shape = MaterialTheme.shapes.extraSmall,
+                        modifier = Modifier.widthIn(min = 70.dp)
+                    ) {
+                        Text(text = confirmText)
+                    }
                 }
             }
         }
