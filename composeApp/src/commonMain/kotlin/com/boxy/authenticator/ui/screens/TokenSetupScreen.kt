@@ -153,10 +153,8 @@ fun TokenSetupScreen(
     var state = tokenSetupViewModel.uiState.value
 
     LaunchedEffect(token, tokenSetupMode) {
-        token?.let {
-            tokenSetupViewModel.setStateFromToken(it, tokenSetupMode)
-            state = tokenSetupViewModel.uiState.value
-        }
+        tokenSetupViewModel.setStateFromToken(token, tokenSetupMode)
+        state = tokenSetupViewModel.uiState.value
     }
 
     SystemBackHandler {

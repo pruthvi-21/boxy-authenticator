@@ -40,12 +40,12 @@ class TokenSetupViewModel(
     private val logger = Logger("TokenSetupViewModel")
 
     private var initialState = TokenFormState()
+    private var currentToken: TokenEntry? = null
 
     private var _uiState = mutableStateOf(initialState)
     val uiState: State<TokenFormState> = _uiState
 
-    var tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW
-    private var tokenToUpdate: TokenEntry? = null
+    private var tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW
 
     val lockSensitiveFields: Boolean
         get() = mutableStateOf(settings.isLockSensitiveFieldsEnabled()).value
@@ -61,7 +61,12 @@ class TokenSetupViewModel(
         val existingToken: TokenEntry? = null,
     )
 
-    fun setStateFromToken(token: TokenEntry, tokenSetupMode: TokenSetupMode) {
+    fun setStateFromToken(token: TokenEntry?, tokenSetupMode: TokenSetupMode) {
+        if(token == null) {
+
+            return
+        }
+        currentToken = token
         var tokenState = TokenFormState(
             issuer = token.issuer,
             label = token.label,
@@ -257,7 +262,7 @@ class TokenSetupViewModel(
                     }
 
                     TokenSetupMode.UPDATE -> {
-                        val token = tokenToUpdate?.copy(
+                        val token = currentToken?.copy(
                             issuer = state.issuer,
                             label = state.label,
                             thumbnail = state.thumbnail,
