@@ -43,8 +43,8 @@ import boxy_authenticator.composeapp.generated.resources.enter_your_password
 import boxy_authenticator.composeapp.generated.resources.hint_issuer
 import boxy_authenticator.composeapp.generated.resources.hint_label
 import boxy_authenticator.composeapp.generated.resources.import_accounts
-import boxy_authenticator.composeapp.generated.resources.import_from_boxy_boxy
-import boxy_authenticator.composeapp.generated.resources.import_from_boxy_json
+import boxy_authenticator.composeapp.generated.resources.import_from_boxy_file
+import boxy_authenticator.composeapp.generated.resources.import_from_plain_text
 import boxy_authenticator.composeapp.generated.resources.import_label
 import boxy_authenticator.composeapp.generated.resources.proceed
 import boxy_authenticator.composeapp.generated.resources.rename
@@ -110,14 +110,14 @@ fun ImportTokensScreen() {
                                 title = { }
                             ) {
                                 Preference(
-                                    title = { Text(stringResource(Res.string.import_from_boxy_json)) },
+                                    title = { Text(stringResource(Res.string.import_from_plain_text) + " (.txt)") },
                                     onClick = {
                                         importTokensViewModel.pickFile(isEncrypted = false)
                                         snackbarHostState.currentSnackbarData?.dismiss()
                                     }
                                 )
                                 Preference(
-                                    title = { Text(stringResource(Res.string.import_from_boxy_boxy)) },
+                                    title = { Text(stringResource(Res.string.import_from_boxy_file) + " (.boxy)") },
                                     onClick = {
                                         importTokensViewModel.pickFile(isEncrypted = true)
                                         snackbarHostState.currentSnackbarData?.dismiss()
@@ -185,7 +185,7 @@ fun ImportTokensScreen() {
                             importTokensViewModel.setInitialState()
                         },
                         onConfirmation = {
-                            importTokensViewModel.tryDecrypt(uiState.file, it)
+                            importTokensViewModel.decodeEncryptedContent(uiState.file, it)
                         }
                     )
                 }

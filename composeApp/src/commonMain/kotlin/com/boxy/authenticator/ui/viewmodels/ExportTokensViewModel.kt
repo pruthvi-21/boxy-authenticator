@@ -11,6 +11,7 @@ import com.boxy.authenticator.core.crypto.Crypto
 import com.boxy.authenticator.core.serialization.BoxyJson
 import com.boxy.authenticator.domain.models.ExportableTokenEntry
 import com.boxy.authenticator.domain.models.TokenEntry
+import com.boxy.authenticator.domain.models.generateOtpAuthUrl
 import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
 import com.boxy.authenticator.utils.Constants
 import com.boxy.authenticator.utils.Constants.EXPORT_ENCRYPTED_FILE_EXTENSION
@@ -120,10 +121,12 @@ class ExportTokensViewModel(
     }
 
     private fun prepareExportData(tokens: List<TokenEntry>): String {
-        val exportData = JsonArray(tokens.map { token ->
-            BoxyJson.encodeToJsonElement(ExportableTokenEntry.fromTokenEntry(token))
-        })
-        return BoxyJson.encodeToString(exportData)
+        return if (isEncrypted) {
+            val exportData = JsonArray(tokens.map { token ->
+                BoxyJson.encodeToJsonElement(ExportableTokenEntry.fromTokenEntry(token))
+            })
+            BoxyJson.encodeToString(exportData)
+        } else tokens.joinToString("\n") { it.generateOtpAuthUrl() }
     }
 
     private suspend fun encryptDataIfEnabled(data: String): ByteArray {

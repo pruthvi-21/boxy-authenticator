@@ -9,6 +9,7 @@ import boxy_authenticator.composeapp.generated.resources.failed_to_decrypt
 import boxy_authenticator.composeapp.generated.resources.failed_to_parse_file
 import boxy_authenticator.composeapp.generated.resources.no_tokens_to_import
 import com.boxy.authenticator.core.Logger
+import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.core.crypto.Crypto
 import com.boxy.authenticator.core.serialization.BoxyJson
 import com.boxy.authenticator.domain.models.ExportableTokenEntry
@@ -18,7 +19,6 @@ import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokensUseCase
 import com.boxy.authenticator.utils.name
 import io.github.vinceglb.filekit.core.FileKit
-import io.github.vinceglb.filekit.core.PickerType
 import io.github.vinceglb.filekit.core.PlatformFile
 import io.github.vinceglb.filekit.core.pickFile
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,9 +58,7 @@ class ImportTokensViewModel(
     }
 
     fun pickFile(isEncrypted: Boolean) = viewModelScope.launch {
-        val file = FileKit.pickFile(
-            type = PickerType.File()
-        ) ?: run {
+        val file = FileKit.pickFile() ?: run {
             logger.e("File selection failed.")
             return@launch
         }
@@ -74,7 +72,7 @@ class ImportTokensViewModel(
         if (isEncrypted) {
             _uiState.update { UiState.RequestPassword(file) }
         } else {
-            val tokens = decode(fileContent.decodeToString())
+            val tokens = decodePlainContent(fileContent.decodeToString())
             when {
                 tokens?.isEmpty() == true -> {
                     _uiState.update { UiState.Initial(getString(Res.string.no_tokens_to_import)) }
@@ -83,6 +81,7 @@ class ImportTokensViewModel(
                 tokens != null -> {
                     _uiState.update { UiState.FileLoaded(tokens) }
                 }
+
                 else -> {
                     _uiState.update { UiState.Initial(getString(Res.string.failed_to_parse_file)) }
                 }
@@ -90,40 +89,49 @@ class ImportTokensViewModel(
         }
     }
 
-    private fun decode(fileContent: String): List<ImportItem>? {
+    private fun decodePlainContent(fileContent: String): List<ImportItem>? {
         return try {
-            val list = BoxyJson.decodeFromString<List<ExportableTokenEntry>>(fileContent)
-                .map { it.toTokenEntry() }
+            val list = fileContent.split("\n")
+            val tokensList = arrayListOf<TokenEntry>()
 
-            buildTokensToImportList(list)
+            list.forEachIndexed { index, line ->
+                try {
+                    val token = TokenEntryParser.buildFromUrl(line)
+                    tokensList.add(token)
+                } catch (e: Exception) {
+                    logger.e("Error parsing line $index: ${e.message}", e)
+                }
+            }
+
+            buildImportListFromTokens(tokensList)
         } catch (e: Exception) {
             logger.e(e.message, e)
             null
         }
     }
 
-    fun tryDecrypt(
+    fun decodeEncryptedContent(
         file: PlatformFile,
         password: String,
-    ) {
-        viewModelScope.launch {
-            val fileContent = file.readBytes()
+    ) = viewModelScope.launch {
+        val fileContent = file.readBytes()
 
+        val decodedData = try {
+            val decryptedData = Crypto.decrypt(password, fileContent)
+            val list = BoxyJson.decodeFromString<List<ExportableTokenEntry>>(decryptedData)
+                .map { it.toTokenEntry() }
 
-            val decodedData = try {
-                val decryptedData = Crypto.decrypt(password, fileContent)
-                decode(decryptedData)
-            } catch (e: Exception){
-                logger.e(e)
-                null
-            }
+            buildImportListFromTokens(list)
+        } catch (e: Exception) {
+            logger.e(e)
+            null
+        }
 
-            _uiState.update {
-                if (decodedData == null) {
-                    UiState.Initial(getString(Res.string.failed_to_decrypt))
-                } else {
-                    UiState.FileLoaded(decodedData)
-                }
+        _uiState.update {
+            if (decodedData == null) {
+                UiState.Initial(getString(Res.string.failed_to_decrypt))
+            } else {
+                UiState.FileLoaded(decodedData)
             }
         }
     }
@@ -154,7 +162,7 @@ class ImportTokensViewModel(
         }
     }
 
-    private fun buildTokensToImportList(tokens: List<TokenEntry>): List<ImportItem> {
+    private fun buildImportListFromTokens(tokens: List<TokenEntry>): List<ImportItem> {
         fetchTokensUseCase()
             .fold(
                 onSuccess = { data ->

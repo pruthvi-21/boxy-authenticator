@@ -47,16 +47,15 @@ import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
-private const val TAG = "ExportTokensScreen"
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
 @Composable
 fun ExportTokensScreen() {
 
     val navController = LocalNavController.current
-    val exportViewModel: ExportTokensViewModel = koinInject()
+    val exportViewModel: ExportTokensViewModel = koinViewModel()
 
     Scaffold(
         topBar = {
