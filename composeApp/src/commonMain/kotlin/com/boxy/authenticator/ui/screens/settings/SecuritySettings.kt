@@ -3,6 +3,8 @@ package com.boxy.authenticator.ui.screens.settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.enter_correct_password
+import boxy_authenticator.composeapp.generated.resources.password
 import boxy_authenticator.composeapp.generated.resources.preference_category_title_security
 import boxy_authenticator.composeapp.generated.resources.preference_summary_app_lock
 import boxy_authenticator.composeapp.generated.resources.preference_summary_biometrics
@@ -12,8 +14,9 @@ import boxy_authenticator.composeapp.generated.resources.preference_title_app_lo
 import boxy_authenticator.composeapp.generated.resources.preference_title_biometrics
 import boxy_authenticator.composeapp.generated.resources.preference_title_block_screenshots
 import boxy_authenticator.composeapp.generated.resources.preference_title_lock_sensitive_fields
+import boxy_authenticator.composeapp.generated.resources.remove_password
 import com.boxy.authenticator.core.Platform
-import com.boxy.authenticator.ui.components.dialogs.RemovePasswordDialog
+import com.boxy.authenticator.ui.components.dialogs.RequestPasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.jw.preferences.PreferenceCategory
@@ -89,7 +92,10 @@ fun SecuritySettings() {
     }
 
     if (settingsViewModel.showDisableAppLockDialog.value) {
-        RemovePasswordDialog(
+        RequestPasswordDialog(
+            title = stringResource(Res.string.remove_password),
+            label = stringResource(Res.string.password),
+            placeholder = stringResource(Res.string.enter_correct_password),
             onDismissRequest = {
                 settingsViewModel.showDisableAppLockDialog.value = false
             },
