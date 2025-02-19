@@ -1,9 +1,16 @@
 package com.boxy.authenticator.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -19,8 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,6 +39,7 @@ import boxy_authenticator.composeapp.generated.resources.empty_layout_text
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_manual_title
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_qr_title
 import boxy_authenticator.composeapp.generated.resources.title_settings
+import com.boxy.authenticator.core.Platform
 import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToEditTokenScreen
 import com.boxy.authenticator.navigation.navigateToNewTokenSetupScreen
@@ -40,8 +50,8 @@ import com.boxy.authenticator.ui.components.ExpandableFab
 import com.boxy.authenticator.ui.components.ExpandableFabItem
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.screens.home.TokensList
+import com.boxy.authenticator.ui.util.SystemBackHandler
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
-import com.boxy.authenticator.utils.copy
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -59,25 +69,28 @@ fun HomeScreen() {
         homeViewModel.loadTokens()
     }
 
-    BoxyScaffold { safePadding ->
+    BoxyScaffold(
+        topBar = {
+            Toolbar(
+                title = stringResource(Res.string.app_name),
+                showDefaultNavigationIcon = false,
+                actions = {
+                    IconButton(onClick = { navController.navigateToSettings() }) {
+                        Icon(
+                            imageVector = Icons.TwoTone.Settings,
+                            contentDescription = stringResource(Res.string.title_settings),
+                        )
+                    }
+                },
+            )
+        }
+    ) { safePadding ->
         Box {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(safePadding.copy(top = 0.dp))
+                    .padding(safePadding)
             ) {
-                Toolbar(
-                    title = stringResource(Res.string.app_name),
-                    showDefaultNavigationIcon = false,
-                    actions = {
-                        IconButton(onClick = { navController.navigateToSettings() }) {
-                            Icon(
-                                imageVector = Icons.TwoTone.Settings,
-                                contentDescription = stringResource(Res.string.title_settings),
-                            )
-                        }
-                    },
-                )
                 when (val uiState = tokensState) {
                     is HomeViewModel.UIState.Loading -> {}
 
@@ -120,23 +133,63 @@ fun HomeScreen() {
                     }
                 }
             }
+        }
+    }
 
-            val items = listOf(
-                ExpandableFabItem(stringResource(Res.string.expandable_fab_qr_title), Icons.Outlined.QrCodeScanner),
-                ExpandableFabItem(stringResource(Res.string.expandable_fab_manual_title), Icons.Outlined.Edit),
-            )
-
-            ExpandableFab(
-                items = items,
-                onItemClick = { index ->
-                    homeViewModel.toggleFabState(false)
-                    when (index) {
-                        0 -> navController.navigateToQrScannerScreen()
-                        1 -> navController.navigateToNewTokenSetupScreen()
-                    }
-                },
-                modifier = Modifier.padding(safePadding),
+    if (Platform.isAndroid) {
+        // Not needed in IOS as action sheet is used
+        AnimatedVisibility(
+            visible = homeViewModel.isFabExpanded,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+                    .then(
+                        if (!homeViewModel.isFabExpanded) Modifier
+                        else Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            enabled = homeViewModel.isFabExpanded
+                        ) { homeViewModel.setIsFabExpanded(false) }
+                    )
             )
         }
+    }
+
+    val items = listOf(
+        ExpandableFabItem(
+            stringResource(Res.string.expandable_fab_qr_title),
+            Icons.Outlined.QrCodeScanner
+        ),
+        ExpandableFabItem(
+            stringResource(Res.string.expandable_fab_manual_title),
+            Icons.Outlined.Edit
+        ),
+    )
+
+    ExpandableFab(
+        isFabExpanded = homeViewModel.isFabExpanded,
+        items = items,
+        onItemClick = { index ->
+            homeViewModel.setIsFabExpanded(false)
+            when (index) {
+                0 -> navController.navigateToQrScannerScreen()
+                1 -> navController.navigateToNewTokenSetupScreen()
+            }
+        },
+        onFabExpandChange = {
+            homeViewModel.setIsFabExpanded(it)
+        },
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
+            .padding(16.dp),
+    )
+
+    SystemBackHandler(enabled = homeViewModel.isFabExpanded) {
+        homeViewModel.setIsFabExpanded(false)
     }
 }

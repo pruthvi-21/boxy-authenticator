@@ -1,5 +1,6 @@
 package com.boxy.authenticator.ui.viewmodels
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,8 +21,8 @@ class HomeViewModel(
         data class Error(val msg: String? = null) : UIState<Nothing>()
     }
 
-    var _isFabExpanded = mutableStateOf(false)
-    val isFabExpanded get() = _isFabExpanded.value
+    private val _isFabExpanded = mutableStateOf(false)
+    val isFabExpanded by _isFabExpanded
 
     private val _tokensState = MutableStateFlow<UIState<List<TokenEntry>>>(UIState.Loading)
     val tokensState = _tokensState.asStateFlow()
@@ -41,7 +42,7 @@ class HomeViewModel(
         }
     }
 
-    fun toggleFabState(expand: Boolean = !_isFabExpanded.value) {
-        _isFabExpanded.value = expand
+    fun setIsFabExpanded(expanded: Boolean) {
+        _isFabExpanded.value = expanded
     }
 }

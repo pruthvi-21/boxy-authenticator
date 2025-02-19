@@ -11,7 +11,9 @@ data class ExpandableFabItem(
 
 @Composable
 expect fun ExpandableFab(
+    isFabExpanded: Boolean,
     items: List<ExpandableFabItem>,
     onItemClick: (index: Int) -> Unit,
+    onFabExpandChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 )

@@ -2,22 +2,15 @@ package com.boxy.authenticator.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.LocalUIViewController
-import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.cd_fab_add_new
@@ -34,17 +27,17 @@ import platform.UIKit.UIViewController
 
 @Composable
 actual fun ExpandableFab(
+    isFabExpanded: Boolean,
     items: List<ExpandableFabItem>,
     onItemClick: (index: Int) -> Unit,
+    onFabExpandChange: (Boolean) -> Unit,
     modifier: Modifier,
 ) {
-    var showActionSheet by remember { mutableStateOf(false) }
-
-    if (showActionSheet) {
+    if (isFabExpanded) {
         FabOptionsSheet(
             options = items.map { it.label },
             onOptionSelected = { _, idx -> onItemClick(idx) },
-            onDismiss = { showActionSheet = false },
+            onDismiss = { onFabExpandChange(false) },
         )
     }
 
@@ -52,11 +45,9 @@ actual fun ExpandableFab(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.Bottom,
         modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
     ) {
         FloatingActionButton(
-            onClick = { showActionSheet = !showActionSheet },
+            onClick = { onFabExpandChange(!isFabExpanded) },
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
