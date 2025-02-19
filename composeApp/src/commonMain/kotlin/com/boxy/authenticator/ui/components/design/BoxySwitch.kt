@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.components
+package com.boxy.authenticator.ui.components.design
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 
 @Composable
-fun BoxSwitch(
+fun BoxySwitch(
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
     modifier: Modifier = Modifier,
@@ -37,7 +37,7 @@ fun BoxSwitch(
     val thumbOffset by animateFloatAsState(
         targetValue = if (checked) 1f else 0f,
         animationSpec = tween(150),
-        label = "BoxSwitchAnimation"
+        label = "BoxySwitchAnimation"
     )
 
     var trackColor = colors.checkedTrackColor

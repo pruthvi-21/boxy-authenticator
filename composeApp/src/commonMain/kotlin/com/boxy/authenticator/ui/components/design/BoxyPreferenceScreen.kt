@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.components
+package com.boxy.authenticator.ui.components.design
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
@@ -19,7 +19,7 @@ fun BoxyPreferenceScreen(
             categoryContentShape = MaterialTheme.shapes.medium,
             showCategoryDivider = false,
             customSwitch = { checked, enabled ->
-                BoxSwitch(checked = checked, onCheckedChange = null, enabled = enabled)
+                BoxySwitch(checked = checked, onCheckedChange = null, enabled = enabled)
             }
         ),
         modifier = modifier,

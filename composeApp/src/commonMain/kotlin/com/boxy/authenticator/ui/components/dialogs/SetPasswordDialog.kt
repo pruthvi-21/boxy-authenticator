@@ -35,7 +35,7 @@ import boxy_authenticator.composeapp.generated.resources.password_didnt_match
 import boxy_authenticator.composeapp.generated.resources.password_too_short
 import boxy_authenticator.composeapp.generated.resources.set_password
 import boxy_authenticator.composeapp.generated.resources.show_password
-import com.boxy.authenticator.ui.components.StyledTextField
+import com.boxy.authenticator.ui.components.design.BoxyTextField
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -89,7 +89,7 @@ fun SetPasswordDialog(
             LaunchedEffect(Unit) {
                 focusRequester.requestFocus()
             }
-            StyledTextField(
+            BoxyTextField(
                 value = password,
                 onValueChange = {
                     password = it
@@ -109,7 +109,7 @@ fun SetPasswordDialog(
                 modifier = Modifier.focusRequester(focusRequester)
             )
             Spacer(Modifier.height(10.dp))
-            StyledTextField(
+            BoxyTextField(
                 value = confirmPassword,
                 onValueChange = {
                     confirmPassword = it

@@ -30,8 +30,8 @@ import boxy_authenticator.composeapp.generated.resources.warning
 import boxy_authenticator.composeapp.generated.resources.warning_backup_encryption
 import boxy_authenticator.composeapp.generated.resources.warning_no_backup_encryption
 import com.boxy.authenticator.navigation.LocalNavController
-import com.boxy.authenticator.ui.components.BoxyPreferenceScreen
-import com.boxy.authenticator.ui.components.BoxyScaffold
+import com.boxy.authenticator.ui.components.design.BoxyPreferenceScreen
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.BoxyDialog

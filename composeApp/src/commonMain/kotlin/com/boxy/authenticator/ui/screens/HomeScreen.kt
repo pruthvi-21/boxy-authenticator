@@ -45,7 +45,7 @@ import com.boxy.authenticator.navigation.navigateToEditTokenScreen
 import com.boxy.authenticator.navigation.navigateToNewTokenSetupScreen
 import com.boxy.authenticator.navigation.navigateToQrScannerScreen
 import com.boxy.authenticator.navigation.navigateToSettings
-import com.boxy.authenticator.ui.components.BoxyScaffold
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.ExpandableFab
 import com.boxy.authenticator.ui.components.ExpandableFabItem
 import com.boxy.authenticator.ui.components.Toolbar

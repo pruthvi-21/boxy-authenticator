@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.components
+package com.boxy.authenticator.ui.components.design
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,7 +31,7 @@ import boxy_authenticator.composeapp.generated.resources.cd_show_password
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun StyledTextField(
+fun BoxyTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String? = null,

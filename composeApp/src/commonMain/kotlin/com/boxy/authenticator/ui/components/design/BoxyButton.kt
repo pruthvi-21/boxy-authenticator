@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.components
+package com.boxy.authenticator.ui.components.design
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 
 @Composable
-fun TokkyButton(
+fun BoxyButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -43,7 +43,7 @@ fun TokkyButton(
 }
 
 @Composable
-fun TokkyTextButton(
+fun BoxyTextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -70,7 +70,7 @@ fun TokkyTextButton(
 }
 
 @Composable
-fun TokkyTonalButton(
+fun BoxyTonalButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,

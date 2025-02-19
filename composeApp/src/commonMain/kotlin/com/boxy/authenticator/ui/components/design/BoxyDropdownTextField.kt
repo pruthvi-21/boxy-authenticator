@@ -1,4 +1,4 @@
-package com.boxy.authenticator.ui.components
+package com.boxy.authenticator.ui.components.design
 
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,7 +19,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownTextField(
+fun BoxyDropdownTextField(
     label: String,
     value: String,
     values: List<String>,
@@ -38,7 +38,7 @@ fun DropdownTextField(
         },
         modifier = modifier
     ) {
-        StyledTextField(
+        BoxyTextField(
             readOnly = true,
             value = selectedOptionText,
             onValueChange = { },

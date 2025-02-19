@@ -13,8 +13,8 @@ import boxy_authenticator.composeapp.generated.resources.title_settings
 import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToExportTokens
 import com.boxy.authenticator.navigation.navigateToImportTokens
-import com.boxy.authenticator.ui.components.BoxyPreferenceScreen
-import com.boxy.authenticator.ui.components.BoxyScaffold
+import com.boxy.authenticator.ui.components.design.BoxyPreferenceScreen
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.screens.settings.AppearanceSettings
 import com.boxy.authenticator.ui.screens.settings.GeneralSettings

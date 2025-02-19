@@ -45,10 +45,10 @@ import boxy_authenticator.composeapp.generated.resources.use_biometrics
 import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToHome
 import com.boxy.authenticator.navigation.navigateToSettings
-import com.boxy.authenticator.ui.components.BoxyScaffold
-import com.boxy.authenticator.ui.components.StyledTextField
-import com.boxy.authenticator.ui.components.TokkyButton
-import com.boxy.authenticator.ui.components.TokkyTextButton
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
+import com.boxy.authenticator.ui.components.design.BoxyTextField
+import com.boxy.authenticator.ui.components.design.BoxyButton
+import com.boxy.authenticator.ui.components.design.BoxyTextButton
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
@@ -139,7 +139,7 @@ fun AuthenticationScreen() {
                         focusRequester.requestFocus()
                     }
                 }
-                StyledTextField(
+                BoxyTextField(
                     value = authViewModel.password,
                     onValueChange = { authViewModel.updatePassword(it) },
                     placeholder = stringResource(Res.string.enter_your_password),
@@ -165,7 +165,7 @@ fun AuthenticationScreen() {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     if (isBiometricUnlockEnabled) {
-                        TokkyTextButton(
+                        BoxyTextButton(
                             onClick = {
                                 authViewModel.promptForBiometrics {
                                     if (it) navController.navigateToHome(true)
@@ -178,7 +178,7 @@ fun AuthenticationScreen() {
 
                     Spacer(Modifier.weight(1f))
 
-                    TokkyButton(
+                    BoxyButton(
                         onClick = {
                             authViewModel.verifyPassword {
                                 if (it) navController.navigateToHome(true)

@@ -69,7 +69,7 @@ import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.models.otp.HotpInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo
 import com.boxy.authenticator.domain.usecases.UpdateHotpCounterUseCase
-import com.boxy.authenticator.ui.components.BoxProgressBar
+import com.boxy.authenticator.ui.components.design.BoxyProgressBar
 import com.boxy.authenticator.ui.components.OtpTextView
 import com.boxy.authenticator.ui.components.TokenThumbnail
 import com.boxy.authenticator.utils.getInitials
@@ -360,7 +360,7 @@ private fun TOTPFieldView(
                     height = 37.5.dp,
                 ), contentAlignment = Alignment.Center
         ) {
-            BoxProgressBar(
+            BoxyProgressBar(
                 progress = progressAnimationValue,
                 width = 28.dp,
                 height = 28.dp,

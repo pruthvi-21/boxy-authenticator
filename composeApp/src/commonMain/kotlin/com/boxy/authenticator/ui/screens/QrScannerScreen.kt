@@ -35,7 +35,7 @@ import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToNewTokenSetupWithUrl
-import com.boxy.authenticator.ui.components.BoxyScaffold
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
 import kotlinx.coroutines.delay

@@ -51,10 +51,10 @@ import boxy_authenticator.composeapp.generated.resources.warning
 import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.navigation.LocalNavController
-import com.boxy.authenticator.ui.components.BoxyPreferenceScreen
-import com.boxy.authenticator.ui.components.BoxyScaffold
-import com.boxy.authenticator.ui.components.StyledTextField
-import com.boxy.authenticator.ui.components.TokkyButton
+import com.boxy.authenticator.ui.components.design.BoxyPreferenceScreen
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
+import com.boxy.authenticator.ui.components.design.BoxyTextField
+import com.boxy.authenticator.ui.components.design.BoxyButton
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.RequestPasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
@@ -155,7 +155,7 @@ fun ImportTokensScreen() {
                             )
                         }
                     }
-                    TokkyButton(
+                    BoxyButton(
                         onClick = {
                             if (tokensToImport.any { it.isDuplicate }) {
                                 importTokensViewModel.showDuplicateWarningDialog.value = true
@@ -253,7 +253,7 @@ private fun RenameTokenDialog(
             }
         ) {
             Column {
-                StyledTextField(
+                BoxyTextField(
                     value = issuer.value,
                     onValueChange = {
                         issuer.value = it
@@ -264,7 +264,7 @@ private fun RenameTokenDialog(
                 )
                 Spacer(Modifier.height(10.dp))
 
-                StyledTextField(
+                BoxyTextField(
                     value = label.value,
                     onValueChange = { label.value = it },
                     placeholder = stringResource(Res.string.hint_label)

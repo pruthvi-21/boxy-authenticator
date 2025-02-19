@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.enter_your_password
 import boxy_authenticator.composeapp.generated.resources.password
-import com.boxy.authenticator.ui.components.StyledTextField
+import com.boxy.authenticator.ui.components.design.BoxyTextField
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -48,7 +48,7 @@ fun RequestPasswordDialog(
                 Spacer(Modifier.height(20.dp))
             }
 
-            StyledTextField(
+            BoxyTextField(
                 value = password,
                 onValueChange = { password = it },
                 label = label,

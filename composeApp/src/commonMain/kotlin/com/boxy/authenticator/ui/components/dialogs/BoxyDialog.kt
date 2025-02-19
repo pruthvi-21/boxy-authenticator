@@ -28,7 +28,7 @@ import androidx.compose.ui.window.DialogProperties
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.ok
-import com.boxy.authenticator.ui.components.TokkyTextButton
+import com.boxy.authenticator.ui.components.design.BoxyTextButton
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -106,7 +106,7 @@ fun BoxyDialog(
                         .align(Alignment.End),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    TokkyTextButton(
+                    BoxyTextButton(
                         onClick = { onDismissRequest() },
                         shape = MaterialTheme.shapes.extraSmall,
                         modifier = Modifier.widthIn(min = 70.dp)
@@ -114,7 +114,7 @@ fun BoxyDialog(
                         Text(text = dismissText)
                     }
 
-                    TokkyTextButton(
+                    BoxyTextButton(
                         onClick = { onConfirmation() },
                         enabled = confirmEnabled,
                         shape = MaterialTheme.shapes.extraSmall,

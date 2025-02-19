@@ -85,11 +85,11 @@ import com.boxy.authenticator.domain.models.form.TokenFormEvent
 import com.boxy.authenticator.domain.models.otp.OtpInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.boxy.authenticator.navigation.LocalNavController
-import com.boxy.authenticator.ui.components.BoxyScaffold
-import com.boxy.authenticator.ui.components.DropdownTextField
-import com.boxy.authenticator.ui.components.StyledTextField
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
+import com.boxy.authenticator.ui.components.design.BoxyDropdownTextField
+import com.boxy.authenticator.ui.components.design.BoxyTextField
 import com.boxy.authenticator.ui.components.ThumbnailController
-import com.boxy.authenticator.ui.components.TokkyButton
+import com.boxy.authenticator.ui.components.design.BoxyButton
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
 import com.boxy.authenticator.ui.util.SystemBackHandler
@@ -296,7 +296,7 @@ fun TokenSetupScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Issuer Field
-                StyledTextField(
+                BoxyTextField(
                     value = state.issuer,
                     onValueChange = { tokenSetupViewModel.onEvent(TokenFormEvent.IssuerChanged(it)) },
                     label = stringResource(Res.string.label_issuer),
@@ -311,7 +311,7 @@ fun TokenSetupScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // Label Field
-                StyledTextField(
+                BoxyTextField(
                     value = state.label,
                     onValueChange = { tokenSetupViewModel.onEvent(TokenFormEvent.LabelChanged(it)) },
                     label = stringResource(Res.string.label_label),
@@ -325,7 +325,7 @@ fun TokenSetupScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // Secret Key Field
-                StyledTextField(
+                BoxyTextField(
                     value = state.secretKey,
                     onValueChange = {
                         tokenSetupViewModel.onEvent(TokenFormEvent.SecretKeyChanged(it))
@@ -354,7 +354,7 @@ fun TokenSetupScreen(
                 if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(Res.string.label_update_account)
                 else stringResource(Res.string.label_add_account)
 
-            TokkyButton(
+            BoxyButton(
                 onClick = {
                     keyboardController?.hide()
 
@@ -432,7 +432,7 @@ fun FormAdvancedOptions(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                    DropdownTextField(
+                    BoxyDropdownTextField(
                         label = stringResource(Res.string.type),
                         value = state.type.name,
                         values = OTPType.entries.map { it.name },
@@ -447,7 +447,7 @@ fun FormAdvancedOptions(
                     )
 
                     if (state.isAlgorithmFieldVisible) {
-                        DropdownTextField(
+                        BoxyDropdownTextField(
                             label = stringResource(Res.string.label_algorithm),
                             value = state.algorithm,
                             values = listOf("SHA1", "SHA256", "SHA512"),
@@ -463,7 +463,7 @@ fun FormAdvancedOptions(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                     if (state.isDigitsFieldVisible) {
-                        DropdownTextField(
+                        BoxyDropdownTextField(
                             label = stringResource(Res.string.label_digits),
                             value = state.digits,
                             values = listOf("4", "5", "6", "7", "8", "9", "10"),
@@ -477,7 +477,7 @@ fun FormAdvancedOptions(
                     }
 
                     if (state.isPeriodFieldVisible) {
-                        StyledTextField(
+                        BoxyTextField(
                             value = state.period,
                             onValueChange = {
                                 tokenSetupViewModel.onEvent(TokenFormEvent.PeriodChanged(it))
@@ -494,7 +494,7 @@ fun FormAdvancedOptions(
                     }
 
                     if (state.isCounterFieldVisible) {
-                        StyledTextField(
+                        BoxyTextField(
                             value = state.counter,
                             onValueChange = {
                                 tokenSetupViewModel.onEvent(TokenFormEvent.CounterChanged(it))
