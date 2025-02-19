@@ -34,7 +34,7 @@ import com.boxy.authenticator.ui.components.BoxyPreferenceScreen
 import com.boxy.authenticator.ui.components.BoxyScaffold
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
-import com.boxy.authenticator.ui.components.dialogs.TokkyDialog
+import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
 import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
 import com.jw.preferences.Preference
 import com.jw.preferences.PreferenceCategory
@@ -105,7 +105,7 @@ fun ExportTokensScreen() {
         if (exportViewModel.showPlainTextWarningDialog.value) {
             var isUnencryptedAcknowledged by remember { mutableStateOf(false) }
 
-            TokkyDialog(
+            BoxyDialog(
                 dialogTitle = stringResource(Res.string.warning),
                 confirmText = stringResource(Res.string.export),
                 confirmEnabled = isUnencryptedAcknowledged,

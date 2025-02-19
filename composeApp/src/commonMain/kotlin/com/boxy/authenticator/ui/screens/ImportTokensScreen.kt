@@ -58,7 +58,7 @@ import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.PlatformAlertDialog
 import com.boxy.authenticator.ui.components.dialogs.RequestPasswordDialog
-import com.boxy.authenticator.ui.components.dialogs.TokkyDialog
+import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
 import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
 import com.boxy.authenticator.utils.name
 import com.jw.preferences.Preference
@@ -235,7 +235,7 @@ private fun RenameTokenDialog(
 
         val issuerError = remember { mutableStateOf<String?>(null) }
 
-        TokkyDialog(
+        BoxyDialog(
             dialogTitle = stringResource(Res.string.rename),
             onDismissRequest = onDismissRequest,
             onConfirmation = {

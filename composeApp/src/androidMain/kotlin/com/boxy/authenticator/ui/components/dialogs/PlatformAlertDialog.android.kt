@@ -12,7 +12,7 @@ actual fun PlatformAlertDialog(
     onConfirmation: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    TokkyDialog(
+    BoxyDialog(
         dialogTitle = title,
         dialogBody = message,
         onDismissRequest = onDismissRequest,

@@ -32,7 +32,7 @@ import com.boxy.authenticator.ui.components.TokkyTextButton
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun TokkyDialog(
+fun BoxyDialog(
     dialogTitle: String? = null,
     dialogBody: String? = null,
     confirmText: String = stringResource(Res.string.ok),

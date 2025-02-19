@@ -33,7 +33,7 @@ fun RequestPasswordDialog(
 
     val focusRequester = remember { FocusRequester() }
 
-    TokkyDialog(
+    BoxyDialog(
         dialogTitle = title,
         onDismissRequest = { onDismissRequest() },
         onConfirmation = { onConfirmation(password) }

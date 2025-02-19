@@ -47,7 +47,7 @@ fun SetPasswordDialog(
 
     val viewModel: SetPasswordDialogViewModel = koinViewModel()
 
-    TokkyDialog(
+    BoxyDialog(
         dialogTitle = stringResource(Res.string.set_password),
         dialogBody = dialogBody,
         confirmText = confirmText,
