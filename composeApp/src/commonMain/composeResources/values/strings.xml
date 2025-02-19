@@ -68,8 +68,7 @@
     <string name="label_advanced_options">Advanced options</string>
     <string name="label_add_account">Add account</string>
     <string name="label_update_account">Update account</string>
-    <string name="message_unsaved_changes">Going back will clear all the fields. Are you sure to go back?</string>
-    <string name="account_exists_dialog_title">Account already exists</string>
+    <string name="message_unsaved_changes">You have unsaved changes. Going back will discard them. Are you sure you want to continue?</string>    <string name="account_exists_dialog_title">Account already exists</string>
     <string name="account_exists_dialog_message">You already have an account with name "%1$s"</string>
     <string name="biometric_prompt_title">Verify your identity</string>
     <string name="to_enable_biometrics">To enable biometrics</string>
