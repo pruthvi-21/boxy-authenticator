@@ -12,7 +12,11 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -26,15 +30,16 @@ import boxy_authenticator.composeapp.generated.resources.confirm_password
 import boxy_authenticator.composeapp.generated.resources.enter_a_password
 import boxy_authenticator.composeapp.generated.resources.ok
 import boxy_authenticator.composeapp.generated.resources.password
+import boxy_authenticator.composeapp.generated.resources.password_cant_be_empty
+import boxy_authenticator.composeapp.generated.resources.password_didnt_match
+import boxy_authenticator.composeapp.generated.resources.password_too_short
 import boxy_authenticator.composeapp.generated.resources.set_password
 import boxy_authenticator.composeapp.generated.resources.show_password
 import com.boxy.authenticator.ui.components.StyledTextField
-import com.boxy.authenticator.ui.viewmodels.SetPasswordDialogViewModel
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SetPasswordDialog(
     dialogBody: String? = null,
@@ -42,10 +47,16 @@ fun SetPasswordDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: (String) -> Unit,
 ) {
-
     val focusRequester = remember { FocusRequester() }
 
-    val viewModel: SetPasswordDialogViewModel = koinViewModel()
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf<String?>(null) }
+    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
+
+    var showPassword by remember { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
 
     BoxyDialog(
         dialogTitle = stringResource(Res.string.set_password),
@@ -53,12 +64,23 @@ fun SetPasswordDialog(
         confirmText = confirmText,
         onDismissRequest = {
             onDismissRequest()
-            viewModel.reset()
         },
         onConfirmation = {
-            if (viewModel.validatePasswords()) {
-                onConfirmation(viewModel.password)
-                viewModel.reset()
+            scope.launch {
+                passwordError = when {
+                    password.isEmpty() -> getString(Res.string.password_cant_be_empty)
+                    password.length < 6 -> getString(Res.string.password_too_short, 6)
+                    else -> null
+                }
+
+                confirmPasswordError = when {
+                    confirmPassword != password -> getString(Res.string.password_didnt_match)
+                    else -> null
+                }
+
+                if (passwordError == null && confirmPasswordError == null) {
+                    onConfirmation(password)
+                }
             }
         }
     ) {
@@ -68,15 +90,16 @@ fun SetPasswordDialog(
                 focusRequester.requestFocus()
             }
             StyledTextField(
-                value = viewModel.password,
+                value = password,
                 onValueChange = {
-                    viewModel.updatePassword(it)
+                    password = it
+                    passwordError = null
                 },
                 placeholder = stringResource(Res.string.enter_a_password),
                 label = stringResource(Res.string.password),
-                isPasswordField = !viewModel.showPassword,
+                isPasswordField = !showPassword,
                 hidePasswordVisibilityEye = true,
-                errorMessage = viewModel.passwordError,
+                errorMessage = passwordError,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next
                 ),
@@ -87,15 +110,16 @@ fun SetPasswordDialog(
             )
             Spacer(Modifier.height(10.dp))
             StyledTextField(
-                value = viewModel.confirmPassword,
+                value = confirmPassword,
                 onValueChange = {
-                    viewModel.updateConfirmPassword(it)
+                    confirmPassword = it
+                    confirmPasswordError = null
                 },
                 placeholder = stringResource(Res.string.confirm_password),
                 label = stringResource(Res.string.confirm_password),
-                isPasswordField = !viewModel.showPassword,
+                isPasswordField = !showPassword,
                 hidePasswordVisibilityEye = true,
-                errorMessage = viewModel.confirmPasswordError,
+                errorMessage = confirmPasswordError,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
@@ -107,15 +131,15 @@ fun SetPasswordDialog(
             Row(
                 modifier = Modifier
                     .clickable {
-                        viewModel.updateShowPassword(!viewModel.showPassword)
+                        showPassword = !showPassword
                     }
                     .padding(end = 15.dp)
                     .align(Alignment.End),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = viewModel.showPassword,
-                    onCheckedChange = { viewModel.updateShowPassword(!viewModel.showPassword) },
+                    checked = showPassword,
+                    onCheckedChange = { showPassword = !showPassword },
                 )
 
                 Text(stringResource(Res.string.show_password))

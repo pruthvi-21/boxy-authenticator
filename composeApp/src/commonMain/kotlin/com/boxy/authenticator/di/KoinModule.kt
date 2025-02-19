@@ -22,7 +22,6 @@ import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
-import com.boxy.authenticator.ui.viewmodels.SetPasswordDialogViewModel
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import dev.icerock.moko.biometry.BiometryAuthenticator
@@ -43,7 +42,6 @@ val sharedModule = module {
     }
     viewModel { ExportTokensViewModel(get()) }
     viewModel { ImportTokensViewModel(get(), get(), get()) }
-    viewModel { SetPasswordDialogViewModel() }
 
     // UseCases
     factory { DeleteTokenUseCase(get()) }
