@@ -33,6 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.app_name
 import boxy_authenticator.composeapp.generated.resources.enter_your_password
@@ -76,6 +79,13 @@ fun AuthenticationScreen() {
             authViewModel.promptForBiometrics {
                 if (it) navController.navigateToHome(true)
             }
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            authViewModel.updateShowPinPad()
         }
     }
 
@@ -146,7 +156,7 @@ fun AuthenticationScreen() {
                     isPasswordField = true,
                     errorMessage = authViewModel.passwordError,
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = if (authViewModel.showPinPad) KeyboardType.Number
+                        keyboardType = if (authViewModel.showPinPad.value) KeyboardType.Number
                         else KeyboardType.Text,
                     ),
                     keyboardActions = KeyboardActions(

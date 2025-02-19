@@ -32,7 +32,11 @@ class AuthenticationViewModel(
     private val _isVerifyingPassword = mutableStateOf(false)
     val isVerifyingPassword by _isVerifyingPassword
 
-    val showPinPad by mutableStateOf(settings.isLockscreenPinPadEnabled())
+    val showPinPad = mutableStateOf(settings.isLockscreenPinPadEnabled())
+
+    fun updateShowPinPad() {
+        showPinPad.value = settings.isLockscreenPinPadEnabled()
+    }
 
     fun verifyPassword(onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
