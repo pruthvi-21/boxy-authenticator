@@ -20,21 +20,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.boxy_file
 import boxy_authenticator.composeapp.generated.resources.error_fetching_tokens
 import boxy_authenticator.composeapp.generated.resources.export
 import boxy_authenticator.composeapp.generated.resources.export_accounts
-import boxy_authenticator.composeapp.generated.resources.export_to_boxy_file
-import boxy_authenticator.composeapp.generated.resources.export_to_plain_text
+import boxy_authenticator.composeapp.generated.resources.export_to
 import boxy_authenticator.composeapp.generated.resources.i_understand_the_risk
+import boxy_authenticator.composeapp.generated.resources.plain_text_file
+import boxy_authenticator.composeapp.generated.resources.recommended
 import boxy_authenticator.composeapp.generated.resources.warning
 import boxy_authenticator.composeapp.generated.resources.warning_backup_encryption
 import boxy_authenticator.composeapp.generated.resources.warning_no_backup_encryption
 import com.boxy.authenticator.navigation.LocalNavController
+import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.design.BoxyPreferenceScreen
 import com.boxy.authenticator.ui.components.design.BoxyScaffold
-import com.boxy.authenticator.ui.components.Toolbar
-import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
+import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
 import com.jw.preferences.Preference
 import com.jw.preferences.PreferenceCategory
@@ -80,17 +82,22 @@ fun ExportTokensScreen() {
             BoxyPreferenceScreen {
                 item {
                     PreferenceCategory(
-                        title = { },
+                        title = { Text(stringResource(Res.string.export_to)) },
                     ) {
                         Preference(
-                            title = { Text(stringResource(Res.string.export_to_boxy_file)) },
+                            title = {
+                                Text(
+                                    stringResource(Res.string.boxy_file) +
+                                            " (${stringResource(Res.string.recommended)})"
+                                )
+                            },
                             enabled = exportEnabled,
                             onClick = {
                                 exportViewModel.showSetPasswordDialog.value = true
                             },
                         )
                         Preference(
-                            title = { Text(stringResource(Res.string.export_to_plain_text)) },
+                            title = { Text(stringResource(Res.string.plain_text_file)) },
                             enabled = exportEnabled,
                             onClick = {
                                 exportViewModel.showPlainTextWarningDialog.value = true

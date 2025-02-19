@@ -17,6 +17,7 @@
     <string name="retry">Retry</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="recommended">Recommended</string>
     <string name="remove_account">Remove account</string>
     <string name="default_value">Default</string>
     <string name="placeholder_default_text">%1$s (Default)</string>
@@ -76,8 +77,9 @@
     <string name="invalid_qr_code">Invalid QR Code</string>
 
     <!-- ExportTokensScreen -->
-    <string name="export_to_plain_text">Export to plain text file</string>
-    <string name="export_to_boxy_file">Export to Boxy file (Recommended)</string>
+    <string name="export_to">Export to</string>
+    <string name="boxy_file">Boxy file</string>
+    <string name="plain_text_file">Plain text file</string>
     <string name="enter_password_to_decrypt">Enter password to decrypt</string>
     <string name="i_understand_the_risk">I understand the risk.</string>
     <string name="warning_no_backup_encryption">Your backup will not be encrypted, and no thumbnail data will be saved. Anyone with access to the backup file can view its contents.</string>
