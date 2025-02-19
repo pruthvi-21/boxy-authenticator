@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,6 +35,7 @@ import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToNewTokenSetupWithUrl
+import com.boxy.authenticator.ui.components.BoxyScaffold
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.PlatformAlertDialog
 import kotlinx.coroutines.delay
@@ -57,7 +57,7 @@ fun QrScannerScreen() {
     var showPlatformAlertDialog by remember { mutableStateOf(false) }
     var isScanComplete by remember { mutableStateOf(false) }
 
-    Scaffold { contentPadding ->
+    BoxyScaffold { contentPadding ->
         Box {
             if (!showPlatformAlertDialog || !isScanComplete) {
                 QrScanner(

@@ -28,7 +28,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -86,6 +85,7 @@ import com.boxy.authenticator.domain.models.form.TokenFormEvent
 import com.boxy.authenticator.domain.models.otp.OtpInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
 import com.boxy.authenticator.navigation.LocalNavController
+import com.boxy.authenticator.ui.components.BoxyScaffold
 import com.boxy.authenticator.ui.components.DropdownTextField
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.ThumbnailController
@@ -165,7 +165,7 @@ fun TokenSetupScreen(
         }
     }
 
-    Scaffold(
+    BoxyScaffold(
         topBar = {
             val title =
                 if (tokenSetupMode == TokenSetupMode.UPDATE) stringResource(Res.string.title_update_account_details)

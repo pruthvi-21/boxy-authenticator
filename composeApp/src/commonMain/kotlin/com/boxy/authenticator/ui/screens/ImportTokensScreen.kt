@@ -21,7 +21,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -53,6 +52,7 @@ import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.ui.components.BoxyPreferenceScreen
+import com.boxy.authenticator.ui.components.BoxyScaffold
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.Toolbar
@@ -80,7 +80,7 @@ fun ImportTokensScreen() {
 
     val importState by importTokensViewModel.uiState.collectAsStateWithLifecycle()
 
-    Scaffold(
+    BoxyScaffold(
         topBar = {
             Toolbar(
                 title = stringResource(Res.string.import_accounts),

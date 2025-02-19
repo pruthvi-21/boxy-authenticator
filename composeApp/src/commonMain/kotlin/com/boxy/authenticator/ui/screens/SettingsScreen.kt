@@ -2,7 +2,6 @@ package com.boxy.authenticator.ui.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -15,6 +14,7 @@ import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToExportTokens
 import com.boxy.authenticator.navigation.navigateToImportTokens
 import com.boxy.authenticator.ui.components.BoxyPreferenceScreen
+import com.boxy.authenticator.ui.components.BoxyScaffold
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.screens.settings.AppearanceSettings
 import com.boxy.authenticator.ui.screens.settings.GeneralSettings
@@ -34,7 +34,7 @@ fun SettingsScreen(
     val settingsViewModel = LocalSettingsViewModel.current
     settingsViewModel.hideSensitiveSettings.value = hideSensitiveSettings
 
-    Scaffold(
+    BoxyScaffold(
         topBar = {
             Toolbar(
                 title = stringResource(Res.string.title_settings),

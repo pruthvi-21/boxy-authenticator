@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -21,7 +20,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +45,7 @@ import boxy_authenticator.composeapp.generated.resources.use_biometrics
 import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToHome
 import com.boxy.authenticator.navigation.navigateToSettings
+import com.boxy.authenticator.ui.components.BoxyScaffold
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.TokkyTextButton
@@ -80,7 +79,7 @@ fun AuthenticationScreen() {
         }
     }
 
-    Scaffold(
+    BoxyScaffold(
         topBar = {
             Toolbar(
                 title = "",

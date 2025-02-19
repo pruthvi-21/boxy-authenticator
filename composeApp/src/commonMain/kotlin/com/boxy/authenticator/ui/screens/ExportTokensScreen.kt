@@ -8,7 +8,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +31,7 @@ import boxy_authenticator.composeapp.generated.resources.warning_backup_encrypti
 import boxy_authenticator.composeapp.generated.resources.warning_no_backup_encryption
 import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.ui.components.BoxyPreferenceScreen
+import com.boxy.authenticator.ui.components.BoxyScaffold
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.TokkyDialog
@@ -53,7 +53,7 @@ fun ExportTokensScreen() {
         exportViewModel.loadAllTokens()
     }
 
-    Scaffold(
+    BoxyScaffold(
         topBar = {
             Toolbar(
                 title = stringResource(Res.string.export_accounts),
