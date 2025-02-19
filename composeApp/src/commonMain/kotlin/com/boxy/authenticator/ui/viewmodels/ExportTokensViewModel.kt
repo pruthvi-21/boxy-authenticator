@@ -16,7 +16,6 @@ import com.boxy.authenticator.utils.Constants
 import com.boxy.authenticator.utils.Constants.EXPORT_ENCRYPTED_FILE_EXTENSION
 import com.boxy.authenticator.utils.Constants.EXPORT_FILE_EXTENSION
 import io.github.vinceglb.filekit.core.FileKit
-import io.github.vinceglb.filekit.core.PlatformFile
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -50,21 +49,23 @@ class ExportTokensViewModel(
         )
     }
 
-    fun exportToPlainTextFile() = viewModelScope.launch {
+    fun exportToPlainTextFile(onDone: (Boolean) -> Unit) = viewModelScope.launch {
         val exportData = tokensList.joinToString("\n") { it.generateOtpAuthUrl() }
-        saveToFile(exportData.encodeToByteArray(), EXPORT_FILE_EXTENSION)
+        val status = saveToFile(exportData.encodeToByteArray(), EXPORT_FILE_EXTENSION)
+        onDone(status)
     }
 
-    fun exportToBoxyFile(password: String) = viewModelScope.launch {
+    fun exportToBoxyFile(password: String, onDone: (Boolean) -> Unit) = viewModelScope.launch {
         val tokensJsonArray = JsonArray(tokensList.map { token ->
             BoxyJson.encodeToJsonElement(ExportableTokenEntry.fromTokenEntry(token))
         })
         val exportData = BoxyJson.encodeToString(tokensJsonArray)
         val encryptedExportData = Crypto.encrypt(password, exportData)
-        saveToFile(encryptedExportData, EXPORT_ENCRYPTED_FILE_EXTENSION)
+        val status = saveToFile(encryptedExportData, EXPORT_ENCRYPTED_FILE_EXTENSION)
+        onDone(status)
     }
 
-    private suspend fun saveToFile(data: ByteArray, extension: String): PlatformFile? {
+    private suspend fun saveToFile(data: ByteArray, extension: String): Boolean {
         val file = FileKit.saveFile(
             baseName = buildFileName(),
             extension = extension,
@@ -76,7 +77,7 @@ class ExportTokensViewModel(
             appSettings.setLastBackupTimestamp(currentTimeMillis)
         }
 
-        return file
+        return file != null
     }
 
     private fun buildFileName(): String {

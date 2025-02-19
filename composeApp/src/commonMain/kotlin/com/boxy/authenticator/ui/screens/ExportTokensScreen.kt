@@ -8,22 +8,27 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.accounts_exported
 import boxy_authenticator.composeapp.generated.resources.boxy_file
 import boxy_authenticator.composeapp.generated.resources.error_fetching_tokens
 import boxy_authenticator.composeapp.generated.resources.export
 import boxy_authenticator.composeapp.generated.resources.export_accounts
+import boxy_authenticator.composeapp.generated.resources.export_failed
 import boxy_authenticator.composeapp.generated.resources.export_to
 import boxy_authenticator.composeapp.generated.resources.i_understand_the_risk
 import boxy_authenticator.composeapp.generated.resources.plain_text_file
@@ -40,6 +45,8 @@ import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
 import com.jw.preferences.Preference
 import com.jw.preferences.PreferenceCategory
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -50,6 +57,9 @@ fun ExportTokensScreen() {
 
     val navController = LocalNavController.current
     val exportViewModel: ExportTokensViewModel = koinViewModel()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         exportViewModel.loadAllTokens()
@@ -62,7 +72,8 @@ fun ExportTokensScreen() {
                 showDefaultNavigationIcon = true,
                 onNavigationIconClick = { navController.navigateUp() }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { contentPadding ->
 
         Column(
@@ -93,6 +104,7 @@ fun ExportTokensScreen() {
                             },
                             enabled = exportEnabled,
                             onClick = {
+                                snackbarHostState.currentSnackbarData?.dismiss()
                                 exportViewModel.showSetPasswordDialog.value = true
                             },
                         )
@@ -100,6 +112,7 @@ fun ExportTokensScreen() {
                             title = { Text(stringResource(Res.string.plain_text_file)) },
                             enabled = exportEnabled,
                             onClick = {
+                                snackbarHostState.currentSnackbarData?.dismiss()
                                 exportViewModel.showPlainTextWarningDialog.value = true
                             },
                             showDivider = false,
@@ -121,7 +134,14 @@ fun ExportTokensScreen() {
                 },
                 onConfirmation = {
                     exportViewModel.showPlainTextWarningDialog.value = false
-                    exportViewModel.exportToPlainTextFile()
+                    exportViewModel.exportToPlainTextFile {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(
+                                if (it) getString(Res.string.accounts_exported)
+                                else getString(Res.string.export_failed)
+                            )
+                        }
+                    }
                 },
             ) {
                 Column {
@@ -160,7 +180,14 @@ fun ExportTokensScreen() {
                 },
                 onConfirmation = { password ->
                     exportViewModel.showSetPasswordDialog.value = false
-                    exportViewModel.exportToBoxyFile(password)
+                    exportViewModel.exportToBoxyFile(password) {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(
+                                if (it) getString(Res.string.accounts_exported)
+                                else getString(Res.string.export_failed)
+                            )
+                        }
+                    }
                 }
             )
         }

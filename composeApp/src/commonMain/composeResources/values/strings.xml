@@ -89,10 +89,9 @@
     <string name="confirm_password">Confirm password</string>
     <string name="show_password">Show password</string>
     <string name="export">Export</string>
-    <string name="export_success">Accounts exported</string>
     <string name="error_fetching_tokens">Unknown error while fetching accounts</string>
-    <string name="no_accounts_to_export">No accounts to export</string>
-    <string name="export_error">Some error occurred while exporting</string>
+    <string name="accounts_exported">Accounts exported.</string>
+    <string name="export_failed">Export failed. Unable to save the file.</string>
 
     <!-- ImportTokensScreen -->
     <string name="import_label">Import</string>
