@@ -1,18 +1,19 @@
 package com.boxy.authenticator.ui.components.dialogs
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,10 +35,10 @@ import org.jetbrains.compose.resources.stringResource
 fun TokkyDialog(
     dialogTitle: String? = null,
     dialogBody: String? = null,
-    icon: (@Composable () -> Unit)? = null,
     confirmText: String = stringResource(Res.string.ok),
     dismissText: String = stringResource(Res.string.cancel),
     confirmEnabled: Boolean = true,
+    isDestructive: Boolean = false,
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     content: (@Composable () -> Unit)? = null,
@@ -52,37 +53,33 @@ fun TokkyDialog(
             onDismissRequest()
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .widthIn(max = 500.dp)
-                .clip(MaterialTheme.shapes.large)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-        ) {
-            Spacer(Modifier.height(18.dp))
-            if (dialogTitle != null || icon != null) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 54.dp)
-                        .padding(horizontal = 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    icon?.invoke()
-                    if (dialogTitle != null) {
-                        Spacer(Modifier.height(if (icon != null) 5.dp else 10.dp))
+        BoxWithConstraints {
+            val width = minOf(maxWidth * 0.85f, 500.dp)
+            Column(
+                modifier = Modifier
+                    .width(width)
+                    .clip(MaterialTheme.shapes.large)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .padding(top = 18.dp, bottom = 10.dp)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                if (dialogTitle != null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 54.dp)
+                            .padding(horizontal = 24.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
                         Text(
                             text = dialogTitle,
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.W500,
                         )
                     }
                 }
-            }
 
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
                 Column(
                     modifier = Modifier.padding(horizontal = 24.dp)
                 ) {
@@ -91,7 +88,7 @@ fun TokkyDialog(
                             text = dialogBody,
                             fontSize = 15.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 15.dp)
+                            modifier = Modifier.padding(vertical = 5.dp)
                         )
                     }
 
@@ -106,8 +103,9 @@ fun TokkyDialog(
                     Modifier
                         .padding(vertical = 4.dp, horizontal = 12.dp)
                         .heightIn(min = 54.dp)
+                        .align(Alignment.End),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Spacer(Modifier.weight(1f))
                     TokkyTextButton(
                         onClick = { onDismissRequest() },
                         shape = MaterialTheme.shapes.extraSmall,
@@ -115,11 +113,15 @@ fun TokkyDialog(
                     ) {
                         Text(text = dismissText)
                     }
-                    Spacer(Modifier.width(5.dp))
+
                     TokkyTextButton(
                         onClick = { onConfirmation() },
                         enabled = confirmEnabled,
                         shape = MaterialTheme.shapes.extraSmall,
+                        colors = ButtonDefaults.textButtonColors().copy(
+                            contentColor = if (isDestructive) MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.primary
+                        ),
                         modifier = Modifier.widthIn(min = 70.dp)
                     ) {
                         Text(text = confirmText)
