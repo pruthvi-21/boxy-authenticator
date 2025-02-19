@@ -40,7 +40,7 @@ val sharedModule = module {
     viewModel { (biometryAuthenticator: BiometryAuthenticator) ->
         SettingsViewModel(get(), biometryAuthenticator)
     }
-    viewModel { ExportTokensViewModel(get()) }
+    viewModel { ExportTokensViewModel(get(), get()) }
     viewModel { ImportTokensViewModel(get(), get(), get()) }
 
     // UseCases

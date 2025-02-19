@@ -32,6 +32,15 @@ actual class SharedPreferenceStore : PreferenceStore {
             ?: defaultValue
     }
 
+    override fun putLong(key: String, value: Long) {
+        userDefaults.setInteger(value, key)
+    }
+
+    override fun getLong(key: String, defaultValue: Long): Long {
+        return userDefaults.integerForKey(key).takeIf { userDefaults.objectForKey(key) != null }
+            ?: defaultValue
+    }
+
     override fun remove(key: String) {
         userDefaults.removeObjectForKey(key)
     }

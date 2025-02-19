@@ -77,6 +77,7 @@
     <string name="invalid_qr_code">Invalid QR Code</string>
 
     <!-- ExportTokensScreen -->
+    <string name="last_backup_on">Last backup was on %1$s</string>
     <string name="export_to">Export to</string>
     <string name="boxy_file">Boxy file</string>
     <string name="plain_text_file">Plain text file</string>

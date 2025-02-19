@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.crypto.Crypto
 import com.boxy.authenticator.core.serialization.BoxyJson
@@ -24,6 +25,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.encodeToJsonElement
 
 class ExportTokensViewModel(
+    private val appSettings: AppSettings,
     private val fetchTokensUseCase: FetchTokensUseCase,
 ) : ViewModel() {
     private val logger = Logger("ExportTokensViewModel")
@@ -63,11 +65,18 @@ class ExportTokensViewModel(
     }
 
     private suspend fun saveToFile(data: ByteArray, extension: String): PlatformFile? {
-        return FileKit.saveFile(
+        val file = FileKit.saveFile(
             baseName = buildFileName(),
             extension = extension,
             bytes = data,
         )
+
+        if (file != null) {
+            val currentTimeMillis = Clock.System.now().toEpochMilliseconds()
+            appSettings.setLastBackupTimestamp(currentTimeMillis)
+        }
+
+        return file
     }
 
     private fun buildFileName(): String {

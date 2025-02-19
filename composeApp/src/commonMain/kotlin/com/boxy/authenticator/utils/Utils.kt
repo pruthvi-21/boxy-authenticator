@@ -6,6 +6,9 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.boxy.authenticator.domain.models.TokenEntry
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 object Utils {
     fun String.toColor(): Color {
@@ -57,3 +60,16 @@ val TokenEntry.name: String
         if (label.isEmpty()) return issuer
         return "$issuer ($label)"
     }
+
+fun formatMillis(millis: Long): String {
+    val instant = Instant.fromEpochMilliseconds(millis)
+    val date = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+
+    return date.month.name.take(3).lowercase().replaceFirstChar { it.uppercase() } + " " +
+            date.dayOfMonth.toString().padStart(2, '0') + ", " +
+            date.year +
+            " " +
+            date.hour.toString().padStart(2, '0') + ":" +
+            date.minute.toString().padStart(2, '0') + ":" +
+            date.second.toString().padStart(2, '0')
+}

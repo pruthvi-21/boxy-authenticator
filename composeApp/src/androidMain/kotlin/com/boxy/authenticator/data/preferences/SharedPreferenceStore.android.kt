@@ -33,6 +33,14 @@ actual class SharedPreferenceStore(private val context: Context) : PreferenceSto
         return sharedPreferences.getInt(key, defaultValue)
     }
 
+    override fun putLong(key: String, value: Long) {
+        sharedPreferences.edit().putLong(key, value).apply()
+    }
+
+    override fun getLong(key: String, defaultValue: Long): Long {
+        return sharedPreferences.getLong(key, defaultValue)
+    }
+
     override fun remove(key: String) {
         sharedPreferences.edit().remove(key).apply()
     }

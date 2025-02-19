@@ -122,6 +122,14 @@ class AppSettings(
             ?: Defaults.VIEWED_ITEMS_LIST
     }
 
+    fun setLastBackupTimestamp(timestamp: Long) {
+        store.putLong(Keys.LAST_BACKUP_TIMESTAMP, timestamp)
+    }
+
+    fun getLastBackupTimestamp(): Long {
+        return store.getLong(Keys.LAST_BACKUP_TIMESTAMP)
+    }
+
     companion object {
         object Keys {
             // Appearance
@@ -140,6 +148,7 @@ class AppSettings(
 
             // Other
             const val VIEWED_ITEMS_LIST = "viewed_items_list"
+            const val LAST_BACKUP_TIMESTAMP = "last_backup_timestamp"
         }
 
         object Defaults {

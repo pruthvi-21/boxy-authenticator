@@ -10,6 +10,9 @@ interface PreferenceStore {
     fun putInt(key: String, value: Int)
     fun getInt(key: String, defaultValue: Int = 0): Int
 
+    fun putLong(key: String, value: Long)
+    fun getLong(key: String, defaultValue: Long = -1L): Long
+
     fun remove(key: String)
     fun clear()
 }
