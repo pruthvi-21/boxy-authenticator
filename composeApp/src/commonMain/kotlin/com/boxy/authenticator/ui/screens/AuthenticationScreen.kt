@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,11 +50,11 @@ import boxy_authenticator.composeapp.generated.resources.use_biometrics
 import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToHome
 import com.boxy.authenticator.navigation.navigateToSettings
-import com.boxy.authenticator.ui.components.design.BoxyScaffold
-import com.boxy.authenticator.ui.components.design.BoxyTextField
-import com.boxy.authenticator.ui.components.design.BoxyButton
-import com.boxy.authenticator.ui.components.design.BoxyTextButton
 import com.boxy.authenticator.ui.components.Toolbar
+import com.boxy.authenticator.ui.components.design.BoxyButton
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
+import com.boxy.authenticator.ui.components.design.BoxyTextButton
+import com.boxy.authenticator.ui.components.design.BoxyTextField
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.BuildUtils
@@ -115,7 +117,7 @@ fun AuthenticationScreen() {
             Column(
                 modifier = Modifier
                     .widthIn(max = 600.dp)
-                    .fillMaxHeight(),
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
@@ -205,17 +207,17 @@ fun AuthenticationScreen() {
                         }
                     }
                 }
-
-                Spacer(Modifier.weight(1f))
-
-                Text(
-                    "${stringResource(Res.string.app_name)} ${BuildUtils.getAppVersionName()}",
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.5f),
-                    modifier = Modifier.padding(10.dp)
-                )
             }
+
+            Spacer(Modifier.weight(1f))
+
+            Text(
+                "${stringResource(Res.string.app_name)} ${BuildUtils.getAppVersionName()}",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.5f),
+                modifier = Modifier.padding(10.dp)
+            )
         }
     }
 }
