@@ -22,11 +22,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,9 +39,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.app_name
+import boxy_authenticator.composeapp.generated.resources.dismiss
 import boxy_authenticator.composeapp.generated.resources.empty_layout_text
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_manual_title
 import boxy_authenticator.composeapp.generated.resources.expandable_fab_qr_title
+import boxy_authenticator.composeapp.generated.resources.no_backup_taken_msg
+import boxy_authenticator.composeapp.generated.resources.outdated_backup_msg
 import boxy_authenticator.composeapp.generated.resources.title_settings
 import com.boxy.authenticator.core.Platform
 import com.boxy.authenticator.navigation.LocalNavController
@@ -45,13 +52,15 @@ import com.boxy.authenticator.navigation.navigateToEditTokenScreen
 import com.boxy.authenticator.navigation.navigateToNewTokenSetupScreen
 import com.boxy.authenticator.navigation.navigateToQrScannerScreen
 import com.boxy.authenticator.navigation.navigateToSettings
-import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.ExpandableFab
 import com.boxy.authenticator.ui.components.ExpandableFabItem
 import com.boxy.authenticator.ui.components.Toolbar
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.screens.home.TokensList
 import com.boxy.authenticator.ui.util.SystemBackHandler
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -65,8 +74,36 @@ fun HomeScreen() {
 
     val tokensState by homeViewModel.tokensState.collectAsStateWithLifecycle()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(Unit) {
         homeViewModel.loadTokens()
+        if ((homeViewModel.isLastBackupOutdated || !homeViewModel.hasTakenAtleastOneBackup) &&
+            !homeViewModel.isSnackBarDismissed
+        ) {
+            coroutineScope.launch {
+                val message = when {
+                    !homeViewModel.hasTakenAtleastOneBackup -> getString(Res.string.no_backup_taken_msg)
+                    homeViewModel.isLastBackupOutdated -> getString(Res.string.outdated_backup_msg)
+                    else -> null
+                }
+
+                if (message != null) {
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = message,
+                            actionLabel = getString(Res.string.dismiss),
+                        )
+                        homeViewModel.dismissSnackbar()
+                    }
+                }
+            }
+        }
+    }
+
+    SystemBackHandler(enabled = homeViewModel.isFabExpanded) {
+        homeViewModel.setIsFabExpanded(false)
     }
 
     BoxyScaffold(
@@ -189,7 +226,20 @@ fun HomeScreen() {
             .padding(16.dp),
     )
 
-    SystemBackHandler(enabled = homeViewModel.isFabExpanded) {
-        homeViewModel.setIsFabExpanded(false)
+    Box(modifier = Modifier.fillMaxSize()) {
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .padding(WindowInsets.safeDrawing.asPaddingValues())
+                .align(Alignment.BottomCenter),
+        ) { snackbarData ->
+            Snackbar(
+                snackbarData = snackbarData,
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                actionColor = MaterialTheme.colorScheme.onErrorContainer,
+            )
+        }
     }
+
 }

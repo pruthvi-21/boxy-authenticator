@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
+    private val appSettings: AppSettings,
     private val fetchTokensUseCase: FetchTokensUseCase,
 ) : ViewModel() {
 
@@ -27,12 +29,31 @@ class HomeViewModel(
     private val _tokensState = MutableStateFlow<UIState<List<TokenEntry>>>(UIState.Loading)
     val tokensState = _tokensState.asStateFlow()
 
+    private val _hasTakenAtleastOneBackup = mutableStateOf(false)
+    val hasTakenAtleastOneBackup by _hasTakenAtleastOneBackup
+
+    private val _isLastBackupOutdated = mutableStateOf(false)
+    val isLastBackupOutdated by _isLastBackupOutdated
+
+    private val _isSnackBarDismissed = mutableStateOf(false)
+    val isSnackBarDismissed by _isSnackBarDismissed
+
     fun loadTokens() {
         _tokensState.update { UIState.Loading }
         viewModelScope.launch {
-            val result = fetchTokensUseCase()
-            result.fold(
+            fetchTokensUseCase().fold(
                 onSuccess = { tokens ->
+                    val disableBackupAlerts = appSettings.isDisableBackupAlertsEnabled()
+                    val lastBackupTime = appSettings.getLastBackupTimestamp()
+
+                    if (disableBackupAlerts || tokens.isEmpty()) {
+                        _hasTakenAtleastOneBackup.value = true
+                        _isLastBackupOutdated.value = false
+                    } else {
+                        _hasTakenAtleastOneBackup.value = lastBackupTime != -1L
+                        _isLastBackupOutdated.value = tokens.any { it.updatedOn > lastBackupTime }
+                    }
+
                     _tokensState.update { UIState.Success(tokens) }
                 },
                 onFailure = { exception ->
@@ -44,5 +65,9 @@ class HomeViewModel(
 
     fun setIsFabExpanded(expanded: Boolean) {
         _isFabExpanded.value = expanded
+    }
+
+    fun dismissSnackbar() {
+        _isSnackBarDismissed.value = true
     }
 }

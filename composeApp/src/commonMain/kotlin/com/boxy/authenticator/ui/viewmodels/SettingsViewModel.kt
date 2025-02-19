@@ -1,6 +1,7 @@
 package com.boxy.authenticator.ui.viewmodels
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.ViewModel
@@ -39,6 +40,9 @@ class SettingsViewModel(
     private val _isLockscreenPinPadEnabled = mutableStateOf(false)
     val isLockscreenPinPadEnabled: State<Boolean> = _isLockscreenPinPadEnabled
 
+    private val _isDisableBackupAlertsEnabled = mutableStateOf(false)
+    val isDisableBackupAlertsEnabled by _isDisableBackupAlertsEnabled
+
     private val _isAppLockEnabled = mutableStateOf(false)
     val isAppLockEnabled: State<Boolean> = _isAppLockEnabled
 
@@ -70,6 +74,7 @@ class SettingsViewModel(
         //General
         _tokenTapResponse.value = settings.getTokenTapResponse()
         _isLockscreenPinPadEnabled.value = settings.isLockscreenPinPadEnabled()
+        _isDisableBackupAlertsEnabled.value = settings.isDisableBackupAlertsEnabled()
 
         //Security
         _isAppLockEnabled.value = settings.isAppLockEnabled()
@@ -157,6 +162,11 @@ class SettingsViewModel(
     fun setLockscreenPinPadEnabled(enabled: Boolean) {
         settings.setLockscreenPinPadEnabled(enabled)
         _isLockscreenPinPadEnabled.value = enabled
+    }
+
+    fun setDisableBackupAlertsEnabled(enabled: Boolean) {
+        settings.setDisableBackupAlertsEnabled(enabled)
+        _isDisableBackupAlertsEnabled.value = enabled
     }
 
     fun enableAppLock(password: String) {

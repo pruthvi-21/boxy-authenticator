@@ -8,7 +8,9 @@ import boxy_authenticator.composeapp.generated.resources.double_tap
 import boxy_authenticator.composeapp.generated.resources.long_press
 import boxy_authenticator.composeapp.generated.resources.never
 import boxy_authenticator.composeapp.generated.resources.preference_category_title_general
+import boxy_authenticator.composeapp.generated.resources.preference_summary_disable_backup_alerts
 import boxy_authenticator.composeapp.generated.resources.preference_summary_use_pin
+import boxy_authenticator.composeapp.generated.resources.preference_title_disable_backup_alerts
 import boxy_authenticator.composeapp.generated.resources.preference_title_token_tap_response
 import boxy_authenticator.composeapp.generated.resources.preference_title_use_pin
 import boxy_authenticator.composeapp.generated.resources.single_tap
@@ -24,6 +26,7 @@ fun GeneralSettings() {
     val settingsViewModel = LocalSettingsViewModel.current
 
     val isLockscreenPinPadEnabled = settingsViewModel.isLockscreenPinPadEnabled.value
+    val isDisableBackupAlertsEnabled = settingsViewModel.isDisableBackupAlertsEnabled
 
     val tokenTapResponse = settingsViewModel.tokenTapResponse.value
     val tokenTapResponseLabels = listOf(
@@ -62,6 +65,14 @@ fun GeneralSettings() {
             value = isLockscreenPinPadEnabled,
             onValueChange = {
                 settingsViewModel.setLockscreenPinPadEnabled(it)
+            },
+        )
+        SwitchPreference(
+            title = { Text(stringResource(Res.string.preference_title_disable_backup_alerts)) },
+            summary = { Text(stringResource(Res.string.preference_summary_disable_backup_alerts)) },
+            value = isDisableBackupAlertsEnabled,
+            onValueChange = {
+                settingsViewModel.setDisableBackupAlertsEnabled(it)
             },
             showDivider = false,
         )

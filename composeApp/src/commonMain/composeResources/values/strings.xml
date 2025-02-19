@@ -17,6 +17,7 @@
     <string name="retry">Retry</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="dismiss">Dismiss</string>
     <string name="recommended">Recommended</string>
     <string name="remove_account">Remove account</string>
     <string name="default_value">Default</string>
@@ -78,6 +79,8 @@
 
     <!-- ExportTokensScreen -->
     <string name="last_backup_on">Last backup was on %1$s</string>
+    <string name="no_backup_taken_msg">You haven't created a backup yet. Set one up to keep your accounts safe.</string>
+    <string name="outdated_backup_msg">Your last backup is outdated.</string>
     <string name="export_to">Export to</string>
     <string name="boxy_file">Boxy file</string>
     <string name="plain_text_file">Plain text file</string>
@@ -137,6 +140,8 @@
     <string name="preference_title_token_tap_response">Copy tokens to the clipboard</string>
     <string name="preference_title_use_pin">Use PIN pad</string>
     <string name="preference_summary_use_pin">Enable to use a PIN pad instead of a full keyboard on the lock screen.</string>
+    <string name="preference_title_disable_backup_alerts">Disable Backup Alerts</string>
+    <string name="preference_summary_disable_backup_alerts">Turn off warnings about outdated backups.</string>
 
     <string name="preference_summary_app_lock">Lock this app with a PIN. To change your PIN please disable app lock and enable it again</string>
     <string name="preference_summary_biometrics">You can unlock with your biometrics instead of typing PIN</string>

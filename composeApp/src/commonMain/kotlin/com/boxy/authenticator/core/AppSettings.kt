@@ -33,6 +33,18 @@ class AppSettings(
         }
     }
 
+    fun setDisableBackupAlertsEnabled(isEnabled: Boolean) {
+        store.putBoolean(Keys.DISABLE_BACKUP_ALERTS, isEnabled)
+    }
+
+    fun isDisableBackupAlertsEnabled(default: Boolean = Defaults.DISABLE_BACKUP_ALERTS): Boolean {
+        return try {
+            store.getBoolean(Keys.DISABLE_BACKUP_ALERTS, default)
+        } catch (e: Exception) {
+            default
+        }
+    }
+
     fun setTokenTapResponse(response: TokenTapResponse) {
         store.putString(Keys.TOKEN_TAP_RESPONSE, response.name)
     }
@@ -138,6 +150,7 @@ class AppSettings(
             // General
             const val TOKEN_TAP_RESPONSE = "key_token_tap_response"
             const val LOCKSCREEN_PIN_PAD = "key_lockscreen_pin_pad"
+            const val DISABLE_BACKUP_ALERTS = "key_disable_backup_alerts"
 
             // Security
             const val APP_LOCK = "key_app_lock"
@@ -158,6 +171,7 @@ class AppSettings(
             // General
             val TOKEN_TAP_RESPONSE = TokenTapResponse.NEVER
             const val LOCKSCREEN_PIN_PAD = false
+            const val DISABLE_BACKUP_ALERTS = false
 
             // Security
             const val APP_LOCK = false
