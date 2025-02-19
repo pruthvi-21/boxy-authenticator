@@ -95,8 +95,7 @@
 
     <!-- ImportTokensScreen -->
     <string name="import_label">Import</string>
-    <string name="import_from_plain_text">Import from plain text file</string>
-    <string name="import_from_boxy_file">Import from Boxy file</string>
+    <string name="import_from">Import from</string>
     <string name="empty_content">No content found in the file.</string>
     <string name="no_tokens_to_import">No accounts were found in the selected file.</string>
     <string name="failed_to_decrypt">Failed to decrypt the file.</string>

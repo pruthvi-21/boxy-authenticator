@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.boxy_file
 import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.duplicate_warning_message
 import boxy_authenticator.composeapp.generated.resources.enter_password_to_decrypt
@@ -42,22 +43,22 @@ import boxy_authenticator.composeapp.generated.resources.enter_your_password
 import boxy_authenticator.composeapp.generated.resources.hint_issuer
 import boxy_authenticator.composeapp.generated.resources.hint_label
 import boxy_authenticator.composeapp.generated.resources.import_accounts
-import boxy_authenticator.composeapp.generated.resources.import_from_boxy_file
-import boxy_authenticator.composeapp.generated.resources.import_from_plain_text
+import boxy_authenticator.composeapp.generated.resources.import_from
 import boxy_authenticator.composeapp.generated.resources.import_label
+import boxy_authenticator.composeapp.generated.resources.plain_text_file
 import boxy_authenticator.composeapp.generated.resources.proceed
 import boxy_authenticator.composeapp.generated.resources.rename
 import boxy_authenticator.composeapp.generated.resources.warning
 import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.navigation.LocalNavController
+import com.boxy.authenticator.ui.components.Toolbar
+import com.boxy.authenticator.ui.components.design.BoxyButton
 import com.boxy.authenticator.ui.components.design.BoxyPreferenceScreen
 import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.design.BoxyTextField
-import com.boxy.authenticator.ui.components.design.BoxyButton
-import com.boxy.authenticator.ui.components.Toolbar
-import com.boxy.authenticator.ui.components.dialogs.RequestPasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
+import com.boxy.authenticator.ui.components.dialogs.RequestPasswordDialog
 import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
 import com.boxy.authenticator.utils.name
 import com.jw.preferences.Preference
@@ -106,19 +107,19 @@ fun ImportTokensScreen() {
                     BoxyPreferenceScreen {
                         item {
                             PreferenceCategory(
-                                title = { }
+                                title = { Text(stringResource(Res.string.import_from)) }
                             ) {
                                 Preference(
-                                    title = { Text(stringResource(Res.string.import_from_plain_text) + " (.txt)") },
-                                    onClick = {
-                                        importTokensViewModel.pickFile(isEncrypted = false)
-                                        snackbarHostState.currentSnackbarData?.dismiss()
-                                    }
-                                )
-                                Preference(
-                                    title = { Text(stringResource(Res.string.import_from_boxy_file) + " (.boxy)") },
+                                    title = { Text(stringResource(Res.string.boxy_file) + " (.boxy)") },
                                     onClick = {
                                         importTokensViewModel.pickFile(isEncrypted = true)
+                                        snackbarHostState.currentSnackbarData?.dismiss()
+                                    },
+                                )
+                                Preference(
+                                    title = { Text(stringResource(Res.string.plain_text_file) + " (.txt)") },
+                                    onClick = {
+                                        importTokensViewModel.pickFile(isEncrypted = false)
                                         snackbarHostState.currentSnackbarData?.dismiss()
                                     },
                                     showDivider = false,
