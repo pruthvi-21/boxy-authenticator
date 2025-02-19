@@ -56,7 +56,6 @@ import com.boxy.authenticator.ui.components.BoxyScaffold
 import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.Toolbar
-import com.boxy.authenticator.ui.components.dialogs.PlatformAlertDialog
 import com.boxy.authenticator.ui.components.dialogs.RequestPasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
 import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
@@ -205,9 +204,9 @@ private fun DuplicateTokensWarningDialog(
         val duplicateCount = tokensToImport.count { it.isDuplicate }
         val nonDuplicateCount = tokensToImport.size - duplicateCount
 
-        PlatformAlertDialog(
-            title = stringResource(Res.string.warning),
-            message = stringResource(
+        BoxyDialog(
+            dialogTitle = stringResource(Res.string.warning),
+            dialogBody = stringResource(
                 Res.string.duplicate_warning_message,
                 nonDuplicateCount,
                 duplicateCount

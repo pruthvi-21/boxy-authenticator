@@ -91,7 +91,7 @@ import com.boxy.authenticator.ui.components.StyledTextField
 import com.boxy.authenticator.ui.components.ThumbnailController
 import com.boxy.authenticator.ui.components.TokkyButton
 import com.boxy.authenticator.ui.components.Toolbar
-import com.boxy.authenticator.ui.components.dialogs.PlatformAlertDialog
+import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
 import com.boxy.authenticator.ui.util.SystemBackHandler
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import com.boxy.authenticator.utils.getInitials
@@ -212,9 +212,9 @@ fun TokenSetupScreen(
         ) {
 
             if (tokenSetupViewModel.showBackPressDialog.value) {
-                PlatformAlertDialog(
-                    title = stringResource(Res.string.warning),
-                    message = stringResource(Res.string.message_unsaved_changes),
+                BoxyDialog(
+                    dialogTitle = stringResource(Res.string.warning),
+                    dialogBody = stringResource(Res.string.message_unsaved_changes),
                     dismissText = stringResource(Res.string.no),
                     confirmText = stringResource(Res.string.yes),
                     onDismissRequest = { tokenSetupViewModel.showBackPressDialog.value = false },
@@ -226,9 +226,9 @@ fun TokenSetupScreen(
             }
 
             if (tokenSetupViewModel.showDeleteTokenDialog.value) {
-                PlatformAlertDialog(
-                    title = stringResource(Res.string.remove_account),
-                    message = stringResource(
+                BoxyDialog(
+                    dialogTitle = stringResource(Res.string.remove_account),
+                    dialogBody = stringResource(
                         Res.string.dialog_message_delete_token,
                         state.issuer,
                         state.label
@@ -253,9 +253,9 @@ fun TokenSetupScreen(
 
             if (tokenSetupViewModel.showDuplicateTokenDialog.value.show) {
                 val args = tokenSetupViewModel.showDuplicateTokenDialog.value
-                PlatformAlertDialog(
-                    title = stringResource(Res.string.account_exists_dialog_title),
-                    message = stringResource(
+                BoxyDialog(
+                    dialogTitle = stringResource(Res.string.account_exists_dialog_title),
+                    dialogBody = stringResource(
                         Res.string.account_exists_dialog_message,
                         args.token!!.name
                     ),

@@ -37,7 +37,7 @@ import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.navigation.navigateToNewTokenSetupWithUrl
 import com.boxy.authenticator.ui.components.BoxyScaffold
 import com.boxy.authenticator.ui.components.Toolbar
-import com.boxy.authenticator.ui.components.dialogs.PlatformAlertDialog
+import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -103,8 +103,8 @@ fun QrScannerScreen() {
             )
 
             if (showPlatformAlertDialog) {
-                PlatformAlertDialog(
-                    title = stringResource(Res.string.invalid_qr_code),
+                BoxyDialog(
+                    dialogTitle = stringResource(Res.string.invalid_qr_code),
                     confirmText = stringResource(Res.string.retry),
                     dismissText = stringResource(Res.string.close),
                     onDismissRequest = {
