@@ -1,8 +1,8 @@
 [versions]
 agp = "8.5.2"
-android-compileSdk = "34"
+android-compileSdk = "36"
 android-minSdk = "26"
-android-targetSdk = "34"
+android-targetSdk = "36"
 androidDatabaseSqlcipher = "4.5.4"
 androidx-activityCompose = "1.9.3"
 androidx-lifecycle = "2.8.4"
