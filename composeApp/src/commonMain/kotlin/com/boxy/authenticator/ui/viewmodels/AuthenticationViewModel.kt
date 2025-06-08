@@ -1,6 +1,5 @@
 package com.boxy.authenticator.ui.viewmodels
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,8 +11,11 @@ import boxy_authenticator.composeapp.generated.resources.to_unlock
 import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.crypto.HashKeyGenerator
+import com.boxy.authenticator.ui.state.AuthenticationUiState
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 
@@ -23,33 +25,33 @@ class AuthenticationViewModel(
 ) : ViewModel() {
     private val logger = Logger("AuthenticationViewModel")
 
-    private val _password = mutableStateOf("")
-    val password by _password
+    private val _uiState = MutableStateFlow(AuthenticationUiState())
+    val uiState = _uiState.asStateFlow()
 
-    private val _passwordError = mutableStateOf<String?>(null)
-    val passwordError by _passwordError
+    val isPinPadVisible = mutableStateOf(settings.isLockscreenPinPadEnabled())
 
-    private val _isVerifyingPassword = mutableStateOf(false)
-    val isVerifyingPassword by _isVerifyingPassword
-
-    val showPinPad = mutableStateOf(settings.isLockscreenPinPadEnabled())
-
-    fun updateShowPinPad() {
-        showPinPad.value = settings.isLockscreenPinPadEnabled()
+    fun updatePinPadVisibility() {
+        isPinPadVisible.value = settings.isLockscreenPinPadEnabled()
     }
 
     fun verifyPassword(onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
-            _isVerifyingPassword.value = true
+            _uiState.value = _uiState.value.copy(
+                isVerifyingPassword = true
+            )
             val storedHash = settings.getPasscodeHash()
-            val currentHash = HashKeyGenerator.generateHashKey(password)
+            val currentHash = HashKeyGenerator.generateHashKey(uiState.value.password)
             val status = currentHash.contentEquals(storedHash)
             if (!status) {
-                _password.value = ""
-                _passwordError.value = getString(Res.string.incorrect_password)
+                _uiState.value = _uiState.value.copy(
+                    password = "",
+                    passwordError = getString(Res.string.incorrect_password)
+                )
             }
             onComplete(status)
-            _isVerifyingPassword.value = false
+            _uiState.value = _uiState.value.copy(
+                isVerifyingPassword = false
+            )
         }
     }
 
@@ -75,7 +77,9 @@ class AuthenticationViewModel(
     }
 
     fun updatePassword(password: String) {
-        _passwordError.value = null
-        _password.value = password
+        _uiState.value = _uiState.value.copy(
+            password = password,
+            passwordError = null,
+        )
     }
 }
