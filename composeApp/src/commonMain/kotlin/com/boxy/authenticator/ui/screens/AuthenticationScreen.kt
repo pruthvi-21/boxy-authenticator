@@ -61,10 +61,9 @@ import com.boxy.authenticator.utils.BuildUtils
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.parameter.ParametersHolder
 
-@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthenticationScreen() {
     val navController = LocalNavController.current

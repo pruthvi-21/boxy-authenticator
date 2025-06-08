@@ -98,9 +98,7 @@ import com.boxy.authenticator.utils.getInitials
 import com.boxy.authenticator.utils.name
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun TokenSetupFromUrlScreen(authUrl: String) {
     val tokenSetupViewModel: TokenSetupViewModel = koinViewModel()
@@ -123,7 +121,6 @@ fun TokenSetupFromUrlScreen(authUrl: String) {
     }
 }
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun EditTokenScreen(tokenId: String) {
     val tokenSetupViewModel: TokenSetupViewModel = koinViewModel()
@@ -138,7 +135,7 @@ fun EditTokenScreen(tokenId: String) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, KoinExperimentalAPI::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TokenSetupScreen(
     token: TokenEntry? = null,
