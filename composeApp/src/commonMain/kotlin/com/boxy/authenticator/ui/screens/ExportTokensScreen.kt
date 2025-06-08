@@ -12,7 +12,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,40 +35,38 @@ import boxy_authenticator.composeapp.generated.resources.recommended
 import boxy_authenticator.composeapp.generated.resources.warning
 import boxy_authenticator.composeapp.generated.resources.warning_backup_encryption
 import boxy_authenticator.composeapp.generated.resources.warning_no_backup_encryption
-import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.design.BoxyPreferenceScreen
 import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
-import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
+import com.boxy.authenticator.ui.state.ExportUiState
 import com.jw.preferences.Preference
 import com.jw.preferences.PreferenceCategory
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExportTokensScreen() {
-
-    val navController = LocalNavController.current
-    val exportViewModel: ExportTokensViewModel = koinViewModel()
-
+fun ExportTokensScreen(
+    uiState: ExportUiState,
+    showPlainTextWarningDialog: (show: Boolean) -> Unit,
+    showSetPasswordDialog: (show: Boolean) -> Unit,
+    exportToPlainTextFile: (onDone: (Boolean) -> Unit) -> Unit,
+    exportToBoxyFile: (password: String, onDone: (Boolean) -> Unit) -> Unit,
+    onNavigateUp: () -> Unit,
+) {
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        exportViewModel.loadAllTokens()
-    }
 
     BoxyScaffold(
         topBar = {
             Toolbar(
                 title = stringResource(Res.string.export_accounts),
                 showDefaultNavigationIcon = true,
-                onNavigationIconClick = { navController.navigateUp() }
+                onNavigationIconClick = { onNavigateUp() }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -80,14 +77,13 @@ fun ExportTokensScreen() {
                 .padding(contentPadding)
                 .padding(horizontal = 16.dp)
         ) {
-            if (exportViewModel.tokensFetchError.value) {
+            if (uiState.tokensFetchError) {
                 Text(
                     text = stringResource(Res.string.error_fetching_tokens),
                     color = MaterialTheme.colorScheme.error,
                 )
             }
-            val exportEnabled =
-                !exportViewModel.tokensFetchError.value && exportViewModel.areTokensAvailable
+            val exportEnabled = !uiState.tokensFetchError && uiState.tokens.isNotEmpty()
 
             BoxyPreferenceScreen {
                 item {
@@ -104,7 +100,7 @@ fun ExportTokensScreen() {
                             enabled = exportEnabled,
                             onClick = {
                                 snackbarHostState.currentSnackbarData?.dismiss()
-                                exportViewModel.showSetPasswordDialog.value = true
+                                showSetPasswordDialog(true)
                             },
                         )
                         Preference(
@@ -112,7 +108,7 @@ fun ExportTokensScreen() {
                             enabled = exportEnabled,
                             onClick = {
                                 snackbarHostState.currentSnackbarData?.dismiss()
-                                exportViewModel.showPlainTextWarningDialog.value = true
+                                showPlainTextWarningDialog(true)
                             },
                             showDivider = false,
                         )
@@ -121,7 +117,7 @@ fun ExportTokensScreen() {
             }
         }
 
-        if (exportViewModel.showPlainTextWarningDialog.value) {
+        if (uiState.showPlainTextWarningDialog) {
             var isUnencryptedAcknowledged by remember { mutableStateOf(false) }
 
             BoxyDialog(
@@ -129,11 +125,11 @@ fun ExportTokensScreen() {
                 confirmText = stringResource(Res.string.export),
                 confirmEnabled = isUnencryptedAcknowledged,
                 onDismissRequest = {
-                    exportViewModel.showPlainTextWarningDialog.value = false
+                    showPlainTextWarningDialog(false)
                 },
                 onConfirmation = {
-                    exportViewModel.showPlainTextWarningDialog.value = false
-                    exportViewModel.exportToPlainTextFile {
+                    showPlainTextWarningDialog(false)
+                    exportToPlainTextFile {
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(
                                 if (it) getString(Res.string.accounts_exported)
@@ -170,16 +166,16 @@ fun ExportTokensScreen() {
             }
         }
 
-        if (exportViewModel.showSetPasswordDialog.value) {
+        if (uiState.showSetPasswordDialog) {
             SetPasswordDialog(
                 dialogBody = stringResource(Res.string.warning_backup_encryption),
                 confirmText = stringResource(Res.string.export),
                 onDismissRequest = {
-                    exportViewModel.showSetPasswordDialog.value = false
+                    showSetPasswordDialog(false)
                 },
                 onConfirmation = { password ->
-                    exportViewModel.showSetPasswordDialog.value = false
-                    exportViewModel.exportToBoxyFile(password) {
+                    showSetPasswordDialog(false)
+                    exportToBoxyFile(password) {
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(
                                 if (it) getString(Res.string.accounts_exported)

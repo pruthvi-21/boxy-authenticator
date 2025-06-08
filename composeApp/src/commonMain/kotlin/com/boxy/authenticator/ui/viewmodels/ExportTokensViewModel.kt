@@ -1,7 +1,5 @@
 package com.boxy.authenticator.ui.viewmodels
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.boxy.authenticator.core.AppSettings
@@ -9,13 +7,15 @@ import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.crypto.Crypto
 import com.boxy.authenticator.core.serialization.BoxyJson
 import com.boxy.authenticator.domain.models.ExportableTokenEntry
-import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.models.generateOtpAuthUrl
 import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
+import com.boxy.authenticator.ui.state.ExportUiState
 import com.boxy.authenticator.utils.Constants
 import com.boxy.authenticator.utils.Constants.EXPORT_ENCRYPTED_FILE_EXTENSION
 import com.boxy.authenticator.utils.Constants.EXPORT_FILE_EXTENSION
 import io.github.vinceglb.filekit.core.FileKit
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -29,34 +29,48 @@ class ExportTokensViewModel(
 ) : ViewModel() {
     private val logger = Logger("ExportTokensViewModel")
 
-    val showPlainTextWarningDialog = mutableStateOf(false)
-    val showSetPasswordDialog = mutableStateOf(false)
-
-    private var tokensList = mutableStateListOf<TokenEntry>()
-    val tokensFetchError = mutableStateOf(false)
-    val areTokensAvailable get() = tokensList.isNotEmpty()
+    private val _uiState = MutableStateFlow(ExportUiState())
+    val uiState = _uiState.asStateFlow()
 
     fun loadAllTokens() {
-        tokensFetchError.value = false
-        tokensList.clear()
+        _uiState.value = _uiState.value.copy(
+            tokensFetchError = false,
+            tokens = emptyList(),
+        )
 
         fetchTokensUseCase().fold(
-            onSuccess = { tokensList.addAll(it) },
+            onSuccess = {
+                _uiState.value = _uiState.value.copy(
+                    tokensFetchError = false,
+                    tokens = it,
+                )
+            },
             onFailure = {
                 logger.e(it.message, it)
-                tokensFetchError.value = true
+                _uiState.value = _uiState.value.copy(
+                    tokensFetchError = true,
+                    tokens = emptyList(),
+                )
             }
         )
     }
 
+    fun showPlainTextWarningDialog(show: Boolean) {
+        _uiState.value = _uiState.value.copy(showPlainTextWarningDialog = show)
+    }
+
+    fun showSetPasswordDialog(show: Boolean) {
+        _uiState.value = _uiState.value.copy(showSetPasswordDialog = show)
+    }
+
     fun exportToPlainTextFile(onDone: (Boolean) -> Unit) = viewModelScope.launch {
-        val exportData = tokensList.joinToString("\n") { it.generateOtpAuthUrl() }
+        val exportData = _uiState.value.tokens.joinToString("\n") { it.generateOtpAuthUrl() }
         val status = saveToFile(exportData.encodeToByteArray(), EXPORT_FILE_EXTENSION)
         onDone(status)
     }
 
     fun exportToBoxyFile(password: String, onDone: (Boolean) -> Unit) = viewModelScope.launch {
-        val tokensJsonArray = JsonArray(tokensList.map { token ->
+        val tokensJsonArray = JsonArray(_uiState.value.tokens.map { token ->
             BoxyJson.encodeToJsonElement(ExportableTokenEntry.fromTokenEntry(token))
         })
         val exportData = BoxyJson.encodeToString(tokensJsonArray)
