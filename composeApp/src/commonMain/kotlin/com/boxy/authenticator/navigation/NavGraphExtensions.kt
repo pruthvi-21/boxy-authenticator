@@ -1,11 +1,11 @@
 package com.boxy.authenticator.navigation
 
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.boxy.authenticator.core.serialization.BoxyJson
-import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.ui.screens.AuthenticationScreen
 import com.boxy.authenticator.ui.screens.EditTokenScreen
 import com.boxy.authenticator.ui.screens.ExportTokensScreen
@@ -15,7 +15,9 @@ import com.boxy.authenticator.ui.screens.QrScannerScreen
 import com.boxy.authenticator.ui.screens.SettingsScreen
 import com.boxy.authenticator.ui.screens.TokenSetupFromUrlScreen
 import com.boxy.authenticator.ui.screens.TokenSetupScreen
+import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import io.ktor.http.decodeURLQueryComponent
+import org.koin.compose.viewmodel.koinViewModel
 
 fun NavGraphBuilder.addAuthRoute() {
     composable(Routes.Auth.base) {
@@ -25,7 +27,21 @@ fun NavGraphBuilder.addAuthRoute() {
 
 fun NavGraphBuilder.addHomeRoute() {
     composable(Routes.Home.base) {
-        HomeScreen()
+        val navController = LocalNavController.current
+        val homeViewModel: HomeViewModel = koinViewModel()
+
+        val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+
+        HomeScreen(
+            uiState = uiState,
+            loadTokens = { homeViewModel.loadTokens() },
+            onFabExpanded = { homeViewModel.setIsFabExpanded(it) },
+            onDismissSnackbar = { homeViewModel.dismissSnackbar() },
+            onNavigateToSettings = { navController.navigateToSettings() },
+            onNavigateToQrScan = { navController.navigateToQrScannerScreen() },
+            onNavigateToNewTokenSetup = { navController.navigateToNewTokenSetupScreen() },
+            onNavigateToEditToken = { navController.navigateToEditTokenScreen(tokenId = it) }
+        )
     }
 }
 
