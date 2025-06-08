@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material.icons.Icons
@@ -21,6 +23,7 @@ import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -28,7 +31,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -36,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.app_name
 import boxy_authenticator.composeapp.generated.resources.dismiss
@@ -47,44 +48,42 @@ import boxy_authenticator.composeapp.generated.resources.no_backup_taken_msg
 import boxy_authenticator.composeapp.generated.resources.outdated_backup_msg
 import boxy_authenticator.composeapp.generated.resources.title_settings
 import com.boxy.authenticator.core.Platform
-import com.boxy.authenticator.navigation.LocalNavController
-import com.boxy.authenticator.navigation.navigateToEditTokenScreen
-import com.boxy.authenticator.navigation.navigateToNewTokenSetupScreen
-import com.boxy.authenticator.navigation.navigateToQrScannerScreen
-import com.boxy.authenticator.navigation.navigateToSettings
 import com.boxy.authenticator.ui.components.ExpandableFab
 import com.boxy.authenticator.ui.components.ExpandableFabItem
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.screens.home.TokensList
+import com.boxy.authenticator.ui.state.HomeUiState
 import com.boxy.authenticator.ui.util.SystemBackHandler
-import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
-
-    val navController = LocalNavController.current
-    val homeViewModel: HomeViewModel = koinViewModel()
-
-    val tokensState by homeViewModel.tokensState.collectAsStateWithLifecycle()
+fun HomeScreen(
+    uiState: HomeUiState,
+    loadTokens: () -> Unit,
+    onFabExpanded: (Boolean) -> Unit,
+    onDismissSnackbar: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToQrScan: () -> Unit,
+    onNavigateToNewTokenSetup: () -> Unit,
+    onNavigateToEditToken: (String) -> Unit,
+) {
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        homeViewModel.loadTokens()
-        if ((homeViewModel.isLastBackupOutdated || !homeViewModel.hasTakenAtleastOneBackup) &&
-            !homeViewModel.isSnackBarDismissed
+        loadTokens()
+        if ((uiState.isLastBackupOutdated || !uiState.hasTakenAtleastOneBackup) &&
+            uiState.isSnackBarVisible
         ) {
             coroutineScope.launch {
                 val message = when {
-                    !homeViewModel.hasTakenAtleastOneBackup -> getString(Res.string.no_backup_taken_msg)
-                    homeViewModel.isLastBackupOutdated -> getString(Res.string.outdated_backup_msg)
+                    !uiState.hasTakenAtleastOneBackup -> getString(Res.string.no_backup_taken_msg)
+                    uiState.isLastBackupOutdated -> getString(Res.string.outdated_backup_msg)
                     else -> null
                 }
 
@@ -94,15 +93,15 @@ fun HomeScreen() {
                             message = message,
                             actionLabel = getString(Res.string.dismiss),
                         )
-                        homeViewModel.dismissSnackbar()
+                        onDismissSnackbar()
                     }
                 }
             }
         }
     }
 
-    SystemBackHandler(enabled = homeViewModel.isFabExpanded) {
-        homeViewModel.setIsFabExpanded(false)
+    SystemBackHandler(enabled = uiState.isFabExpanded) {
+        onFabExpanded(false)
     }
 
     BoxyScaffold(
@@ -111,7 +110,7 @@ fun HomeScreen() {
                 title = stringResource(Res.string.app_name),
                 showDefaultNavigationIcon = false,
                 actions = {
-                    IconButton(onClick = { navController.navigateToSettings() }) {
+                    IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             imageVector = Icons.TwoTone.Settings,
                             contentDescription = stringResource(Res.string.title_settings),
@@ -121,26 +120,23 @@ fun HomeScreen() {
             )
         }
     ) { safePadding ->
-        Box {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(safePadding)
+        ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(safePadding)
+                modifier = Modifier.fillMaxSize()
             ) {
-                when (val uiState = tokensState) {
-                    is HomeViewModel.UIState.Loading -> {}
 
-                    is HomeViewModel.UIState.Success -> {
-                        val tokens = uiState.data
-
-                        if (tokens.isNotEmpty()) {
-                            TokensList(
-                                tokens,
-                                onEdit = {
-                                    navController.navigateToEditTokenScreen(tokenId = it.id)
-                                }
-                            )
-                        } else {
+                if (uiState.error == null) {
+                    if (uiState.tokens.isNotEmpty()) {
+                        TokensList(
+                            accounts = uiState.tokens,
+                            onEdit = { onNavigateToEditToken(it.id) }
+                        )
+                    } else {
+                        if (uiState.isInitialLoadComplete) {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
@@ -156,18 +152,25 @@ fun HomeScreen() {
                             }
                         }
                     }
-
-                    is HomeViewModel.UIState.Error -> {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("Unable to load")
-                            //TODO: display error
-                        }
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Unable to load")
+                        //TODO: display error
                     }
                 }
+            }
+
+            if (uiState.isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .align(Alignment.TopCenter)
+                )
             }
         }
     }
@@ -175,7 +178,7 @@ fun HomeScreen() {
     if (Platform.isAndroid) {
         // Not needed in IOS as action sheet is used
         AnimatedVisibility(
-            visible = homeViewModel.isFabExpanded,
+            visible = uiState.isFabExpanded,
             enter = fadeIn(),
             exit = fadeOut(),
         ) {
@@ -184,12 +187,12 @@ fun HomeScreen() {
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.5f))
                     .then(
-                        if (!homeViewModel.isFabExpanded) Modifier
+                        if (!uiState.isFabExpanded) Modifier
                         else Modifier.clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            enabled = homeViewModel.isFabExpanded
-                        ) { homeViewModel.setIsFabExpanded(false) }
+                            enabled = uiState.isFabExpanded
+                        ) { onFabExpanded(false) }
                     )
             )
         }
@@ -207,17 +210,17 @@ fun HomeScreen() {
     )
 
     ExpandableFab(
-        isFabExpanded = homeViewModel.isFabExpanded,
+        isFabExpanded = uiState.isFabExpanded,
         items = items,
         onItemClick = { index ->
-            homeViewModel.setIsFabExpanded(false)
+            onFabExpanded(false)
             when (index) {
-                0 -> navController.navigateToQrScannerScreen()
-                1 -> navController.navigateToNewTokenSetupScreen()
+                0 -> onNavigateToQrScan()
+                1 -> onNavigateToNewTokenSetup()
             }
         },
         onFabExpandChange = {
-            homeViewModel.setIsFabExpanded(it)
+            onFabExpanded(it)
         },
         modifier = Modifier
             .fillMaxSize()
@@ -240,5 +243,4 @@ fun HomeScreen() {
             )
         }
     }
-
 }
