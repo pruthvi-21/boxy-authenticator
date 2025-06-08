@@ -15,13 +15,43 @@ import com.boxy.authenticator.ui.screens.QrScannerScreen
 import com.boxy.authenticator.ui.screens.SettingsScreen
 import com.boxy.authenticator.ui.screens.TokenSetupFromUrlScreen
 import com.boxy.authenticator.ui.screens.TokenSetupScreen
+import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
+import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import io.ktor.http.decodeURLQueryComponent
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.ParametersHolder
 
 fun NavGraphBuilder.addAuthRoute() {
     composable(Routes.Auth.base) {
-        AuthenticationScreen()
+        val navController = LocalNavController.current
+        val settingsViewModel = LocalSettingsViewModel.current
+        val authViewModel: AuthenticationViewModel = koinViewModel {
+            ParametersHolder(mutableListOf(settingsViewModel.biometryAuthenticator))
+        }
+
+        val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
+
+        val isBiometricUnlockEnabled = authViewModel.isBiometricUnlockEnabled()
+
+        AuthenticationScreen(
+            uiState = uiState,
+            isBiometricUnlockEnabled = isBiometricUnlockEnabled,
+            isPinPadVisible = authViewModel.isPinPadVisible.value,
+            onPasswordChange = { authViewModel.updatePassword(it) },
+            onSubmit = {
+                authViewModel.verifyPassword {
+                    if (it) navController.navigateToHome(true)
+                }
+            },
+            promptForBiometrics = {
+                authViewModel.promptForBiometrics {
+                    if (it) navController.navigateToHome(true)
+                }
+            },
+            updatePinPadVisibility = { authViewModel.updatePinPadVisibility() },
+            onNavigateToSettings = { navController.navigateToSettings(hideSensitiveSettings = true) }
+        )
     }
 }
 

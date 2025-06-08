@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.app_name
@@ -55,6 +56,7 @@ import com.boxy.authenticator.ui.components.design.BoxyButton
 import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.design.BoxyTextButton
 import com.boxy.authenticator.ui.components.design.BoxyTextField
+import com.boxy.authenticator.ui.state.AuthenticationUiState
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.BuildUtils
@@ -65,28 +67,26 @@ import org.koin.core.parameter.ParametersHolder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthenticationScreen() {
-    val navController = LocalNavController.current
-    val settingsViewModel = LocalSettingsViewModel.current
-    val authViewModel: AuthenticationViewModel = koinViewModel {
-        ParametersHolder(mutableListOf(settingsViewModel.biometryAuthenticator))
-    }
+fun AuthenticationScreen(
+    uiState: AuthenticationUiState,
+    isBiometricUnlockEnabled: Boolean,
+    isPinPadVisible: Boolean,
+    onPasswordChange: (String) -> Unit,
+    onSubmit: () -> Unit,
+    promptForBiometrics: () -> Unit,
+    updatePinPadVisibility: () -> Unit,
+    onNavigateToSettings: (hideSensitiveSettings: Boolean) -> Unit,
+) {
     val focusRequester = remember { FocusRequester() }
 
-    val isBiometricUnlockEnabled = authViewModel.isBiometricUnlockEnabled()
-
     LaunchedEffect(Unit) {
-        if (isBiometricUnlockEnabled) {
-            authViewModel.promptForBiometrics {
-                if (it) navController.navigateToHome(true)
-            }
-        }
+        if (isBiometricUnlockEnabled) promptForBiometrics()
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            authViewModel.updateShowPinPad()
+            updatePinPadVisibility()
         }
     }
 
@@ -95,7 +95,7 @@ fun AuthenticationScreen() {
             Toolbar(
                 title = "",
                 actions = {
-                    IconButton(onClick = { navController.navigateToSettings(hideSensitiveSettings = true) }) {
+                    IconButton(onClick = { onNavigateToSettings(true) }) {
                         Icon(
                             Icons.Outlined.Settings,
                             contentDescription = stringResource(Res.string.title_settings)
@@ -151,21 +151,17 @@ fun AuthenticationScreen() {
                     }
                 }
                 BoxyTextField(
-                    value = authViewModel.password,
-                    onValueChange = { authViewModel.updatePassword(it) },
+                    value = uiState.password,
+                    onValueChange = { onPasswordChange(it) },
                     placeholder = stringResource(Res.string.enter_your_password),
                     isPasswordField = true,
-                    errorMessage = authViewModel.passwordError,
+                    errorMessage = uiState.passwordError,
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = if (authViewModel.showPinPad.value) KeyboardType.Number
+                        keyboardType = if (isPinPadVisible) KeyboardType.Number
                         else KeyboardType.Text,
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            authViewModel.verifyPassword {
-                                if (it) navController.navigateToHome(true)
-                            }
-                        }
+                        onDone = { onSubmit() }
                     ),
                     modifier = Modifier.focusRequester(focusRequester)
                 )
@@ -177,11 +173,7 @@ fun AuthenticationScreen() {
                 ) {
                     if (isBiometricUnlockEnabled) {
                         BoxyTextButton(
-                            onClick = {
-                                authViewModel.promptForBiometrics {
-                                    if (it) navController.navigateToHome(true)
-                                }
-                            },
+                            onClick = { promptForBiometrics() },
                         ) {
                             Text(stringResource(Res.string.use_biometrics))
                         }
@@ -190,14 +182,10 @@ fun AuthenticationScreen() {
                     Spacer(Modifier.weight(1f))
 
                     BoxyButton(
-                        onClick = {
-                            authViewModel.verifyPassword {
-                                if (it) navController.navigateToHome(true)
-                            }
-                        },
-                        enabled = authViewModel.password.isNotEmpty() && !authViewModel.isVerifyingPassword,
+                        onClick = { onSubmit() },
+                        enabled = uiState.password.isNotEmpty() && !uiState.isVerifyingPassword,
                     ) {
-                        if (authViewModel.isVerifyingPassword) {
+                        if (uiState.isVerifyingPassword) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(28.dp)
                             )
