@@ -1,5 +1,6 @@
 package com.boxy.authenticator.navigation
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -16,6 +17,7 @@ import com.boxy.authenticator.ui.screens.SettingsScreen
 import com.boxy.authenticator.ui.screens.TokenSetupFromUrlScreen
 import com.boxy.authenticator.ui.screens.TokenSetupScreen
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
+import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import io.ktor.http.decodeURLQueryComponent
@@ -119,7 +121,25 @@ fun NavGraphBuilder.addSettingsRoute() {
 
 fun NavGraphBuilder.addExportTokensRoute() {
     composable(Routes.ExportTokens.base) {
-        ExportTokensScreen()
+        val navController = LocalNavController.current
+        val exportViewModel: ExportTokensViewModel = koinViewModel()
+
+        val uiState by exportViewModel.uiState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(Unit) {
+            exportViewModel.loadAllTokens()
+        }
+
+        ExportTokensScreen(
+            uiState = uiState,
+            showPlainTextWarningDialog = { exportViewModel.showPlainTextWarningDialog(it) },
+            showSetPasswordDialog = { exportViewModel.showSetPasswordDialog(it) },
+            exportToPlainTextFile = { exportViewModel.exportToPlainTextFile(it) },
+            exportToBoxyFile = { password, onDone ->
+                exportViewModel.exportToBoxyFile(password, onDone)
+            },
+            onNavigateUp = { navController.navigateUp() }
+        )
     }
 }
 
