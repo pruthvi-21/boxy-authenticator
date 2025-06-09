@@ -27,16 +27,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.close
 import boxy_authenticator.composeapp.generated.resources.invalid_qr_code
 import boxy_authenticator.composeapp.generated.resources.retry
 import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.TokenEntryParser
-import com.boxy.authenticator.navigation.LocalNavController
-import com.boxy.authenticator.navigation.navigateToNewTokenSetupWithUrl
-import com.boxy.authenticator.ui.components.design.BoxyScaffold
+import com.boxy.authenticator.navigation.Screen
 import com.boxy.authenticator.ui.components.Toolbar
+import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.dialogs.BoxyDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,10 +47,9 @@ import qrscanner.QrScanner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QrScannerScreen() {
+fun QrScannerScreen(navController: NavController) {
     val logger = Logger("QrScannerScreen")
 
-    val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
 
     var isFlashOn by remember { mutableStateOf(false) }
@@ -72,10 +71,7 @@ fun QrScannerScreen() {
                                 if(!isScanComplete) {
                                     isScanComplete = true
                                     delay(300)
-                                    navController.navigateToNewTokenSetupWithUrl(
-                                        authUrl = result,
-                                        popCurrent = true,
-                                    )
+                                    navController.navigate(Screen.TokenSetup(authUrl = result))
                                 }
                             } catch (e: Exception) {
                                 logger.e(e.message, e)

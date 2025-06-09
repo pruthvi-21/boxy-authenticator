@@ -84,7 +84,6 @@ import com.boxy.authenticator.domain.models.form.TokenFormEvent
 import com.boxy.authenticator.ui.state.TokenSetupUiState
 import com.boxy.authenticator.domain.models.otp.OtpInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
-import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.ui.components.ThumbnailController
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.design.BoxyButton
@@ -98,8 +97,6 @@ import com.boxy.authenticator.utils.getInitials
 import com.boxy.authenticator.utils.name
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.ParametersHolder
 
 @Composable
 fun TokenSetupScreen(

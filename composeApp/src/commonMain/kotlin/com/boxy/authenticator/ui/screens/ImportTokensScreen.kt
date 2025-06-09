@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.boxy_file
 import boxy_authenticator.composeapp.generated.resources.cancel
@@ -51,7 +52,6 @@ import boxy_authenticator.composeapp.generated.resources.rename
 import boxy_authenticator.composeapp.generated.resources.warning
 import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.domain.models.TokenEntry
-import com.boxy.authenticator.navigation.LocalNavController
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.design.BoxyButton
 import com.boxy.authenticator.ui.components.design.BoxyPreferenceScreen
@@ -70,9 +70,8 @@ import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ImportTokensScreen() {
+fun ImportTokensScreen(navController: NavController) {
 
-    val navController = LocalNavController.current
     val importTokensViewModel: ImportTokensViewModel = koinInject()
 
     val snackbarHostState = remember { SnackbarHostState() }

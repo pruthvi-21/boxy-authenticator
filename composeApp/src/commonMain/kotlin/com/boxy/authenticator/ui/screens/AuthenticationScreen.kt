@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +36,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.app_name
@@ -48,22 +46,15 @@ import boxy_authenticator.composeapp.generated.resources.unlock
 import boxy_authenticator.composeapp.generated.resources.unlock_vault
 import boxy_authenticator.composeapp.generated.resources.unlock_vault_message
 import boxy_authenticator.composeapp.generated.resources.use_biometrics
-import com.boxy.authenticator.navigation.LocalNavController
-import com.boxy.authenticator.navigation.navigateToHome
-import com.boxy.authenticator.navigation.navigateToSettings
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.design.BoxyButton
 import com.boxy.authenticator.ui.components.design.BoxyScaffold
 import com.boxy.authenticator.ui.components.design.BoxyTextButton
 import com.boxy.authenticator.ui.components.design.BoxyTextField
 import com.boxy.authenticator.ui.state.AuthenticationUiState
-import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.utils.BuildUtils
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.ParametersHolder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
