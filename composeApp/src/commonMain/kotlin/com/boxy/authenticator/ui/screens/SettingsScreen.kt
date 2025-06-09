@@ -5,12 +5,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.title_settings
+import com.boxy.authenticator.domain.models.form.SettingChangeEvent
 import com.boxy.authenticator.navigation.Screen
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.design.BoxyPreferenceScreen
@@ -19,26 +22,50 @@ import com.boxy.authenticator.ui.screens.settings.AppearanceSettings
 import com.boxy.authenticator.ui.screens.settings.GeneralSettings
 import com.boxy.authenticator.ui.screens.settings.SecuritySettings
 import com.boxy.authenticator.ui.screens.settings.TransferAccounts
+import com.boxy.authenticator.ui.state.SettingsUiState
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navController: NavController,
     hideSensitiveSettings: Boolean = false,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-
     val settingsViewModel = LocalSettingsViewModel.current
-    settingsViewModel.hideSensitiveSettings.value = hideSensitiveSettings
+
+    val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
+
+    SettingsScreen(
+        uiState = uiState,
+        onEvent = { settingsViewModel.onEvent(it) },
+        showEnableAppLockDialog = { settingsViewModel.showEnableAppLockDialog(it) },
+        showDisableAppLockDialog = { settingsViewModel.showDisableAppLockDialog(it) },
+        navigateToExportScreen = { navController.navigate(Screen.ExportTokens) },
+        navigateToImportScreen = { navController.navigate(Screen.ImportTokens) },
+        navigateUp = { navController.navigateUp() },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsScreen(
+    uiState: SettingsUiState,
+    onEvent: (SettingChangeEvent) -> Unit,
+    hideSensitiveSettings: Boolean = false,
+    showEnableAppLockDialog: (Boolean) -> Unit,
+    showDisableAppLockDialog: (Boolean) -> Unit,
+    navigateToExportScreen: () -> Unit,
+    navigateToImportScreen: () -> Unit,
+    navigateUp: () -> Unit,
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
 
     BoxyScaffold(
         topBar = {
             Toolbar(
                 title = stringResource(Res.string.title_settings),
                 showDefaultNavigationIcon = true,
-                onNavigationIconClick = { navController.popBackStack() }
+                onNavigationIconClick = { navigateUp() }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -48,27 +75,33 @@ fun SettingsScreen(
                 .padding(contentPadding)
                 .padding(horizontal = 10.dp),
         ) {
-            item { AppearanceSettings() }
-            item { GeneralSettings() }
-            if (!settingsViewModel.hideSensitiveSettings.value) {
-                item {
-                    SecuritySettings(
-                        snackbarHostState = snackbarHostState,
-                    )
-                }
+            item {
+                AppearanceSettings(
+                    uiState = uiState,
+                    onEvent = onEvent,
+                )
             }
-            if (!settingsViewModel.hideSensitiveSettings.value) {
-                item {
-                    TransferAccounts(
-                        snackbarHostState = snackbarHostState,
-                        onNavigateToExport = {
-                            navController.navigate(Screen.ExportTokens)
-                        },
-                        onNavigateToImport = {
-                            navController.navigate(Screen.ImportTokens)
-                        }
-                    )
-                }
+            item {
+                GeneralSettings(
+                    uiState = uiState,
+                    onEvent = onEvent,
+                )
+            }
+            item {
+                SecuritySettings(
+                    uiState = uiState,
+                    snackbarHostState = snackbarHostState,
+                    onEvent = onEvent,
+                    showEnableAppLockDialog = showEnableAppLockDialog,
+                    showDisableAppLockDialog = showDisableAppLockDialog,
+                )
+            }
+            item {
+                TransferAccounts(
+                    uiState = uiState,
+                    navigateToExport = navigateToExportScreen,
+                    navigateToImport = navigateToImportScreen
+                )
             }
         }
     }

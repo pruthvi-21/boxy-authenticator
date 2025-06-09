@@ -10,22 +10,24 @@ import boxy_authenticator.composeapp.generated.resources.light
 import boxy_authenticator.composeapp.generated.resources.preference_category_title_appearance
 import boxy_authenticator.composeapp.generated.resources.preference_title_app_theme
 import com.boxy.authenticator.domain.models.enums.AppTheme
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
+import com.boxy.authenticator.domain.models.form.SettingChangeEvent
+import com.boxy.authenticator.ui.state.SettingsUiState
 import com.jw.preferences.DropDownPreference
 import com.jw.preferences.PreferenceCategory
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun AppearanceSettings() {
-    val settingsViewModel = LocalSettingsViewModel.current
-
+fun AppearanceSettings(
+    uiState: SettingsUiState,
+    onEvent: (SettingChangeEvent) -> Unit,
+) {
     val appThemeLabels = listOf(
         stringResource(Res.string.light),
         stringResource(Res.string.dark),
         stringResource(Res.string.follow_system),
     )
 
-    val appTheme = settingsViewModel.appTheme.value
+    val appTheme = uiState.settings.appTheme
 
     PreferenceCategory(
         title = { Text(stringResource(Res.string.preference_category_title_appearance)) },
@@ -46,7 +48,7 @@ fun AppearanceSettings() {
                     appThemeLabels[1] -> AppTheme.DARK
                     else -> AppTheme.SYSTEM
                 }
-                settingsViewModel.setAppTheme(theme)
+                onEvent(SettingChangeEvent.AppThemeChanged(theme))
             },
             showDivider = false
         )

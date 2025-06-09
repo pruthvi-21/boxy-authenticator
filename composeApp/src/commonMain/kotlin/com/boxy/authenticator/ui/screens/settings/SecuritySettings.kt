@@ -19,8 +19,10 @@ import boxy_authenticator.composeapp.generated.resources.preference_title_block_
 import boxy_authenticator.composeapp.generated.resources.preference_title_lock_sensitive_fields
 import boxy_authenticator.composeapp.generated.resources.remove_password
 import com.boxy.authenticator.core.Platform
+import com.boxy.authenticator.domain.models.form.SettingChangeEvent
 import com.boxy.authenticator.ui.components.dialogs.RequestPasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
+import com.boxy.authenticator.ui.state.SettingsUiState
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.jw.preferences.PreferenceCategory
 import com.jw.preferences.SwitchPreference
@@ -30,14 +32,18 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SecuritySettings(
+    uiState: SettingsUiState,
+    onEvent: (SettingChangeEvent) -> Unit,
+    showEnableAppLockDialog: (Boolean) -> Unit,
+    showDisableAppLockDialog: (Boolean) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     val settingsViewModel = LocalSettingsViewModel.current
 
-    val isAppLockEnabled = settingsViewModel.isAppLockEnabled.value
-    val isBiometricUnlockEnabled = settingsViewModel.isBiometricUnlockEnabled.value
-    val isBlockScreenshotsEnabled = settingsViewModel.isBlockScreenshotsEnabled.value
-    val isLockSensitiveFieldsEnabled = settingsViewModel.isLockSensitiveFieldsEnabled.value
+    val isAppLockEnabled = uiState.settings.isAppLockEnabled
+    val isBiometricUnlockEnabled = uiState.settings.isBiometricUnlockEnabled
+    val isBlockScreenshotsEnabled = uiState.settings.isBlockScreenshotsEnabled
+    val isLockSensitiveFieldsEnabled = uiState.settings.isLockSensitiveFieldsEnabled
 
     val scope = rememberCoroutineScope()
 
@@ -50,11 +56,11 @@ fun SecuritySettings(
             value = isAppLockEnabled,
             onValueChange = {
                 if (it) {
-                    settingsViewModel.showEnableAppLockDialog.value = true
-                    settingsViewModel.showDisableAppLockDialog.value = false
+                    showEnableAppLockDialog(true)
+                    showDisableAppLockDialog(false)
                 } else {
-                    settingsViewModel.showEnableAppLockDialog.value = false
-                    settingsViewModel.showDisableAppLockDialog.value = true
+                    showEnableAppLockDialog(false)
+                    showDisableAppLockDialog(true)
                     snackbarHostState.currentSnackbarData?.dismiss()
                 }
             },
@@ -74,7 +80,7 @@ fun SecuritySettings(
                 summary = { Text(stringResource(Res.string.preference_summary_block_screenshots)) },
                 value = isBlockScreenshotsEnabled,
                 onValueChange = {
-                    settingsViewModel.setBlockScreenshotsEnabled(it)
+                    onEvent(SettingChangeEvent.BlockScreenshotsChanged(it))
                 },
             )
         }
@@ -89,29 +95,29 @@ fun SecuritySettings(
         )
     }
 
-    if (settingsViewModel.showEnableAppLockDialog.value) {
+    if (uiState.showEnableAppLockDialog) {
         SetPasswordDialog(
             onDismissRequest = {
-                settingsViewModel.showEnableAppLockDialog.value = false
+                showEnableAppLockDialog(false)
             },
             onConfirmation = { password ->
                 settingsViewModel.enableAppLock(password)
-                settingsViewModel.showEnableAppLockDialog.value = false
+                showEnableAppLockDialog(false)
             }
         )
     }
 
-    if (settingsViewModel.showDisableAppLockDialog.value) {
+    if (uiState.showDisableAppLockDialog) {
         RequestPasswordDialog(
             title = stringResource(Res.string.remove_password),
             label = stringResource(Res.string.password),
             placeholder = stringResource(Res.string.enter_correct_password),
             onDismissRequest = {
-                settingsViewModel.showDisableAppLockDialog.value = false
+                showDisableAppLockDialog(false)
             },
             onConfirmation = { password ->
                 settingsViewModel.disableAppLock(password) {
-                    settingsViewModel.showDisableAppLockDialog.value = false
+                    showDisableAppLockDialog(false)
                     if (!it) {
                         scope.launch {
                             snackbarHostState.showSnackbar(getString(Res.string.incorrect_password))
@@ -121,5 +127,4 @@ fun SecuritySettings(
             }
         )
     }
-
 }

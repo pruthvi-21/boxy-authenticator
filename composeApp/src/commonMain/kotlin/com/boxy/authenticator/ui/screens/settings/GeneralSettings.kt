@@ -15,6 +15,8 @@ import boxy_authenticator.composeapp.generated.resources.preference_title_token_
 import boxy_authenticator.composeapp.generated.resources.preference_title_use_pin
 import boxy_authenticator.composeapp.generated.resources.single_tap
 import com.boxy.authenticator.domain.models.enums.TokenTapResponse
+import com.boxy.authenticator.domain.models.form.SettingChangeEvent
+import com.boxy.authenticator.ui.state.SettingsUiState
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.jw.preferences.DropDownPreference
 import com.jw.preferences.PreferenceCategory
@@ -22,13 +24,14 @@ import com.jw.preferences.SwitchPreference
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun GeneralSettings() {
-    val settingsViewModel = LocalSettingsViewModel.current
+fun GeneralSettings(
+    uiState: SettingsUiState,
+    onEvent: (SettingChangeEvent) -> Unit,
+) {
+    val isLockscreenPinPadEnabled = uiState.settings.isLockscreenPinPadEnabled
+    val isDisableBackupAlertsEnabled = uiState.settings.isDisableBackupAlertsEnabled
 
-    val isLockscreenPinPadEnabled = settingsViewModel.isLockscreenPinPadEnabled.value
-    val isDisableBackupAlertsEnabled = settingsViewModel.isDisableBackupAlertsEnabled
-
-    val tokenTapResponse = settingsViewModel.tokenTapResponse.value
+    val tokenTapResponse = uiState.settings.tokenTapResponse
     val tokenTapResponseLabels = listOf(
         stringResource(Res.string.never),
         stringResource(Res.string.single_tap),
@@ -56,7 +59,7 @@ fun GeneralSettings() {
                     tokenTapResponseLabels[3] -> TokenTapResponse.LONG_PRESS
                     else -> TokenTapResponse.NEVER
                 }
-                settingsViewModel.setTokenTapResponse(theme)
+                onEvent(SettingChangeEvent.TokenTapResponseChanged(theme))
             },
         )
         SwitchPreference(
@@ -64,7 +67,7 @@ fun GeneralSettings() {
             summary = { Text(stringResource(Res.string.preference_summary_use_pin)) },
             value = isLockscreenPinPadEnabled,
             onValueChange = {
-                settingsViewModel.setLockscreenPinPadEnabled(it)
+                onEvent(SettingChangeEvent.LockScreenPinPadChanged(it))
             },
         )
         SwitchPreference(
@@ -72,7 +75,7 @@ fun GeneralSettings() {
             summary = { Text(stringResource(Res.string.preference_summary_disable_backup_alerts)) },
             value = isDisableBackupAlertsEnabled,
             onValueChange = {
-                settingsViewModel.setDisableBackupAlertsEnabled(it)
+                onEvent(SettingChangeEvent.BackupAlertsChanged(it))
             },
             showDivider = false,
         )

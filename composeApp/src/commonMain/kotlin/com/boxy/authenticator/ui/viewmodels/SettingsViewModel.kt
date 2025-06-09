@@ -1,8 +1,5 @@
 package com.boxy.authenticator.ui.viewmodels
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,10 +13,13 @@ import boxy_authenticator.composeapp.generated.resources.verify_your_identity
 import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.crypto.HashKeyGenerator
-import com.boxy.authenticator.domain.models.enums.AppTheme
-import com.boxy.authenticator.domain.models.enums.TokenTapResponse
+import com.boxy.authenticator.domain.models.form.SettingChangeEvent
+import com.boxy.authenticator.ui.state.SettingsState
+import com.boxy.authenticator.ui.state.SettingsUiState
 import dev.icerock.moko.biometry.BiometryAuthenticator
 import dev.icerock.moko.resources.desc.desc
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 
@@ -29,58 +29,87 @@ class SettingsViewModel(
 ) : ViewModel() {
     private val logger = Logger("SettingsViewModel")
 
-    val hideSensitiveSettings = mutableStateOf(false)
-
-    private val _appTheme = mutableStateOf(AppTheme.SYSTEM)
-    val appTheme: State<AppTheme> = _appTheme
-
-    private val _tokenTapResponse = mutableStateOf(TokenTapResponse.NEVER)
-    val tokenTapResponse: State<TokenTapResponse> = _tokenTapResponse
-
-    private val _isLockscreenPinPadEnabled = mutableStateOf(false)
-    val isLockscreenPinPadEnabled: State<Boolean> = _isLockscreenPinPadEnabled
-
-    private val _isDisableBackupAlertsEnabled = mutableStateOf(false)
-    val isDisableBackupAlertsEnabled by _isDisableBackupAlertsEnabled
-
-    private val _isAppLockEnabled = mutableStateOf(false)
-    val isAppLockEnabled: State<Boolean> = _isAppLockEnabled
-
-    private val _isBiometricUnlockEnabled = mutableStateOf(false)
-    val isBiometricUnlockEnabled: State<Boolean> = _isBiometricUnlockEnabled
-
-    private val _isBlockScreenshotsEnabled = mutableStateOf(false)
-    val isBlockScreenshotsEnabled: State<Boolean> = _isBlockScreenshotsEnabled
-
-    private val _isLockSensitiveFieldsEnabled = mutableStateOf(true)
-    val isLockSensitiveFieldsEnabled: State<Boolean> = _isLockSensitiveFieldsEnabled
-
-    val showEnableAppLockDialog = mutableStateOf(false)
-    val showDisableAppLockDialog = mutableStateOf(false)
+    private val _uiState = MutableStateFlow(SettingsUiState())
+    val uiState = _uiState.asStateFlow()
 
     init {
         loadSettings()
     }
 
-    fun setAppTheme(theme: AppTheme) {
-        settings.setAppTheme(theme)
-        _appTheme.value = theme
+    fun onEvent(event: SettingChangeEvent) {
+        when (event) {
+            is SettingChangeEvent.AppThemeChanged -> {
+                settings.setAppTheme(event.theme)
+                updateSettings(
+                    _uiState.value.settings.copy(appTheme = event.theme)
+                )
+            }
+
+            is SettingChangeEvent.TokenTapResponseChanged -> {
+                settings.setTokenTapResponse(event.response)
+                updateSettings(
+                    _uiState.value.settings.copy(tokenTapResponse = event.response)
+                )
+            }
+
+            is SettingChangeEvent.LockScreenPinPadChanged -> {
+                settings.setLockscreenPinPadEnabled(event.enabled)
+                updateSettings(
+                    _uiState.value.settings.copy(isLockscreenPinPadEnabled = event.enabled)
+                )
+            }
+
+            is SettingChangeEvent.BackupAlertsChanged -> {
+                settings.setDisableBackupAlertsEnabled(event.enabled)
+                updateSettings(
+                    _uiState.value.settings.copy(isDisableBackupAlertsEnabled = event.enabled)
+                )
+            }
+
+            is SettingChangeEvent.AppLockChanged -> {
+                if (event.enabled) enableAppLock(event.password)
+                else disableAppLock(event.password, {})
+            }
+
+            is SettingChangeEvent.BiometricUnlockChanged -> {
+//                toggleBiometrics(event.enabled)
+            }
+            is SettingChangeEvent.BlockScreenshotsChanged -> {
+                settings.setBlockScreenshotsEnabled(event.enabled)
+                updateSettings(
+                    _uiState.value.settings.copy(isBlockScreenshotsEnabled = event.enabled)
+                )
+            }
+
+            is SettingChangeEvent.LockSensitiveFieldsChanged -> {
+                settings.setLockSensitiveFieldsEnabled(event.enabled)
+                updateSettings(
+                    _uiState.value.settings.copy(isLockSensitiveFieldsEnabled = event.enabled)
+                )
+            }
+        }
     }
 
     private fun loadSettings() {
-        //Appearance
-        _appTheme.value = settings.getAppTheme()
+        updateSettings(
+            _uiState.value.settings.copy(
+                //Appearance
+                appTheme = settings.getAppTheme(),
 
-        //General
-        _tokenTapResponse.value = settings.getTokenTapResponse()
-        _isLockscreenPinPadEnabled.value = settings.isLockscreenPinPadEnabled()
-        _isDisableBackupAlertsEnabled.value = settings.isDisableBackupAlertsEnabled()
+                //General
+                tokenTapResponse = settings.getTokenTapResponse(),
+                isLockscreenPinPadEnabled = settings.isLockscreenPinPadEnabled(),
+                isDisableBackupAlertsEnabled = settings.isDisableBackupAlertsEnabled(),
 
-        //Security
-        _isAppLockEnabled.value = settings.isAppLockEnabled()
-        _isBiometricUnlockEnabled.value = settings.isBiometricUnlockEnabled()
-        _isBlockScreenshotsEnabled.value = settings.isBlockScreenshotsEnabled()
-        _isLockSensitiveFieldsEnabled.value = settings.isLockSensitiveFieldsEnabled()
+                //Security
+                isAppLockEnabled = settings.isAppLockEnabled(),
+                isBiometricUnlockEnabled = settings.isBiometricUnlockEnabled(),
+                isBlockScreenshotsEnabled = settings.isBlockScreenshotsEnabled(),
+                isLockSensitiveFieldsEnabled = settings.isLockSensitiveFieldsEnabled(),
+
+                lastBackupTimestamp = settings.getLastBackupTimestamp(),
+            )
+        )
     }
 
     fun setBiometricUnlockEnabled(enabled: Boolean) {
@@ -94,7 +123,9 @@ class SettingsViewModel(
                     onComplete = {
                         if (it) {
                             settings.setBiometricUnlockEnabled(enabled)
-                            _isBiometricUnlockEnabled.value = enabled
+                            updateSettings(
+                                _uiState.value.settings.copy(isBiometricUnlockEnabled = enabled)
+                            )
                         }
                     }
                 )
@@ -125,12 +156,7 @@ class SettingsViewModel(
     }
 
     fun areBiometricsAvailable(): Boolean {
-        return biometryAuthenticator.isBiometricAvailable() && isAppLockEnabled.value
-    }
-
-    fun setBlockScreenshotsEnabled(enabled: Boolean) {
-        settings.setBlockScreenshotsEnabled(enabled)
-        _isBlockScreenshotsEnabled.value = enabled
+        return biometryAuthenticator.isBiometricAvailable() && _uiState.value.settings.isAppLockEnabled
     }
 
     fun setLockSensitiveFieldsEnabled(enabled: Boolean) {
@@ -142,31 +168,16 @@ class SettingsViewModel(
                         reason = getString(Res.string.to_disable_this_setting),
                         failureButtonText = getString(Res.string.cancel),
                         onComplete = {
-                            if (it) applyLockSensitiveSetting(false)
+                            if (it) onEvent(SettingChangeEvent.LockSensitiveFieldsChanged(false))
                         }
                     )
                 } else {
-                    applyLockSensitiveSetting(false)
+                    onEvent(SettingChangeEvent.LockSensitiveFieldsChanged(false))
                 }
             } else {
-                applyLockSensitiveSetting(true)
+                onEvent(SettingChangeEvent.LockSensitiveFieldsChanged(true))
             }
         }
-    }
-
-    private fun applyLockSensitiveSetting(enabled: Boolean) {
-        settings.setLockSensitiveFieldsEnabled(enabled)
-        _isLockSensitiveFieldsEnabled.value = enabled
-    }
-
-    fun setLockscreenPinPadEnabled(enabled: Boolean) {
-        settings.setLockscreenPinPadEnabled(enabled)
-        _isLockscreenPinPadEnabled.value = enabled
-    }
-
-    fun setDisableBackupAlertsEnabled(enabled: Boolean) {
-        settings.setDisableBackupAlertsEnabled(enabled)
-        _isDisableBackupAlertsEnabled.value = enabled
     }
 
     fun enableAppLock(password: String) {
@@ -176,7 +187,9 @@ class SettingsViewModel(
                     true,
                     HashKeyGenerator.generateHashKey(password)
                 )
-                _isAppLockEnabled.value = true
+                updateSettings(
+                    _uiState.value.settings.copy(isAppLockEnabled = true)
+                )
             } catch (e: IllegalArgumentException) {
                 logger.e(e.message, e)
             }
@@ -188,16 +201,27 @@ class SettingsViewModel(
             verifyPassword(password) {
                 if (it) {
                     settings.setAppLockEnabled(false)
-                    _isAppLockEnabled.value = false
-
                     settings.setBiometricUnlockEnabled(false)
-                    _isBiometricUnlockEnabled.value = false
+
+                    updateSettings(
+                        _uiState.value.settings.copy(
+                            isAppLockEnabled = false,
+                            isBiometricUnlockEnabled = false,
+                        )
+                    )
                 }
 
                 onComplete(it)
             }
         }
     }
+
+    private fun updateSettings(settings: SettingsState) {
+        _uiState.value = _uiState.value.copy(
+            settings = settings
+        )
+    }
+
 
     private fun verifyPassword(password: String, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
@@ -208,9 +232,16 @@ class SettingsViewModel(
         }
     }
 
-    fun setTokenTapResponse(response: TokenTapResponse) {
-        settings.setTokenTapResponse(response)
-        _tokenTapResponse.value = response
+    fun showEnableAppLockDialog(show: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            showEnableAppLockDialog = show
+        )
+    }
+
+    fun showDisableAppLockDialog(show: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            showEnableAppLockDialog = show
+        )
     }
 }
 

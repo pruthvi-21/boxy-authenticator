@@ -20,11 +20,10 @@ import androidx.compose.ui.unit.sp
 import com.boxy.authenticator.domain.models.enums.TokenTapResponse
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OtpTextView(otp: String, modifier: Modifier = Modifier) {
     val settingsViewModel = LocalSettingsViewModel.current
-    val tokenTapResponse = settingsViewModel.tokenTapResponse.value
+    val tokenTapResponse = settingsViewModel.uiState.value.settings.tokenTapResponse
 
     val clipboardManager = LocalClipboardManager.current
     val hapticFeedback = LocalHapticFeedback.current

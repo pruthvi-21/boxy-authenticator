@@ -3,6 +3,8 @@ package com.boxy.authenticator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.boxy.authenticator.navigation.RootNavigation
 import com.boxy.authenticator.ui.theme.BoxyTheme
 import com.boxy.authenticator.ui.util.BindScreenshotBlockerEffect
@@ -21,12 +23,15 @@ fun App() {
     val settingsViewModel: SettingsViewModel = koinViewModel {
         ParametersHolder(mutableListOf(biometryAuthenticator))
     }
+
+    val settingsUiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
+
     BindBiometryAuthenticatorEffect(biometryAuthenticator)
-    BindScreenshotBlockerEffect(settingsViewModel.isBlockScreenshotsEnabled.value)
+    BindScreenshotBlockerEffect(settingsUiState.settings.isBlockScreenshotsEnabled)
 
     KoinContext {
         CompositionLocalProvider(LocalSettingsViewModel provides settingsViewModel) {
-            BoxyTheme(theme = settingsViewModel.appTheme.value) {
+            BoxyTheme(theme = settingsUiState.settings.appTheme) {
                 Surface {
                     RootNavigation()
                 }
