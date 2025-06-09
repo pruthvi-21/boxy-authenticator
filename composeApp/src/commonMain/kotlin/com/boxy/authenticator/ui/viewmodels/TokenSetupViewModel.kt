@@ -1,11 +1,11 @@
 package com.boxy.authenticator.ui.viewmodels
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.boxy.authenticator.core.AppSettings
 import com.boxy.authenticator.core.Logger
+import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.core.encoding.Base32
 import com.boxy.authenticator.domain.models.TokenEntry
@@ -13,7 +13,6 @@ import com.boxy.authenticator.domain.models.enums.AccountEntryMethod
 import com.boxy.authenticator.domain.models.enums.OTPType
 import com.boxy.authenticator.domain.models.enums.TokenSetupMode
 import com.boxy.authenticator.domain.models.form.TokenFormEvent
-import com.boxy.authenticator.domain.models.form.TokenFormState
 import com.boxy.authenticator.domain.models.otp.HotpInfo
 import com.boxy.authenticator.domain.models.otp.OtpInfo
 import com.boxy.authenticator.domain.models.otp.SteamInfo
@@ -23,8 +22,11 @@ import com.boxy.authenticator.domain.usecases.FetchTokenByIdUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
 import com.boxy.authenticator.domain.usecases.UpdateTokenUseCase
+import com.boxy.authenticator.ui.state.TokenSetupUiState
 import com.boxy.authenticator.utils.TokenNameExistsException
 import com.boxy.authenticator.utils.cleanSecretKey
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 
@@ -39,21 +41,15 @@ class TokenSetupViewModel(
 ) : ViewModel() {
     private val logger = Logger("TokenSetupViewModel")
 
-    private var initialState = TokenFormState()
     private var currentToken: TokenEntry? = null
 
-    private var _uiState = mutableStateOf(initialState)
-    val uiState: State<TokenFormState> = _uiState
-
-    private var tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW
+    private var initialUiState = TokenSetupUiState() // only required to check if form is updated
+    private val _uiState = MutableStateFlow(initialUiState)
+    val uiState = _uiState.asStateFlow()
 
     val lockSensitiveFields: Boolean
         get() = mutableStateOf(settings.isLockSensitiveFieldsEnabled()).value
                 && uiState.value.isInEditMode
-
-    val showBackPressDialog = mutableStateOf(false)
-    val showDeleteTokenDialog = mutableStateOf(false)
-    val showDuplicateTokenDialog = mutableStateOf(DuplicateTokenDialogArgs(false))
 
     data class DuplicateTokenDialogArgs(
         val show: Boolean,
@@ -61,13 +57,11 @@ class TokenSetupViewModel(
         val existingToken: TokenEntry? = null,
     )
 
-    fun setStateFromToken(token: TokenEntry?, tokenSetupMode: TokenSetupMode) {
-        if(token == null) {
+    fun setStateFromToken(token: TokenEntry?, setupMode: TokenSetupMode) {
+        if (token == null) return
 
-            return
-        }
         currentToken = token
-        var tokenState = TokenFormState(
+        _uiState.value = _uiState.value.copy(
             issuer = token.issuer,
             label = token.label,
             thumbnail = token.thumbnail,
@@ -75,25 +69,34 @@ class TokenSetupViewModel(
             algorithm = token.otpInfo.algorithm,
             digits = token.otpInfo.digits.toString(),
             isInEditMode = true,
+            tokenSetupMode = setupMode
         )
 
-        tokenState = when (token.otpInfo) {
-            is HotpInfo -> tokenState.copy(
+        _uiState.value = when (token.otpInfo) {
+            is HotpInfo -> _uiState.value.copy(
                 type = OTPType.HOTP,
                 counter = token.otpInfo.counter.toString()
             )
 
-            is SteamInfo -> tokenState.copy(type = OTPType.STEAM)
-            is TotpInfo -> tokenState.copy(
+            is SteamInfo -> _uiState.value.copy(type = OTPType.STEAM)
+            is TotpInfo -> _uiState.value.copy(
                 type = OTPType.TOTP,
                 period = token.otpInfo.period.toString()
             )
         }
-        tokenState = updateFieldVisibilityState(tokenState)
+        updateFieldVisibilityState()
 
-        initialState = tokenState
-        _uiState.value = tokenState
-        this.tokenSetupMode = tokenSetupMode
+        initialUiState = _uiState.value
+    }
+
+    fun setStateFromAuthUrl(authUrl: String) {
+        val token = try {
+            TokenEntryParser.buildFromUrl(authUrl)
+        } catch (e: Exception) {
+            null
+        }
+
+        setStateFromToken(token, TokenSetupMode.URL)
     }
 
     fun onEvent(event: TokenFormEvent) {
@@ -122,7 +125,7 @@ class TokenSetupViewModel(
 
             is TokenFormEvent.TypeChanged -> {
                 updateState { copy(type = event.type) }
-                _uiState.value = updateFieldVisibilityState(_uiState.value)
+                updateFieldVisibilityState()
             }
 
             is TokenFormEvent.ThumbnailChanged -> {
@@ -170,7 +173,7 @@ class TokenSetupViewModel(
         }
     }
 
-    private fun updateState(newState: TokenFormState.() -> TokenFormState) {
+    private fun updateState(newState: TokenSetupUiState.() -> TokenSetupUiState) {
         _uiState.value = _uiState.value.newState()
     }
 
@@ -242,7 +245,7 @@ class TokenSetupViewModel(
             try {
                 val otpInfo = buildOtpInfo()
 
-                when (tokenSetupMode) {
+                when (_uiState.value.tokenSetupMode) {
                     TokenSetupMode.NEW,
                     TokenSetupMode.URL,
                         -> {
@@ -254,7 +257,7 @@ class TokenSetupViewModel(
                             addedFrom = AccountEntryMethod.FORM,
                         )
 
-                        if (tokenSetupMode == TokenSetupMode.URL) {
+                        if (_uiState.value.tokenSetupMode == TokenSetupMode.URL) {
                             newToken = newToken.copy(addedFrom = AccountEntryMethod.QR_CODE)
                         }
 
@@ -308,23 +311,23 @@ class TokenSetupViewModel(
             }
     }
 
-    private fun updateFieldVisibilityState(state: TokenFormState): TokenFormState {
-        return when (state.type) {
-            OTPType.TOTP -> state.copy(
+    private fun updateFieldVisibilityState() {
+        _uiState.value = when (_uiState.value.type) {
+            OTPType.TOTP -> _uiState.value.copy(
                 isAlgorithmFieldVisible = true,
                 isDigitsFieldVisible = true,
                 isPeriodFieldVisible = true,
                 isCounterFieldVisible = false,
             )
 
-            OTPType.HOTP -> state.copy(
+            OTPType.HOTP -> _uiState.value.copy(
                 isAlgorithmFieldVisible = true,
                 isDigitsFieldVisible = true,
                 isPeriodFieldVisible = false,
                 isCounterFieldVisible = true,
             )
 
-            OTPType.STEAM -> state.copy(
+            OTPType.STEAM -> _uiState.value.copy(
                 isAlgorithmFieldVisible = false,
                 isDigitsFieldVisible = false,
                 isPeriodFieldVisible = false,
@@ -333,37 +336,38 @@ class TokenSetupViewModel(
         }
     }
 
-    // Reset form
-    fun dispose() {
-        val resetState = TokenFormState()
-        _uiState.value = resetState
-        initialState = resetState
-    }
-
     fun isFormUpdated(): Boolean {
-        // Ignoring enableAdvancedOptions and validationErrors
-        // since they don't represent user-modified data.
-        val currentState = _uiState.value
-        return currentState.copy(
-            enableAdvancedOptions = initialState.enableAdvancedOptions,
-            validationErrors = initialState.validationErrors,
-        ) != initialState
+        return initialUiState != _uiState.value.copy(
+            // ignore these fields
+            enableAdvancedOptions = initialUiState.enableAdvancedOptions,
+            tokenSetupMode = initialUiState.tokenSetupMode,
+            showBackPressDialog = initialUiState.showBackPressDialog,
+            showDeleteTokenDialog = initialUiState.showDeleteTokenDialog,
+            showDuplicateTokenDialog = initialUiState.showDuplicateTokenDialog,
+        )
     }
 
-    fun deleteToken(tokenId: String, onComplete: () -> Unit) {
-        viewModelScope.launch {
-            deleteTokenUseCase(tokenId)
-            onComplete()
-        }
+    fun deleteToken() {
+        currentToken?.let { deleteTokenUseCase(it.id) }
     }
 
     fun replaceExistingToken(existingToken: TokenEntry, token: TokenEntry) {
-        viewModelScope.launch {
-            replaceExistingTokenUseCase(existingToken, token)
-        }
+        replaceExistingTokenUseCase(existingToken, token)
     }
 
     fun getTokenFromId(tokenId: String): TokenEntry? {
         return fetchTokenByIdUseCase.invoke(tokenId).fold(onSuccess = { it }, onFailure = { null })
+    }
+
+    fun showBackPressDialog(show: Boolean) {
+        _uiState.value = _uiState.value.copy(showBackPressDialog = show)
+    }
+
+    fun showDeleteTokenDialog(show: Boolean) {
+        _uiState.value = _uiState.value.copy(showDeleteTokenDialog = show)
+    }
+
+    fun showDuplicateTokenDialog(args: DuplicateTokenDialogArgs) {
+        _uiState.value = _uiState.value.copy(showDuplicateTokenDialog = args)
     }
 }

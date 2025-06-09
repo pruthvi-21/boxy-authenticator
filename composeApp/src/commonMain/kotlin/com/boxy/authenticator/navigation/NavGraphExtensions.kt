@@ -7,19 +7,19 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.boxy.authenticator.domain.models.enums.TokenSetupMode
 import com.boxy.authenticator.ui.screens.AuthenticationScreen
-import com.boxy.authenticator.ui.screens.EditTokenScreen
 import com.boxy.authenticator.ui.screens.ExportTokensScreen
 import com.boxy.authenticator.ui.screens.HomeScreen
 import com.boxy.authenticator.ui.screens.ImportTokensScreen
 import com.boxy.authenticator.ui.screens.QrScannerScreen
 import com.boxy.authenticator.ui.screens.SettingsScreen
-import com.boxy.authenticator.ui.screens.TokenSetupFromUrlScreen
 import com.boxy.authenticator.ui.screens.TokenSetupScreen
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
+import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import io.ktor.http.decodeURLQueryComponent
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.ParametersHolder
@@ -91,10 +91,37 @@ fun NavGraphBuilder.addTokenSetupRoute() {
         val tokenId = arguments?.getString("token_id")
         val authUrl = arguments?.getString("auth_url")
 
+        val navController = LocalNavController.current
+        val viewModel: TokenSetupViewModel = koinViewModel()
+
         when {
-            authUrl != null -> TokenSetupFromUrlScreen(authUrl.decodeURLQueryComponent())
-            tokenId != null -> EditTokenScreen(tokenId)
-            else -> TokenSetupScreen()
+            authUrl != null -> {
+                TokenSetupScreen(
+                    viewModel = viewModel,
+                    tokenId = null,
+                    authUrl = authUrl.decodeURLQueryComponent(),
+                    setupMode = TokenSetupMode.URL,
+                    navController = navController
+                )
+            }
+
+            tokenId != null -> {
+                TokenSetupScreen(
+                    viewModel = viewModel,
+                    tokenId = tokenId,
+                    setupMode = TokenSetupMode.UPDATE,
+                    navController = navController
+                )
+            }
+
+            else -> {
+                TokenSetupScreen(
+                    viewModel = viewModel,
+                    tokenId = null,
+                    setupMode = TokenSetupMode.NEW,
+                    navController = navController
+                )
+            }
         }
     }
 }

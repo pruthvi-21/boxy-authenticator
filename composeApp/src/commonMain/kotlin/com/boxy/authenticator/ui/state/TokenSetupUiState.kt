@@ -1,14 +1,16 @@
-package com.boxy.authenticator.domain.models.form
+package com.boxy.authenticator.ui.state
 
 import com.boxy.authenticator.domain.models.Thumbnail
 import com.boxy.authenticator.domain.models.enums.OTPType
+import com.boxy.authenticator.domain.models.enums.TokenSetupMode
 import com.boxy.authenticator.domain.models.otp.HotpInfo.Companion.DEFAULT_COUNTER
 import com.boxy.authenticator.domain.models.otp.OtpInfo.Companion.DEFAULT_ALGORITHM
 import com.boxy.authenticator.domain.models.otp.OtpInfo.Companion.DEFAULT_DIGITS
 import com.boxy.authenticator.domain.models.otp.TotpInfo.Companion.DEFAULT_PERIOD
+import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel.DuplicateTokenDialogArgs
 import com.boxy.authenticator.utils.Constants.THUMBNAIL_COlORS
 
-data class TokenFormState(
+data class TokenSetupUiState(
     val issuer: String = "",
     val label: String = "",
     val secretKey: String = "",
@@ -25,4 +27,10 @@ data class TokenFormState(
     val isPeriodFieldVisible: Boolean = true,
     val isCounterFieldVisible: Boolean = false,
     val validationErrors: Map<String, String?> = emptyMap(),
+
+    val tokenSetupMode: TokenSetupMode = TokenSetupMode.NEW,
+
+    val showBackPressDialog: Boolean = false,
+    val showDeleteTokenDialog: Boolean = false,
+    val showDuplicateTokenDialog: DuplicateTokenDialogArgs = DuplicateTokenDialogArgs(false),
 )
