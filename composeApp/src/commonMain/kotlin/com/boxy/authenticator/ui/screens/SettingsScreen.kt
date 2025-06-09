@@ -8,14 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.title_settings
-import com.boxy.authenticator.navigation.LocalNavController
-import com.boxy.authenticator.navigation.navigateToExportTokens
-import com.boxy.authenticator.navigation.navigateToImportTokens
+import com.boxy.authenticator.navigation.Screen
+import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.design.BoxyPreferenceScreen
 import com.boxy.authenticator.ui.components.design.BoxyScaffold
-import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.screens.settings.AppearanceSettings
 import com.boxy.authenticator.ui.screens.settings.GeneralSettings
 import com.boxy.authenticator.ui.screens.settings.SecuritySettings
@@ -26,11 +25,11 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    navController: NavController,
     hideSensitiveSettings: Boolean = false,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val navController = LocalNavController.current
     val settingsViewModel = LocalSettingsViewModel.current
     settingsViewModel.hideSensitiveSettings.value = hideSensitiveSettings
 
@@ -63,10 +62,10 @@ fun SettingsScreen(
                     TransferAccounts(
                         snackbarHostState = snackbarHostState,
                         onNavigateToExport = {
-                            navController.navigateToExportTokens()
+                            navController.navigate(Screen.ExportTokens)
                         },
                         onNavigateToImport = {
-                            navController.navigateToImportTokens()
+                            navController.navigate(Screen.ImportTokens)
                         }
                     )
                 }
