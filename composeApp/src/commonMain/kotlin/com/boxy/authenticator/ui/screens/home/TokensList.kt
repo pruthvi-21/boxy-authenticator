@@ -10,7 +10,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -85,17 +84,16 @@ import kotlin.collections.set
 
 private const val SLIDE_DURATION = 150
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TokensList(
-    accounts: List<TokenEntry>,
+    tokensList: List<TokenEntry>,
     onEdit: (token: TokenEntry) -> Unit,
     singleExpansion: Boolean = true,
 ) {
     val expandedStates = remember { mutableStateMapOf<TokenEntry, Boolean>() }
     val settings: SettingsDataStore = koinInject()
 
-    val groupedAccounts = accounts
+    val groupedAccounts = tokensList
         .sortedBy { it.name.lowercase() }
         .groupBy { it.name.first().uppercaseChar() }
 
@@ -157,7 +155,7 @@ fun TokensList(
 
         item {
             Text(
-                text = "Showing ${accounts.size} entries",
+                text = "Showing ${tokensList.size} entries",
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.75f),
                 modifier = Modifier
