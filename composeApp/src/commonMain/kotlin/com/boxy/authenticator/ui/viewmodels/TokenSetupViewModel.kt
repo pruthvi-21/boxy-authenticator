@@ -3,7 +3,7 @@ package com.boxy.authenticator.ui.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.boxy.authenticator.core.AppSettings
+import com.boxy.authenticator.core.SettingsDataStore
 import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.TokenEntryParser
 import com.boxy.authenticator.core.TokenFormValidator
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 
 class TokenSetupViewModel(
-    private val settings: AppSettings,
+    private val settings: SettingsDataStore,
     private val fetchTokenByIdUseCase: FetchTokenByIdUseCase,
     private val insertTokenUseCase: InsertTokenUseCase,
     private val updateTokenUseCase: UpdateTokenUseCase,

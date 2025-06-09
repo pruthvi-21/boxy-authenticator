@@ -1,5 +1,6 @@
 package com.boxy.authenticator.di
 
+import com.boxy.authenticator.core.BiometricsHelper
 import com.boxy.authenticator.data.database.DatabaseDriverFactory
 import com.boxy.authenticator.data.database.dao.LocalTokenDao
 import com.boxy.authenticator.data.database.repository.LocalTokenRepository
@@ -14,7 +15,7 @@ import com.boxy.authenticator.domain.usecases.InsertTokenUseCase
 import com.boxy.authenticator.domain.usecases.InsertTokensUseCase
 import com.boxy.authenticator.domain.usecases.ReplaceExistingTokenUseCase
 import com.boxy.authenticator.domain.usecases.UpdateTokenUseCase
-import com.boxy.authenticator.core.AppSettings
+import com.boxy.authenticator.core.SettingsDataStore
 import com.boxy.authenticator.core.TokenFormValidator
 import com.boxy.authenticator.domain.usecases.FetchTokenCountUseCase
 import com.boxy.authenticator.domain.usecases.UpdateHotpCounterUseCase
@@ -37,9 +38,7 @@ val sharedModule = module {
     }
     viewModel { HomeViewModel(get(), get()) }
     viewModel { TokenSetupViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { (biometryAuthenticator: BiometryAuthenticator) ->
-        SettingsViewModel(get(), biometryAuthenticator)
-    }
+    viewModel { SettingsViewModel(get()) }
     viewModel { ExportTokensViewModel(get(), get()) }
     viewModel { ImportTokensViewModel(get(), get(), get()) }
 
@@ -68,5 +67,6 @@ val sharedModule = module {
 
     factory { TokenFormValidator() }
 
-    single { AppSettings(get()) }
+    single { SettingsDataStore(get()) }
+    single { BiometricsHelper() }
 }

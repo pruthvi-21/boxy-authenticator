@@ -23,35 +23,13 @@ import com.boxy.authenticator.ui.screens.settings.GeneralSettings
 import com.boxy.authenticator.ui.screens.settings.SecuritySettings
 import com.boxy.authenticator.ui.screens.settings.TransferAccounts
 import com.boxy.authenticator.ui.state.SettingsUiState
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import org.jetbrains.compose.resources.stringResource
-
-@Composable
-fun SettingsScreen(
-    navController: NavController,
-    hideSensitiveSettings: Boolean = false,
-) {
-    val settingsViewModel = LocalSettingsViewModel.current
-
-    val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
-
-    SettingsScreen(
-        uiState = uiState,
-        onEvent = { settingsViewModel.onEvent(it) },
-        showEnableAppLockDialog = { settingsViewModel.showEnableAppLockDialog(it) },
-        showDisableAppLockDialog = { settingsViewModel.showDisableAppLockDialog(it) },
-        navigateToExportScreen = { navController.navigate(Screen.ExportTokens) },
-        navigateToImportScreen = { navController.navigate(Screen.ImportTokens) },
-        navigateUp = { navController.navigateUp() },
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     uiState: SettingsUiState,
     onEvent: (SettingChangeEvent) -> Unit,
-    hideSensitiveSettings: Boolean = false,
     showEnableAppLockDialog: (Boolean) -> Unit,
     showDisableAppLockDialog: (Boolean) -> Unit,
     navigateToExportScreen: () -> Unit,

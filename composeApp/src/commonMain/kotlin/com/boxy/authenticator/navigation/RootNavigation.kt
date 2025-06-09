@@ -9,7 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.boxy.authenticator.core.AppSettings
+import com.boxy.authenticator.core.BiometricsHelper
+import com.boxy.authenticator.core.SettingsDataStore
 import com.boxy.authenticator.domain.models.enums.TokenSetupMode
 import com.boxy.authenticator.ui.screens.AuthenticationScreen
 import com.boxy.authenticator.ui.screens.ExportTokensScreen
@@ -33,7 +34,7 @@ fun RootNavigation() {
     val density = LocalDensity.current
     val transitions = TransitionHelper(density)
 
-    val settings: AppSettings = koinInject()
+    val settings: SettingsDataStore = koinInject()
     val navController = rememberNavController()
 
     val startDestination = if (settings.isAppLockEnabled()) Screen.Auth
@@ -48,9 +49,9 @@ fun RootNavigation() {
         popExitTransition = { transitions.screenPopExitAnim },
     ) {
         composable<Screen.Auth> {
-            val settingsViewModel = LocalSettingsViewModel.current
+            val biometricsHelper: BiometricsHelper = koinInject()
             val authViewModel: AuthenticationViewModel = koinViewModel {
-                ParametersHolder(mutableListOf(settingsViewModel.biometryAuthenticator))
+                ParametersHolder(mutableListOf(biometricsHelper.biometryAuthenticator))
             }
 
             val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
@@ -83,7 +84,7 @@ fun RootNavigation() {
                     }
                 },
                 updatePinPadVisibility = { authViewModel.updatePinPadVisibility() },
-                onNavigateToSettings = { navController.navigate(Screen.Settings(true)) }
+                onNavigateToSettings = { navController.navigate(Screen.Settings) }
             )
         }
 
@@ -97,7 +98,7 @@ fun RootNavigation() {
                 loadTokens = { homeViewModel.loadTokens() },
                 onFabExpanded = { homeViewModel.setIsFabExpanded(it) },
                 onDismissSnackbar = { homeViewModel.dismissSnackbar() },
-                onNavigateToSettings = { navController.navigate(Screen.Settings()) },
+                onNavigateToSettings = { navController.navigate(Screen.Settings) },
                 onNavigateToQrScan = { navController.navigate(Screen.QrScanner) },
                 onNavigateToNewTokenSetup = { navController.navigate(Screen.TokenSetup()) },
                 onNavigateToEditToken = { navController.navigate(Screen.TokenSetup(tokenId = it)) }
@@ -144,12 +145,18 @@ fun RootNavigation() {
             }
         }
 
-        composable<Screen.Settings> { navBackStackEntry ->
-            val params = navBackStackEntry.toRoute<Screen.Settings>()
+        composable<Screen.Settings> {
+            val settingsViewModel = LocalSettingsViewModel.current
+            val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
 
             SettingsScreen(
-                navController = navController,
-                hideSensitiveSettings = params.hideSensitiveSettings,
+                uiState = uiState,
+                onEvent = { settingsViewModel.onEvent(it) },
+                showEnableAppLockDialog = { settingsViewModel.showEnableAppLockDialog(it) },
+                showDisableAppLockDialog = { settingsViewModel.showDisableAppLockDialog(it) },
+                navigateToExportScreen = { navController.navigate(Screen.ExportTokens) },
+                navigateToImportScreen = { navController.navigate(Screen.ImportTokens) },
+                navigateUp = { navController.navigateUp() },
             )
         }
 
