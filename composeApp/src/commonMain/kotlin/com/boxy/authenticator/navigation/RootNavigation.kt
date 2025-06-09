@@ -27,7 +27,6 @@ import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import io.ktor.http.decodeURLQueryComponent
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.ParametersHolder
 
 @Composable
 fun RootNavigation() {
@@ -49,18 +48,12 @@ fun RootNavigation() {
         popExitTransition = { transitions.screenPopExitAnim },
     ) {
         composable<Screen.Auth> {
-            val biometricsHelper: BiometricsHelper = koinInject()
-            val authViewModel: AuthenticationViewModel = koinViewModel {
-                ParametersHolder(mutableListOf(biometricsHelper.biometryAuthenticator))
-            }
+            val authViewModel: AuthenticationViewModel = koinViewModel()
 
             val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
 
-            val isBiometricUnlockEnabled = authViewModel.isBiometricUnlockEnabled()
-
             AuthenticationScreen(
                 uiState = uiState,
-                isBiometricUnlockEnabled = isBiometricUnlockEnabled,
                 isPinPadVisible = authViewModel.isPinPadVisible.value,
                 onPasswordChange = { authViewModel.updatePassword(it) },
                 onSubmit = {
@@ -73,18 +66,16 @@ fun RootNavigation() {
                         }
                     }
                 },
-                promptForBiometrics = {
-                    authViewModel.promptForBiometrics {
-                        if (it) navController.navigate(Screen.Home) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = false
-                            }
-                            launchSingleTop = true
+                updatePinPadVisibility = { authViewModel.updatePinPadVisibility() },
+                onAuthSuccess = {
+                    navController.navigate(Screen.Home) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
                         }
+                        launchSingleTop = true
                     }
                 },
-                updatePinPadVisibility = { authViewModel.updatePinPadVisibility() },
-                onNavigateToSettings = { navController.navigate(Screen.Settings) }
+                navigateToSettings = { navController.navigate(Screen.Settings) }
             )
         }
 

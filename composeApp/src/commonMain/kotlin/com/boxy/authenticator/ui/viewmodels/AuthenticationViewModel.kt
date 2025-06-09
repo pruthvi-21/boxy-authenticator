@@ -21,7 +21,6 @@ import org.jetbrains.compose.resources.getString
 
 class AuthenticationViewModel(
     private val settings: SettingsDataStore,
-    private val biometryAuthenticator: BiometryAuthenticator,
 ) : ViewModel() {
     private val logger = Logger("AuthenticationViewModel")
 
@@ -52,27 +51,6 @@ class AuthenticationViewModel(
             _uiState.value = _uiState.value.copy(
                 isVerifyingPassword = false
             )
-        }
-    }
-
-    fun isBiometricUnlockEnabled(): Boolean {
-        return biometryAuthenticator.isBiometricAvailable() && settings.isBiometricUnlockEnabled()
-    }
-
-    fun promptForBiometrics(
-        onComplete: (Boolean) -> Unit,
-    ) = viewModelScope.launch {
-        try {
-            val isSuccess = biometryAuthenticator.checkBiometryAuthentication(
-                requestTitle = getString(Res.string.biometric_prompt_title).desc(),
-                requestReason = getString(Res.string.to_unlock).desc(),
-                failureButtonText = getString(Res.string.cancel).desc(),
-                allowDeviceCredentials = false,
-            )
-            onComplete(isSuccess)
-        } catch (throwable: Throwable) {
-            logger.e(throwable.message, throwable)
-            onComplete(false)
         }
     }
 
