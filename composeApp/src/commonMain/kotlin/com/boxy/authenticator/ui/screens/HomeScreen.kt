@@ -132,7 +132,7 @@ fun HomeScreen(
                 if (uiState.error == null) {
                     if (uiState.tokens.isNotEmpty()) {
                         TokensList(
-                            accounts = uiState.tokens,
+                            tokensList = uiState.tokens,
                             onEdit = { onNavigateToEditToken(it.id) }
                         )
                     } else {
