@@ -25,7 +25,6 @@ import com.boxy.authenticator.ui.viewmodels.HomeViewModel
 import com.boxy.authenticator.ui.viewmodels.ImportTokensViewModel
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
-import dev.icerock.moko.biometry.BiometryAuthenticator
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -33,9 +32,7 @@ import org.koin.dsl.module
 expect val platformModule: Module
 
 val sharedModule = module {
-    viewModel { (biometryAuthenticator: BiometryAuthenticator) ->
-        AuthenticationViewModel(get(), biometryAuthenticator)
-    }
+    viewModel { AuthenticationViewModel(get()) }
     viewModel { HomeViewModel(get(), get()) }
     viewModel { TokenSetupViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { SettingsViewModel(get()) }

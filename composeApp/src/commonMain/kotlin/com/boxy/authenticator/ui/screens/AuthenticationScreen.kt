@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,13 +40,17 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.app_name
+import boxy_authenticator.composeapp.generated.resources.biometric_prompt_title
+import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.enter_your_password
 import boxy_authenticator.composeapp.generated.resources.ic_app_logo
 import boxy_authenticator.composeapp.generated.resources.title_settings
+import boxy_authenticator.composeapp.generated.resources.to_unlock
 import boxy_authenticator.composeapp.generated.resources.unlock
 import boxy_authenticator.composeapp.generated.resources.unlock_vault
 import boxy_authenticator.composeapp.generated.resources.unlock_vault_message
 import boxy_authenticator.composeapp.generated.resources.use_biometrics
+import com.boxy.authenticator.core.BiometricsHelper
 import com.boxy.authenticator.ui.components.Toolbar
 import com.boxy.authenticator.ui.components.design.BoxyButton
 import com.boxy.authenticator.ui.components.design.BoxyScaffold
@@ -53,22 +58,41 @@ import com.boxy.authenticator.ui.components.design.BoxyTextButton
 import com.boxy.authenticator.ui.components.design.BoxyTextField
 import com.boxy.authenticator.ui.state.AuthenticationUiState
 import com.boxy.authenticator.utils.BuildUtils
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthenticationScreen(
     uiState: AuthenticationUiState,
-    isBiometricUnlockEnabled: Boolean,
     isPinPadVisible: Boolean,
     onPasswordChange: (String) -> Unit,
     onSubmit: () -> Unit,
-    promptForBiometrics: () -> Unit,
     updatePinPadVisibility: () -> Unit,
-    onNavigateToSettings: (hideSensitiveSettings: Boolean) -> Unit,
+    onAuthSuccess: () -> Unit,
+    navigateToSettings: (hideSensitiveSettings: Boolean) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
+    val biometricsHelper: BiometricsHelper = koinInject()
+
+    val scope = rememberCoroutineScope()
+
+    val isBiometricUnlockEnabled = biometricsHelper.isBiometricAvailable()
+
+    fun promptForBiometrics() {
+        scope.launch {
+            val isSuccess = biometricsHelper.promptForBiometrics(
+                title = getString(Res.string.biometric_prompt_title),
+                reason = getString(Res.string.to_unlock),
+                failureButtonText = getString(Res.string.cancel),
+            )
+
+            if (isSuccess) onAuthSuccess()
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (isBiometricUnlockEnabled) promptForBiometrics()
@@ -86,7 +110,7 @@ fun AuthenticationScreen(
             Toolbar(
                 title = "",
                 actions = {
-                    IconButton(onClick = { onNavigateToSettings(true) }) {
+                    IconButton(onClick = { navigateToSettings(true) }) {
                         Icon(
                             Icons.Outlined.Settings,
                             contentDescription = stringResource(Res.string.title_settings)
