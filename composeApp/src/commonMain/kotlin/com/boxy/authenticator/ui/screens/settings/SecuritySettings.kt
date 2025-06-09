@@ -5,6 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import boxy_authenticator.composeapp.generated.resources.Res
+import boxy_authenticator.composeapp.generated.resources.biometric_prompt_title
+import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.enter_correct_password
 import boxy_authenticator.composeapp.generated.resources.incorrect_password
 import boxy_authenticator.composeapp.generated.resources.password
@@ -18,17 +20,23 @@ import boxy_authenticator.composeapp.generated.resources.preference_title_biomet
 import boxy_authenticator.composeapp.generated.resources.preference_title_block_screenshots
 import boxy_authenticator.composeapp.generated.resources.preference_title_lock_sensitive_fields
 import boxy_authenticator.composeapp.generated.resources.remove_password
+import boxy_authenticator.composeapp.generated.resources.to_disable_biometrics
+import boxy_authenticator.composeapp.generated.resources.to_disable_this_setting
+import boxy_authenticator.composeapp.generated.resources.to_enable_biometrics
+import boxy_authenticator.composeapp.generated.resources.verify_your_identity
+import com.boxy.authenticator.core.BiometricsHelper
+import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.Platform
 import com.boxy.authenticator.domain.models.form.SettingChangeEvent
 import com.boxy.authenticator.ui.components.dialogs.RequestPasswordDialog
 import com.boxy.authenticator.ui.components.dialogs.SetPasswordDialog
 import com.boxy.authenticator.ui.state.SettingsUiState
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.jw.preferences.PreferenceCategory
 import com.jw.preferences.SwitchPreference
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 @Composable
 fun SecuritySettings(
@@ -38,7 +46,9 @@ fun SecuritySettings(
     showDisableAppLockDialog: (Boolean) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
-    val settingsViewModel = LocalSettingsViewModel.current
+    val logger = Logger("SecuritySettings")
+
+    val biometricsHelper: BiometricsHelper = koinInject()
 
     val isAppLockEnabled = uiState.settings.isAppLockEnabled
     val isBiometricUnlockEnabled = uiState.settings.isBiometricUnlockEnabled
@@ -54,8 +64,8 @@ fun SecuritySettings(
             title = { Text(stringResource(Res.string.preference_title_app_lock)) },
             summary = { Text(stringResource(Res.string.preference_summary_app_lock)) },
             value = isAppLockEnabled,
-            onValueChange = {
-                if (it) {
+            onValueChange = { newValue ->
+                if (newValue) {
                     showEnableAppLockDialog(true)
                     showDisableAppLockDialog(false)
                 } else {
@@ -68,10 +78,22 @@ fun SecuritySettings(
         SwitchPreference(
             title = { Text(stringResource(Res.string.preference_title_biometrics)) },
             summary = { Text(stringResource(Res.string.preference_summary_biometrics)) },
-            enabled = settingsViewModel.areBiometricsAvailable(),
+            enabled = uiState.settings.isAppLockEnabled && biometricsHelper.isBiometricAvailable(),
             value = isBiometricUnlockEnabled,
-            onValueChange = {
-                settingsViewModel.setBiometricUnlockEnabled(it)
+            onValueChange = { newValue ->
+                scope.launch {
+                    val canProceed = biometricsHelper.isBiometricAvailable().not() ||
+                            biometricsHelper.promptForBiometrics(
+                                title = getString(Res.string.biometric_prompt_title),
+                                reason = if (newValue) getString(Res.string.to_enable_biometrics)
+                                else getString(Res.string.to_disable_biometrics),
+                                failureButtonText = getString(Res.string.cancel),
+                            )
+
+                    if (canProceed) {
+                        onEvent(SettingChangeEvent.BiometricUnlockChanged(newValue))
+                    }
+                }
             },
         )
         if (Platform.isAndroid) {
@@ -88,8 +110,24 @@ fun SecuritySettings(
             title = { Text(stringResource(Res.string.preference_title_lock_sensitive_fields)) },
             summary = { Text(stringResource(Res.string.preference_summary_lock_sensitive_fields)) },
             value = isLockSensitiveFieldsEnabled,
-            onValueChange = {
-                settingsViewModel.setLockSensitiveFieldsEnabled(it)
+            onValueChange = { newValue ->
+                scope.launch {
+                    if (newValue) {
+                        onEvent(SettingChangeEvent.LockSensitiveFieldsChanged(true))
+                        return@launch
+                    }
+
+                    val canProceed = biometricsHelper.isBiometricAvailable()
+                        .not() || biometricsHelper.promptForBiometrics(
+                        title = getString(Res.string.verify_your_identity),
+                        reason = getString(Res.string.to_disable_this_setting),
+                        failureButtonText = getString(Res.string.cancel),
+                    )
+
+                    if (canProceed) {
+                        onEvent(SettingChangeEvent.LockSensitiveFieldsChanged(false))
+                    }
+                }
             },
             showDivider = false,
         )
@@ -101,8 +139,15 @@ fun SecuritySettings(
                 showEnableAppLockDialog(false)
             },
             onConfirmation = { password ->
-                settingsViewModel.enableAppLock(password)
                 showEnableAppLockDialog(false)
+                try {
+                    onEvent(SettingChangeEvent.AppLockChanged(true, password))
+                } catch (e: IllegalArgumentException) {
+                    logger.e(e.message, e)
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Unknown error")
+                    }
+                }
             }
         )
     }
@@ -116,12 +161,18 @@ fun SecuritySettings(
                 showDisableAppLockDialog(false)
             },
             onConfirmation = { password ->
-                settingsViewModel.disableAppLock(password) {
-                    showDisableAppLockDialog(false)
-                    if (!it) {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(getString(Res.string.incorrect_password))
+                showDisableAppLockDialog(false)
+
+                runCatching {
+                    onEvent(SettingChangeEvent.AppLockChanged(false, password))
+                }.onFailure { e ->
+                    logger.e(e.message, e)
+                    scope.launch {
+                        val message = when (e) {
+                            is IllegalArgumentException -> "Unknown error"
+                            else -> getString(Res.string.incorrect_password)
                         }
+                        snackbarHostState.showSnackbar(message)
                     }
                 }
             }

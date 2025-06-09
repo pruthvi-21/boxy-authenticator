@@ -2,7 +2,7 @@ package com.boxy.authenticator.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.boxy.authenticator.core.AppSettings
+import com.boxy.authenticator.core.SettingsDataStore
 import com.boxy.authenticator.domain.usecases.FetchTokensUseCase
 import com.boxy.authenticator.ui.state.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val appSettings: AppSettings,
+    private val settingsDataStore: SettingsDataStore,
     private val fetchTokensUseCase: FetchTokensUseCase,
 ) : ViewModel() {
 
@@ -22,8 +22,8 @@ class HomeViewModel(
         viewModelScope.launch {
             fetchTokensUseCase().fold(
                 onSuccess = { tokens ->
-                    val disableBackupAlerts = appSettings.isDisableBackupAlertsEnabled()
-                    val lastBackupTime = appSettings.getLastBackupTimestamp()
+                    val disableBackupAlerts = settingsDataStore.isDisableBackupAlertsEnabled()
+                    val lastBackupTime = settingsDataStore.getLastBackupTimestamp()
 
                     if (disableBackupAlerts || tokens.isEmpty()) {
                         _uiState.value = _uiState.value.copy(

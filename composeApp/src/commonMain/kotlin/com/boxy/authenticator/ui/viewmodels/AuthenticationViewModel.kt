@@ -8,7 +8,7 @@ import boxy_authenticator.composeapp.generated.resources.biometric_prompt_title
 import boxy_authenticator.composeapp.generated.resources.cancel
 import boxy_authenticator.composeapp.generated.resources.incorrect_password
 import boxy_authenticator.composeapp.generated.resources.to_unlock
-import com.boxy.authenticator.core.AppSettings
+import com.boxy.authenticator.core.SettingsDataStore
 import com.boxy.authenticator.core.Logger
 import com.boxy.authenticator.core.crypto.HashKeyGenerator
 import com.boxy.authenticator.ui.state.AuthenticationUiState
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 
 class AuthenticationViewModel(
-    private val settings: AppSettings,
+    private val settings: SettingsDataStore,
     private val biometryAuthenticator: BiometryAuthenticator,
 ) : ViewModel() {
     private val logger = Logger("AuthenticationViewModel")

@@ -64,7 +64,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import boxy_authenticator.composeapp.generated.resources.Res
 import boxy_authenticator.composeapp.generated.resources.refresh
-import com.boxy.authenticator.core.AppSettings
+import com.boxy.authenticator.core.SettingsDataStore
 import com.boxy.authenticator.domain.models.TokenEntry
 import com.boxy.authenticator.domain.models.otp.HotpInfo
 import com.boxy.authenticator.domain.models.otp.TotpInfo
@@ -93,7 +93,7 @@ fun TokensList(
     singleExpansion: Boolean = true,
 ) {
     val expandedStates = remember { mutableStateMapOf<TokenEntry, Boolean>() }
-    val settings: AppSettings = koinInject()
+    val settings: SettingsDataStore = koinInject()
 
     val groupedAccounts = accounts
         .sortedBy { it.name.lowercase() }

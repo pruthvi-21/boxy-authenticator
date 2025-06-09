@@ -3,10 +3,32 @@ package com.boxy.authenticator.core
 import com.boxy.authenticator.data.preferences.PreferenceStore
 import com.boxy.authenticator.domain.models.enums.AppTheme
 import com.boxy.authenticator.domain.models.enums.TokenTapResponse
+import com.boxy.authenticator.ui.state.SettingsState
 
-class AppSettings(
+class SettingsDataStore(
     private val store: PreferenceStore,
 ) {
+
+    fun getSettings(): SettingsState {
+        return SettingsState(
+            // Appearance
+            appTheme = getAppTheme(),
+
+            // General
+            tokenTapResponse = getTokenTapResponse(),
+            isLockscreenPinPadEnabled = isLockscreenPinPadEnabled(),
+            isDisableBackupAlertsEnabled = isDisableBackupAlertsEnabled(),
+
+            // Security
+            isAppLockEnabled = isAppLockEnabled(),
+            isBiometricUnlockEnabled = isBiometricUnlockEnabled(),
+            isBlockScreenshotsEnabled = isBlockScreenshotsEnabled(),
+            isLockSensitiveFieldsEnabled = isLockSensitiveFieldsEnabled(),
+
+            // Other
+            lastBackupTimestamp = getLastBackupTimestamp()
+        )
+    }
 
     fun setAppTheme(theme: AppTheme) {
         store.putString(Keys.APP_THEME, theme.name)

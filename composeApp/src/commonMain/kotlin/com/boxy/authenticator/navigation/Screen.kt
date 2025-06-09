@@ -19,7 +19,7 @@ sealed class Screen {
     ) : Screen()
 
     @Serializable
-    data class Settings(val hideSensitiveSettings: Boolean = false) : Screen()
+    data object Settings : Screen()
 
     @Serializable
     data object ImportTokens : Screen()
