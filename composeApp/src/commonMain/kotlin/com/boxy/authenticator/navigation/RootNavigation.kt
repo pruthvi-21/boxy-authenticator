@@ -9,7 +9,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.boxy.authenticator.core.BiometricsHelper
 import com.boxy.authenticator.core.SettingsDataStore
 import com.boxy.authenticator.domain.models.enums.TokenSetupMode
 import com.boxy.authenticator.ui.screens.AuthenticationScreen
@@ -22,14 +21,16 @@ import com.boxy.authenticator.ui.screens.TokenSetupScreen
 import com.boxy.authenticator.ui.viewmodels.AuthenticationViewModel
 import com.boxy.authenticator.ui.viewmodels.ExportTokensViewModel
 import com.boxy.authenticator.ui.viewmodels.HomeViewModel
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
+import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import com.boxy.authenticator.ui.viewmodels.TokenSetupViewModel
 import io.ktor.http.decodeURLQueryComponent
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun RootNavigation() {
+fun RootNavigation(
+    settingsViewModel: SettingsViewModel
+) {
     val density = LocalDensity.current
     val transitions = TransitionHelper(density)
 
@@ -137,7 +138,6 @@ fun RootNavigation() {
         }
 
         composable<Screen.Settings> {
-            val settingsViewModel = LocalSettingsViewModel.current
             val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
 
             SettingsScreen(
