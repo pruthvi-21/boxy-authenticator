@@ -13,7 +13,6 @@ import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
-import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -31,12 +30,10 @@ fun App() {
 
     BindScreenshotBlockerEffect(settingsUiState.settings.isBlockScreenshotsEnabled)
 
-    KoinContext {
-        CompositionLocalProvider(LocalSettingsViewModel provides settingsViewModel) {
-            BoxyTheme(theme = settingsUiState.settings.appTheme) {
-                Surface {
-                    RootNavigation()
-                }
+    CompositionLocalProvider(LocalSettingsViewModel provides settingsViewModel) {
+        BoxyTheme(theme = settingsUiState.settings.appTheme) {
+            Surface {
+                RootNavigation()
             }
         }
     }
