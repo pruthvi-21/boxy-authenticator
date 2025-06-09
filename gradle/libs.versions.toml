@@ -21,6 +21,7 @@ kotlinxSerializationJson = "1.8.0-RC"
 ksp = "2.1.21-2.0.1"
 ktorClientCore = "2.3.12"
 mokoBiometry = "0.4.0"
+navigationCompose = "2.9.0-beta01"
 preferenceKtx = "1.2.1"
 qrKit = "3.0.6"
 sqlDelight = "2.0.2"
@@ -49,6 +50,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
 moko-biometry = { module = "dev.icerock.moko:biometry", version.ref = "mokoBiometry" }
 moko-biometry-compose = { module = "dev.icerock.moko:biometry-compose", version.ref = "mokoBiometry" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
