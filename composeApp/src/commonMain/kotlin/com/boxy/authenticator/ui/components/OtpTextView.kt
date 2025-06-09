@@ -1,7 +1,6 @@
 package com.boxy.authenticator.ui.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -18,12 +17,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boxy.authenticator.domain.models.enums.TokenTapResponse
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
+import com.boxy.authenticator.ui.util.LocalSettings
 
 @Composable
 fun OtpTextView(otp: String, modifier: Modifier = Modifier) {
-    val settingsViewModel = LocalSettingsViewModel.current
-    val tokenTapResponse = settingsViewModel.uiState.value.settings.tokenTapResponse
+    val settings = LocalSettings.current
+    val tokenTapResponse = settings.tokenTapResponse
 
     val clipboardManager = LocalClipboardManager.current
     val hapticFeedback = LocalHapticFeedback.current

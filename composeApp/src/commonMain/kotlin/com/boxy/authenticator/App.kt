@@ -9,7 +9,7 @@ import com.boxy.authenticator.core.BiometricsHelper
 import com.boxy.authenticator.navigation.RootNavigation
 import com.boxy.authenticator.ui.theme.BoxyTheme
 import com.boxy.authenticator.ui.util.BindScreenshotBlockerEffect
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
+import com.boxy.authenticator.ui.util.LocalSettings
 import com.boxy.authenticator.ui.viewmodels.SettingsViewModel
 import dev.icerock.moko.biometry.compose.BindBiometryAuthenticatorEffect
 import dev.icerock.moko.biometry.compose.rememberBiometryAuthenticatorFactory
@@ -30,10 +30,10 @@ fun App() {
 
     BindScreenshotBlockerEffect(settingsUiState.settings.isBlockScreenshotsEnabled)
 
-    CompositionLocalProvider(LocalSettingsViewModel provides settingsViewModel) {
+    CompositionLocalProvider(LocalSettings provides settingsUiState.settings) {
         BoxyTheme(theme = settingsUiState.settings.appTheme) {
             Surface {
-                RootNavigation()
+                RootNavigation(settingsViewModel)
             }
         }
     }

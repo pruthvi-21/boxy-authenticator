@@ -17,7 +17,6 @@ import boxy_authenticator.composeapp.generated.resources.single_tap
 import com.boxy.authenticator.domain.models.enums.TokenTapResponse
 import com.boxy.authenticator.domain.models.form.SettingChangeEvent
 import com.boxy.authenticator.ui.state.SettingsUiState
-import com.boxy.authenticator.ui.viewmodels.LocalSettingsViewModel
 import com.jw.preferences.DropDownPreference
 import com.jw.preferences.PreferenceCategory
 import com.jw.preferences.SwitchPreference

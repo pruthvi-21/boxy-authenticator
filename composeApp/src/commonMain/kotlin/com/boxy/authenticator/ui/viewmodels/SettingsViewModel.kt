@@ -1,6 +1,5 @@
 package com.boxy.authenticator.ui.viewmodels
 
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.boxy.authenticator.core.Logger
@@ -123,8 +122,4 @@ class SettingsViewModel(
             showDisableAppLockDialog = show
         )
     }
-}
-
-val LocalSettingsViewModel = staticCompositionLocalOf<SettingsViewModel> {
-    error("SettingsViewModel not provided")
 }
